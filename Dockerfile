@@ -16,7 +16,7 @@ RUN npm run build
 
 
 ### Kies je kraam
-FROM mhart/alpine-node:16
+FROM node:16-alpine
 
 # Setup certificates for ADP/Motiv
 RUN apk add ca-certificates
@@ -25,14 +25,6 @@ RUN chmod 644 /usr/local/share/ca-certificates/adp_rootca.crt \
   && update-ca-certificates --fresh
 
 RUN mkdir -p /srv /deploy \
-    && addgroup -g 1000 node \
-    && adduser \
-        -D \
-        -G node \
-        -h /srv \
-        -s /bin/sh \
-        -u 1000 \
-        node \
     && chown -R node:node /srv \
     && chown -R node:node /deploy
 
@@ -40,11 +32,11 @@ ADD ./deploy/docker-migrate.sh /deploy/
 
 RUN chown node:node /deploy/docker-migrate.sh && chmod +x /deploy/docker-migrate.sh
 
-USER node
-
 WORKDIR /srv/
 
-ADD ./package.json ./package-lock.json /srv/
+ADD --chown=node:node ./package.json ./package-lock.json /srv/
+
+USER node
 
 # Add `NPM_TOKEN` right before the first `npm install`
 
