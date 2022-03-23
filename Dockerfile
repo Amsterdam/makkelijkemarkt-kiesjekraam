@@ -1,5 +1,5 @@
 ### Bewerk de markten
-FROM node:16.4.2-alpine as bdm_build
+FROM node:16-alpine as bdm_build
 
 COPY bdm/package.json bdm/
 COPY bdm/package-lock.json bdm/
@@ -16,7 +16,7 @@ RUN npm run build
 
 
 ### Kies je kraam
-FROM mhart/alpine-node:16.4.2
+FROM mhart/alpine-node:16
 
 # Setup certificates for ADP/Motiv
 RUN apk add ca-certificates
