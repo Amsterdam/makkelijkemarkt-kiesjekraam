@@ -11,6 +11,15 @@ import MarktGenericDataProvider from './components/providers/MarktGenericDataPro
 import MarktPageWrapper from './components/MarktPageWrapper'
 import { HOME_LINK } from './constants'
 
+if (process.env.REACT_APP_MOCK_SERVICE_WORKER) {
+  const { worker } = require('./mocks/mmApiServiceWorker/browser')
+  worker.start({
+    serviceWorker: {
+      url: '/bdm/mockServiceWorker.js',
+    },
+  })
+}
+
 const { Footer } = Layout
 const queryClient = new QueryClient()
 

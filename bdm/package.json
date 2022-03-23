@@ -29,8 +29,9 @@
   },
   "scripts": {
     "start": "SKIP_PREFLIGHT_CHECK=true react-scripts start",
+    "start:msw": "SKIP_PREFLIGHT_CHECK=true REACT_APP_MOCK_SERVICE_WORKER=true react-scripts start",
     "build": "SKIP_PREFLIGHT_CHECK=true react-scripts build",
-    "test": "react-scripts test",
+    "test": "SKIP_PREFLIGHT_CHECK=true react-scripts test",
     "eject": "react-scripts eject",
     "prettier_check": "npx prettier --check .",
     "prettier": "npx prettier --write ."
@@ -61,6 +62,10 @@
     "@types/react-edit-text": "^1.1.0",
     "@types/react-router-dom": "^5.1.6",
     "@types/styled-components": "^5.1.22",
+    "msw": "^0.39.2",
     "prettier": "2.5.1"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }

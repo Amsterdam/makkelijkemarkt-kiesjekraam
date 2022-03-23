@@ -1,0 +1,26 @@
+[
+  {
+    "id": 101,
+    "afkorting": "101-agf",
+    "omschrijving": "AGF",
+    "color": "73ab4f"
+  },
+  {
+    "id": 102,
+    "afkorting": "102-bio-health-fairtrade",
+    "omschrijving": "Biologisch, health & fairtrade producten",
+    "color": "abce92"
+  },
+  {
+    "id": 103,
+    "afkorting": "103-brood-banket",
+    "omschrijving": "Brood & banket",
+    "color": "c75819"
+  },
+  {
+    "id": 104,
+    "afkorting": "104-hummus-kruiden-olijven",
+    "omschrijving": "Hummus, kruiden & olijven",
+    "color": "385527"
+  }
+]
