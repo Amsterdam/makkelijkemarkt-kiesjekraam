@@ -15,9 +15,8 @@ const IndelingsLegenda = ({
     const relevantBranches     = getAllBranchesForLegend(branches, marktplaatsen);
     const showToewijzingen     = !!toewijzingen.length;
     const indelingenPerBranche = showToewijzingen ?
-                                 countBrancheToewijzingen(marktplaatsen, toewijzingen) :
+                                 countToewijzingenPerBranche(branches, ondernemers, toewijzingen):
                                  {};
-
     return (
         <div className="IndelingsLegenda">
             <table>
