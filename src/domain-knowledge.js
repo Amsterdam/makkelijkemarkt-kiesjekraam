@@ -89,6 +89,7 @@ const isVast = status =>
 const isTVPLZ = status =>
     status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_Z;
 const isExp = status =>
+    status === DeelnemerStatus.ECONOMISCHE_BINDING ||
     status === DeelnemerStatus.EXPERIMENTAL ||
     status === DeelnemerStatus.EXPERIMENTAL_F;
 const isVastOfExp = status =>

@@ -30,6 +30,7 @@ export enum DeelnemerStatus {
     SOLLICITANT = 'soll',
     EXPERIMENTAL = 'exp',
     EXPERIMENTAL_F = 'expf',
+    ECONOMISCHE_BINDING = 'eb',
 }
 
 export interface IMarktProperties {
