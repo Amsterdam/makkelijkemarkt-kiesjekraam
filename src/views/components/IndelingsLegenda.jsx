@@ -38,6 +38,12 @@ const IndelingsLegenda = ({
                     {showToewijzingen && <td>{indelingenPerBranche[branche.brancheId] || 0}</td>}
                 </tr>
             )}
+                <tr key='evi-stand'>
+                    <td className='autoColor evi background-light'>evi</td>
+                    <td>Eigen verkoopinrichting plaats</td>
+                    <td></td>
+                    {showToewijzingen && <td></td>}
+                </tr>
                 </tbody>
             </table>
         </div>
