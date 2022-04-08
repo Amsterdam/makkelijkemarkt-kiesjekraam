@@ -51,6 +51,17 @@ $plaatsCellHeight: 16px;
                 top: -5px;
                 left: -5px;
             }
+            &.evi::before {
+                border: 5px solid #000000;
+                border-color: #000000 transparent transparent transparent;
+                content: '';
+                transform: rotate(225deg);
+                height: 0;
+                position: absolute;
+                width: 0;
+                top: -5px;
+                right: -5px;
+            }
         }
         &-soll {
             text-align: right;

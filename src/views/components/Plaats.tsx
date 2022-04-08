@@ -43,6 +43,7 @@ const Plaats = ({
     // wordt.
     const realBranche = branches.find(branche => branche.brancheId !== 'bak');
     const wilBakken   = branches.find(branche => branche.brancheId === 'bak');
+    const evi         = plaats.verkoopinrichting.includes('eigen-materieel');
     const color       = realBranche ? realBranche.color : null;
     const tags        = (plaats.properties || []).filter(word =>
         ['experimentele-zone', 'standwerkersplaats', 'eigen-materiaal'].includes(word)
@@ -64,7 +65,7 @@ const Plaats = ({
                 {plaats.plaatsId}
             </td>
             <td
-                className={`Plaats__prop Plaats__prop-branche autoColor ${wilBakken ? 'bak' : ''}`}
+                className={`Plaats__prop Plaats__prop-branche autoColor ${evi ? 'evi' : ''} ${wilBakken ? 'bak' : ''}`}
                 style={{ backgroundColor: color || 'transparent' }}
             >
                 {realBranche ? realBranche.brancheId.substring(0,3) : null}
