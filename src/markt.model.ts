@@ -88,6 +88,7 @@ export interface IMarktondernemerVoorkeur {
     anywhere?: boolean;
     absentFrom?: Date;
     absentUntil?: Date;
+    bakType?: string;
     branches?: BrancheId[];
     verkoopinrichting?: string[];
 }
@@ -104,6 +105,7 @@ export interface IMarktondernemerVoorkeurRow {
     absentFrom?: Date;
     absentUntil?: Date;
     brancheId?: BrancheId;
+    bakType?: string;
     parentBrancheId?: BrancheId;
     inrichting?: string;
 }

@@ -65,16 +65,15 @@ class AlgemeneVoorkeurenForm extends React.Component {
                     </div>
                     <div className="Fieldset">
                         <h2 className="Fieldset__header">Hebt u een bakplaats nodig?</h2>
-                        <p className="InputField InputField--checkbox">
-                            <input
-                                id="parentBrancheId"
-                                type="checkbox"
-                                name="parentBrancheId"
-                                defaultValue="bak"
-                                defaultChecked={voorkeur.parentBrancheId === 'bak'}
-                            />
-                            <label htmlFor="parentBrancheId">Ja, ik ga koken, bakken of frituren.</label>
-                        </p>
+                        <div className="InputField">
+                            <div className="Select__wrapper">
+                            <select id="bakType" name="bakType" className='Select'>
+                                <option selected={voorkeur.bakType === 'geen'} value="geen">Nee</option>
+                                <option selected={voorkeur.bakType === 'bak'} value="bak">Ja, ik ga koken, bakken of frituren.</option>
+                                <option selected={voorkeur.bakType === 'bak-licht'} value="bak-licht">Ja, ik ga electrisch verwarmen</option>
+                            </select>
+                            </div>
+                        </div>
                     </div>
                     <div className="Fieldset">
                         <h2 className="Fieldset__header">Wilt u met eigen materiaal staan?</h2>

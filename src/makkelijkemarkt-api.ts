@@ -102,6 +102,12 @@ const apiBase = (
     requestBody?,
     throwError: boolean = false,
 ): Promise<AxiosResponse> => {
+
+    // console.log("API request body:")
+    // console.log(requestBody);
+    // console.log("- - - - - ")
+
+
     const api = getApi();
 
     const httpFunction = createHttpFunction(api, httpMethod);
@@ -281,7 +287,7 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
 
     marktvoorkeuren.forEach(vk => {
         let branches = [];
-        let inrichting;
+        let inrichting:string;
 
         if (vk.hasInrichting) {
             inrichting = 'eigen-materieel';
@@ -289,10 +295,6 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
 
         if (vk.branche) {
             branches.push(vk.branche as BrancheId);
-        }
-
-        if (vk.isBak) {
-            branches.push('bak' as BrancheId);
         }
 
         result.push({
@@ -305,6 +307,7 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
             kraaminrichting: inrichting,
             inrichting: inrichting,
             anywhere: vk.anywhere,
+            bakType: vk.bakType,
             branches: branches,
             verkoopinrichting: inrichting ? [inrichting]: [],
         });
@@ -319,17 +322,17 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
 const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
     marktvoorkeur: IMarktondernemerVoorkeur,
 ): MMarktondernemerVoorkeur => {
-    // By nulling the fields 'isBak', 'hasInrichting' and 'branche'
+    // By nulling the fields 'bakType', 'hasInrichting' and 'branche'
     // we let the MM-api know that these fields
     // can be ignored in the update.
 
-    let isBak = null;
+    let bakType = null;
     let branche = null;
     if (marktvoorkeur.branches !== null) {
-        isBak = (marktvoorkeur.branches.includes('bak')) ? true : false;
         branche = marktvoorkeur.branches[0] as BrancheId;
+        bakType = marktvoorkeur.bakType;
     }
-
+        
 
     let hasInrichting: boolean = null;
     if (marktvoorkeur.verkoopinrichting !== undefined) {
@@ -343,7 +346,7 @@ const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
         minimum: marktvoorkeur.minimum,
         maximum: marktvoorkeur.maximum,
         hasInrichting: hasInrichting,
-        isBak: isBak,
+        bakType: bakType,
         branche: branche,
     };
 
@@ -353,7 +356,7 @@ const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
     if (marktvoorkeur.absentUntil !== undefined) {
         result.absentUntil = marktvoorkeur.absentUntil;
     }
-
+    
     return result;
 };
 

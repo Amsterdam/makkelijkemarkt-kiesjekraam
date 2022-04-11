@@ -114,7 +114,7 @@ export interface MMarktondernemerVoorkeur {
     minimum?: number;
     maximum?: number;
     hasInrichting?: boolean;
-    isBak?: boolean;
+    bakType?: string;
     absentFrom?: Date;
     absentUntil?: Date;
     branche: string;
