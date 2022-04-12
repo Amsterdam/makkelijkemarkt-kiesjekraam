@@ -57,7 +57,7 @@ class OndernemerMarktDetailPage extends React.Component {
         );
 
         const rsvpEntries = filterRsvpList(
-            aanmeldingen.filter(aanmelding => aanmelding.marktId === markt.id),
+            aanmeldingen.filter(aanmelding => aanmelding.marktId === markt.id.toString()),
             markt,
             today(),
         );
