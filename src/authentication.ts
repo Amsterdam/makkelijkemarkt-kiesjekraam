@@ -1,7 +1,7 @@
 import { createClient } from 'redis';
 import Keycloak from 'keycloak-connect';
 import session from 'express-session';
-import { RedisClient } from 'redis-client';
+import { RedisClient } from './redis-client';
 let RedisStore = require("connect-redis")(session)
 
 const redisHost: string = process.env.REDIS_HOST;

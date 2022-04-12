@@ -11,7 +11,7 @@ import {
 
 import { ConceptQueue, ALLOCATION_MODE_CONCEPT } from '../concept-queue';
 import { getCalculationInput } from '../pakjekraam-api';
-import { RedisClient } from 'redis-client';
+import { RedisClient } from '../redis-client';
 
 const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();

@@ -16,7 +16,7 @@ timezoneTime.add(INDELING_DAG_OFFSET, 'days');
 const marktDate = timezoneTime.format('YYYY-MM-DD');
 
 import { ConceptQueue } from './concept-queue';
-import { RedisClient } from 'redis-client';
+import { RedisClient } from './redis-client';
 const conceptQueue = new ConceptQueue();
 const redisClient = new RedisClient().getClient();
 import { createAllocations } from './makkelijkemarkt-api';

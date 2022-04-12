@@ -24,7 +24,7 @@ import {
 } from './makkelijkemarkt-api';
 
 import { ConceptQueue, ALLOCATION_MODE_SCHEDULED } from './concept-queue';
-import { RedisClient } from 'redis-client';
+import { RedisClient } from './redis-client';
 
 const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
