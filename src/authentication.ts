@@ -1,22 +1,20 @@
+import { createClient } from 'redis';
 import Keycloak from 'keycloak-connect';
-import Pool from 'pg-pool';
 import session from 'express-session';
-import url from 'url';
+let RedisStore = require("connect-redis")(session)
 
-const connectPgSimple = require('connect-pg-simple')(session);
+const redisHost: string = process.env.REDIS_HOST;
+const redisPort: string = process.env.REDIS_PORT;
+const redisPassword: string = process.env.REDIS_PASSWORD;
 
-const parseDatabaseURL = (str: string) => {
-    const params = url.parse(str);
-    const auth = params.auth.split(':');
+const redisClient = createClient(
+{
+    legacyMode: true,
+    url: `redis://:${redisPassword}@${redisHost}:${redisPort}`
+});
+redisClient.connect().catch(console.error);
 
-    return {
-        user: auth[0],
-        password: auth[1],
-        host: params.hostname,
-        port: parseInt(params.port, 10),
-        database: params.pathname.split('/')[1],
-    };
-};
+const sessionStore = new RedisStore({ client: redisClient });
 
 export const Roles = {
     MARKTBUREAU: 'marktbureau',
@@ -24,10 +22,6 @@ export const Roles = {
     MARKTONDERNEMER: 'marktondernemer',
     MARKTBEWERKER: 'marktbewerker',
 };
-
-const sessionStore = new connectPgSimple({
-    pool: new Pool(parseDatabaseURL(process.env.DATABASE_URL)),
-});
 
 export const keycloak = new Keycloak(
     {
