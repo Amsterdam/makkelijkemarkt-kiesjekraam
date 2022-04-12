@@ -24,10 +24,11 @@ import {
 } from './makkelijkemarkt-api';
 
 import { ConceptQueue, ALLOCATION_MODE_SCHEDULED } from './concept-queue';
+import { RedisClient } from 'redis-client';
 
 const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
-const client = conceptQueue.getClient();
+const client = new RedisClient().getClient();
 
 const loadJSON = <T>(path: string, defaultValue: T = null): Promise<T> =>
     new Promise((resolve, reject) => {

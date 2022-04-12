@@ -1,18 +1,16 @@
 import { createClient } from 'redis';
 import Keycloak from 'keycloak-connect';
 import session from 'express-session';
+import { RedisClient } from 'redis-client';
 let RedisStore = require("connect-redis")(session)
 
 const redisHost: string = process.env.REDIS_HOST;
 const redisPort: string = process.env.REDIS_PORT;
 const redisPassword: string = process.env.REDIS_PASSWORD;
 
-const redisClient = createClient(
-{
-    legacyMode: true,
-    url: `redis://:${redisPassword}@${redisHost}:${redisPort}`
-});
-redisClient.connect().catch(console.error);
+let connected = false;
+
+const redisClient = new RedisClient().getClient();
 
 const sessionStore = new RedisStore({ client: redisClient });
 

@@ -11,10 +11,11 @@ import {
 
 import { ConceptQueue, ALLOCATION_MODE_CONCEPT } from '../concept-queue';
 import { getCalculationInput } from '../pakjekraam-api';
+import { RedisClient } from 'redis-client';
 
 const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
-const client = conceptQueue.getClient();
+const client = new RedisClient().getClient();
 
 export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
