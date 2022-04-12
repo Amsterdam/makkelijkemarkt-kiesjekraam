@@ -53,5 +53,9 @@ export class RedisClient {
     getClient(): any {
         return this.client;
     }
-}
 
+    getAsyncClient(): any {
+        this.client.get = util.promisify(this.client.get);
+        return this.client;
+    }
+}

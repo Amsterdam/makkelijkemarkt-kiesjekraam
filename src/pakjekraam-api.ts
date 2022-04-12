@@ -28,7 +28,7 @@ import { RedisClient } from './redis-client';
 
 const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
-const client = new RedisClient().getClient();
+const client = new RedisClient().getAsyncClient();
 
 const loadJSON = <T>(path: string, defaultValue: T = null): Promise<T> =>
     new Promise((resolve, reject) => {

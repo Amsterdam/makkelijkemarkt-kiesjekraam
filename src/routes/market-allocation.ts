@@ -15,7 +15,7 @@ import { RedisClient } from '../redis-client';
 
 const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
-const client = new RedisClient().getClient();
+const client = new RedisClient().getAsyncClient();
 
 export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
