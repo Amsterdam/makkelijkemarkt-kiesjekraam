@@ -615,8 +615,10 @@ export async function getMarktBasics(marktId: string) {
         // (behalve in de indeling), worden de plaatsen nu simpelweg verwijderd.
         if (geblokkeerdePlaatsen) {
             const blocked = geblokkeerdePlaatsen.replace(/\s+/g, '').split(',');
-            legacyMarktConfig.marktplaatsen = legacyMarktConfig.marktplaatsen.filter(
-                ({ plaatsId }) => !blocked.includes(plaatsId),
+            legacyMarktConfig.marktplaatsen = legacyMarktConfig.marktplaatsen.map(plaats => {
+                    blocked.includes(plaats.plaatsId) ? plaats.inactive = true : null;
+                    return plaats;
+				}
             );
         }
         return {

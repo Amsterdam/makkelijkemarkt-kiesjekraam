@@ -245,6 +245,7 @@ export interface Lot {
     branches?: string[];
     verkoopinrichting?: string[];
     properties?: string[];
+    inactive?: boolean;
     kraamA?: string;
     kraamB?: string;
     obstakel?: string[];

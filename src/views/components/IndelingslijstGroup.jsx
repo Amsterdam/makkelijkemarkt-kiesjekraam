@@ -104,7 +104,7 @@ const IndelingslijstGroup = ({
                             toewijzing
                         };
 
-                        if (plaatsList[plaatsNr]) {
+                        if (!plaatsList[plaatsNr].inactive) {
                             if (obstakelList[plaatsNr] && obstakelList[plaatsNr].length > 0) {
                                 return (
                                     <React.Fragment key={plaatsNr}>
