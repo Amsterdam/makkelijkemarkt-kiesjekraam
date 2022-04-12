@@ -24,7 +24,8 @@ export class RedisClient {
                 return 3000;
             },
         });
-        this.client.get = util.promisify(this.client.get);
+
+        this.client.connect().catch(console.error);
 
         this.client.on('connect', function() {
             console.log('Connected to Redis');
