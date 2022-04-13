@@ -1,7 +1,6 @@
-const PropTypes = require('prop-types');
-const React = require('react');
+import React from 'react';
 
-const LogLine = ({ type, message}) => {
+const LogLine = ({ type, message }) => {
     return (
         <pre>
             {type} : {message}

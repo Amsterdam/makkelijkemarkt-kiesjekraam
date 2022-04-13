@@ -1,24 +1,37 @@
-import { Request, Response, NextFunction } from 'express';
 
 import {
+    getIndelingVoorkeur,
     getMarktBasics,
     getOndernemer,
     getPlaatsvoorkeurenByMarktEnOndernemer,
-    updatePlaatsvoorkeur,
-    getIndelingVoorkeur,
     updateMarktVoorkeur,
+    updatePlaatsvoorkeur,
 } from '../makkelijkemarkt-api';
-
+import {
+    getQueryErrors,
+    HTTP_CREATED_SUCCESS,
+    internalServerErrorPage
+} from '../express-util';
+import {
+    NextFunction,
+    Request,
+    Response,
+} from 'express';
+import {
+    getKeycloakUser,
+} from '../keycloak-api';
 import {
     getMededelingen,
 } from '../pakjekraam-api';
-
-const { isExp } = require('../domain-knowledge.js');
-
-import { getQueryErrors, internalServerErrorPage, HTTP_CREATED_SUCCESS } from '../express-util';
-import { IPlaatsvoorkeurRow } from '../markt.model';
-import { getKeycloakUser } from '../keycloak-api';
-import { GrantedRequest } from 'keycloak-connect';
+import {
+    GrantedRequest,
+} from 'keycloak-connect';
+import {
+    IPlaatsvoorkeurRow,
+} from '../model/markt.model';
+import {
+    isExp,
+} from '../domain-knowledge.js';
 
 export const plaatsvoorkeurenPage = (
     req: GrantedRequest,
@@ -29,12 +42,11 @@ export const plaatsvoorkeurenPage = (
     role: string,
     csrfToken: string,
 ) => {
-    const messages          = getQueryErrors(req.query);
+    const messages = getQueryErrors(req.query);
     const ondernemerPromise = getOndernemer(erkenningsNummer);
-    const marktPromise      = ondernemerPromise
-    .then(ondernemer => {
-        const sollicitatie = ondernemer.sollicitaties.find(sollicitatie =>
-            String(sollicitatie.markt.id) === currentMarktId
+    const marktPromise = ondernemerPromise.then(ondernemer => {
+        const sollicitatie = ondernemer.sollicitaties.find(
+            sollicitatie => String(sollicitatie.markt.id) === currentMarktId,
         );
         if (!sollicitatie) {
             throw Error('Geen sollicitatie voor deze markt gevonden');
@@ -51,9 +63,7 @@ export const plaatsvoorkeurenPage = (
         getMededelingen(),
     ]).then(
         ([ondernemer, marktBasics, plaatsvoorkeuren, indelingVoorkeur, mededelingen]) => {
-            const sollicitatie = ondernemer.sollicitaties.find(soll =>
-                soll.markt.id === marktBasics.markt.id
-            );
+            const sollicitatie = ondernemer.sollicitaties.find(soll => soll.markt.id === marktBasics.markt.id);
 
             // Als iemand de status experimenteel heeft mag degene zijn plaatsvoorkeuren niet wijzigen
             if (role === 'marktondernemer' && isExp(sollicitatie.status)) {
@@ -72,7 +82,7 @@ export const plaatsvoorkeurenPage = (
                 sollicitatie,
                 mededeling: mededelingen.plaatsVoorkeuren,
                 csrfToken,
-                user: getKeycloakUser(req)
+                user: getKeycloakUser(req),
             });
         },
         err => internalServerErrorPage(res)(err),
@@ -86,7 +96,13 @@ const voorkeurenFormDataToObject = (formData: any): IPlaatsvoorkeurRow => ({
     priority: parseInt(formData.priority, 10),
 });
 
-export const updatePlaatsvoorkeuren = (req: Request, res: Response, next: NextFunction, marktId: string, erkenningsNummer: string) => {
+export const updatePlaatsvoorkeuren = (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    marktId: string,
+    erkenningsNummer: string,
+) => {
     const { redirectTo } = req.body;
 
     const ignoreEmptyVoorkeur = (voorkeur: IPlaatsvoorkeurRow) => !!voorkeur.plaatsId;
@@ -107,26 +123,24 @@ export const updatePlaatsvoorkeuren = (req: Request, res: Response, next: NextFu
 
             return updatePlaatsvoorkeur(voorkeuren);
         }
-    }
+    };
 
     const insertAlgVoorkeurFormData = () => {
         console.log('algemene voorkeuren opslaan...');
 
-        let vk = (
-            {
-                erkenningsNummer,
-                marktId,
-                minimum: req.body.minimum,
-                branches: null,
-                maximum: req.body.maximum,
-                anywhere: !!req.body.anywhere,
-            }
-        );
+        const vk = {
+            erkenningsNummer,
+            marktId,
+            minimum: req.body.minimum,
+            branches: null,
+            maximum: req.body.maximum,
+            anywhere: !!req.body.anywhere,
+        };
         return updateMarktVoorkeur(vk);
     };
 
-    if(parseInt(req.body.maximum) > parseInt(req.body.maxNumKramen)){
-        const formError = "Sorry, het maximale aantal kramen voor deze markt is "+req.body.maxNumKramen;
+    if (parseInt(req.body.maximum) > parseInt(req.body.maxNumKramen)) {
+        const formError = 'Sorry, het maximale aantal kramen voor deze markt is ' + req.body.maxNumKramen;
         return res.redirect(`./?error=${formError}`);
     }
 

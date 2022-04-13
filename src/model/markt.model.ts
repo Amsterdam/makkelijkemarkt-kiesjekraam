@@ -63,8 +63,6 @@ export interface IMarktindeling extends IMarkt, IMarktindelingSeed {
 }
 
 export interface IRSVP {
-    // `id` is used by Sequelize
-    id?: number;
     marktId?: string;
     marktDate: string;
     erkenningsNummer: ErkenningsNummer;
@@ -190,8 +188,6 @@ export interface IPlaatsvoorkeur {
 }
 
 export interface IPlaatsvoorkeurRow {
-    // `id` is used by Sequelize
-    id?: number;
     marktId: string;
     erkenningsNummer: string;
     plaatsId: string;

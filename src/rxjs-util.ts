@@ -1,6 +1,11 @@
-import { Observable } from 'rxjs';
-
-import { delay, retryWhen, tap } from 'rxjs/operators';
+import {
+    delay,
+    retryWhen,
+    tap,
+} from 'rxjs/operators';
+import {
+    Observable,
+} from 'rxjs';
 
 export const retry = <T>(attempts: number, delayTime: number): ((source$: Observable<T>) => Observable<T>) => {
     let failedAttempts = 0;

@@ -1,11 +1,12 @@
-const Queue = require('bee-queue');
+import Queue from 'bee-queue';
 
-export const ALLOCATION_MODE_CONCEPT:string = "concept";
-export const ALLOCATION_MODE_SCHEDULED:string = "scheduled";
+export const ALLOCATION_MODE_CONCEPT = 'concept';
+export const ALLOCATION_MODE_SCHEDULED = 'scheduled';
+
 export class ConceptQueue {
     dispatcher_config: any;
-    prefix: string = 'kjk-alloc';
-    name: string = 'allocation';
+    prefix = 'kjk-alloc';
+    name = 'allocation';
 
     constructor() {
         this.dispatcher_config = {

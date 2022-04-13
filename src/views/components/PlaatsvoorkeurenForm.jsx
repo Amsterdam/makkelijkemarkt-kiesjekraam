@@ -1,11 +1,10 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const { plaatsSort, isVastOfExp, isExp } = require('../../domain-knowledge.js');
+import PropTypes from 'prop-types';
+import React from 'react';
+const { plaatsSort, isVastOfExp } = require('../../domain-knowledge.js');
+const { getDefaultVoorkeur } = require('../../model/voorkeur.functions');
 const MarktplaatsSelect = require('./MarktplaatsSelect');
 const Button = require('./Button');
 const Form = require('./Form');
-
-const { getDefaultVoorkeur } = require('../../model/voorkeur.functions');
 
 class PlaatsvoorkeurenForm extends React.Component {
     propTypes = {
@@ -28,13 +27,9 @@ class PlaatsvoorkeurenForm extends React.Component {
 
         let minimumCount = null;
         if (role === 'marktmeester') {
-            minimumCount = sollicitatie.vastePlaatsen.length > 0
-                    ? sollicitatie.vastePlaatsen.length + 2
-                    : 3;
+            minimumCount = sollicitatie.vastePlaatsen.length > 0 ? sollicitatie.vastePlaatsen.length + 2 : 3;
         } else {
-            minimumCount = sollicitatie.vastePlaatsen.length > 0
-                    ? sollicitatie.vastePlaatsen.length
-                    : 3;
+            minimumCount = sollicitatie.vastePlaatsen.length > 0 ? sollicitatie.vastePlaatsen.length : 3;
         }
 
         const minimumDisabled = isVastOfExp(sollicitatie.status) && role !== 'marktmeester';
@@ -54,7 +49,7 @@ class PlaatsvoorkeurenForm extends React.Component {
         };
 
         const defaultCheckedMax = i => {
-            if ((voorkeur.maximum - voorkeur.minimum) === i) {
+            if (voorkeur.maximum - voorkeur.minimum === i) {
                 return true;
             } else {
                 return false;
@@ -69,10 +64,11 @@ class PlaatsvoorkeurenForm extends React.Component {
             return plaatsen.length > 1 ? 'plaatsnummers' : 'plaatsnummer';
         };
 
-        const isMarktmeesterEnVph = (role === 'marktmeester' && isVastOfExp(sollicitatie.status));
+        const isMarktmeesterEnVph = role === 'marktmeester' && isVastOfExp(sollicitatie.status);
         const maxNumKramen = markt.maxAantalKramenPerOndernemer;
 
-        plaatsvoorkeuren = plaatsvoorkeuren.map((plaatsvoorkeur, index) => {
+        plaatsvoorkeuren = plaatsvoorkeuren
+            .map((plaatsvoorkeur, index) => {
                 return {
                     marktId: plaatsvoorkeur.marktId,
                     erkenningsNummer: plaatsvoorkeur.erkenningsNummer,
@@ -87,16 +83,12 @@ class PlaatsvoorkeurenForm extends React.Component {
         marktplaatsen
             .sort((a, b) => plaatsSort(a, b, 'plaatsId'))
             .map(plaats => {
-                plaats.disabled = !!(plaatsvoorkeuren.find(entry => (entry.plaatsId === plaats.plaatsId)));
+                plaats.disabled = !!plaatsvoorkeuren.find(entry => entry.plaatsId === plaats.plaatsId);
                 return plaats;
             });
 
         return (
-            <Form
-                className="Form Form--PlaatsvoorkeurenForm"
-                csrfToken={csrfToken}
-                decorator="voorkeur-form"
-            >
+            <Form className="Form Form--PlaatsvoorkeurenForm" csrfToken={csrfToken} decorator="voorkeur-form">
                 <input
                     id="erkenningsNummer"
                     type="hidden"
@@ -104,28 +96,41 @@ class PlaatsvoorkeurenForm extends React.Component {
                     defaultValue={ondernemer.erkenningsnummer}
                 />
 
-                <input
-                    id="maxNumKramen"
-                    type="hidden"
-                    name="maxNumKramen"
-                    defaultValue={maxNumKramen}
-                />
+                <input id="maxNumKramen" type="hidden" name="maxNumKramen" defaultValue={maxNumKramen} />
 
                 <div className="PlaatsvoorkeurenForm__markt" data-markt-id={markt.id}>
                     <input name="maximum" id="maximum" type="hidden" defaultValue={voorkeur.maximum} />
-                    <div className={"Fieldset PlaatsvoorkeurenForm__plaats-count " + (isMarktmeesterEnVph ? 'Fieldset--highlighted' : null)}>
-                        {isMarktmeesterEnVph ?
-                            <p className="Fieldset__highlight-text">Verouderde functie! Alleen aanpassen als je weet wat je doet.</p> : null
+                    <div
+                        className={
+                            'Fieldset PlaatsvoorkeurenForm__plaats-count ' +
+                            (isMarktmeesterEnVph ? 'Fieldset--highlighted' : null)
                         }
-                        { maxNumKramen ? <p className="Fieldset__highlight-text"><i>Voor deze markt geldt een maximum van {maxNumKramen} plaatsen ondernemer.</i></p>: null }
+                    >
+                        {isMarktmeesterEnVph ? (
+                            <p className="Fieldset__highlight-text">
+                                Verouderde functie! Alleen aanpassen als je weet wat je doet.
+                            </p>
+                        ) : null}
+                        {maxNumKramen ? (
+                            <p className="Fieldset__highlight-text">
+                                <i>Voor deze markt geldt een maximum van {maxNumKramen} plaatsen ondernemer.</i>
+                            </p>
+                        ) : null}
                         <h2 className="Fieldset__header">
-                            {isVastOfExp(sollicitatie.status) ? `Uw vaste ${plaatsenDuiding(sollicitatie.vastePlaatsen)}` : 'Aantal plaatsen'}
+                            {isVastOfExp(sollicitatie.status)
+                                ? `Uw vaste ${plaatsenDuiding(sollicitatie.vastePlaatsen)}`
+                                : 'Aantal plaatsen'}
                         </h2>
                         <span className="Fieldset__sub-header">
-                            {isVastOfExp(sollicitatie.status)
-                                ? `${plaatsNummerDuiding(sollicitatie.vastePlaatsen)}: ${sollicitatie.vastePlaatsen.join(', ')}`
-                                : <span>Hoeveel plaatsen hebt u <strong>echt nodig</strong>?</span>
-                            }
+                            {isVastOfExp(sollicitatie.status) ? (
+                                `${plaatsNummerDuiding(sollicitatie.vastePlaatsen)}: ${sollicitatie.vastePlaatsen.join(
+                                    ', ',
+                                )}`
+                            ) : (
+                                <span>
+                                    Hoeveel plaatsen hebt u <strong>echt nodig</strong>?
+                                </span>
+                            )}
                         </span>
 
                         <div className="PlaatsvoorkeurenForm__plaats-count__wrapper">
@@ -144,7 +149,6 @@ class PlaatsvoorkeurenForm extends React.Component {
                                 </React.Fragment>
                             ))}
                         </div>
-
                     </div>
 
                     <div className="Fieldset PlaatsvoorkeurenForm__plaats-count extra">
@@ -176,15 +180,19 @@ class PlaatsvoorkeurenForm extends React.Component {
                         <span className="Fieldset__sub-header">U kunt zoveel voorkeuren invullen als u wilt.</span>
                         <div className="Icon-line">
                             <img className="Icon-line__icon" src="/images/draggable.svg" alt="Unchecked" />
-                            <p className="Icon-line__text">Verander de volgorde van de plaatsnummers door ze op de juiste plaats te slepen.</p>
+                            <p className="Icon-line__text">
+                                Verander de volgorde van de plaatsnummers door ze op de juiste plaats te slepen.
+                            </p>
                         </div>
-                        <h4 className="Fieldset__sub-header"><strong>Plaatsnummers</strong></h4>
+                        <h4 className="Fieldset__sub-header">
+                            <strong>Plaatsnummers</strong>
+                        </h4>
                         <div className="PlaatsvoorkeurenForm__list">
                             {plaatsvoorkeuren.map((entry, index) => (
                                 <div className="Draggable-list-item" id="plaatsvoorkeuren-list-item" key={entry.id}>
                                     <div className="Draggable-list-item__handle">
-                                        <div className="Draggable-list-item__handle__bar"></div>
-                                        <div className="Draggable-list-item__handle__bar"></div>
+                                        <div className="Draggable-list-item__handle__bar" />
+                                        <div className="Draggable-list-item__handle__bar" />
                                     </div>
                                     <div className="Draggable-list-item__left">
                                         <span className="Draggable-list-item__label">
@@ -207,8 +215,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                         value={entry.plaatsId}
                                     />
                                     <a href="#" data-handler="remove-voorkeur" className="Draggable-list-item__right">
-                                        <span className="Draggable-list-item__delete">
-                                        </span>
+                                        <span className="Draggable-list-item__delete" />
                                     </a>
                                 </div>
                             ))}
@@ -255,16 +262,18 @@ class PlaatsvoorkeurenForm extends React.Component {
                         {/* Dit veld willen we alleen laten zien aan marktmeesters en sollicitanten */}
                         {role == 'marktmeester' || !isVastOfExp(sollicitatie.status) ? (
                             <div className={`Fieldset ${isMarktmeesterEnVph ? 'Fieldset--highlighted' : null}`}>
-                                {isMarktmeesterEnVph ?
-                                    <p className="Fieldset__highlight-text">Verouderde functie! Alleen aanpassen als je weet wat je doet.</p> : null
-                                }
-                                <h2 className="Fieldset__header">
-                                    Automatisch indelen?
-                                </h2>
-                                <p><i>
-                                    Zijn uw voorkeursplekken niet meer vrij?
-                                    Met deze optie aan wordt geprobeerd u op andere vrije plaatsen in te delen.
-                                </i></p>
+                                {isMarktmeesterEnVph ? (
+                                    <p className="Fieldset__highlight-text">
+                                        Verouderde functie! Alleen aanpassen als je weet wat je doet.
+                                    </p>
+                                ) : null}
+                                <h2 className="Fieldset__header">Automatisch indelen?</h2>
+                                <p>
+                                    <i>
+                                        Zijn uw voorkeursplekken niet meer vrij? Met deze optie aan wordt geprobeerd u
+                                        op andere vrije plaatsen in te delen.
+                                    </i>
+                                </p>
                                 <p className="InputField InputField--checkbox">
                                     <input
                                         id="anywhere"
@@ -273,9 +282,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                         defaultChecked={voorkeur.anywhere}
                                     />
                                     <label htmlFor="anywhere">
-                                        <span>
-                                            Ja, ook als mijn voorkeuren niet vrij zijn wil ik ingedeeld worden.
-                                        </span>
+                                        <span>Ja, ook als mijn voorkeuren niet vrij zijn wil ik ingedeeld worden.</span>
                                     </label>
                                 </p>
                             </div>
@@ -290,7 +297,8 @@ class PlaatsvoorkeurenForm extends React.Component {
                                     ? `/profile/${ondernemer.erkenningsnummer}`
                                     : `/markt-detail/${markt.id}#plaatsvoorkeuren`
                             }
-                            type="tertiary"/>
+                            type="tertiary"
+                        />
                         <button
                             className="Button Button--secondary"
                             type="submit"
@@ -299,7 +307,8 @@ class PlaatsvoorkeurenForm extends React.Component {
                                 role === 'marktmeester'
                                     ? `/profile/${ondernemer.erkenningsnummer}?error=plaatsvoorkeuren-saved`
                                     : `/markt-detail/${markt.id}?error=plaatsvoorkeuren-saved#plaatsvoorkeuren`
-                                }`}>
+                            }`}
+                        >
                             Opslaan
                         </button>
                     </p>

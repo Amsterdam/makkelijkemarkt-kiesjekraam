@@ -1,12 +1,9 @@
+import PropTypes from 'prop-types';
+import React from 'react';
 const Content = require('./components/Content');
-const React = require('react');
 const Page = require('./components/Page.jsx');
-const PropTypes = require('prop-types');
 const OndernemerProfile = require('./components/OndernemerProfile.jsx');
-const MarktmeesterProfile = require('./components/MarktmeesterProfile.jsx');
 const Header = require('./components/Header');
-
-const today = () => new Date().toISOString().replace(/T.+/, '');
 
 class ProfilePage extends React.Component {
     propTypes = {
@@ -15,7 +12,7 @@ class ProfilePage extends React.Component {
         messages: PropTypes.array,
     };
 
-    render(state) {
+    render() {
         return (
             <Page messages={this.props.messages}>
                 <Header user={this.props.user} />

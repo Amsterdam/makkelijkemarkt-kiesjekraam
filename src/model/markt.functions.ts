@@ -1,48 +1,32 @@
 import {
-    getMarkten,
-} from '../makkelijkemarkt-api';
-
-import {
-    MMMarkt,
-} from 'makkelijkemarkt.model';
-
-import {
-    DAYS_CLOSED,
-} from '../domain-knowledge';
-import {
     addDays,
     dateDiffInDays,
     formatDayOfWeekShort,
     getMaDiWoDo,
-    today,
+    today
 } from '../util';
+import { DAYS_CLOSED } from '../domain-knowledge';
+import { getMarkten } from '../makkelijkemarkt-api';
+import { MMMarkt } from 'makkelijkemarkt.model';
 
 export const getMarktenByDate = (marktDate: string) => {
-    return getMarkten()
-    .then(markten => {
+    return getMarkten().then(markten => {
         if (DAYS_CLOSED.includes(marktDate)) {
             console.log('Alle markten zijn vandaag gesloten');
             return [];
         } else {
             const day = new Date(marktDate);
-            return markten.filter(({
-                marktDagen,
-                kiesJeKraamGeblokkeerdeData
-            }) => {
-                return marktDagen.includes(getMaDiWoDo(day)) && (
-                           !kiesJeKraamGeblokkeerdeData ||
-                           !kiesJeKraamGeblokkeerdeData.split(',').includes(marktDate)
-                       );
+            return markten.filter(({ marktDagen, kiesJeKraamGeblokkeerdeData }) => {
+                return (
+                    marktDagen.includes(getMaDiWoDo(day)) &&
+                    (!kiesJeKraamGeblokkeerdeData || !kiesJeKraamGeblokkeerdeData.split(',').includes(marktDate))
+                );
             });
         }
     });
 };
 
-export const getNextMarktDate = (
-    markt: MMMarkt,
-    skipDays: number,
-    autoAdjust: boolean = true
-) => {
+export const getNextMarktDate = (markt: MMMarkt, skipDays: number, autoAdjust = true) => {
     if (!markt.marktDagen) {
         return undefined;
     }
@@ -61,12 +45,12 @@ export const getNextMarktDate = (
     }
 
     const dateString = addDays(today(), skipDays);
-    return isMarketDay(markt, dateString) && !isMarketClosed(markt, dateString) ?
-           dateString :
-           getNextMarktDate(markt, skipDays+1, false);
+    return isMarketDay(markt, dateString) && !isMarketClosed(markt, dateString)
+        ? dateString
+        : getNextMarktDate(markt, skipDays + 1, false);
 };
 
-export const isMarketDay = (markt: MMMarkt, dateString: string) => {
+const isMarketDay = (markt: MMMarkt, dateString: string) => {
     const dayShort = formatDayOfWeekShort(dateString);
     return markt.marktDagen && markt.marktDagen.includes(dayShort);
 };

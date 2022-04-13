@@ -1,13 +1,17 @@
-const PropTypes = require('prop-types');
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const icons = ['loopjediedichtmag', 'lantaarnpaal', 'bankje', 'boom', 'electra'];
 
 const Obstakel = ({ obstakel }) => {
     return (
-        <span className={
-            'Obstakel ' + (icons.includes(obstakel) ? 'Obstakel__icon icon-' + obstakel : ' Obstakel__street')
-        }> </span>
+        <span
+            className={
+                'Obstakel ' + (icons.includes(obstakel) ? 'Obstakel__icon icon-' + obstakel : ' Obstakel__street')
+            }
+        >
+            {' '}
+        </span>
     );
 };
 

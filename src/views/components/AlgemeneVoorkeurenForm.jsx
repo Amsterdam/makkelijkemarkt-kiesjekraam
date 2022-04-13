@@ -1,9 +1,13 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const { yyyyMmDdtoDDMMYYYY } = require('../../util.ts');
-const Form = require('./Form');
-const SollicitatieSpecs = require('./SollicitatieSpecs');
-const { getDefaultVoorkeur } = require('../../model/voorkeur.functions');
+import Form from './Form';
+import {
+    getDefaultVoorkeur,
+} from '../../model/voorkeur.functions';
+import PropTypes from 'prop-types';
+import React from 'react';
+import SollicitatieSpecs from './SollicitatieSpecs';
+import {
+    yyyyMmDdtoDDMMYYYY,
+} from '../../util.ts';
 
 class AlgemeneVoorkeurenForm extends React.Component {
     propTypes = {
@@ -21,9 +25,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
 
     render() {
         const { branches, ondernemer, markt, marktId, marktDate, role, csrfToken } = this.props;
-        const sollicitatie = ondernemer.sollicitaties.find(soll =>
-            soll.markt.id === markt.id
-        );
+        const sollicitatie = ondernemer.sollicitaties.find(soll => soll.markt.id === markt.id);
 
         const voorkeur = this.props.voorkeur || getDefaultVoorkeur(sollicitatie);
 
@@ -36,11 +38,8 @@ class AlgemeneVoorkeurenForm extends React.Component {
         }
 
         return (
-
             <Form csrfToken={csrfToken} className="Form--AlgemenevoorkeurenForm">
-                { role === 'marktondernemer' ?
-                    <SollicitatieSpecs sollicitatie={sollicitatie} markt={markt} /> : null
-                }
+                {role === 'marktondernemer' ? <SollicitatieSpecs sollicitatie={sollicitatie} markt={markt} /> : null}
                 <h1 className="Heading Heading--intro">Marktprofiel {markt.naam}</h1>
                 <div className="well well--max-width">
                     <div className="Fieldset">
@@ -49,16 +48,15 @@ class AlgemeneVoorkeurenForm extends React.Component {
                             <div className="Select__wrapper">
                                 <select id="brancheId" name="brancheId" className="Select">
                                     <option />
-                                    {branches
-                                        .map(branche => (
-                                            <option
-                                                key={branche.brancheId}
-                                                value={branche.brancheId}
-                                                selected={branche.brancheId === voorkeur.brancheId}
-                                            >
-                                                {branche.description}
-                                            </option>
-                                        ))}
+                                    {branches.map(branche => (
+                                        <option
+                                            key={branche.brancheId}
+                                            value={branche.brancheId}
+                                            selected={branche.brancheId === voorkeur.brancheId}
+                                        >
+                                            {branche.description}
+                                        </option>
+                                    ))}
                                 </select>{' '}
                             </div>
                         </div>
@@ -89,12 +87,16 @@ class AlgemeneVoorkeurenForm extends React.Component {
                             <label htmlFor="inrichting">Ja, ik kom met een eigen verkoopwagen/eigen materiaal.</label>
                         </p>
                     </div>
-                    { role == 'marktmeester' ? (
+                    {role == 'marktmeester' ? (
                         <div className={`Fieldset Fieldset--highlighted`}>
-                            <p className="Fieldset__highlight-text">Functie speciaal voor marktmeesters! Alleen aanpassen als je weet wat je doet.</p>
+                            <p className="Fieldset__highlight-text">
+                                Functie speciaal voor marktmeesters! Alleen aanpassen als je weet wat je doet.
+                            </p>
                             <h2 className="Fieldset__header">Langdurige afwezigheid</h2>
                             <p className="InputField  InputField--text">
-                                <label className="Label" htmlFor="absentFrom">Afwezig vanaf (dd-mm-yyyy): </label>
+                                <label className="Label" htmlFor="absentFrom">
+                                    Afwezig vanaf (dd-mm-yyyy):{' '}
+                                </label>
                                 <input
                                     id="absentFrom"
                                     type="text"
@@ -105,7 +107,9 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                 />
                             </p>
                             <p className="InputField InputField--text">
-                                <label className="Label" htmlFor="absentUntil">Afwezig tot en met (dd-mm-yyyy):</label>
+                                <label className="Label" htmlFor="absentUntil">
+                                    Afwezig tot en met (dd-mm-yyyy):
+                                </label>
                                 <input
                                     id="absentUntil"
                                     type="text"
@@ -116,7 +120,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                 />
                             </p>
                         </div>
-                    ) : null }
+                    ) : null}
                 </div>
 
                 <div className="Fieldset">
@@ -154,11 +158,11 @@ class AlgemeneVoorkeurenForm extends React.Component {
                         >
                             Opslaan
                         </button>
-
                     </p>
                 </div>
             </Form>
         );
     }
 }
+
 module.exports = AlgemeneVoorkeurenForm;

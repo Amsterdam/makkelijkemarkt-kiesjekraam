@@ -1,8 +1,8 @@
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
 const MarktDetailBase = require('./components/MarktDetailBase');
 const OndernemerListAfwezig = require('./components/OndernemerListAfwezig.tsx');
 const PrintPage = require('./components/PrintPage');
-const PropTypes = require('prop-types');
 const { paginate, getBreadcrumbsMarkt } = require('../util');
 
 class SollicitantenPage extends React.Component {
@@ -37,12 +37,7 @@ class SollicitantenPage extends React.Component {
                 {paginasLists.map((pagina, i) => (
                     <PrintPage key={i} index={i} title={`Ondernemers langdurig afgemeld: ${markt.naam}`} datum={datum}>
                         {pagina.map((list, j) => (
-                            <OndernemerListAfwezig
-                                key={j}
-                                ondernemers={list}
-                                markt={markt}
-                                datum={datum}
-                            />
+                            <OndernemerListAfwezig key={j} ondernemers={list} markt={markt} datum={datum} />
                         ))}
                     </PrintPage>
                 ))}

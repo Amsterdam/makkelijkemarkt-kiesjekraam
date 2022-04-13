@@ -1,37 +1,45 @@
-const axios = require('axios');
-import { AxiosInstance, AxiosResponse } from 'axios';
-import { addDays, MONDAY, THURSDAY, requireEnv } from './util';
-
 import {
-    MMMarkt,
-    MMOndernemerStandalone,
-    MMSollicitatieStandalone,
-    MMOndernemer,
-    MMMarktPlaatsvoorkeuren,
-    MMarktondernemerVoorkeur,
-} from './makkelijkemarkt.model';
-
+    A_LIJST_DAYS,
+    formatOndernemerName,
+} from './domain-knowledge';
+import {
+    addDays,
+    MONDAY,
+    numberSort,
+    requireEnv,
+    THURSDAY,
+} from './util';
+import axios,
+{
+    AxiosInstance,
+    AxiosResponse,
+} from 'axios';
 import {
     BrancheId,
+    IAfwijzing,
     IBranche,
     IGenericBranche,
-    IRSVP,
     IMarktConfiguratie,
     IMarktondernemer,
-    IPlaatsvoorkeur,
     IMarktondernemerVoorkeur,
     IMarktondernemerVoorkeurRow,
+    IPlaatsvoorkeur,
+    IRSVP,
     IToewijzing,
-    IAfwijzing,
-} from './markt.model';
-
-import { A_LIJST_DAYS, formatOndernemerName } from './domain-knowledge';
-
-import { indelingVoorkeurMerge, indelingVoorkeurSort } from './pakjekraam-api';
-import { IBrancheInput, IMarktConfiguratieInput, IObstakelInput, IPlaatsEigenschapInput } from './markt.model';
-import { MarktConfig, validateMarktConfig } from './model/marktconfig';
-
-const packageJSON = require('../package.json');
+} from './model/markt.model';
+import {
+    MarktConfig,
+    validateMarktConfig,
+} from './model/marktconfig';
+import {
+    MMarktondernemerVoorkeur,
+    MMMarkt,
+    MMMarktPlaatsvoorkeuren,
+    MMOndernemer,
+    MMOndernemerStandalone,
+    MMSollicitatieStandalone,
+} from './makkelijkemarkt.model';
+import packageJSON = require('../package.json');
 
 const MILLISECONDS_IN_SECOND = 1000;
 const SECONDS_IN_MINUTE = 60;
@@ -90,6 +98,8 @@ const createHttpFunction = (
                 return api.put(url, data, { headers });
             case 'delete':
                 return api.delete(url, { headers });
+            default:
+                return api.get(url, { headers });
         }
     };
 };
@@ -98,7 +108,7 @@ const apiBase = (
     url: string,
     httpMethod: HttpMethod = 'get',
     requestBody?,
-    throwError: boolean = false,
+    throwError = false,
 ): Promise<AxiosResponse> => {
     const api = getApi();
 
@@ -108,10 +118,10 @@ const apiBase = (
     let counter40xRetry = 0;
 
     const retry = (api: any) => {
-        return login(api)
-            .then((res: any) => {
-                return httpFunction(url, res.data.uuid, requestBody);
-            });
+        //TODO: token opslaan in redis of memory?
+        return login(api).then((res: any) => {
+            return httpFunction(url, res.data.uuid, requestBody);
+        });
     };
 
     api.interceptors.response.use(
@@ -203,8 +213,8 @@ const convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren = (
         return null;
     }
 
-    let markt = plaatsvoorkeuren[0].marktId;
-    let koopman = plaatsvoorkeuren[0].erkenningsNummer;
+    const markt = plaatsvoorkeuren[0].marktId;
+    const koopman = plaatsvoorkeuren[0].erkenningsNummer;
 
     plaatsvoorkeuren.reverse().forEach(pv => {
         if (pv.marktId !== markt || pv.erkenningsNummer !== koopman) {
@@ -243,20 +253,20 @@ export const getPlaatsvoorkeurenByMarktEnOndernemer = (
     );
 
 export const updatePlaatsvoorkeur = (plaatsvoorkeuren: IPlaatsvoorkeur[]): Promise<IPlaatsvoorkeur> => {
-    let pv = convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren(plaatsvoorkeuren);
+    const pv = convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren(plaatsvoorkeuren);
     return apiBase('plaatsvoorkeur', 'post', JSON.stringify(pv)).then(response => response.data);
 };
 
 const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
     marktvoorkeuren: MMarktondernemerVoorkeur[],
 ): IMarktondernemerVoorkeur[] => {
-    let result = [];
+    const result = [];
     if (marktvoorkeuren === undefined) {
         return result;
     }
 
     marktvoorkeuren.forEach(vk => {
-        let branches = [];
+        const branches = [];
         let inrichting;
 
         if (vk.hasInrichting) {
@@ -279,10 +289,10 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
             maximum: vk.maximum,
             krachtStroom: null,
             kraaminrichting: inrichting,
-            inrichting: inrichting,
+            inrichting,
             anywhere: vk.anywhere,
-            branches: branches,
-            verkoopinrichting: inrichting ? [inrichting]: [],
+            branches,
+            verkoopinrichting: inrichting ? [inrichting] : [],
         });
 
         if (vk.absentFrom) result[result.length - 1].absentFrom = vk.absentFrom;
@@ -302,25 +312,24 @@ const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
     let isBak = null;
     let branche = null;
     if (marktvoorkeur.branches !== null) {
-        isBak = (marktvoorkeur.branches.includes('bak')) ? true : false;
+        isBak = !!marktvoorkeur.branches.includes('bak');
         branche = marktvoorkeur.branches[0] as BrancheId;
     }
 
-
     let hasInrichting: boolean = null;
     if (marktvoorkeur.verkoopinrichting !== undefined) {
-        hasInrichting = (marktvoorkeur.verkoopinrichting.includes('eigen-materieel')) ? true : false;
+        hasInrichting = !!marktvoorkeur.verkoopinrichting.includes('eigen-materieel');
     }
 
-    let result: MMarktondernemerVoorkeur = {
+    const result: MMarktondernemerVoorkeur = {
         koopman: marktvoorkeur.erkenningsNummer,
         markt: marktvoorkeur.marktId,
         anywhere: marktvoorkeur.anywhere,
         minimum: marktvoorkeur.minimum,
         maximum: marktvoorkeur.maximum,
-        hasInrichting: hasInrichting,
-        isBak: isBak,
-        branche: branche,
+        hasInrichting,
+        isBak,
+        branche,
     };
 
     if (marktvoorkeur.absentFrom !== undefined) {
@@ -340,6 +349,45 @@ export const updateMarktVoorkeur = (marktvoorkeur: IMarktondernemerVoorkeur): Pr
         JSON.stringify(convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur(marktvoorkeur)),
     ).then(response => response.data);
 
+const indelingVoorkeurPrio = (voorkeur: IMarktondernemerVoorkeur): number =>
+    (voorkeur.marktId ? 1 : 0) | (voorkeur.marktDate ? 2 : 0);
+
+const indelingVoorkeurSort = (a: IMarktondernemerVoorkeur, b: IMarktondernemerVoorkeur) =>
+    numberSort(indelingVoorkeurPrio(b), indelingVoorkeurPrio(a));
+
+const indelingVoorkeurMerge = (
+    a: IMarktondernemerVoorkeurRow,
+    b: IMarktondernemerVoorkeurRow,
+): IMarktondernemerVoorkeurRow => {
+    const merged = Object.assign({}, a);
+
+    if (b.minimum !== null) {
+        merged.minimum = b.minimum;
+    }
+    if (b.maximum !== null) {
+        merged.maximum = b.maximum;
+    }
+    if (b.krachtStroom !== null) {
+        merged.krachtStroom = b.krachtStroom;
+    }
+    if (b.kraaminrichting !== null) {
+        merged.kraaminrichting = b.kraaminrichting;
+    }
+    if (b.anywhere !== null) {
+        merged.anywhere = b.anywhere;
+    }
+    if (b.brancheId !== null) {
+        merged.brancheId = b.brancheId;
+    }
+    if (b.parentBrancheId !== null) {
+        merged.parentBrancheId = b.parentBrancheId;
+    }
+    if (b.inrichting !== null) {
+        merged.inrichting = b.inrichting;
+    }
+    return merged;
+};
+
 export const getIndelingVoorkeur = (
     erkenningsNummer: string,
     marktId: string = null,
@@ -354,7 +402,7 @@ export const getIndelingVoorkeur = (
 export const getIndelingVoorkeuren = (marktId: string, marktDate: string = null): Promise<IMarktondernemerVoorkeur[]> =>
     getVoorkeurenByMarkt(marktId);
 
-export const convertVoorkeurToVoorkeurRow = (obj: IMarktondernemerVoorkeur): IMarktondernemerVoorkeurRow => {
+const convertVoorkeurToVoorkeurRow = (obj: IMarktondernemerVoorkeur): IMarktondernemerVoorkeurRow => {
     if (obj === undefined) {
         return null;
     }
@@ -389,7 +437,7 @@ export const getVoorkeurenByOndernemer = (erkenningsNummer: string): Promise<IMa
 export const getMarkt = (marktId: string): Promise<MMMarkt> =>
     apiBase(`markt/${marktId}`).then(response => response.data);
 
-export const getMarkten = (includeInactive: boolean = false): Promise<MMMarkt[]> =>
+export const getMarkten = (includeInactive = false): Promise<MMMarkt[]> =>
     apiBase('markt/').then(({ data: markten = [] }) =>
         markten.filter(
             markt =>
@@ -403,7 +451,7 @@ export const getMarkten = (includeInactive: boolean = false): Promise<MMMarkt[]>
 
 export const getMarktenForOndernemer = (
     ondernemer: Promise<MMOndernemerStandalone> | MMOndernemerStandalone,
-    includeInactive: boolean = false,
+    includeInactive = false,
 ): Promise<MMMarkt[]> => {
     return Promise.all([getMarkten(includeInactive), ondernemer]).then(([markten, ondernemer]) => {
         return ondernemer.sollicitaties.reduce((result, sollicitatie) => {
@@ -412,9 +460,6 @@ export const getMarktenForOndernemer = (
         }, []);
     });
 };
-
-export const getOndernemers = (): Promise<MMSollicitatieStandalone[]> =>
-    apiBase('koopman/').then(response => response.data);
 
 export const getOndernemer = (erkenningsNummer: string): Promise<MMOndernemerStandalone> => {
     return apiBase(`koopman/erkenningsnummer/${erkenningsNummer}`).then(response => {
@@ -478,7 +523,7 @@ export const checkActivationCode = (username: string, code: string): Promise<any
 
 export const checkLogin = (): Promise<any> => {
     const api = getApi();
-    return login(api).then((res: AxiosResponse) => console.log('Login OK'));
+    return login(api).then(() => console.log('Login OK'));
 };
 
 export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?: JSON): Promise<AxiosResponse> => {
@@ -487,106 +532,95 @@ export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?
     return result.data;
 };
 
-export async function createAllocations(marktId: string, date: string, data: Object): Promise<any> {
-    let url: string = `allocation/markt/${marktId}/date/${date}`;
-    let obj: string = JSON.stringify(data);
+export function createAllocations(marktId: string, date: string, data: Object): Promise<any> {
+    const url = `allocation/markt/${marktId}/date/${date}`;
+    const obj: string = JSON.stringify(data);
     return apiBase(url, 'post', obj).then(response => {
         return response;
     });
 }
 
-export async function getAllocations(marktId: string, date: string): Promise<any[]> {
-    let url: string = `allocation/markt/${marktId}/date/${date}`;
+export function getAllocations(marktId: string, date: string): Promise<any[]> {
+    const url = `allocation/markt/${marktId}/date/${date}`;
     return apiBase(url, 'get').then(response => {
         return response.data;
     });
 }
 
-export async function getAllocationsByOndernemerAndMarkt(erkenningsNummer: string, marktId: string): Promise<any[]> {
-    let url: string = `allocation/markt/${marktId}/koopman/${erkenningsNummer}`;
+export function getAllocationsByOndernemerAndMarkt(erkenningsNummer: string, marktId: string): Promise<any[]> {
+    const url = `allocation/markt/${marktId}/koopman/${erkenningsNummer}`;
     return apiBase(url, 'get').then(response => {
         return response.data;
     });
 }
 
-export async function getAllocationsByOndernemer(erkenningsNummer: string): Promise<any[]> {
-    let url: string = `allocation/koopman/${erkenningsNummer}`;
+export function getAllocationsByOndernemer(erkenningsNummer: string): Promise<any[]> {
+    const url = `allocation/koopman/${erkenningsNummer}`;
     return apiBase(url, 'get').then(response => {
         return response.data;
     });
 }
 
 const removeUnallocatedAllocations = (allocations: any[]): IToewijzing[] => {
-    return  allocations.filter(allocation => (allocation.isAllocated));
-}
+    return allocations.filter(allocation => allocation.isAllocated);
+};
 
 const removeAllocatedAllocations = (allocations: any[]): IAfwijzing[] => {
-    return allocations.filter(allocation => !(allocation.isAllocated));
-}
+    return allocations.filter(allocation => !allocation.isAllocated);
+};
 
-
-export const getToewijzingen = async (marktId: string, marktDate: string): Promise<IToewijzing[]>  => {
-    return getAllocations(marktId, marktDate).then( response => {
+export const getToewijzingen = (marktId: string, marktDate: string): Promise<IToewijzing[]> => {
+    return getAllocations(marktId, marktDate).then(response => {
         return removeUnallocatedAllocations(response);
-    })
-}
+    });
+};
 
-export const getAfwijzingen = async (marktId: string, marktDate: string): Promise<IAfwijzing[]> => {
-    return getAllocations(marktId, marktDate).then( response => {
+export const getAfwijzingen = (marktId: string, marktDate: string): Promise<IAfwijzing[]> => {
+    return getAllocations(marktId, marktDate).then(response => {
         return removeAllocatedAllocations(response);
-    })
-}
+    });
+};
 
-export const getToewijzingenByOndernemerAndMarkt = async (marktId: string, erkenningsNummer: string): Promise<IToewijzing[]> => {
+export const getToewijzingenByOndernemerAndMarkt = (
+    marktId: string,
+    erkenningsNummer: string
+): Promise<IToewijzing[]> => {
     return getAllocationsByOndernemerAndMarkt(marktId, erkenningsNummer).then( response => {
         return removeUnallocatedAllocations(response);
-    })
-}
+    });
+};
 
-export const getAfwijzingenByOndernemerAndMarkt = async (marktId: string, erkenningsNummer: string): Promise<IAfwijzing[]> => {
-    return getAllocationsByOndernemerAndMarkt(marktId, erkenningsNummer).then( response => {
+export const getAfwijzingenByOndernemerAndMarkt = (
+    marktId: string,
+    erkenningsNummer: string,
+): Promise<IAfwijzing[]> => {
+    return getAllocationsByOndernemerAndMarkt(marktId, erkenningsNummer).then(response => {
         return removeAllocatedAllocations(response);
-    })
-}
+    });
+};
 
-export const getToewijzingenByOndernemer = async (erkenningsNummer: string): Promise<IToewijzing[]> => {
-    return getAllocationsByOndernemer(erkenningsNummer).then( response => {
+export const getToewijzingenByOndernemer = (erkenningsNummer: string): Promise<IToewijzing[]> => {
+    return getAllocationsByOndernemer(erkenningsNummer).then(response => {
         return removeUnallocatedAllocations(response);
-    })
-}
+    });
+};
 
-export const getAfwijzingenByOndernemer = async (erkenningsNummer: string): Promise<IAfwijzing[]> => {
-    return getAllocationsByOndernemer(erkenningsNummer).then( response => {
+export const getAfwijzingenByOndernemer = (erkenningsNummer: string): Promise<IAfwijzing[]> => {
+    return getAllocationsByOndernemer(erkenningsNummer).then(response => {
         return removeAllocatedAllocations(response);
-    })
-}
-
-export const postBranche = async (branche: IBrancheInput) => {
-    return callApiGeneric('branche', 'post', JSON.parse(JSON.stringify(branche)));
+    });
 };
 
-export const postObstakel = async (obstakel: IObstakelInput) => {
-    return callApiGeneric('obstakel', 'post', JSON.parse(JSON.stringify(obstakel)));
-};
-
-export const postPlaatseigenschap = async (plaatseigenschap: IPlaatsEigenschapInput) => {
-    return callApiGeneric('plaatseigenschap', 'post', JSON.parse(JSON.stringify(plaatseigenschap)));
-};
-
-export const postMarktConfiguratie = async (marktId: string, config: IMarktConfiguratieInput) => {
-    return callApiGeneric(`markt/${marktId}/marktconfiguratie`, 'post', JSON.parse(JSON.stringify(config)));
-};
-
-export const getGenericBranches = async (): Promise<IGenericBranche[]> => {
+const getGenericBranches = async (): Promise<IGenericBranche[]> => {
     const url = '/branche/all';
     const genericBranches = await callApiGeneric(url, 'get');
-    return (genericBranches as unknown) as IGenericBranche[];
+    return genericBranches as unknown as IGenericBranche[];
 };
 
-export const getLatestMarktConfig = async (marktId: string): Promise<IMarktConfiguratie> => {
+const getLatestMarktConfig = async (marktId: string): Promise<IMarktConfiguratie> => {
     const url = `/markt/${marktId}/marktconfiguratie/latest`;
     const marktConfig = await callApiGeneric(url, 'get');
-    return (marktConfig as unknown) as IMarktConfiguratie;
+    return marktConfig as unknown as IMarktConfiguratie;
 };
 
 const transformToLegacyBranches = (genericBranches: IGenericBranche[]): IBranche[] => {

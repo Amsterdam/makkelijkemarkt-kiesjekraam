@@ -1,4 +1,3 @@
-/**** Colors ****/
 $neutral-grey1: #f5f5f5;
 $neutral-grey2: #e6e6e6;
 $neutral-grey3: #b4b4b4;
@@ -23,8 +22,6 @@ $amsterdam-red: #da1219;
 
 $primary-darkblue-light: scale-color($primary-darkblue, $lightness: 91%);
 
-/**** Fonts ****/
-/** breadcrumb **/
 $breadcrumb-font-size: 14px;
 $breadcrumb-color: #767676;
 $breadcrumb-line-height: 22px;
@@ -40,7 +37,7 @@ $breadcrumb-text-align: left;
     font-weight: $breadcrumb-font-weight;
     text-align: $breadcrumb-text-align;
 }
-/** breadcrumb-hovered **/
+
 $breadcrumb-hovered-font-size: 14px;
 $breadcrumb-hovered-color: #ec0000;
 $breadcrumb-hovered-line-height: 22px;
@@ -58,7 +55,7 @@ $breadcrumb-hovered-text-align: left;
     text-decoration: $breadcrumb-hovered-text-decoration;
     text-align: $breadcrumb-hovered-text-align;
 }
-/** buttonlabel-disabled **/
+
 $buttonlabel-disabled-font-size: 16px;
 $buttonlabel-disabled-color: #b4b4b4;
 $buttonlabel-disabled-font-family: "Avenir Next LT Pro";
@@ -72,7 +69,7 @@ $buttonlabel-disabled-text-align: left;
     font-weight: $buttonlabel-disabled-font-weight;
     text-align: $buttonlabel-disabled-text-align;
 }
-/** buttonlabel-primary **/
+
 $buttonlabel-primary-font-size: 16px;
 $buttonlabel-primary-color: #ffffff;
 $buttonlabel-primary-font-family: "Avenir Next LT Pro";
@@ -86,7 +83,7 @@ $buttonlabel-primary-text-align: left;
     font-weight: $buttonlabel-primary-font-weight;
     text-align: $buttonlabel-primary-text-align;
 }
-/** buttonlabel-secondary **/
+
 $buttonlabel-secondary-font-size: 16px;
 $buttonlabel-secondary-color: #004699;
 $buttonlabel-secondary-font-family: "Avenir Next LT Pro";
@@ -100,7 +97,7 @@ $buttonlabel-secondary-text-align: left;
     font-weight: $buttonlabel-secondary-font-weight;
     text-align: $buttonlabel-secondary-text-align;
 }
-/** buttonlabel-tertiary **/
+
 $buttonlabel-tertiary-font-size: 16px;
 $buttonlabel-tertiary-color: #000000;
 $buttonlabel-tertiary-font-family: "Avenir Next LT Pro";
@@ -114,7 +111,7 @@ $buttonlabel-tertiary-text-align: left;
     font-weight: $buttonlabel-tertiary-font-weight;
     text-align: $buttonlabel-tertiary-text-align;
 }
-/** character-count **/
+
 $character-count-font-size: 16px;
 $character-count-color: #767676;
 $character-count-line-height: 22px;
@@ -130,7 +127,7 @@ $character-count-text-align: left;
     font-weight: $character-count-font-weight;
     text-align: $character-count-text-align;
 }
-/** default **/
+
 $default-font-size: 16px;
 $default-color: #000000;
 $default-line-height: 22px;
@@ -146,7 +143,7 @@ $default-text-align: left;
     font-weight: $default-font-weight;
     text-align: $default-text-align;
 }
-/** formfield-label **/
+
 $formfield-label-font-size: 18px;
 $formfield-label-color: #000000;
 $formfield-label-line-height: 25px;
@@ -163,7 +160,6 @@ $formfield-label-text-align: left;
     text-align: $formfield-label-text-align;
 }
 
-/** h1 **/
 $h1-font-size: 30px;
 $h1-color: #000000;
 $h1-line-height: 38px;
@@ -198,7 +194,6 @@ $h1-text-align: left;
     text-align: $h1-text-align;
 }
 
-/** h2 **/
 $h2-font-size: 24px;
 $h2-color: #000000;
 $h2-line-height: 30px;
@@ -242,7 +237,6 @@ $h2-text-align: left;
     text-align: $h2-text-align;
 }
 
-/** h3 **/
 $h3-font-size: 20px;
 $h3-color: #000000;
 $h3-line-height: 28px;
@@ -259,7 +253,6 @@ $h3-text-align: left;
     text-align: $h3-text-align;
 }
 
-/** h4 **/
 $h4-font-size: 18px;
 $h4-color: #000000;
 $h4-line-height: 25px;
@@ -276,7 +269,6 @@ $h4-text-align: left;
     text-align: $h4-text-align;
 }
 
-/** hint-text **/
 $hint-text-font-size: 16px;
 $hint-text-color: #767676;
 $hint-text-line-height: 22px;
@@ -292,7 +284,7 @@ $hint-text-text-align: left;
     font-weight: $hint-text-font-weight;
     text-align: $hint-text-text-align;
 }
-/** hover **/
+
 $hover-font-size: 16px;
 $hover-color: #ec0000;
 $hover-line-height: 22px;
@@ -311,7 +303,6 @@ $hover-text-align: left;
     text-align: $hover-text-align;
 }
 
-/** intro **/
 $intro-font-size: 16px;
 $intro-color: #000000;
 $intro-line-height: 22px;
@@ -327,7 +318,7 @@ $intro-text-align: left;
     font-weight: $intro-font-weight;
     text-align: $intro-text-align;
 }
-/** link **/
+
 $link-font-size: 16px;
 $link-color: #004699;
 $link-line-height: 22px;
@@ -345,7 +336,7 @@ $link-text-align: left;
     text-decoration: $link-text-decoration;
     text-align: $link-text-align;
 }
-/** link-hovered **/
+
 $link-hovered-font-size: 16px;
 $link-hovered-color: #ec0000;
 $link-hovered-line-height: 22px;
@@ -363,7 +354,7 @@ $link-hovered-text-align: left;
     text-decoration: $link-hovered-text-decoration;
     text-align: $link-hovered-text-align;
 }
-/** link-visited **/
+
 $link-visited-font-size: 16px;
 $link-visited-color: #a00078;
 $link-visited-line-height: 22px;
@@ -381,7 +372,7 @@ $link-visited-text-align: left;
     text-decoration: $link-visited-text-decoration;
     text-align: $link-visited-text-align;
 }
-/** linkinverted **/
+
 $linkinverted-font-size: 16px;
 $linkinverted-color: #ffffff;
 $linkinverted-line-height: 22px;
@@ -399,7 +390,7 @@ $linkinverted-text-align: left;
     text-decoration: $linkinverted-text-decoration;
     text-align: $linkinverted-text-align;
 }
-/** linkinverted-hovered **/
+
 $linkinverted-hovered-font-size: 16px;
 $linkinverted-hovered-color: #ffffff;
 $linkinverted-hovered-line-height: 22px;
@@ -417,7 +408,7 @@ $linkinverted-hovered-text-align: left;
     text-decoration: $linkinverted-hovered-text-decoration;
     text-align: $linkinverted-hovered-text-align;
 }
-/** linkinverted-visited-style **/
+
 $linkinverted-visited-style-font-size: 16px;
 $linkinverted-visited-style-color: #ffffff;
 $linkinverted-visited-style-line-height: 22px;
@@ -435,7 +426,7 @@ $linkinverted-visited-style-text-align: left;
     text-decoration: $linkinverted-visited-style-text-decoration;
     text-align: $linkinverted-visited-style-text-align;
 }
-/** linklist **/
+
 $linklist-font-size: 16px;
 $linklist-color: #000000;
 $linklist-line-height: 22px;
@@ -451,7 +442,7 @@ $linklist-text-align: left;
     font-weight: $linklist-font-weight;
     text-align: $linklist-text-align;
 }
-/** linklist-hovered **/
+
 $linklist-hovered-font-size: 16px;
 $linklist-hovered-color: #ec0000;
 $linklist-hovered-line-height: 22px;
@@ -469,7 +460,7 @@ $linklist-hovered-text-align: left;
     text-decoration: $linklist-hovered-text-decoration;
     text-align: $linklist-hovered-text-align;
 }
-/** linklist-visited **/
+
 $linklist-visited-font-size: 16px;
 $linklist-visited-color: #000000;
 $linklist-visited-line-height: 22px;
@@ -486,7 +477,6 @@ $linklist-visited-text-align: left;
     text-align: $linklist-visited-text-align;
 }
 
-/** o-list **/
 $o-list-font-size: 16px;
 $o-list-color: #000000;
 $o-list-font-family: "Avenir Next LT Pro";
@@ -501,7 +491,6 @@ $o-list-text-align: left;
     text-align: $o-list-text-align;
 }
 
-/** p1 **/
 $p1-font-size: 16px;
 $p1-color: #000000;
 $p1-line-height: 22px;
@@ -518,7 +507,6 @@ $p1-text-align: left;
     text-align: $p1-text-align;
 }
 
-/** p2 **/
 $p2-font-size: 16px;
 $p2-color: #323232;
 $p2-line-height: 22px;
@@ -535,7 +523,6 @@ $p2-text-align: left;
     text-align: $p2-text-align;
 }
 
-/** sitenavitem-default **/
 $sitenavitem-default-font-size: 18px;
 $sitenavitem-default-color: #323232;
 $sitenavitem-default-line-height: 24px;
@@ -551,7 +538,7 @@ $sitenavitem-default-text-align: left;
     font-weight: $sitenavitem-default-font-weight;
     text-align: $sitenavitem-default-text-align;
 }
-/** sitenavitem-hover **/
+
 $sitenavitem-hover-font-size: 18px;
 $sitenavitem-hover-color: #ec0000;
 $sitenavitem-hover-line-height: 24px;
@@ -568,7 +555,6 @@ $sitenavitem-hover-text-align: left;
     text-align: $sitenavitem-hover-text-align;
 }
 
-/** t1 **/
 $t1-font-size: 14px;
 $t1-color: #000000;
 $t1-line-height: 18px;
@@ -584,7 +570,7 @@ $t1-text-align: left;
     font-weight: $t1-font-weight;
     text-align: $t1-text-align;
 }
-/** textbuttonlabel-default **/
+
 $textbuttonlabel-default-font-size: 16px;
 $textbuttonlabel-default-color: #004699;
 $textbuttonlabel-default-line-height: 22px;
@@ -600,7 +586,7 @@ $textbuttonlabel-default-text-align: left;
     font-weight: $textbuttonlabel-default-font-weight;
     text-align: $textbuttonlabel-default-text-align;
 }
-/** textbuttonlabel-hover **/
+
 $textbuttonlabel-hover-font-size: 16px;
 $textbuttonlabel-hover-color: #ec0000;
 $textbuttonlabel-hover-line-height: 22px;
@@ -616,7 +602,7 @@ $textbuttonlabel-hover-text-align: left;
     font-weight: $textbuttonlabel-hover-font-weight;
     text-align: $textbuttonlabel-hover-text-align;
 }
-/** textbuttonongreylabel-default **/
+
 $textbuttonongreylabel-default-font-size: 16px;
 $textbuttonongreylabel-default-color: #004699;
 $textbuttonongreylabel-default-line-height: 22px;
@@ -632,7 +618,7 @@ $textbuttonongreylabel-default-text-align: left;
     font-weight: $textbuttonongreylabel-default-font-weight;
     text-align: $textbuttonongreylabel-default-text-align;
 }
-/** textbuttonongreylabel-hover **/
+
 $textbuttonongreylabel-hover-font-size: 16px;
 $textbuttonongreylabel-hover-color: #004699;
 $textbuttonongreylabel-hover-line-height: 22px;

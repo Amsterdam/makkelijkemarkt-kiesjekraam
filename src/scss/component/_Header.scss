@@ -6,7 +6,6 @@ $headerHeight__540: 162px;
 $headerHeightTop__540: 108px;
 
 .Header {
-    //height: $headerHeight;
     display: flex;
     flex-direction: column;
     background-color: $neutral-grey1;
@@ -29,7 +28,6 @@ $headerHeightTop__540: 108px;
     }
     &__logo-link {
         width: 100px;
-        // margin: $gutter;
         @media screen and (min-width: $screenMedium) {
             margin-right: 40px;
         }
@@ -50,13 +48,10 @@ $headerHeightTop__540: 108px;
         align-items: flex-end;
         &__name{
             margin: 5px 0 0;
-            // color: $primary-darkblue;
             font-weight: bold;
         }
         &__role{
             margin: 0 0;
-            // font-weight: bold;
-            // color: $primary-darkblue;
         }
     }
     &__heading {

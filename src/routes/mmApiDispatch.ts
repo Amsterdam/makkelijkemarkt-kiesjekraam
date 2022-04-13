@@ -1,8 +1,19 @@
-import express, { Request, Response, NextFunction } from 'express';
-import { GrantedRequest } from 'keycloak-connect';
-
-import { Roles, keycloak } from '../authentication';
-import { callApiGeneric, HttpMethod } from '../makkelijkemarkt-api';
+import {
+    callApiGeneric,
+    HttpMethod,
+} from '../makkelijkemarkt-api';
+import express, {
+    NextFunction,
+    Request,
+    Response,
+} from 'express';
+import {
+    keycloak,
+    Roles,
+} from '../authentication';
+import {
+    GrantedRequest
+} from 'keycloak-connect';
 
 const router = express.Router();
 const subroutes = [
@@ -12,8 +23,8 @@ const subroutes = [
     '/obstakel/all',
     '/plaatseigenschap/all',
     '/markt/:marktId',
-    '/markt/:marktId/marktconfiguratie/latest', // GET
-    '/markt/:marktId/marktconfiguratie', // POST
+    '/markt/:marktId/marktconfiguratie/latest',
+    '/markt/:marktId/marktconfiguratie',
 ];
 
 const isProtectionDisabled = Boolean(process.env.DISABLE_MM_API_DISPATCH_PROTECTION);

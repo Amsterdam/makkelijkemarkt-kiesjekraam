@@ -1,6 +1,5 @@
-const React = require('react');
-const Page = require('./Page.jsx');
-const PropTypes = require('prop-types');
+import PropTypes from 'prop-types';
+import React from 'react';
 
 class MarktmeesterProfile extends React.Component {
     propTypes = {

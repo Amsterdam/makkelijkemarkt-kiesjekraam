@@ -1,6 +1,5 @@
-const Alert = require('./Alert');
-const PropTypes = require('prop-types');
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
 
 class Page extends React.Component {
     propTypes = {

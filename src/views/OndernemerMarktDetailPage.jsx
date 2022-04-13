@@ -1,7 +1,16 @@
-const React = require('react');
-const moment = require('moment');
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import React from 'react';
+const {
+    today,
+    getBreadcrumbsOndernemer,
+    arrayToObject,
+} = require('../util.ts');
+const {
+    filterRsvpList,
+    isExp,
+} = require('../domain-knowledge.js');
 const Page = require('./components/Page.jsx');
-const PropTypes = require('prop-types');
 const Header = require('./components/Header');
 const Content = require('./components/Content');
 const OndernemerProfileHeader = require('./components/OndernemerProfileHeader');
@@ -9,10 +18,8 @@ const SollicitatieSpecs = require('./components/SollicitatieSpecs');
 const OndernemerMarktVoorkeuren = require('./components/OndernemerMarktVoorkeuren');
 const OndernemerMarktAanwezigheid = require('./components/OndernemerMarktAanwezigheid');
 const OndernemerMarktAlgVoorkeuren = require('./components/OndernemerMarktAlgVoorkeuren');
-const { today, tomorrow, getBreadcrumbsOndernemer, arrayToObject } = require('../util.ts');
 const Alert = require('./components/Alert');
 const Uitslag = require('./components/Uitslag');
-const { filterRsvpList, isExp } = require('../domain-knowledge.js');
 
 class OndernemerMarktDetailPage extends React.Component {
     propTypes = {
@@ -32,7 +39,6 @@ class OndernemerMarktDetailPage extends React.Component {
         mededelingen: PropTypes.object,
         algemeneVoorkeur: PropTypes.object,
         role: PropTypes.string,
-        daysClosed: PropTypes.array.isRequired,
     };
 
     render() {
@@ -50,11 +56,8 @@ class OndernemerMarktDetailPage extends React.Component {
             algemeneVoorkeur,
             role,
             user,
-            daysClosed
         } = this.props;
-        const sollicitatie = ondernemer.sollicitaties.find(soll =>
-            soll.markt.id === markt.id
-        );
+        const sollicitatie = ondernemer.sollicitaties.find(soll => soll.markt.id === markt.id);
 
         const rsvpEntries = filterRsvpList(
             aanmeldingen.filter(aanmelding => aanmelding.marktId === markt.id),
@@ -62,34 +65,37 @@ class OndernemerMarktDetailPage extends React.Component {
             today(),
         );
 
-        const absentGemeld = algemeneVoorkeur ? ( algemeneVoorkeur.absentFrom && algemeneVoorkeur.absentUntil )  : false;
+        const absentGemeld = algemeneVoorkeur ? algemeneVoorkeur.absentFrom && algemeneVoorkeur.absentUntil : false;
         const breadcrumbs = getBreadcrumbsOndernemer(ondernemer, role);
         const branchesObj = arrayToObject(branches, 'brancheId');
 
         return (
             <Page messages={messages}>
-                <Header
-                    user={user}
-                    role={role}
-                    breadcrumbs={breadcrumbs}
-                    >
+                <Header user={user} role={role} breadcrumbs={breadcrumbs}>
                     <OndernemerProfileHeader user={ondernemer} />
                 </Header>
                 <Content>
                     <h1 className="Heading Heading--intro">{markt.naam}</h1>
                     <div className="Section Section--column Section--flat-top">
-                    { markt.kiesJeKraamFase === 'wenperiode' || markt.kiesJeKraamFase === 'live' ?
-                        <a href={`/pdf/kaart-${markt.afkorting}.pdf`} rel="noopener noreferrer" target="_blank" className="Link">Kaart {markt.naam}</a> : null
-                    }
+                        {markt.kiesJeKraamFase === 'wenperiode' || markt.kiesJeKraamFase === 'live' ? (
+                            <a
+                                href={`/pdf/kaart-${markt.afkorting}.pdf`}
+                                rel="noopener noreferrer"
+                                target="_blank"
+                                className="Link"
+                            >
+                                Kaart {markt.naam}
+                            </a>
+                        ) : null}
                     </div>
-                    { markt.kiesJeKraamFase ? (
+                    {markt.kiesJeKraamFase ? (
                         <p dangerouslySetInnerHTML={{ __html: mededelingen.marktDetail[markt.kiesJeKraamFase] }} />
                     ) : null}
-                    { markt.kiesJeKraamMededelingActief ? (
+                    {markt.kiesJeKraamMededelingActief ? (
                         <Alert type="warning" inline={true} title={markt.kiesJeKraamMededelingTitel}>
                             {markt.kiesJeKraamMededelingTekst}
                         </Alert>
-                    ) : null }
+                    ) : null}
                     <SollicitatieSpecs sollicitatie={sollicitatie} markt={markt} />
                     <Uitslag
                         ondernemer={ondernemer}
@@ -98,13 +104,19 @@ class OndernemerMarktDetailPage extends React.Component {
                         afwijzingen={afwijzingen}
                         aanmeldingen={aanmeldingen}
                     />
-                    { absentGemeld ? (
+                    {absentGemeld ? (
                         <Alert type="warning" inline={true}>
                             <span>
-                                LET OP: U bent langere tijd afwezig gemeld <strong>({moment(algemeneVoorkeur.absentFrom).format('DD-MM-YYYY')} t/m {moment(algemeneVoorkeur.absentUntil).format('DD-MM-YYYY')})</strong>. Klopt dit niet, neem dan contact op met de marktmeesters via {markt.telefoonNummerContact}.
+                                LET OP: U bent langere tijd afwezig gemeld{' '}
+                                <strong>
+                                    ({moment(algemeneVoorkeur.absentFrom).format('DD-MM-YYYY')} t/m{' '}
+                                    {moment(algemeneVoorkeur.absentUntil).format('DD-MM-YYYY')})
+                                </strong>
+                                . Klopt dit niet, neem dan contact op met de marktmeesters via{' '}
+                                {markt.telefoonNummerContact}.
                             </span>
                         </Alert>
-                    ) : null }
+                    ) : null}
                     {!algemeneVoorkeur || !algemeneVoorkeur.brancheId || !branchesObj[algemeneVoorkeur.brancheId] ? (
                         <Alert type="warning" inline={true}>
                             <span>
@@ -112,7 +124,7 @@ class OndernemerMarktDetailPage extends React.Component {
                                 <a href={`/algemene-voorkeuren/${markt.id}/`}>marktprofiel</a>.
                             </span>
                         </Alert>
-                    ) : null }
+                    ) : null}
 
                     <div className="row row--responsive">
                         <div className="col-1-2">
@@ -120,7 +132,9 @@ class OndernemerMarktDetailPage extends React.Component {
                                 markt={markt}
                                 sollicitatie={sollicitatie}
                                 rsvpEntries={rsvpEntries}
-                                disabled={ !voorkeur || !algemeneVoorkeur.brancheId || !branchesObj[algemeneVoorkeur.brancheId] }
+                                disabled={
+                                    !voorkeur || !algemeneVoorkeur.brancheId || !branchesObj[algemeneVoorkeur.brancheId]
+                                }
                             />
                         </div>
                         <div className="col-1-2">
@@ -131,16 +145,16 @@ class OndernemerMarktDetailPage extends React.Component {
                                 voorkeur={voorkeur}
                                 branches={branches}
                             />
-                            { !isExp(sollicitatie.status) ?
-                            <OndernemerMarktVoorkeuren
-                                ondernemer={ondernemer}
-                                markt={markt}
-                                mededelingen={mededelingen}
-                                plaatsvoorkeuren={plaatsvoorkeuren}
-                                voorkeur={voorkeur}
-                                sollicitatie={sollicitatie}
-                            /> : null
-                            }
+                            {!isExp(sollicitatie.status) ? (
+                                <OndernemerMarktVoorkeuren
+                                    ondernemer={ondernemer}
+                                    markt={markt}
+                                    mededelingen={mededelingen}
+                                    plaatsvoorkeuren={plaatsvoorkeuren}
+                                    voorkeur={voorkeur}
+                                    sollicitatie={sollicitatie}
+                                />
+                            ) : null}
                         </div>
                     </div>
                 </Content>

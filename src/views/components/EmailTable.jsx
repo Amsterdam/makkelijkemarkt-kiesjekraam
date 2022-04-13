@@ -1,13 +1,5 @@
-const PropTypes = require('prop-types');
-const React = require('react');
-const fontBody = {
-    padding: '0',
-    fontSize: '16px',
-    lineHeight: '22px',
-    fontFamily: 'Helvetica, Arial, sans-serif',
-    color: '#333333',
-    fontWeight: '400',
-};
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const EmailTable = ({ data, title }) => {
     const fullWidth = 100;

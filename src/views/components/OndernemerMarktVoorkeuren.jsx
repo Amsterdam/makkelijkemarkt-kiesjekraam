@@ -1,7 +1,5 @@
-const PropTypes = require('prop-types');
-const React = require('react');
-const { paginate } = require('../../util.ts');
-const Button = require('./Button');
+import PropTypes from 'prop-types';
+import React from 'react';
 const HeaderTitleButton = require('./HeaderTitleButton');
 const { isVast } = require('../../domain-knowledge.js');
 
@@ -32,8 +30,12 @@ const OndernemerMarktVoorkeuren = ({ plaatsvoorkeuren, markt, mededelingen, soll
             <a href={blockUrl} className="background-link" />
             <HeaderTitleButton title="Plaatsvoorkeuren" url={blockUrl} />
             <div className="well">
-                { markt.kiesJeKraamFase ? (
-                    <p dangerouslySetInnerHTML={{ __html: mededelingen.marktDetailPlaatsvoorkeuren[markt.kiesJeKraamFase] }} />
+                {markt.kiesJeKraamFase ? (
+                    <p
+                        dangerouslySetInnerHTML={{
+                            __html: mededelingen.marktDetailPlaatsvoorkeuren[markt.kiesJeKraamFase],
+                        }}
+                    />
                 ) : null}
                 {isVast(sollicitatie.status) ? (
                     <div className="margin-bottom">
@@ -50,10 +52,9 @@ const OndernemerMarktVoorkeuren = ({ plaatsvoorkeuren, markt, mededelingen, soll
                         <dd>{voorkeurDef.minimum}</dd>
                         <dt>Extra plaatsen:</dt>
                         <dd>
-                            { voorkeurDef.maximum === voorkeurDef.minimum
-                                ?  'geen'
-                                :  voorkeurDef.maximum - voorkeurDef.minimum
-                            }
+                            {voorkeurDef.maximum === voorkeurDef.minimum
+                                ? 'geen'
+                                : voorkeurDef.maximum - voorkeurDef.minimum}
                         </dd>
                     </dl>
                 </div>

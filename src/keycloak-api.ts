@@ -1,7 +1,14 @@
+import {
+    requireEnv,
+    requireOne,
+} from './util';
+import {
+    Credentials,
+} from 'keycloak-admin/lib/utils/auth';
+import {
+    GrantedRequest,
+} from 'keycloak-connect';
 import KeycloakAdminClient from 'keycloak-admin';
-import { requireEnv, requireOne } from './util';
-import { GrantedRequest } from 'keycloak-connect';
-import {Credentials} from "keycloak-admin/lib/utils/auth";
 
 requireEnv('IAM_URL');
 requireEnv('IAM_REALM');
@@ -39,7 +46,10 @@ export const userExists = (username: string): Promise<boolean> =>
         .then(user => {
             return requireOne(user);
         })
-        .then(() => true, () => false);
+        .then(
+            () => true,
+            () => false,
+        );
 
 export const getAllUsers = () => getKeycloakAdmin().then(kcAdminClient => kcAdminClient.users.find({ max: -1 }));
 

@@ -1,9 +1,13 @@
 import * as React from 'react';
-import { EmailPage } from './views/EmailPage';
-// import { defer } from 'rxjs';
-// import { shareReplay, tap, combineLatest } from 'rxjs/operators';
-import { mail } from './mail.js';
-import { requireEnv } from './util';
+import {
+    EmailPage,
+} from './views/EmailPage';
+import {
+    mail,
+} from './mail.js';
+import {
+requireEnv,
+} from './util';
 
 requireEnv('MAILER_FROM');
 

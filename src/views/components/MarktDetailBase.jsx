@@ -1,14 +1,30 @@
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
 const Page = require('./Page.jsx');
 const Header = require('./Header');
 const Content = require('./Content');
-const PropTypes = require('prop-types');
-const { formatDayOfWeek, formatMonth } = require('../../util');
+const {
+    formatDayOfWeek,
+    formatMonth,
+} = require('../../util');
 const MarktDayLink = require('./MarktDayLink');
 const MarktDetailHeader = require('./MarktDetailHeader');
 const PrintButton = require('./PrintButton');
 
-const MarktDetailBase = ({ children, bodyClass, title, markt, type, datum, printButton, showDate, fase, breadcrumbs, role, user }) => {
+const MarktDetailBase = ({
+    children,
+    bodyClass,
+    title,
+    markt,
+    type,
+    datum,
+    printButton,
+    showDate,
+    fase,
+    breadcrumbs,
+    role,
+    user,
+}) => {
     const relativeDatum = d => {
         return formatDayOfWeek(d) + ', ' + new Date(d).getDate() + ' ' + formatMonth(d);
     };
@@ -22,12 +38,12 @@ const MarktDetailBase = ({ children, bodyClass, title, markt, type, datum, print
                 )}
                 <div className="MarktDetailHeader__title-wrapper">
                     <h1 className="MarktDetailHeader__title">
-                        { markt.naam }
-                        { title ? ': ' + title : '' }
-                        { fase ? ' fase: ' + fase : '' }
+                        {markt.naam}
+                        {title ? ': ' + title : ''}
+                        {fase ? ' fase: ' + fase : ''}
                         {showDate && <span className="MarktDetailHeader__title-sub">{relativeDatum(datum)}</span>}
                     </h1>
-                    { printButton ? <PrintButton title={'Print'} /> : null }
+                    {printButton ? <PrintButton title={'Print'} /> : null}
                 </div>
                 {showDate && (
                     <MarktDayLink markt={markt} offsetDate={new Date(datum).toISOString()} direction={1} type={type} />

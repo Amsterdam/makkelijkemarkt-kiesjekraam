@@ -1,13 +1,11 @@
-const PropTypes = require('prop-types');
-const React = require('react');
-
+import PropTypes from 'prop-types';
+import React from 'react';
 const {
     ondernemerIsAfgemeld,
     ondernemerIsAfgemeldPeriode,
     vphIsGewisseld,
-    vphIsUitgebreid
+    vphIsUitgebreid,
 } = require('../../model/ondernemer.functions');
-
 const ObstakelList = require('./ObstakelList');
 const Plaats = require('./Plaats.tsx').default;
 const BlockedPlaats = require('./BlockedPlaats.tsx').default;
@@ -40,14 +38,10 @@ const IndelingslijstGroup = ({
             <table className="IndelingslijstGroup__table" cellPadding="0" cellSpacing="0">
                 <thead>
                     <tr>
-                        <th className="Plaats__prop Plaats__prop-properties"></th>
+                        <th className="Plaats__prop Plaats__prop-properties" />
                         <th className="Plaats__prop">nr.</th>
-                        <th className="Plaats__prop">
-                            br.
-                        </th>
-                        <th className="Plaats__prop">
-                            vph
-                        </th>
+                        <th className="Plaats__prop">br.</th>
+                        <th className="Plaats__prop">vph</th>
                         <th className="Plaats__prop" />
                         <th className="Plaats__prop" />
                         <th className="Plaats__prop" />
@@ -60,29 +54,34 @@ const IndelingslijstGroup = ({
                         let voorkeurOp = null;
 
                         if (originelePlaatshouder) {
-                            originelePlaatshouder = ondernemers.find(ondernemer =>
-                                ondernemer.erkenningsNummer == originelePlaatshouder.erkenningsNummer
+                            originelePlaatshouder = ondernemers.find(
+                                ondernemer => ondernemer.erkenningsNummer == originelePlaatshouder.erkenningsNummer,
                             );
                             voorkeurOp = originelePlaatshouder.voorkeur;
                         }
 
-                        const aanmeldingVph = originelePlaatshouder ?
-                                              aanmeldingen.find(rsvp => rsvp.erkenningsNummer === originelePlaatshouder.erkenningsNummer) :
-                                              null;
+                        const aanmeldingVph = originelePlaatshouder
+                            ? aanmeldingen.find(
+                                  rsvp => rsvp.erkenningsNummer === originelePlaatshouder.erkenningsNummer,
+                              )
+                            : null;
 
                         const toewijzing = toewijzingen.find(({ plaatsen }) => plaatsen.includes(plaatsNr));
 
-                        const ingedeeldeOndernemer = toewijzing ? ondernemers.find(
-                            ({ erkenningsNummer }) => {
-                                if(toewijzing.koopman){
-                                    toewijzing.erkenningsNummer = toewijzing.koopman;
-                                }
-                                return erkenningsNummer === toewijzing.erkenningsNummer;
-                            },
-                        ) : null;
+                        const ingedeeldeOndernemer = toewijzing
+                            ? ondernemers.find(({ erkenningsNummer }) => {
+                                  if (toewijzing.koopman) {
+                                      toewijzing.erkenningsNummer = toewijzing.koopman;
+                                  }
+                                  return erkenningsNummer === toewijzing.erkenningsNummer;
+                              })
+                            : null;
 
-                        const plaats         = plaatsList[plaatsNr];
-                        const plaatsBranches = plaats && plaats.branches ? branches.filter(branche => plaats.branches.includes(branche.brancheId)) : [];
+                        const plaats = plaatsList[plaatsNr];
+                        const plaatsBranches =
+                            plaats && plaats.branches
+                                ? branches.filter(branche => plaats.branches.includes(branche.brancheId))
+                                : [];
 
                         const plaatsProps = {
                             key: plaatsNr,
@@ -92,16 +91,33 @@ const IndelingslijstGroup = ({
                             obstakels: obstakelList,
                             ondernemer: ingedeeldeOndernemer,
                             vph: originelePlaatshouder,
-                            opUitgebreid: originelePlaatshouder && toewijzingen ? vphIsUitgebreid(originelePlaatshouder, toewijzingen) : false,
-                            opGewisseld: originelePlaatshouder && toewijzingen ? vphIsGewisseld(originelePlaatshouder, toewijzingen) : false,
-                            opAfgemeld: aanmeldingVph ? ondernemerIsAfgemeld(originelePlaatshouder, [aanmeldingVph], datum) : false,
-                            opAfgemeldPeriode: originelePlaatshouder && voorkeurOp ? ondernemerIsAfgemeldPeriode(voorkeurOp, datum) : false,
-                            ondernemerUitgebreid: ingedeeldeOndernemer && ingedeeldeOndernemer.status == 'vpl' ? vphIsUitgebreid(ingedeeldeOndernemer, toewijzingen) : false,
-                            ondernemerGewisseld: ingedeeldeOndernemer && ingedeeldeOndernemer.status == 'vpl' ? vphIsGewisseld(ingedeeldeOndernemer, toewijzingen) : false,
+                            opUitgebreid:
+                                originelePlaatshouder && toewijzingen
+                                    ? vphIsUitgebreid(originelePlaatshouder, toewijzingen)
+                                    : false,
+                            opGewisseld:
+                                originelePlaatshouder && toewijzingen
+                                    ? vphIsGewisseld(originelePlaatshouder, toewijzingen)
+                                    : false,
+                            opAfgemeld: aanmeldingVph
+                                ? ondernemerIsAfgemeld(originelePlaatshouder, [aanmeldingVph], datum)
+                                : false,
+                            opAfgemeldPeriode:
+                                originelePlaatshouder && voorkeurOp
+                                    ? ondernemerIsAfgemeldPeriode(voorkeurOp, datum)
+                                    : false,
+                            ondernemerUitgebreid:
+                                ingedeeldeOndernemer && ingedeeldeOndernemer.status == 'vpl'
+                                    ? vphIsUitgebreid(ingedeeldeOndernemer, toewijzingen)
+                                    : false,
+                            ondernemerGewisseld:
+                                ingedeeldeOndernemer && ingedeeldeOndernemer.status == 'vpl'
+                                    ? vphIsGewisseld(ingedeeldeOndernemer, toewijzingen)
+                                    : false,
                             aanmelding: aanmeldingVph,
                             markt,
                             datum,
-                            toewijzing
+                            toewijzing,
                         };
 
                         if (plaatsList[plaatsNr]) {
@@ -122,7 +138,7 @@ const IndelingslijstGroup = ({
                                 );
                             }
                         } else {
-                            return <BlockedPlaats plaatsnummer={plaatsNr} key={i}/>;
+                            return <BlockedPlaats plaatsnummer={plaatsNr} key={i} />;
                         }
                     })}
                 </tbody>
@@ -146,7 +162,7 @@ IndelingslijstGroup.propTypes = {
     ondernemers: PropTypes.array.isRequired,
     markt: PropTypes.object.isRequired,
     datum: PropTypes.string,
-    branches: PropTypes.array.isRequired
+    branches: PropTypes.array.isRequired,
 };
 
 module.exports = IndelingslijstGroup;

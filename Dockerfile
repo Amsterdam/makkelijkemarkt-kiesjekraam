@@ -1,4 +1,3 @@
-### Bewerk de markten
 FROM node:16-alpine as bdm_build
 
 COPY bdm/package.json bdm/
@@ -14,11 +13,8 @@ RUN npm ci --loglevel verbose
 RUN CI=true npm run test
 RUN npm run build
 
-
-### Kies je kraam
 FROM node:16-alpine
 
-# Setup certificates for ADP/Motiv
 RUN apk add ca-certificates
 COPY certificates/adp_rootca.crt /usr/local/share/ca-certificates/adp_rootca.crt
 RUN chmod 644 /usr/local/share/ca-certificates/adp_rootca.crt \
@@ -34,16 +30,9 @@ ADD --chown=node:node ./package.json ./package-lock.json /srv/
 
 USER node
 
-# Add `NPM_TOKEN` right before the first `npm install`
-
 ARG NPM_TOKEN
 
-# Do not create or update `package-lock.json` inside the container,
-# and prevent npm from showing a warning about the lock file.
-
 ARG NODE_ENV
-
-# Performance optimization: skip build process during development.
 
 RUN if test "$NODE_ENV" = 'development'; \
 then \
@@ -54,9 +43,6 @@ then \
 ; fi
 
 ADD --chown=node ./ /srv/
-
-# After building the application, remove the `devDependencies`
-# for when NODE_ENV is "production".
 
 RUN if test "$NODE_ENV" != 'development'; \
 then \
@@ -73,19 +59,16 @@ ARG VCS_REF
 
 LABEL \
     org.label-schema.build-date="${BUILD_DATE}" \
-    org.label-schema.description="Pak je kraam" \
-    org.label-schema.name="pakjekraam" \
+    org.label-schema.description="KiesJeKraam" \
+    org.label-schema.name="kiesjekraam" \
     org.label-schema.schema-version="2.0" \
-    org.label-schema.url="https://github.com/Amsterdam/fixxx-pakjekraam/" \
-    org.label-schema.usage="https://github.com/Amsterdam/fixxx-pakjekraam/blob/master/README.md" \
+    org.label-schema.url="https://git.data.amsterdam.nl:salmagundi/makkelijkemarkt/makkelijkemarkt-kiesjekraam" \
+    org.label-schema.usage="https://git.data.amsterdam.nl:salmagundi/makkelijkemarkt/makkelijkemarkt-kiesjekraam" \
     org.label-schema.vcs-ref="${VCS_REF}" \
-    org.label-schema.vcs-url="https://github.com/Amsterdam/fixxx-pakjekraam" \
+    org.label-schema.vcs-url="https://git.data.amsterdam.nl:salmagundi/makkelijkemarkt/makkelijkemarkt-kiesjekraam.git" \
     org.label-schema.vendor="Amsterdam" \
     org.label-schema.version="16.4.2"
 
-# Add lowercase proxy settings for compatibility,
-# but use uppercase exports for shellcheck compatibility.
-# https://unix.stackexchange.com/a/212972
 ENV \
     HTTP_PROXY=$HTTP_PROXY \
     HTTPS_PROXY=$HTTPS_PROXY \
@@ -97,7 +80,6 @@ ENV \
 
 EXPOSE 8080
 
-# Copy React build from Bewerk de markten
 COPY --from=bdm_build /bdm/build /srv/bdm/build
 
 CMD ["npm", "run", "start"]

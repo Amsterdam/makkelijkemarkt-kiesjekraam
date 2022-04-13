@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 const w = 100;
 const borderWidth = '2px';

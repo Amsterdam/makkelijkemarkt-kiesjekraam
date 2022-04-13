@@ -1,5 +1,5 @@
-const PropTypes = require('prop-types');
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const ProfilePhoto = ({ imageUrlSet }) => {
     const mediaQueries = ['(max-width: 539px)', '(min-width: 540px)'];

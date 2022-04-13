@@ -2,20 +2,25 @@ import {
     Request,
     Response,
 } from 'express';
+import {
+    checkLogin,
+} from '../makkelijkemarkt-api';
+import {
+    getKeycloakAdmin,
+} from '../keycloak-api';
+import {
+    getTimezoneTime,
+} from '../util';
+import {
+    internalServerErrorPage,
+} from '../express-util';
 
-import { checkLogin } from '../makkelijkemarkt-api';
-import { getKeycloakAdmin } from '../keycloak-api';
-import { getTimezoneTime } from '../util';
-import { internalServerErrorPage } from '../express-util';
-
-// This health check page is required for Docker deployments
 export const serverHealth = (req: Request, res: Response) => {
     res.end('OK!');
 };
 
-// This health check page is required for Docker deployments
 export const serverTime = (req: Request, res: Response) => {
-    res.end( String(getTimezoneTime()) );
+    res.end(String(getTimezoneTime()));
 };
 
 export const keycloakHealth = (req: Request, res: Response) => {

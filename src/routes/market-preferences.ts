@@ -1,46 +1,45 @@
-import { NextFunction, Request, Response } from 'express';
-import { GrantedRequest } from 'keycloak-connect';
-import moment from 'moment';
-
-import {
-    internalServerErrorPage,
-    HTTP_CREATED_SUCCESS,
-    getQueryErrors,
-} from '../express-util';
-
-import {
-    getKeycloakUser
-} from '../keycloak-api';
-
 import {
     getMarktBasics,
-    getVoorkeurByMarktEnOndernemer,
     getOndernemer,
+    getVoorkeurByMarktEnOndernemer,
     updateMarktVoorkeur,
 } from '../makkelijkemarkt-api';
-
+import {
+    getQueryErrors,
+    HTTP_CREATED_SUCCESS,
+    internalServerErrorPage,
+} from '../express-util';
+import {
+    NextFunction,
+    Request,
+    Response,
+} from 'express';
 import {
     convertVoorkeur,
 } from '../pakjekraam-api';
-
+import {
+    getKeycloakUser,
+} from '../keycloak-api';
+import {
+    GrantedRequest,
+} from 'keycloak-connect';
+import moment from 'moment';
 import {
     voorkeurenFormData,
 } from '../model/voorkeur.functions';
 
-
-export const algemeneVoorkeurenFormCheckForError = (body: any, role: string) => {
-
+const algemeneVoorkeurenFormCheckForError = (body: any, role: string) => {
     let error = null;
 
     if (role === 'marktmeester') {
         const { absentFrom, absentUntil } = body;
         if (absentUntil) {
-            if ( !moment(absentUntil, 'DD-MM-YYYY', true).isValid()) {
+            if (!moment(absentUntil, 'DD-MM-YYYY', true).isValid()) {
                 error = 'Datum afwezigheid vanaf heeft niet het juiste format. Gebruik dd-mm-yyyy.';
             }
         }
         if (absentFrom) {
-            if ( !moment(absentFrom, 'DD-MM-YYYY',true).isValid()) {
+            if (!moment(absentFrom, 'DD-MM-YYYY', true).isValid()) {
                 error = 'Datum afwezigheid tot en met heeft niet het juiste format. Gebruik dd-mm-yyyy.';
             }
         }
@@ -49,8 +48,13 @@ export const algemeneVoorkeurenFormCheckForError = (body: any, role: string) => 
     return error;
 };
 
-export const updateMarketPreferences = (req: Request, res: Response, next: NextFunction, erkenningsNummer: string, role: string) => {
-
+export const updateMarketPreferences = (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    erkenningsNummer: string,
+    role: string,
+) => {
     const data = voorkeurenFormData(req.body);
     const formError = algemeneVoorkeurenFormCheckForError(req.body, role);
 
@@ -59,7 +63,7 @@ export const updateMarketPreferences = (req: Request, res: Response, next: NextF
     }
 
     updateMarktVoorkeur(convertVoorkeur(data));
-    res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next ? req.body.next : '/')
+    res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next ? req.body.next : '/');
 };
 
 export const marketPreferencesPage = (
@@ -90,8 +94,7 @@ export const marketPreferencesPage = (
             messages: getQueryErrors(req.query),
             role,
             csrfToken,
-            user: getKeycloakUser(req)
+            user: getKeycloakUser(req),
         });
-
     }, internalServerErrorPage(res));
 };

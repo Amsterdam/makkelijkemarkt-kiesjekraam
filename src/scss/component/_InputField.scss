@@ -16,10 +16,8 @@ $radiobutton-left: 0px;
             margin: $vm1;
         }
         & > * {
-            //margin-bottom: 10px;
         }
         & > :first-child {
-            //margin-bottom: 0;
         }
     }
     &--checkbox {

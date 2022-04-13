@@ -1,16 +1,10 @@
-const PropTypes = require('prop-types');
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
+const { isTVPLZ } = require('../../domain-knowledge.js');
 
-const {
-    isVast,
-    isTVPLZ
-} = require('../../domain-knowledge.js');
-
-const SollicitatieSpecs = ({ markt, sollicitatie }) => {
+const SollicitatieSpecs = ({ sollicitatie }) => {
     const aantalPlaatsen = sollicitatie.vastePlaatsen.length;
-    const vastePlaatsen = aantalPlaatsen ?
-                          sollicitatie.vastePlaatsen.join(', ') :
-                          '';
+    const vastePlaatsen = aantalPlaatsen ? sollicitatie.vastePlaatsen.join(', ') : '';
 
     return (
         <div className="SollicitatieSpecs">
@@ -19,10 +13,9 @@ const SollicitatieSpecs = ({ markt, sollicitatie }) => {
 
             {aantalPlaatsen > 0 ? (
                 <span className="Pil">
-                    { isTVPLZ(sollicitatie.status) ?
-                         `${aantalPlaatsen} plaats${aantalPlaatsen > 1 ? 'en' : ''}`:
-                         `plaats${aantalPlaatsen > 1 ? 'en' : ''} ${vastePlaatsen}`
-                    }
+                    {isTVPLZ(sollicitatie.status)
+                        ? `${aantalPlaatsen} plaats${aantalPlaatsen > 1 ? 'en' : ''}`
+                        : `plaats${aantalPlaatsen > 1 ? 'en' : ''} ${vastePlaatsen}`}
                 </span>
             ) : null}
         </div>
@@ -31,7 +24,6 @@ const SollicitatieSpecs = ({ markt, sollicitatie }) => {
 
 SollicitatieSpecs.propTypes = {
     sollicitatie: PropTypes.object.isRequired,
-    markt: PropTypes.object,
 };
 
 module.exports = SollicitatieSpecs;

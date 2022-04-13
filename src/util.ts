@@ -1,7 +1,5 @@
 import * as fs from 'fs';
-
-// import moment from 'moment';
-const moment = require('moment-timezone');
+import moment = require('moment-timezone');
 
 export const capitalize = (s: string) => {
     return typeof s === 'string' ? s.charAt(0).toUpperCase() + s.slice(1) : '';
@@ -110,17 +108,15 @@ export const addMinutes = (offsetDate: string | number, minutes: number): string
 export const addMinutesTime = (offsetDate: string | number, minutes: number): Date => {
     const date = new Date(offsetDate);
     const dateNewTime = new Date(date.getTime() + minutes * 60000);
-    return moment(dateNewTime)
-        .tz('Europe/Amsterdam')
-        .format();
+    return moment(dateNewTime).tz('Europe/Amsterdam').format();
 };
 
 export const getTimezoneTime = (): any => {
     return moment().tz('Europe/Amsterdam');
 };
 
-export const getTimezoneHours = (): Number => {
-    return parseInt(moment(getTimezoneTime()).format('H'));
+export const getTimezoneHours = (): number => {
+    return parseInt(moment(getTimezoneTime()).format('H'), 10);
 };
 
 export const today = (): string => toISODate(new Date());
@@ -146,15 +142,8 @@ export const ddmmyyyyToDate = (dateString: string) => {
     const day = dateString.split('-')[0];
     const month = dateString.split('-')[1];
     const year = dateString.split('-')[2];
-    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day), 0, 0, 0);
+    return new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10), 0, 0, 0);
 };
-
-// export const dateToDDMMYYYY = (dateObject: Date) => {
-//     const day = dateObject.getDay();
-//     const month = dateObject.getMonth();
-//     const year = dateObject.getFullYear();
-//     return `${day}-${month}-${year}`;
-// };
 
 export const yyyyMmDdtoDDMMYYYY = (dateString: string) => {
     const year = dateString.split('-')[0];
@@ -163,27 +152,22 @@ export const yyyyMmDdtoDDMMYYYY = (dateString: string) => {
     return `${day}-${month}-${year}`;
 };
 
-// Array functions
-// ===============
-
-// Sort functions
-// --------------
 export const numberSort = (a: number, b: number): number => (a > b ? 1 : a === b ? 0 : -1);
+
 export const stringSort = (a: string, b: string): number => (a > b ? 1 : a === b ? 0 : -1);
-// Reduce functions
-// ----------------
-// Example usage: [[1], [2]].reduce(methodName, [])
+
 export const sum = (a: number, b: number): number => a + b;
+
 export const max = (a: number, b: number): number => Math.max(a, b);
+
 export const flatten = <T>(a: T[] = [], b: T[] = []): T[] => [...(a || []), ...(b || [])];
+
 export const unique = <T>(a: T[], b: T): T[] => (a.includes(b) ? a : [...a, b]);
 
 export const compareProperty = (a: any[], b: any[], property: string) => {
     return a.map(({ [property]: p }) => p).reduce(sum, 0) - b.map(({ [property]: p }) => p).reduce(sum, 0);
 };
 
-// General
-// -------
 export const readJSON = (filePath, emitError = true, defaultValue?) => {
     try {
         const data = fs.readFileSync(filePath, { encoding: 'utf8' });

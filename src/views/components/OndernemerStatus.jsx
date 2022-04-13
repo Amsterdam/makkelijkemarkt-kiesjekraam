@@ -1,12 +1,8 @@
-const PropTypes = require('prop-types');
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const OndernemerStatus = ({ status }) => {
-    return (
-        <span className={`OndernemerStatus OndernemerStatus--${status}`}>
-            {status}
-        </span>
-    );
+    return <span className={`OndernemerStatus OndernemerStatus--${status}`}>{status}</span>;
 };
 
 OndernemerStatus.propTypes = {

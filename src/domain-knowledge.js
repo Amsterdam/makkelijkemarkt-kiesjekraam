@@ -1,9 +1,5 @@
-const fs = require('fs');
-
-const {
-    DeelnemerStatus
-} = require('./markt.model.ts');
-
+import fs from 'fs';
+import moment from 'moment';
 const {
     ISO_SUNDAY,
     ISO_MONDAY,
@@ -24,8 +20,9 @@ const {
     getMaDiWoDo,
     getTimezoneTime,
 } = require('./util.ts');
-
-const moment = require('moment');
+const {
+    DeelnemerStatus,
+} = require('./model/markt.model.ts');
 
 const dagen = {
     zo: 0,
@@ -59,47 +56,45 @@ const DAYS_CLOSED = (function() {
     }
 })();
 
-const A_LIJST_DAYS = [FRIDAY, SATURDAY, SUNDAY];
+export const A_LIJST_DAYS = [FRIDAY, SATURDAY, SUNDAY];
 
 const INDELINGSTIJDSTIP = '21:00';
 const INDELINGSTIJDSTIP_TEXT = "21 uur 's avonds";
-const INDELING_DAG_OFFSET = 1;
+export const INDELING_DAG_OFFSET = 1;
 
 const indelingstijdstipInMinutes = () => {
-    const hours = parseInt(INDELINGSTIJDSTIP.split(":", 1), 10);
-    const minutes = parseInt(INDELINGSTIJDSTIP.split(":", 2)[1], 10);
-    return ((60 * hours) + minutes );
+    const hours = parseInt(INDELINGSTIJDSTIP.split(':', 1), 10);
+    const minutes = parseInt(INDELINGSTIJDSTIP.split(':', 2)[1], 10);
+    return 60 * hours + minutes;
 };
 
 const allocationHours = () => {
-    return parseInt(INDELINGSTIJDSTIP.split(":", 1), 10);
+    return parseInt(INDELINGSTIJDSTIP.split(':', 1), 10);
 };
 
 const allocationMinutes = () => {
-    return parseInt(INDELINGSTIJDSTIP.split(":", 2)[1], 10);
+    return parseInt(INDELINGSTIJDSTIP.split(':', 2)[1], 10);
 };
 
 const parseISOMarktDag = dag => (isoMarktDagen.hasOwnProperty(dag) ? isoMarktDagen[dag] : -1);
 
-const isVast = status =>
+export const isVast = status =>
     status === DeelnemerStatus.VASTE_PLAATS ||
     status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS ||
     status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_Z ||
     status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_OLD;
-const isTVPLZ = status =>
-    status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_Z;
+const isTVPLZ = status => status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_Z;
 const isExp = status =>
     status === DeelnemerStatus.ECONOMISCHE_BINDING ||
     status === DeelnemerStatus.EXPERIMENTAL ||
     status === DeelnemerStatus.EXPERIMENTAL_F;
-const isVastOfExp = status =>
-    isVast(status) || isExp(status);
+const isVastOfExp = status => isVast(status) || isExp(status);
 
 const isAfterAllocationTime = () => {
     const timeNow = getTimezoneTime();
     const allocationTime = getTimezoneTime()
-        .set("hour", allocationHours() )
-        .set("minute", allocationMinutes() );
+        .set('hour', allocationHours())
+        .set('minute', allocationMinutes());
     return timeNow.isAfter(allocationTime) || timeNow.isSame(allocationTime);
 };
 
@@ -111,14 +106,12 @@ const isAfterAllocationTime = () => {
 const getMarktThresholdDate = role => {
     // Door `offsetMins` bij de huidige tijd op te tellen, zal `startDate` naar morgen
     // gaan ipv vandaag als de huidige tijd voorbij indelingstijd ligt.
-    const offsetMins = role !== 'marktmeester' ?
-                       (( 24 * 60 ) - indelingstijdstipInMinutes()) :
-                       0;
+    const offsetMins = role !== 'marktmeester' ? 24 * 60 - indelingstijdstipInMinutes() : 0;
     return getTimezoneTime()
-           .add(offsetMins, 'minutes')
-           .add(INDELING_DAG_OFFSET, 'days')
-           .startOf('day')
-           .toDate();
+        .add(offsetMins, 'minutes')
+        .add(INDELING_DAG_OFFSET, 'days')
+        .startOf('day')
+        .toDate();
 };
 
 const getMarktDaysOndernemer = (startDate, endDate, marktdagen) => {
@@ -139,7 +132,6 @@ const getMarktDaysOndernemer = (startDate, endDate, marktdagen) => {
     return dates;
 };
 
-
 const getMarktDays = (startDate, endDate, daysOfWeek) => {
     const start = Date.parse(startDate);
     const end = Date.parse(endDate);
@@ -159,7 +151,7 @@ const getMarktDays = (startDate, endDate, daysOfWeek) => {
 const getUpcomingMarktDays = (startDate, endDate, daysOfWeek) =>
     getMarktDays(addDays(startDate, 1), endDate, daysOfWeek);
 
-const formatOndernemerName = ondernemer =>
+export const formatOndernemerName = ondernemer =>
     `${ondernemer.tussenvoegsels} ${ondernemer.achternaam} ${ondernemer.voorletters}`.replace(/\s+/g, ' ');
 
 const ondernemersToLocatieKeyValue = array =>
@@ -183,14 +175,21 @@ const obstakelsToLocatieKeyValue = array =>
 
 const filterRsvpList = (aanmeldingen, markt, startDate, endDate) => {
     const dates = getMarktDays(
-        startDate ? startDate : addDays(moment().day(0).valueOf(), 0),
+        startDate
+            ? startDate
+            : addDays(
+                  moment()
+                      .day(0)
+                      .valueOf(),
+                  0,
+              ),
         endDate ? endDate : addDays(endOfWeek(), DAYS_IN_WEEK),
         (markt.marktDagen || []).map(parseMarktDag),
     );
 
     const rsvpList = dates.map(date => ({
         date,
-        rsvp: aanmeldingen.find(aanmelding => aanmelding.marktDate === date)
+        rsvp: aanmeldingen.find(aanmelding => aanmelding.marktDate === date),
     }));
 
     return rsvpList;
@@ -243,5 +242,5 @@ module.exports = {
     filterRsvpList,
     plaatsSort,
     isErkenningsnummer,
-    isAfterAllocationTime
+    isAfterAllocationTime,
 };

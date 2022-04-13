@@ -1,6 +1,7 @@
-const PropTypes = require('prop-types');
-const React = require('react');
-const EmailLogo = require('./EmailLogo.jsx');
+import EmailLogo from './EmailLogo.jsx';
+import PropTypes from 'prop-types';
+import React from 'react';
+
 const headStyle =
     '' +
     '                /* CLIENT-SPECIFIC STYLES */\n' +

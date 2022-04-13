@@ -1,8 +1,8 @@
+import PropTypes from 'prop-types';
+import React from 'react';
 const Content = require('./components/Content');
-const React = require('react');
 const Page = require('./components/Page.jsx');
 const AlgemeneVoorkeurenForm = require('./components/AlgemeneVoorkeurenForm.jsx');
-const PropTypes = require('prop-types');
 const Header = require('./components/Header');
 const OndernemerProfileHeader = require('./components/OndernemerProfileHeader');
 const SollicitatieSpecs = require('./components/SollicitatieSpecs');
@@ -21,47 +21,28 @@ class AlgemeneVoorkeurenPage extends React.Component {
         role: PropTypes.string,
         messages: PropTypes.array,
         csrfToken: PropTypes.string,
-        user: PropTypes.object.isRequired
+        user: PropTypes.object.isRequired,
     };
 
     render() {
         const { ondernemer, messages, role, markt, user } = this.props;
         let { branches } = this.props;
 
-        branches = branches.filter(branche => branche.brancheId !== 'bak')
-                           .sort((a, b) => a.brancheId - b.brancheId);
+        branches = branches.filter(branche => branche.brancheId !== 'bak').sort((a, b) => a.brancheId - b.brancheId);
 
-        const breadcrumbs = role === 'marktondernemer' ?
-                            getBreadcrumbsMarkt(markt, role) :
-                            getBreadcrumbsOndernemer(ondernemer, role);
-        const sollicitatie = ondernemer.sollicitaties.find(soll =>
-            soll.markt.id === markt.id
-        );
+        const breadcrumbs =
+            role === 'marktondernemer' ? getBreadcrumbsMarkt(markt, role) : getBreadcrumbsOndernemer(ondernemer, role);
+        const sollicitatie = ondernemer.sollicitaties.find(soll => soll.markt.id === markt.id);
 
         return (
             <Page messages={messages}>
-                <Header
-                    user={user}
-                    role={role}
-                    breadcrumbs={breadcrumbs}
-                    >
-                    { role === 'marktondernemer' ?
-                        <OndernemerProfileHeader user={ondernemer} /> : null
-                    }
+                <Header user={user} role={role} breadcrumbs={breadcrumbs}>
+                    {role === 'marktondernemer' ? <OndernemerProfileHeader user={ondernemer} /> : null}
                 </Header>
                 <Content>
-                    { role === 'marktmeester' ?
-                        <h2 className="Heading Heading--intro">Ondernemer</h2> : null
-                    }
-                    { role === 'marktmeester' ?
-                        <OndernemerProfileHeader
-                            inline={true}
-                            user={ondernemer}
-                        /> : null
-                    }
-                    { role === 'marktmeester' ?
-                        <SollicitatieSpecs sollicitatie={sollicitatie} /> : null
-                    }
+                    {role === 'marktmeester' ? <h2 className="Heading Heading--intro">Ondernemer</h2> : null}
+                    {role === 'marktmeester' ? <OndernemerProfileHeader inline={true} user={ondernemer} /> : null}
+                    {role === 'marktmeester' ? <SollicitatieSpecs sollicitatie={sollicitatie} /> : null}
                     <AlgemeneVoorkeurenForm
                         branches={branches}
                         markt={this.props.markt}

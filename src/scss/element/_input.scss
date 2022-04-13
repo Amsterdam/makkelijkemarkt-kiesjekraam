@@ -5,9 +5,9 @@ input {
 }
 
 .track-thumb {
-    -webkit-appearance: none; /* Override default look */
+    -webkit-appearance: none;
     appearance: none;
-    cursor: pointer; /* Cursor on hover */
+    cursor: pointer;
     padding: 0;
     background: steelblue;
 }
@@ -22,48 +22,47 @@ input[type="range"] {
 }
 
 input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Override default look */
+    -webkit-appearance: none;
     appearance: none;
-    width: 42px; /* Set a specific slider handle width */
-    height: 42px; /* Slider handle height */
-    background: $primary-black; /* Green background */
-    cursor: pointer; /* Cursor on hover */
+    width: 42px;
+    height: 42px;
+    background: $primary-black;
+    cursor: pointer;
     border-radius: 50%;
-    //margin-top: -18px;
     position: absolute;
     top: -16px;
 }
 
 input[type="range"]::-moz-range-thumb {
-    -webkit-appearance: none; /* Override default look */
+    -webkit-appearance: none;
     appearance: none;
-    width: 42px; /* Set a specific slider handle width */
-    height: 42px; /* Slider handle height */
-    background: $primary-black; /* Green background */
-    cursor: pointer; /* Cursor on hover */
+    width: 42px;
+    height: 42px;
+    background: $primary-black;
+    cursor: pointer;
     border-radius: 50%;
     position: absolute;
     top: -16px;
 }
 
 input[type="range"]::-moz-range-track {
-    -webkit-appearance: none; /* Override default look */
+    -webkit-appearance: none;
     appearance: none;
     width: 100%;
     height: 10px;
     background-color: $neutral-grey2;
-    cursor: pointer; /* Cursor on hover */
+    cursor: pointer;
     margin: 16px 0;
     border-radius: 5px;
     position: relative;
 }
 input[type="range"]::-webkit-slider-runnable-track {
-    -webkit-appearance: none; /* Override default look */
+    -webkit-appearance: none;
     appearance: none;
     width: 100%;
     height: 10px;
     background-color: $neutral-grey2;
-    cursor: pointer; /* Cursor on hover */
+    cursor: pointer;
     margin: 16px 0;
     border-radius: 5px;
     position: relative;
@@ -80,12 +79,12 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 
 ::-ms-thumb {
-    -webkit-appearance: none; /* Override default look */
+    -webkit-appearance: none;
     appearance: none;
-    width: 36px; /* Set a specific slider handle width */
-    height: 36px; /* Slider handle height */
-    background: $primary-black; /* Green background */
-    cursor: pointer; /* Cursor on hover */
+    width: 36px;
+    height: 36px;
+    background: $primary-black;
+    cursor: pointer;
     border-radius: 50%;
     margin: 4px;
 }

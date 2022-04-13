@@ -1,10 +1,15 @@
-const { arrayToObject } = require('../util.ts');
+import PropTypes from 'prop-types';
+import React from 'react';
+const {
+    ondernemersToLocatieKeyValue,
+    obstakelsToLocatieKeyValue,
+} = require('../domain-knowledge.js');
+const {
+    arrayToObject,
+} = require('../util.ts');
 const IndelingslijstGroup = require('./components/IndelingslijstGroup');
-const React = require('react');
 const MarktDetailBase = require('./components/MarktDetailBase');
 const PrintPage = require('./components/PrintPage');
-const PropTypes = require('prop-types');
-const { ondernemersToLocatieKeyValue, obstakelsToLocatieKeyValue } = require('../domain-knowledge.js');
 const Street = require('./components/Street');
 
 class VastplaatshoudersPage extends React.Component {
@@ -12,11 +17,10 @@ class VastplaatshoudersPage extends React.Component {
         data: PropTypes.object.isRequired,
         datum: PropTypes.string,
         type: PropTypes.string,
-        user: PropTypes.object,
     };
 
     render() {
-        const { datum, type, user } = this.props;
+        const { datum, type } = this.props;
         const {
             aanmeldingen,
             branches,

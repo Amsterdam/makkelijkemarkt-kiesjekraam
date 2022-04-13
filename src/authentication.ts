@@ -1,8 +1,9 @@
 import Keycloak from 'keycloak-connect';
-import { RedisClient } from './redis-client';
+import {
+    RedisClient,
+} from './redis-client';
 import session from 'express-session';
-
-const RedisStore = require("connect-redis")(session);
+const RedisStore = require('connect-redis')(session);
 
 const redisClient = new RedisClient().getClient();
 

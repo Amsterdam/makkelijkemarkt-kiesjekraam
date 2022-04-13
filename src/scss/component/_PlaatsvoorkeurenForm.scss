@@ -3,11 +3,8 @@
     &__list {
         display: flex;
         flex-direction: column;
-        // margin-bottom: $gutter;
-        // flex-direction: column-reverse;
     }
     &__list-item {
-        //display: flex;
         flex-wrap: wrap;
         margin-bottom: $vm4;
         .well {
@@ -297,13 +294,6 @@
         display: flex;
         align-items: center;
         margin-bottom: 10px;
-        //&:after {
-        //    content: "en";
-        //    display: inline-block;
-        //    width: 50px;
-        //    text-align: center;
-        //}
-
         &:nth-last-child(2):after {
             display: none;
         }

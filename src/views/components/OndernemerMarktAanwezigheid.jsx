@@ -1,6 +1,5 @@
-const Button = require('./Button');
-const PropTypes = require('prop-types');
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
 const { formatDayOfWeek, formatDate, relativeHumanDay, endOfWeek, today } = require('../../util.ts');
 const HeaderTitleButton = require('./HeaderTitleButton');
 const Alert = require('./Alert');
@@ -16,8 +15,8 @@ const OndernemerMarktAanwezigheid = ({ rsvpEntries, sollicitatie, disabled, mark
                     {relativeHumanDay(date) ? (
                         <strong>{relativeHumanDay(date)}</strong>
                     ) : (
-                            <span>{formatDayOfWeek(date)}</span>
-                        )}
+                        <span>{formatDayOfWeek(date)}</span>
+                    )}
                 </span>,
                 formatDate(date),
                 <strong key={attending ? `aangemeld` : `afgemeld`} className="OndernemerMarktAanwezigheid__attending">
@@ -34,15 +33,16 @@ const OndernemerMarktAanwezigheid = ({ rsvpEntries, sollicitatie, disabled, mark
 
     const renderInner = () => {
         return (
-            <div className={'well' + (disabled ? ' well--disabled' : '' )}>
-                { disabled ? (
+            <div className={'well' + (disabled ? ' well--disabled' : '')}>
+                {disabled ? (
                     <Alert type="error" inline={true}>
                         <span>
-                        U hebt uw <strong>koopwaar</strong> nog niet doorgegeven in het {' '}
-                            <a href={`/algemene-voorkeuren/${markt.id}/`}>marktprofiel</a>, daarom kunt u zich niet aanmelden voor deze markt.
+                            U hebt uw <strong>koopwaar</strong> nog niet doorgegeven in het{' '}
+                            <a href={`/algemene-voorkeuren/${markt.id}/`}>marktprofiel</a>, daarom kunt u zich niet
+                            aanmelden voor deze markt.
                         </span>
                     </Alert>
-                ) : null }
+                ) : null}
                 <span>Op welke dagen staat er iemand (vergunninghouder of vervanger) in de kraam?</span>
                 {weekAanmeldingen.map((week, i) => (
                     <div key={i}>
@@ -53,8 +53,9 @@ const OndernemerMarktAanwezigheid = ({ rsvpEntries, sollicitatie, disabled, mark
                             {week.map(day => (
                                 <li
                                     key={day[1]}
-                                    className={`OndernemerMarktAanwezigheid__list-item OndernemerMarktAanwezigheid__list-item--${day[3] ? 'attending' : 'not-attending'
-                                        } ${day[4] ? `OndernemerMarktAanwezigheid__list-item--today` : ``}`}
+                                    className={`OndernemerMarktAanwezigheid__list-item OndernemerMarktAanwezigheid__list-item--${
+                                        day[3] ? 'attending' : 'not-attending'
+                                    } ${day[4] ? `OndernemerMarktAanwezigheid__list-item--today` : ``}`}
                                 >
                                     <span className="OndernemerMarktAanwezigheid__list-item-wrapper">
                                         <span className="OndernemerMarktAanwezigheid__week-day">{day[0]}</span>
@@ -74,18 +75,18 @@ const OndernemerMarktAanwezigheid = ({ rsvpEntries, sollicitatie, disabled, mark
 
     return (
         <div className="OndernemerMarktAanwezigheid background-link-parent" id="aanwezigheid">
-            { disabled ? (
+            {disabled ? (
                 <div className="box">
                     <HeaderTitleButton title="Aanwezigheid" buttonDisabled={true} />
-                    { renderInner(true) }
+                    {renderInner(true)}
                 </div>
             ) : (
                 <a href={blockUrl} className="background-link">
                     <HeaderTitleButton title="Aanwezigheid" url={blockUrl} />
-                    { renderInner(false)}
+                    {renderInner(false)}
                 </a>
             )}
-        </div >
+        </div>
     );
 };
 

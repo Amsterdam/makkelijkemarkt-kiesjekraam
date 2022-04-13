@@ -1,5 +1,5 @@
-const redis = require('redis');
-const util = require('util');
+import redis from 'redis';
+import util from 'util';
 
 export class RedisClient {
     client: any;
@@ -15,7 +15,7 @@ export class RedisClient {
         this.client = redis.createClient({
             legacyMode: true,
             url: `redis://:${redisPassword}@${redisHost}:${redisPort}`,
-            retry_strategy: function(options) {
+            retry_strategy: function (options) {
                 if (options.error && (options.error.code === 'ECONNREFUSED' || options.error.code === 'NR_CLOSED')) {
                     // Try reconnecting after 5 seconds
                     return 5000;
@@ -27,18 +27,18 @@ export class RedisClient {
 
         this.client.connect().catch(console.error);
 
-        this.client.on('connect', function() {
+        this.client.on('connect', function () {
             console.log('Connected to Redis');
             connected = true;
         });
-        this.client.on('error', function(err) {
+        this.client.on('error', function (err) {
             console.log('Redis error: ' + err);
         });
-        this.client.on('reconnecting', function() {
+        this.client.on('reconnecting', function () {
             console.log('Redis try reconnecting..');
         });
 
-        this.client.on('end', function() {
+        this.client.on('end', function () {
             // we had a redis connection
             // but redis is down now
             // exit the server, docker will restart the container

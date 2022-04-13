@@ -1,6 +1,5 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const moment = require('moment-timezone');
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const MarktDetailBase = require('./components/MarktDetailBase');
 const AlertLine = require('./components/AlertLine');

@@ -1,11 +1,14 @@
-const React = require('react');
+import {
+    Cog,
+    TriangleSmallDown
+} from './components/svg';
+import PropTypes from 'prop-types';
+import PullDownMenu from './components/PullDownMenu';
+import React from 'react';
 const Page = require('./components/Page.jsx');
-const PropTypes = require('prop-types');
 const Header = require('./components/Header');
 const Content = require('./components/Content');
 const MarktList = require('./components/MarktList');
-import PullDownMenu from './components/PullDownMenu';
-import { Cog, TriangleSmallDown } from './components/svg';
 
 class MarktenPage extends React.Component {
     propTypes = {

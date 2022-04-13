@@ -1,11 +1,13 @@
+import PropTypes from 'prop-types';
+import React from 'react';
 const Content = require('./components/Content');
 const Header = require('./components/Header');
 const Page = require('./components/Page.jsx');
-const PropTypes = require('prop-types');
-const React = require('react');
 const OndernemerProfileHeader = require('./components/OndernemerProfileHeader');
 const moment = require('moment');
-const { getBreadcrumbsOndernemer } = require('../util');
+const {
+    getBreadcrumbsOndernemer,
+} = require('../util');
 
 class ToewijzingenAfwijzingenPage extends React.Component {
     propTypes = {
@@ -15,7 +17,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
         role: PropTypes.string,
         markten: PropTypes.array,
         messages: PropTypes.array,
-        user: PropTypes.object.isRequired
+        user: PropTypes.object.isRequired,
     };
 
     render() {
@@ -33,12 +35,10 @@ class ToewijzingenAfwijzingenPage extends React.Component {
 
         let toewijzingenAfwijzingen = [...toewijzingen, ...afwijzingen];
 
-        // Sort by date
-        toewijzingenAfwijzingen = toewijzingenAfwijzingen.sort( (a, b) =>
-            new Date(b.marktDate).getTime()- new Date(a.marktDate).getTime()
+        toewijzingenAfwijzingen = toewijzingenAfwijzingen.sort(
+            (a, b) => new Date(b.marktDate).getTime() - new Date(a.marktDate).getTime(),
         );
 
-        // Take only the first 14 records
         toewijzingenAfwijzingen = toewijzingenAfwijzingen.slice(0, 13);
 
         function isVph(ondernemerObj, marktId) {
@@ -56,17 +56,11 @@ class ToewijzingenAfwijzingenPage extends React.Component {
         return (
             <Page messages={this.props.messages}>
                 <Header user={user} breadcrumbs={breadcrumbs} role={role}>
-                    { role === 'marktondernemer' ?
-                        <OndernemerProfileHeader user={ondernemer}  /> : null
-                    }
+                    {role === 'marktondernemer' ? <OndernemerProfileHeader user={ondernemer} /> : null}
                 </Header>
                 <Content>
-                    { role === 'marktmeester' ?
-                        <h2 className="Heading Heading--intro">Ondernemer</h2> : null
-                    }
-                    { role === 'marktmeester' ?
-                        <OndernemerProfileHeader inline={true} user={ondernemer} /> : null
-                    }
+                    {role === 'marktmeester' ? <h2 className="Heading Heading--intro">Ondernemer</h2> : null}
+                    {role === 'marktmeester' ? <OndernemerProfileHeader inline={true} user={ondernemer} /> : null}
                     <h1 className="Heading Heading--intro">Toewijzingen/afwijzingen</h1>
                     <div className="Table Table__responsive Table--toewijzingen-afwijzingen">
                         <table className="Table__table">
@@ -82,35 +76,41 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                 <th>Branche</th>
                             </tr>
                             <tbody>
-                            {toewijzingenAfwijzingen.map((item, index) => (
-                                <tr key={index}>
-                                    <td>{ moment(item.marktDate).format('DD-MM') }</td>
-                                    <td>{ getMarktAfkorting(item.marktId) }</td>
-                                    <td>{ item.type }</td>
-                                    <td>{ item.minimum ?
-                                        <span>{ item.minimum }, { item.maximum - item.minimum } </span>:
-                                        null }
-                                    </td>
-                                    <td>{ item.anywhere !== null ?
-                                        !isVph(ondernemer, item.marktId) ?
-                                        item.anywhere === true ? 'AAN' : 'UIT' :
-                                        '-' :
-                                        null }
-                                    </td>
-                                    <td>{ item.bak !== null ?
-                                        item.bak === true ? 'AAN' : 'UIT' :
-                                        null }
-                                    </td>
-                                    <td>{ item.eigenMaterieel !== null ?
-                                        item.eigenMaterieel === true ? 'AAN' : 'UIT' :
-                                        null }
-                                    </td>
-                                    <td>
-                                        { item.plaatsvoorkeuren !== null ? item.plaatsvoorkeuren.join(',') : null }
-                                    </td>
-                                    <td>{ item.brancheId }</td>
-                                </tr>
-                            ))}
+                                {toewijzingenAfwijzingen.map((item, index) => (
+                                    <tr key={index}>
+                                        <td>{moment(item.marktDate).format('DD-MM')}</td>
+                                        <td>{getMarktAfkorting(item.marktId)}</td>
+                                        <td>{item.type}</td>
+                                        <td>
+                                            {item.minimum ? (
+                                                <span>
+                                                    {item.minimum}, {item.maximum - item.minimum}{' '}
+                                                </span>
+                                            ) : null}
+                                        </td>
+                                        <td>
+                                            {item.anywhere !== null
+                                                ? !isVph(ondernemer, item.marktId)
+                                                    ? item.anywhere === true
+                                                        ? 'AAN'
+                                                        : 'UIT'
+                                                    : '-'
+                                                : null}
+                                        </td>
+                                        <td>{item.bak !== null ? (item.bak === true ? 'AAN' : 'UIT') : null}</td>
+                                        <td>
+                                            {item.eigenMaterieel !== null
+                                                ? item.eigenMaterieel === true
+                                                    ? 'AAN'
+                                                    : 'UIT'
+                                                : null}
+                                        </td>
+                                        <td>
+                                            {item.plaatsvoorkeuren !== null ? item.plaatsvoorkeuren.join(',') : null}
+                                        </td>
+                                        <td>{item.brancheId}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

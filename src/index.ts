@@ -1,40 +1,84 @@
 import * as reactViews from 'express-react-views';
-import express, { NextFunction, Request, RequestHandler, Response } from 'express';
-import { internalServerErrorPage, isAbsoluteUrl } from './express-util';
+import {
+    afmeldingenVasteplaatshoudersPage,
+    alleOndernemersAanwezigheidLijst,
+    ondernemersNietIngedeeldPage,
+    sollicitantentAanwezigheidLijst,
+    vasteplaatshoudersPage,
+    voorrangslijstPage,
+} from './routes/markt-marktmeester';
+import {
+    attendancePage,
+    handleAttendanceUpdate,
+} from './routes/market-application';
+import {
+    conceptIndelingPage,
+    indelingErrorStacktracePage,
+    indelingInputJobPage,
+    indelingLogsPage,
+    indelingPage,
+    indelingWaitingPage,
+} from './routes/market-allocation';
+import express, {
+    NextFunction,
+    Request,
+    RequestHandler,
+    Response,
+} from 'express';
+import {
+    getMarkt,
+    getMarkten,
+} from './makkelijkemarkt-api';
+import {
+    GrantedRequest,
+    TokenContent,
+} from 'keycloak-connect';
+import {
+    internalServerErrorPage,
+    isAbsoluteUrl,
+} from './express-util';
+import {
+    keycloak,
+    Roles,
+    sessionMiddleware,
+} from './authentication';
+import {
+    keycloakHealth,
+    makkelijkeMarktHealth,
+    serverHealth,
+    serverTime,
+} from './routes/status';
+import {
+    langdurigAfgemeld,
+    marktDetail,
+} from './routes/markt';
+import {
+    marketPreferencesPage,
+    updateMarketPreferences,
+} from './routes/market-preferences';
+import {
+    plaatsvoorkeurenPage,
+    updatePlaatsvoorkeuren,
+} from './routes/market-location';
+import {
+    publicProfilePage,
+    toewijzingenAfwijzingenPage,
+} from './routes/ondernemer';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
+import {
+    dashboardPage,
+} from './routes/dashboard';
+import {
+    getKeycloakUser,
+} from './keycloak-api';
+import mmApiDispatch from './routes/mmApiDispatch';
 import morgan from 'morgan';
 import path from 'path';
-import { requireEnv } from './util';
-import { GrantedRequest, TokenContent } from 'keycloak-connect';
-import { getKeycloakUser } from './keycloak-api';
-import { Roles, keycloak, sessionMiddleware } from './authentication';
-import { getMarkt, getMarkten } from './makkelijkemarkt-api';
-import { serverHealth, serverTime, keycloakHealth, makkelijkeMarktHealth } from './routes/status';
-import { attendancePage, handleAttendanceUpdate } from './routes/market-application';
-import { marketPreferencesPage, updateMarketPreferences } from './routes/market-preferences';
-import { dashboardPage } from './routes/dashboard';
-import { plaatsvoorkeurenPage, updatePlaatsvoorkeuren } from './routes/market-location';
-import { publicProfilePage, toewijzingenAfwijzingenPage } from './routes/ondernemer';
-import { langdurigAfgemeld, marktDetail } from './routes/markt';
 import {
-    vasteplaatshoudersPage,
-    voorrangslijstPage,
-    ondernemersNietIngedeeldPage,
-    afmeldingenVasteplaatshoudersPage,
-    sollicitantentAanwezigheidLijst,
-    alleOndernemersAanwezigheidLijst,
-} from './routes/markt-marktmeester';
-import {
-    conceptIndelingPage,
-    indelingPage,
-    indelingWaitingPage,
-    indelingLogsPage,
-    indelingInputJobPage,
-    indelingErrorStacktracePage,
-} from './routes/market-allocation';
-import mmApiDispatch from './routes/mmApiDispatch';
+    requireEnv,
+} from './util';
 
 const csrfProtection = csrf({ cookie: true });
 
@@ -44,7 +88,7 @@ const HTTP_DEFAULT_PORT = 8080;
 
 const isMarktondernemer = (req: GrantedRequest) => {
     const accessToken = req.kauth.grant.access_token.content;
-    console.log(accessToken.resource_access)
+    console.log(accessToken.resource_access);
     return (
         !!accessToken.resource_access[process.env.IAM_CLIENT_ID] &&
         accessToken.resource_access[process.env.IAM_CLIENT_ID].roles.includes(Roles.MARKTONDERNEMER)
@@ -79,7 +123,6 @@ app.engine('tsx', templateEngine);
 
 app.use(morgan(':date[iso] :method :status :url :response-time ms'));
 
-// The `/status/health` endpoint is required for Docker deployments
 app.get('/status/health', serverHealth);
 app.get('/status/time', serverTime);
 app.get('/status/keycloak', keycloakHealth);

@@ -2,17 +2,17 @@
 import * as React from 'react';
 import EmailBase from '../EmailBase.jsx';
 import EmailContent from '../EmailContent.jsx';
+import {
+    IMarktondernemer,
+} from '../../../model/markt.model';
 
-import { IMarktondernemer } from '../../../markt.model';
-
-export type EmailIndelingProps = {
+type EmailIndelingProps = {
     ondernemer: IMarktondernemer;
     subject: string;
     telefoonnummer: string;
 };
 
 export class EmailWenperiode extends React.Component<EmailIndelingProps> {
-
     public render() {
         const { ondernemer, subject, telefoonnummer } = this.props;
 
@@ -23,8 +23,8 @@ export class EmailWenperiode extends React.Component<EmailIndelingProps> {
                 <EmailContent>
                     <p>Beste {ondernemer.description},</p>
                     <p>
-                        Dit is een testmail tijdens de wenperiode van digitaal indelen. U ontvangt deze e-mail omdat
-                        u zich digitaal heeft aangemeld.
+                        Dit is een testmail tijdens de wenperiode van digitaal indelen. U ontvangt deze e-mail omdat u
+                        zich digitaal heeft aangemeld.
                     </p>
                     <p>In de toekomst ontvangt u in deze mail uw (toegewezen) plaatsnummers.</p>
                     <p>
@@ -35,12 +35,17 @@ export class EmailWenperiode extends React.Component<EmailIndelingProps> {
                     <p>
                         <strong>Meer informatie?</strong>
                         <br />
-                        Op deze <a href={infoLink} target="_blank">website</a> kunt u veel informatie vinden over digitaal indelen.
-                        Wij raden u aan dit te lezen als u wilt weten hoe het precies werkt.
+                        Op deze{' '}
+                        <a href={infoLink} target="_blank">
+                            website
+                        </a>{' '}
+                        kunt u veel informatie vinden over digitaal indelen. Wij raden u aan dit te lezen als u wilt
+                        weten hoe het precies werkt.
                     </p>
                     <p>
                         Hebt u daarna nog vragen? Stuur ons dan een e-mail via{' '}
-                        <a href="mailto: marktbureau@amsterdam.nl">marktbureau@amsterdam.nl</a> of bel ons via {telefoonnummer}.
+                        <a href="mailto: marktbureau@amsterdam.nl">marktbureau@amsterdam.nl</a> of bel ons via{' '}
+                        {telefoonnummer}.
                     </p>
                     <p>
                         Met vriendelijke groet,
@@ -52,5 +57,3 @@ export class EmailWenperiode extends React.Component<EmailIndelingProps> {
         );
     }
 }
-
-export default EmailWenperiode;
