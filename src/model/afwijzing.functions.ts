@@ -1,12 +1,21 @@
-import { IMarkt, IAfwijzing } from 'markt.model';
-import { Afwijzing } from '../model/afwijzing.model';
-import { afwijzing } from '../model/index';
-import {
-    BRANCHE_FULL,
-    ADJACENT_UNAVAILABLE,
-    MINIMUM_UNAVAILABLE,
-    MARKET_FULL
-} from '../allocation/afwijzing';
+import { IMarkt, IAfwijzing, IAfwijzingReason } from 'markt.model';
+
+const BRANCHE_FULL: IAfwijzingReason = {
+    code: 1,
+    message: 'Alle marktplaatsen voor deze branche zijn reeds ingedeeld.'
+};
+const ADJACENT_UNAVAILABLE: IAfwijzingReason = {
+    code: 2,
+    message: 'Geen geschikte locatie gevonden met huidige voorkeuren.'
+};
+const MINIMUM_UNAVAILABLE: IAfwijzingReason = {
+    code: 3,
+    message: 'Minimum aantal plaatsen niet beschikbaar.'
+};
+const MARKET_FULL: IAfwijzingReason = {
+    code: 4,
+    message: 'Alle marktplaatsen zijn reeds ingedeeld.'
+};
 
 import {
     getPlaatsvoorkeurenByMarktEnOndernemer,
@@ -56,25 +65,3 @@ export const getAfwijzingEnriched = (afwijzing: IAfwijzing): Promise<IAfwijzing>
         return afwijzing;
     });
 };
-
-export const getAfwijzingen = (marktId: string, marktDate: string): Promise<any[]> =>
-    afwijzing
-        .findAll<Afwijzing>({
-            where: { marktId, marktDate },
-            raw: true,
-        });
-
-export const getAfwijzingenByOndernemer = (erkenningsNummer: string): Promise<any[]> =>
-    afwijzing
-        .findAll<Afwijzing>({
-            where: { erkenningsNummer },
-            raw: true,
-        });
-
-export const getAfwijzingenByOndernemerAndMarkt = (marktId: string, erkenningsNummer: string): Promise<any[]> =>
-    afwijzing
-        .findAll<Afwijzing>({
-            where: { erkenningsNummer, marktId },
-            raw: true,
-        });
-

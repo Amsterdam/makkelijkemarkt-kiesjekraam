@@ -1,15 +1,8 @@
-import { allocation } from './index';
 import { IToewijzing, IMarkt } from 'markt.model';
 import {
     getPlaatsvoorkeurenByMarktEnOndernemer,
     getVoorkeurByMarktEnOndernemer,
 } from '../makkelijkemarkt-api';
-
-import { Allocation } from './allocation.model';
-import { groupAllocationRows } from '../pakjekraam-api';
-
-export const deleteAllocationsByErkenningsnummer = (erkenningsNummer: string) =>
-    allocation.destroy({ where: { erkenningsNummer } });
 
 export const convertToewijzingForDB = (toewijzing: IToewijzing[], markt: IMarkt, marktDate: string) => {
     return {
@@ -37,48 +30,3 @@ export const getToewijzingEnriched = (toewijzing: IToewijzing): Promise<IToewijz
         return toewijzing;
     });
 };
-
-
-const toewijzingenPerDatum = (toewijzingen: IToewijzing[], row: Allocation): IToewijzing[] => {
-    const { marktId, marktDate, erkenningsNummer } = row;
-
-    const existing = toewijzingen.find(toewijzing => toewijzing.marktDate === marktDate);
-
-    const voorkeur: IToewijzing = {
-        ...row,
-        plaatsen: [...(existing ? existing.plaatsen : []), row.plaatsId],
-    };
-
-    if (existing) {
-        return [...toewijzingen.filter(toewijzing => toewijzing.marktDate !== marktDate), voorkeur];
-    } else {
-        return [...toewijzingen, voorkeur];
-    }
-
-};
-
-export const getToewijzingenByMarktAndDate = (marktId: string, marktDate: string): Promise<IToewijzing[]> =>
-    allocation
-    .findAll<Allocation>({
-        where: { marktId, marktDate },
-        raw: true,
-    })
-    .then(toewijzingen => toewijzingen.reduce(groupAllocationRows, []));
-
-export const getToewijzingenByOndernemer = (erkenningsNummer: string): Promise<IToewijzing[]> =>
-    allocation
-    .findAll<Allocation>({
-        where: { erkenningsNummer },
-        raw: true,
-    })
-    .then(toewijzingen => {
-        return toewijzingen.reduce(toewijzingenPerDatum, []);
-    });
-
-export const getToewijzingenByOndernemerEnMarkt = (marktId: string, erkenningsNummer: string): Promise<IToewijzing[]> =>
-    allocation
-    .findAll<Allocation>({
-        where: { marktId, erkenningsNummer },
-        raw: true,
-    })
-    .then(toewijzingen => toewijzingen.reduce(toewijzingenPerDatum, []));

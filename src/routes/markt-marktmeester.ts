@@ -4,7 +4,8 @@ import {
     getOndernemersByMarkt,
     getPlaatsvoorkeurenByMarkt,
     getIndelingVoorkeuren,
-    getAanmeldingenByMarktAndDate
+    getAanmeldingenByMarktAndDate,
+    getToewijzingen
 } from '../makkelijkemarkt-api';
 import {
     getCalculationInput,
@@ -14,13 +15,11 @@ import {
 } from '../pakjekraam-api';
 import { internalServerErrorPage } from '../express-util';
 
-import Indeling from '../allocation/indeling';
-
 import { Roles } from '../authentication';
 import { GrantedRequest } from 'keycloak-connect';
 import { getKeycloakUser } from '../keycloak-api';
+import { IMarktondernemer, IRSVP } from 'markt.model';
 
-import { getToewijzingenByMarktAndDate } from '../model/allocation.functions';
 
 export const vasteplaatshoudersPage = (req: GrantedRequest, res: Response) => {
     const datum = req.params.datum;
@@ -48,6 +47,40 @@ export const sollicitantenPage = (req: Request, res: Response) => {
     );
 };
 
+const isVast = (ondernemer: IMarktondernemer): boolean => {
+    return ondernemer.status === 'vpl' ||
+           ondernemer.status === 'tvpl' ||
+           ondernemer.status === 'tvplz' ||
+           ondernemer.status === 'vkk';
+}
+
+const hasVastePlaatsen = (ondernemer: IMarktondernemer): boolean => {
+    return ondernemer.plaatsen &&
+           ondernemer.plaatsen.length > 0;
+}
+
+export const isAanwezig = (
+    ondernemer: IMarktondernemer,
+    aanmeldingen: IRSVP[],
+    marktDate: Date
+) => {
+    const { absentFrom = null, absentUntil = null } = ondernemer.voorkeur || {};
+    if (
+        absentFrom && absentUntil &&
+        marktDate >= new Date(absentFrom) &&
+        marktDate <= new Date(absentUntil)
+    ) {
+        return false;
+    }
+
+    const rsvp = aanmeldingen.find(({ erkenningsNummer }) =>
+        erkenningsNummer === ondernemer.erkenningsNummer
+    );
+    return isVast(ondernemer) && hasVastePlaatsen(ondernemer) ?
+           !rsvp || !!rsvp.attending || rsvp.attending === null :
+           !!rsvp && !!rsvp.attending;
+}
+
 export const afmeldingenVasteplaatshoudersPage = (req: GrantedRequest, res: Response, next: NextFunction) => {
 
     const datum = req.params.datum;
@@ -58,7 +91,7 @@ export const afmeldingenVasteplaatshoudersPage = (req: GrantedRequest, res: Resp
                 const { ondernemers, aanmeldingen } = data;
                 const vasteplaatshouders = ondernemers.filter(ondernemer => ondernemer.status === 'vpl');
                 const vasteplaatshoudersAfwezig = vasteplaatshouders.filter( ondernemer => {
-                    return !Indeling.isAanwezig(ondernemer, aanmeldingen, new Date(datum));
+                    return !isAanwezig(ondernemer, aanmeldingen, new Date(datum));
                 });
 
                 const role = Roles.MARKTMEESTER;
@@ -133,7 +166,7 @@ export const ondernemersNietIngedeeldPage = (req: GrantedRequest, res: Response,
         getOndernemersByMarkt(marktId),
         getAanmeldingenByMarktAndDate(marktId, datum),
         getMarkt(marktId),
-        getToewijzingenByMarktAndDate(marktId, datum),
+        getToewijzingen(marktId, datum),
         getIndelingVoorkeuren(marktId),
     ]).then(([ondernemers, aanmeldingen, markt, toewijzingen, algemenevoorkeuren]) => {
 
@@ -196,7 +229,7 @@ export const alleSollicitantenPage = (req: GrantedRequest, res: Response, next: 
         getAanmeldingenByMarktAndDate(marktId, datum),
         getPlaatsvoorkeurenByMarkt(marktId),
         getMarkt(marktId),
-        getToewijzingenByMarktAndDate(marktId, datum),
+        getToewijzingen(marktId, datum),
         getIndelingVoorkeuren(marktId),
     ]).then(([ondernemers, aanmeldingen, plaatsvoorkeuren, markt, toewijzingen, algemenevoorkeuren]) => {
             const role = Roles.MARKTMEESTER;
@@ -226,7 +259,7 @@ export const sollicitantentAanwezigheidLijst = (req: GrantedRequest, res: Respon
         getAanmeldingenByMarktAndDate(marktId, datum),
         getPlaatsvoorkeurenByMarkt(marktId),
         getMarkt(marktId),
-        getToewijzingenByMarktAndDate(marktId, datum),
+        getToewijzingen(marktId, datum),
         getIndelingVoorkeuren(marktId),
     ]).then(([ondernemers, aanmeldingen, plaatsvoorkeuren, markt, toewijzingen, algemenevoorkeuren]) => {
 
@@ -258,7 +291,7 @@ export const alleOndernemersAanwezigheidLijst = (req: GrantedRequest, res: Respo
         getAanmeldingenByMarktAndDate(marktId, datum),
         getPlaatsvoorkeurenByMarkt(marktId),
         getMarkt(marktId),
-        getToewijzingenByMarktAndDate(marktId, datum),
+        getToewijzingen(marktId, datum),
         getIndelingVoorkeuren(marktId),
     ]).then(([ondernemers, aanmeldingen, plaatsvoorkeuren, markt, toewijzingen, algemenevoorkeuren]) => {
 

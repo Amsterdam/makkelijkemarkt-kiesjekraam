@@ -14,14 +14,6 @@ __MACOSX
 
 # Docker
 .env
-.env-acc
-.env-old
-.env-acc
-.env-prod
-docker-compose.override.yml
-docker-compose-dev.override.yml
-dev-docker-compose.yml
-.ash_history
 
 # Node.js
 .config/

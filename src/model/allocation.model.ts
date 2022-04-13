@@ -1,7 +1,6 @@
-import { Model } from 'sequelize';
 import { IToewijzing } from '../markt.model';
 
-export class Allocation extends Model<IToewijzing, IToewijzing> {
+export class Allocation {
     public id!: number;
     public marktId!: string;
     public marktDate!: string;

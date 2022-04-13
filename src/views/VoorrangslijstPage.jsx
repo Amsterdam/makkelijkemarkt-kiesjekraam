@@ -5,9 +5,29 @@ const PrintPage = require('./components/PrintPage');
 const PropTypes = require('prop-types');
 const { paginate, getBreadcrumbsMarkt } = require('../util');
 const { A_LIJST_DAYS } = require('../domain-knowledge.js');
+const { isAanwezig } = require('routes/markt-marktmeester');
 
-import Indeling from '../allocation/indeling';
-import Ondernemers from '../allocation/ondernemers';
+const compare = (
+    a,
+    b,
+    aLijst,
+) => {
+    const sort1 = Number(aLijst.includes(b)) -
+                  Number(aLijst.includes(a));
+    const sort2 = Math.max(STATUS_PRIORITIES.indexOf(b.status), 0) -
+                  Math.max(STATUS_PRIORITIES.indexOf(a.status), 0);
+    const sort3 = a.sollicitatieNummer - b.sollicitatieNummer;
+
+    return sort1 || sort2 || sort3;
+}
+
+const sort = (
+    ondernemers,
+    aLijst = []
+) => {
+    return [...ondernemers].sort((a, b) => compare(a, b, aLijst));
+}
+
 
 class VoorrangslijstPage extends React.Component {
     propTypes = {
@@ -53,10 +73,10 @@ class VoorrangslijstPage extends React.Component {
                 !toewijzingen.find(({ erkenningsNummer }) => erkenningsNummer === ondernemer.erkenningsNummer),
         );
 
-        ondernemers = Ondernemers.sort(ondernemers, aLijst);
+        ondernemers = sort(ondernemers, aLijst);
         ondernemers = [
-            ...ondernemers.filter(ondernemer => Indeling.isAanwezig(ondernemer, aanmeldingen, datum)),
-            ...ondernemers.filter(ondernemer => !Indeling.isAanwezig(ondernemer, aanmeldingen, datum)),
+            ...ondernemers.filter(ondernemer => isAanwezig(ondernemer, aanmeldingen, datum)),
+            ...ondernemers.filter(ondernemer => isAanwezig(ondernemer, aanmeldingen, datum)),
         ];
         const ondernemersErkenningsNummers = ondernemers.map(ondernemer => ondernemer.erkenningsNummer);
         const ondernemersRest = aLijstErkenningsNummers.filter(nr => !ondernemersErkenningsNummers.includes(nr));
@@ -65,10 +85,10 @@ class VoorrangslijstPage extends React.Component {
             .reduce(
                 (total, ondernemer) => {
                     total[
-                        Indeling.isAanwezig(ondernemer, aanmeldingen, datum) && aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
-                            ? aLijstAangemeld : Indeling.isAanwezig(ondernemer, aanmeldingen, datum) && !aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
-                            ? Aangemeld : !Indeling.isAanwezig(ondernemer, aanmeldingen, datum) && aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
-                            ? aLijstNietAangemeld : !Indeling.isAanwezig(ondernemer, aanmeldingen, datum) && !aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
+                        isAanwezig(ondernemer, aanmeldingen, datum) && aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
+                            ? aLijstAangemeld : isAanwezig(ondernemer, aanmeldingen, datum) && !aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
+                            ? Aangemeld : !isAanwezig(ondernemer, aanmeldingen, datum) && aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
+                            ? aLijstNietAangemeld : !isAanwezig(ondernemer, aanmeldingen, datum) && !aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
                             ? NietAangemeld : NietAangemeld
                     ].push(ondernemer);
                     return total;

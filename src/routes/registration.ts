@@ -1,9 +1,7 @@
 import { stringify } from 'qs';
 import { Router } from 'express';
-import ClientRepresentation from 'keycloak-admin/lib/defs/clientRepresentation';
 
 import {
-    HTTP_PAGE_NOT_FOUND,
     forbiddenErrorPage,
     publicErrors,
     getQueryErrors,

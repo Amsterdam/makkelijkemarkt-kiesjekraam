@@ -1,11 +1,5 @@
 import * as path from 'path';
 
-import {
-    DataTypes,
-    Model,
-    Sequelize,
-} from 'sequelize';
-
 // import * as NodeCache from 'node-cache';
 const NodeCache = require('node-cache');
 
@@ -30,7 +24,7 @@ const marktCache = new NodeCache({
     useClones : false
 });
 
-export class MarktConfig extends Model {
+export class MarktConfig {
     public id!: number;
     public marktAfkorting: string;
     public createdBy: number;
@@ -38,100 +32,12 @@ export class MarktConfig extends Model {
     public title!: string;
     public data!: object;
 
-    public static get(marktAfkorting) {
-        return this._get(marktAfkorting)
-        .then(configModel => {
-            if (!configModel) {
-                throw Error('Markt niet gevonden');
-            }
-
-            const marktplaatsen = configModel.data.locaties;
-            const rows          = configModel.data.markt.rows.map(row =>
-                row.map(plaatsId =>
-                    marktplaatsen.find(plaats => plaats.plaatsId === plaatsId)
-                )
-            );
-            return {
-                marktplaatsen,
-                rows,
-                branches      : configModel.data.branches,
-                obstakels     : configModel.data.geografie.obstakels,
-                paginas       : configModel.data.paginas
-            };
-        });
-    }
-
-    public static getNewestConfigName() {
-        return this.findOne({
-            order: [['createdAt', 'DESC']]
-        })
-        .then(newestConfigModel => {
-            return newestConfigModel ?
-                   newestConfigModel.title :
-                   undefined;
-        });
-    }
-
     public static mergeBranches(allBranches, marktBranches) {
         return this._mergeBranches(allBranches, marktBranches)
     }
 
     public static homogenizeData(data) {
         return this._homogenizeData(data)
-    }
-
-    public static store(configName, marktAfkorting, allBranches, configJSON) {
-        marktCache.flushAll();
-
-        return this._get(marktAfkorting)
-        .then(newestConfigModel => {
-            let marktConfig = {
-                ...configJSON,
-                branches: this._mergeBranches(allBranches, configJSON.branches)
-            };
-            // Hier valideren, omdat `_homogenizeData` aannames doet t.a.v. de
-            // data structuur van het config bestand. Als we dit een onderdeel
-            // van de model validatie zouden maken, dan zijn we te laat.
-            validateMarktConfig(marktConfig);
-            marktConfig = this._homogenizeData(marktConfig);
-
-            if (newestConfigModel) {
-                // Als deze data identiek is aan de meest recente config
-                const currentData = JSON.stringify(newestConfigModel.data);
-                const newData     = JSON.stringify(marktConfig);
-                if (currentData === newData) {
-                    return newestConfigModel;
-                }
-            }
-
-            return this.create({
-                title: configName,
-                marktAfkorting,
-                createdAt: new Date(),
-                data: marktConfig
-            });
-        });
-    }
-
-    private static _get(marktAfkorting) {
-        const cachedConfigModel = marktCache.get(marktAfkorting);
-
-        if (cachedConfigModel) {
-            // Update cached item's TTL.
-            marktCache.ttl(marktAfkorting);
-            return Promise.resolve(cachedConfigModel);
-        } else {
-            return this.findOne({
-                where: { marktAfkorting },
-                order: [['createdAt', 'DESC']]
-            })
-            .then(configModel => {
-                if (configModel) {
-                    marktCache.set(marktAfkorting, configModel);
-                }
-                return configModel;
-            });
-        }
     }
 
     // Het kan nl zo zijn dat dit exact dezelfde config data is, maar dat enkel
@@ -194,54 +100,6 @@ export class MarktConfig extends Model {
     }
 }
 
-export const initMarktConfig = (sequelize: Sequelize) => {
-    MarktConfig.init({
-        id: {
-            primaryKey: true,
-            type: DataTypes.INTEGER,
-            autoIncrement: true
-        },
-        marktAfkorting: {
-            type: DataTypes.STRING(255),
-            allowNull: true
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false
-        },
-        createdBy: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-        title: {
-            type: DataTypes.STRING(255),
-            allowNull: true
-        },
-        type: {
-            type: DataTypes.STRING(32),
-            allowNull: false,
-            defaultValue: 'all'
-        },
-        data: {
-            type: DataTypes.JSON,
-            allowNull: false
-        }
-    }, {
-        sequelize,
-        freezeTableName: true,
-        modelName: 'marktconfig',
-        tableName: 'marktconfig',
-        timestamps: false,
-
-        indexes: [{
-            name: 'marktAfkorting',
-            fields: ['marktAfkorting', 'createdAt']
-        }],
-    });
-
-    return MarktConfig;
-};
 
 export const validateMarktConfig = (configData) => {
     const index = {

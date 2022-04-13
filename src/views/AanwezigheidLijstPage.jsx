@@ -4,8 +4,7 @@ const OndernemerList = require('./components/OndernemerList.tsx');
 const PrintPage = require('./components/PrintPage');
 const PropTypes = require('prop-types');
 const { paginate, getBreadcrumbsMarkt } = require('../util');
-
-import Indeling from '../allocation/indeling';
+const { isAanwezig } = require('../routes/markt-marktmeester');
 
 class template extends React.Component {
     propTypes = {
@@ -36,8 +35,8 @@ class template extends React.Component {
         } = this.props;
 
         let groups = [
-            ondernemers.filter(ondernemer => Indeling.isAanwezig(ondernemer, aanmeldingen, datum)),
-            ondernemers.filter(ondernemer => !Indeling.isAanwezig(ondernemer, aanmeldingen, datum))
+            ondernemers.filter(ondernemer => isAanwezig(ondernemer, aanmeldingen, datum)),
+            ondernemers.filter(ondernemer => !isAanwezig(ondernemer, aanmeldingen, datum))
         ];
         groups = groups.map(group => paginate(paginate(group, 40), 2));
 

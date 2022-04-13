@@ -178,7 +178,6 @@ export const zipMarket = (marketDayId: string) => {
 export const uploadMarket = async (marketDayId: string) => {
   let success: string[] = []
   let errors: string[] = []
-  // TODO: clear localStorage
   const _branchesFromStorage: string | null = localStorage.getItem(`bwdm_cache_${marketDayId}_branches`)
   const _geographyFromStorage: string | null = localStorage.getItem(`bwdm_cache_${marketDayId}_geography`)
   const _lotsFromStorage: string | null = localStorage.getItem(`bwdm_cache_${marketDayId}_lots`)

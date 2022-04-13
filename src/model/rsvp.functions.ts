@@ -17,7 +17,7 @@ const {
 
 export const groupAanmeldingenPerMarktPerWeek = (
     markten: MMMarkt[],
-    sollicitaties: { [marktId: number]: MMSollicitatie },
+    sollicitaties: { [marktId: string]: MMSollicitatie },
     aanmeldingen: IRSVP[],
     thresholdDate: Date
 ): object[] => {

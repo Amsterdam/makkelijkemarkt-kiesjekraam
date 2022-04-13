@@ -1,5 +1,3 @@
-import { MMMarkt } from './makkelijkemarkt.model';
-
 export type PlaatsId = string;
 
 export type ErkenningsNummer = string;
@@ -73,10 +71,6 @@ export interface IRSVP {
     attending: boolean;
 }
 
-export interface IMarktdeelnemer {}
-
-// TODO: Implement 'standwerker' en 'promoplek' als `IMarktdeelnemer`
-
 export interface IMarktondernemerVoorkeur {
     erkenningsNummer: string;
     marktId?: string;
@@ -108,7 +102,7 @@ export interface IMarktondernemerVoorkeurRow {
     inrichting?: string;
 }
 
-export interface IMarktondernemer extends IMarktdeelnemer {
+export interface IMarktondernemer {
     description: string;
     erkenningsNummer: ErkenningsNummer;
     sollicitatieNummer: number;

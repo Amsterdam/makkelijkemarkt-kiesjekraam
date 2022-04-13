@@ -3,6 +3,7 @@
 *.tmp
 .DS_Store
 .env
+.example.env
 .npm/
 .npmrc
 .vscode/

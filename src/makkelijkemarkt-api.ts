@@ -21,17 +21,15 @@ import {
     IPlaatsvoorkeur,
     IMarktondernemerVoorkeur,
     IMarktondernemerVoorkeurRow,
+    IToewijzing,
+    IAfwijzing,
 } from './markt.model';
-
-import { session } from './model/index';
-import { upsert } from './sequelize-util';
 
 import { A_LIJST_DAYS, formatOndernemerName } from './domain-knowledge';
 
 import { indelingVoorkeurMerge, indelingVoorkeurSort } from './pakjekraam-api';
 import { IBrancheInput, IMarktConfiguratieInput, IObstakelInput, IPlaatsEigenschapInput } from './markt.model';
-
-import { MarktConfig, validateMarktConfig } from '../src/model/marktconfig';
+import { MarktConfig, validateMarktConfig } from './model/marktconfig';
 
 const packageJSON = require('../package.json');
 
@@ -112,18 +110,7 @@ const apiBase = (
     const retry = (api: any) => {
         return login(api)
             .then((res: any) => {
-                return upsert(
-                    session,
-                    {
-                        sid: mmConfig.sessionKey,
-                    },
-                    {
-                        sess: { token: res.data.uuid },
-                    },
-                ).then(() => res.data.uuid);
-            })
-            .then((token: string) => {
-                return httpFunction(url, token, requestBody);
+                return httpFunction(url, res.data.uuid, requestBody);
             });
     };
 
@@ -155,9 +142,7 @@ const apiBase = (
         },
     );
 
-    return session.findByPk(mmConfig.sessionKey).then((sessionRecord: any) => {
-        return sessionRecord ? httpFunction(url, sessionRecord.dataValues.sess.token, requestBody) : retry(api);
-    });
+    return retry(api);
 };
 
 export const updateRsvp = (
@@ -171,9 +156,6 @@ export const updateRsvp = (
         'post',
         `{"marktDate": "${marktDate}", "attending": ${attending}, "marktId": ${marktId}, "koopmanErkenningsNummer": "${erkenningsNummer}"}`,
     ).then(response => response.data);
-
-//TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
-export const deleteRsvpsByErkenningsnummer = erkenningsNummer => null;
 
 const getAanmeldingen = (url: string): Promise<IRSVP[]> =>
     apiBase(url).then(response => {
@@ -246,12 +228,6 @@ export const getPlaatsvoorkeurenOndernemer = (erkenningsNummer: string): Promise
     apiBase(`plaatsvoorkeur/koopman/${erkenningsNummer}`).then(response =>
         convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray(response.data),
     );
-
-//TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
-export const deletePlaatsvoorkeurenByErkenningsnummer = (erkenningsNummer: string) => null;
-
-export const deletePlaatsvoorkeurenByMarktAndKoopman = (marktId: string, erkenningsNummer: string) =>
-    apiBase(`plaatsvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`, 'delete').then(response => response.data);
 
 export const getPlaatsvoorkeurenByMarkt = (marktId: string): Promise<IPlaatsvoorkeur[]> =>
     apiBase(`plaatsvoorkeur/markt/${marktId}`).then(response =>
@@ -378,9 +354,6 @@ export const getIndelingVoorkeur = (
 export const getIndelingVoorkeuren = (marktId: string, marktDate: string = null): Promise<IMarktondernemerVoorkeur[]> =>
     getVoorkeurenByMarkt(marktId);
 
-//TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
-export const deleteVoorkeurenByErkenningsnummer = (erkenningsNummer: string) => null;
-
 export const convertVoorkeurToVoorkeurRow = (obj: IMarktondernemerVoorkeur): IMarktondernemerVoorkeurRow => {
     if (obj === undefined) {
         return null;
@@ -415,10 +388,6 @@ export const getVoorkeurenByOndernemer = (erkenningsNummer: string): Promise<IMa
 
 export const getMarkt = (marktId: string): Promise<MMMarkt> =>
     apiBase(`markt/${marktId}`).then(response => response.data);
-
-//TODO: deze mag verwijderd worden als de migrate-marktConfig wordt gedecommed
-export const getAllMarkten = (): Promise<MMMarkt[]> =>
-    apiBase('markt/').then(response => response.data)
 
 export const getMarkten = (includeInactive: boolean = false): Promise<MMMarkt[]> =>
     apiBase('markt/').then(({ data: markten = [] }) =>
@@ -519,18 +488,77 @@ export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?
 };
 
 export async function createAllocations(marktId: string, date: string, data: Object): Promise<any> {
-    let url: string = `allocation/${marktId}/${date}`;
+    let url: string = `allocation/markt/${marktId}/date/${date}`;
     let obj: string = JSON.stringify(data);
     return apiBase(url, 'post', obj).then(response => {
         return response;
     });
 }
 
-export async function getAllocations(marktId: string, date: string): Promise<any> {
-    let url: string = `allocation/${marktId}/${date}`;
+export async function getAllocations(marktId: string, date: string): Promise<any[]> {
+    let url: string = `allocation/markt/${marktId}/date/${date}`;
     return apiBase(url, 'get').then(response => {
-        return response;
+        return response.data;
     });
+}
+
+export async function getAllocationsByOndernemerAndMarkt(erkenningsNummer: string, marktId: string): Promise<any[]> {
+    let url: string = `allocation/markt/${marktId}/koopman/${erkenningsNummer}`;
+    return apiBase(url, 'get').then(response => {
+        return response.data;
+    });
+}
+
+export async function getAllocationsByOndernemer(erkenningsNummer: string): Promise<any[]> {
+    let url: string = `allocation/koopman/${erkenningsNummer}`;
+    return apiBase(url, 'get').then(response => {
+        return response.data;
+    });
+}
+
+const removeUnallocatedAllocations = (allocations: any[]): IToewijzing[] => {
+    return  allocations.filter(allocation => (allocation.isAllocated));
+}
+
+const removeAllocatedAllocations = (allocations: any[]): IAfwijzing[] => {
+    return allocations.filter(allocation => !(allocation.isAllocated));
+}
+
+
+export const getToewijzingen = async (marktId: string, marktDate: string): Promise<IToewijzing[]>  => {
+    return getAllocations(marktId, marktDate).then( response => {
+        return removeUnallocatedAllocations(response);
+    })
+}
+
+export const getAfwijzingen = async (marktId: string, marktDate: string): Promise<IAfwijzing[]> => {
+    return getAllocations(marktId, marktDate).then( response => {
+        return removeAllocatedAllocations(response);
+    })
+}
+
+export const getToewijzingenByOndernemerAndMarkt = async (marktId: string, erkenningsNummer: string): Promise<IToewijzing[]> => {
+    return getAllocationsByOndernemerAndMarkt(marktId, erkenningsNummer).then( response => {
+        return removeUnallocatedAllocations(response);
+    })
+}
+
+export const getAfwijzingenByOndernemerAndMarkt = async (marktId: string, erkenningsNummer: string): Promise<IAfwijzing[]> => {
+    return getAllocationsByOndernemerAndMarkt(marktId, erkenningsNummer).then( response => {
+        return removeAllocatedAllocations(response);
+    })
+}
+
+export const getToewijzingenByOndernemer = async (erkenningsNummer: string): Promise<IToewijzing[]> => {
+    return getAllocationsByOndernemer(erkenningsNummer).then( response => {
+        return removeUnallocatedAllocations(response);
+    })
+}
+
+export const getAfwijzingenByOndernemer = async (erkenningsNummer: string): Promise<IAfwijzing[]> => {
+    return getAllocationsByOndernemer(erkenningsNummer).then( response => {
+        return removeAllocatedAllocations(response);
+    })
 }
 
 export const postBranche = async (branche: IBrancheInput) => {
@@ -545,7 +573,7 @@ export const postPlaatseigenschap = async (plaatseigenschap: IPlaatsEigenschapIn
     return callApiGeneric('plaatseigenschap', 'post', JSON.parse(JSON.stringify(plaatseigenschap)));
 };
 
-export const postMarktConfiguratie = async (marktId: number, config: IMarktConfiguratieInput) => {
+export const postMarktConfiguratie = async (marktId: string, config: IMarktConfiguratieInput) => {
     return callApiGeneric(`markt/${marktId}/marktconfiguratie`, 'post', JSON.parse(JSON.stringify(config)));
 };
 

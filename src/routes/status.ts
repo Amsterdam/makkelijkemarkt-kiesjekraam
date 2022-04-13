@@ -1,9 +1,12 @@
-import { Request, Response } from 'express';
-import { sequelize } from '../model/index';
-import { getKeycloakAdmin } from '../keycloak-api';
+import {
+    Request,
+    Response,
+} from 'express';
+
 import { checkLogin } from '../makkelijkemarkt-api';
-import { internalServerErrorPage } from '../express-util';
+import { getKeycloakAdmin } from '../keycloak-api';
 import { getTimezoneTime } from '../util';
+import { internalServerErrorPage } from '../express-util';
 
 // This health check page is required for Docker deployments
 export const serverHealth = (req: Request, res: Response) => {
@@ -13,17 +16,6 @@ export const serverHealth = (req: Request, res: Response) => {
 // This health check page is required for Docker deployments
 export const serverTime = (req: Request, res: Response) => {
     res.end( String(getTimezoneTime()) );
-};
-
-export const databaseHealth = (req: Request, res: Response) => {
-    sequelize
-        .authenticate()
-        .then(() => {
-            res.end('Database OK!');
-        })
-        .catch((err: Error) => {
-            internalServerErrorPage(res)('Unable to connect to the database');
-        });
 };
 
 export const keycloakHealth = (req: Request, res: Response) => {

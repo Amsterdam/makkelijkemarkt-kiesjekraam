@@ -29,7 +29,6 @@ export default class Stand extends Component<{
   }
 
   renderProperties = () => {
-    // Todo: Render ALL properties (how?)
     const { invert, stand } = this.props
     let propertyPosition: { x: number; y: number } = { x: 36, y: 31 }
     if (invert) {

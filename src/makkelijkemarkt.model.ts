@@ -11,13 +11,13 @@ export interface MMSession {
 }
 
 export interface MMMarktRef {
-    id: number;
+    id: string;
     naam: string;
     afkorting: string;
 }
 
 export interface MMMarkt {
-    id: number;
+    id: string;
     afkorting: string;
     naam: string;
     geoArea: any;

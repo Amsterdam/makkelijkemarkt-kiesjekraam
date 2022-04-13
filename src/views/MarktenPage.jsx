@@ -23,9 +23,6 @@ class MarktenPage extends React.Component {
                     <ConfigurationPullDownMenu />
                 </Header>
                 <Content>
-                    {/* <h1 className="Heading Heading--intro">Acties</h1>
-                    <a href="/upload-markten" className="Link">Upload markten</a> */}
-
                     <h1 className="Heading Heading--intro">Markten</h1>
                     <MarktList markten={markten} />
                 </Content>

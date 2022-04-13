@@ -22,8 +22,6 @@ const UitslagTile = ({
     toewijzing,
     afwijzing
 }) => {
-    // TODO: Deze status check is niet compleet!! Dit werkt alleen maar tijdens de
-    //       corona periode waarbij enkel `soll` en `vpl` actief zijn.
     const aangemeld = (aanmelding && aanmelding.attending && sollicitatie.status === '?') ||
         (aanmelding && aanmelding.attending && sollicitatie.status === 'soll') ||
         ((!aanmelding || aanmelding.attending) && sollicitatie.status === 'vpl');

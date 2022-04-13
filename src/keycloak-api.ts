@@ -24,12 +24,6 @@ const authConfig: Credentials = {
 };
 
 export const getKeycloakAdmin = () => {
-    /*
-     * TODO: Use RxJS to return a Observable instead of a Promise and:
-     * - connects on demand
-     * - refreshes the access token
-     * - reconnects when refreshing fails
-     */
     const kcAdminClient = new KeycloakAdminClient(clientConfig);
 
     return kcAdminClient.auth(authConfig).then(() => kcAdminClient);

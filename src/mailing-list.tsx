@@ -10,11 +10,9 @@ import { shareReplay, tap, combineLatest } from 'rxjs/operators';
 import { mail } from './mail.js';
 import { requireEnv, yyyyMmDdtoDDMMYYYY, getTimezoneTime } from './util';
 import { INDELING_DAG_OFFSET } from './domain-knowledge.js';
-import { getToewijzingen } from './pakjekraam-api';
-import { getAfwijzingen } from './model/afwijzing.functions';
 import { retry } from './rxjs-util';
 import { getAllUsers } from './keycloak-api';
-import { checkLogin, getOndernemersByMarkt } from './makkelijkemarkt-api';
+import { checkLogin, getAfwijzingen, getOndernemersByMarkt, getToewijzingen } from './makkelijkemarkt-api';
 import { getMarktenByDate } from './model/markt.functions';
 import { MMMarkt } from 'makkelijkemarkt.model';
 

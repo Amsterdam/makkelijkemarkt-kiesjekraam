@@ -10,13 +10,9 @@ import { MMSollicitatie } from '../makkelijkemarkt.model';
 import {
     getMarkten,
     getOndernemer,
-    deletePlaatsvoorkeurenByErkenningsnummer,
-    deleteVoorkeurenByErkenningsnummer,
-    deleteRsvpsByErkenningsnummer
+    getToewijzingenByOndernemer,
+    getAfwijzingenByOndernemer
 } from '../makkelijkemarkt-api';
-
-import { getToewijzingenByOndernemer } from '../model/allocation.functions';
-import { getAfwijzingenByOndernemer } from '../model/afwijzing.functions';
 
 export const deleteUserPage = ( req: GrantedRequest, res: Response, result: string, error: string, csrfToken: string, role: string) => {
     return res.render('DeleteUserPage', {
@@ -25,29 +21,6 @@ export const deleteUserPage = ( req: GrantedRequest, res: Response, result: stri
         csrfToken,
         role,
         user: getKeycloakUser(req)
-    });
-};
-
-//TODO https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
-export const deleteUser = (req: GrantedRequest, res: Response, erkenningsNummer: string) => {
-    Promise.all([
-        deletePlaatsvoorkeurenByErkenningsnummer(erkenningsNummer),
-        deleteRsvpsByErkenningsnummer(erkenningsNummer),
-        deleteVoorkeurenByErkenningsnummer(erkenningsNummer)
-    ])
-    .then( (result) => {
-        const numberOfRecordsFound = result.reduce((a,b) => a + b, 0);
-        deleteUserPage(
-            req,
-            res,
-            `${numberOfRecordsFound} records mbt registratienummer '${req.body.erkenningsNummer}' verwijderd`,
-            null,
-            req.csrfToken(),
-            Roles.MARKTMEESTER,
-        );
-    })
-    .catch( ( e: string ) => {
-        internalServerErrorPage(res);
     });
 };
 
@@ -102,7 +75,7 @@ export const toewijzingenAfwijzingenPage = (
             return marktIds.includes(afwijzing.marktId);
         });
         toewijzingen = toewijzingen.filter(toewijzing => {
-            return marktIds.includes(parseInt(toewijzing.marktId));
+            return marktIds.includes(toewijzing.marktId);
         });
 
         res.render('ToewijzingenAfwijzingenPage', {

@@ -7,7 +7,6 @@ import {
     updatePlaatsvoorkeur,
     getIndelingVoorkeur,
     updateMarktVoorkeur,
-    deletePlaatsvoorkeurenByMarktAndKoopman,
 } from '../makkelijkemarkt-api';
 
 import {
@@ -18,7 +17,6 @@ const { isExp } = require('../domain-knowledge.js');
 
 import { getQueryErrors, internalServerErrorPage, HTTP_CREATED_SUCCESS } from '../express-util';
 import { IPlaatsvoorkeurRow } from '../markt.model';
-import models from '../model/index';
 import { getKeycloakUser } from '../keycloak-api';
 import { GrantedRequest } from 'keycloak-connect';
 
@@ -89,11 +87,6 @@ const voorkeurenFormDataToObject = (formData: any): IPlaatsvoorkeurRow => ({
 });
 
 export const updatePlaatsvoorkeuren = (req: Request, res: Response, next: NextFunction, marktId: string, erkenningsNummer: string) => {
-    /*
-     * TODO: Form data format validation
-     * TODO: Business logic validation
-     */
-
     const { redirectTo } = req.body;
 
     const ignoreEmptyVoorkeur = (voorkeur: IPlaatsvoorkeurRow) => !!voorkeur.plaatsId;
@@ -113,11 +106,8 @@ export const updatePlaatsvoorkeuren = (req: Request, res: Response, next: NextFu
                 .filter(ignoreEmptyVoorkeur);
 
             return updatePlaatsvoorkeur(voorkeuren);
-        } else {
-            return deletePlaatsvoorkeurenByMarktAndKoopman(marktId, erkenningsNummer);
         }
-
-    };
+    }
 
     const insertAlgVoorkeurFormData = () => {
         console.log('algemene voorkeuren opslaan...');

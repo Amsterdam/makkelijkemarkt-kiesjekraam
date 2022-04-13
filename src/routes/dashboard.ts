@@ -5,15 +5,15 @@ import {
     getMarkten,
     getAanmeldingenByOndernemer,
     getPlaatsvoorkeurenOndernemer,
-    getOndernemer
+    getOndernemer,
+    getToewijzingenByOndernemer,
+    getAfwijzingenByOndernemer
 } from '../makkelijkemarkt-api';
 
 import { internalServerErrorPage, getQueryErrors } from '../express-util';
 
 import { Roles } from '../authentication';
 
-import { getAfwijzingenByOndernemer } from '../model/afwijzing.functions';
-import { getToewijzingenByOndernemer } from '../model/allocation.functions';
 import { GrantedRequest } from 'keycloak-connect';
 import { getKeycloakUser } from '../keycloak-api';
 

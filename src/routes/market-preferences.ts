@@ -70,8 +70,6 @@ export const marketPreferencesPage = (
     role: string,
     csrfToken: string,
 ) => {
-    // TODO: Only allow relative URLs in `next`, to prevent redirection
-    // to 3rd party phishing sites
     const next = req.query.next;
     const query = req.query;
 

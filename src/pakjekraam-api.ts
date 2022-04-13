@@ -3,13 +3,10 @@ import * as fs from 'fs';
 import { numberSort } from './util';
 import { isVast } from './domain-knowledge.js';
 
-import { allocation, log } from './model/index';
-
 import { IMarktondernemer, IMarktondernemerVoorkeur, IMarktondernemerVoorkeurRow, IToewijzing } from './markt.model';
 
 import { Allocation } from './model/allocation.model';
 
-import { MarktConfig } from './model/marktconfig';
 
 import {
     getALijst,
@@ -21,6 +18,7 @@ import {
     getVoorkeurenByMarkt,
     getAllocations,
     getMarktBasics,
+    getToewijzingen,
 } from './makkelijkemarkt-api';
 
 import { ConceptQueue, ALLOCATION_MODE_SCHEDULED } from './concept-queue';
@@ -66,14 +64,6 @@ export const groupAllocationRows = (toewijzingen: IToewijzing[], row: Allocation
         return [...toewijzingen, voorkeur];
     }
 };
-
-export const getToewijzingen = (marktId: string, marktDate: string): Promise<IToewijzing[]> =>
-    allocation
-        .findAll<Allocation>({
-            where: { marktId, marktDate },
-            raw: true,
-        })
-        .then(toewijzingen => toewijzingen.reduce(groupAllocationRows, []));
 
 const indelingVoorkeurPrio = (voorkeur: IMarktondernemerVoorkeur): number =>
     (voorkeur.marktId ? 1 : 0) | (voorkeur.marktDate ? 2 : 0);
@@ -189,7 +179,7 @@ export const getCalculationInput = (marktId: string, marktDate: string) => {
 export const getIndelingslijst = (marktId: string, marktDate: string) => {
     return Promise.all([getMarktDetails(marktId, marktDate), getAllocations(marktId, marktDate)]).then(
         ([marktDetails, tws]) => {
-            let toewijzingen = tws['data'];
+            let toewijzingen = tws;
             return {
                 ...marktDetails,
                 toewijzingen,

@@ -28,10 +28,6 @@ RUN mkdir -p /srv /deploy \
     && chown -R node:node /srv \
     && chown -R node:node /deploy
 
-ADD ./deploy/docker-migrate.sh /deploy/
-
-RUN chown node:node /deploy/docker-migrate.sh && chmod +x /deploy/docker-migrate.sh
-
 WORKDIR /srv/
 
 ADD --chown=node:node ./package.json ./package-lock.json /srv/

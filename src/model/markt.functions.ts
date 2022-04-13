@@ -1,22 +1,20 @@
 import {
-    getMarkt,
-    getMarkten
+    getMarkten,
 } from '../makkelijkemarkt-api';
 
 import {
     MMMarkt,
-    MMOndernemerStandalone
 } from 'makkelijkemarkt.model';
 
 import {
-    DAYS_CLOSED
+    DAYS_CLOSED,
 } from '../domain-knowledge';
 import {
     addDays,
     dateDiffInDays,
     formatDayOfWeekShort,
     getMaDiWoDo,
-    today
+    today,
 } from '../util';
 
 export const getMarktenByDate = (marktDate: string) => {
