@@ -1,3 +1,6 @@
+import {
+    DeelnemerStatus,
+} from '../model/markt.model';
 import PropTypes from 'prop-types';
 import React from 'react';
 const MarktDetailBase = require('./components/MarktDetailBase');
@@ -12,7 +15,15 @@ const {
 } = require('../domain-knowledge.ts');
 const {
     isAanwezig,
-} = require('routes/markt-marktmeester');
+} = require('../routes/markt-marktmeester');
+
+
+
+const STATUS_PRIORITIES = [
+    DeelnemerStatus.SOLLICITANT,
+    DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS,
+    DeelnemerStatus.VASTE_PLAATS
+];
 
 const compare = (a, b, aLijst) => {
     const sort1 = Number(aLijst.includes(b)) - Number(aLijst.includes(a));
