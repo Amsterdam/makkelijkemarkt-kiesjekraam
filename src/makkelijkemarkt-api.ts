@@ -103,11 +103,6 @@ const apiBase = (
     throwError: boolean = false,
 ): Promise<AxiosResponse> => {
 
-    // console.log("API request body:")
-    // console.log(requestBody);
-    // console.log("- - - - - ")
-
-
     const api = getApi();
 
     const httpFunction = createHttpFunction(api, httpMethod);
