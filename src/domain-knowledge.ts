@@ -102,7 +102,7 @@ const isAfterAllocationTime = () => {
 //
 // Dit betekent momenteel: Geef de datum van vandaag, tenzij de indeling
 // voor vandaag al gedraaid heeft. Dit hangt af van `INDELINGSTIJDSTIP`.
-const getMarktThresholdDate = role => {
+export const getMarktThresholdDate = role => {
     // Door `offsetMins` bij de huidige tijd op te tellen, zal `startDate` naar morgen
     // gaan ipv vandaag als de huidige tijd voorbij indelingstijd ligt.
     const offsetMins = role !== 'marktmeester' ? 24 * 60 - indelingstijdstipInMinutes() : 0;
