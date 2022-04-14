@@ -110,6 +110,7 @@ const apiBase = (
     requestBody?,
     throwError = false,
 ): Promise<AxiosResponse> => {
+
     const api = getApi();
 
     const httpFunction = createHttpFunction(api, httpMethod);
@@ -266,8 +267,8 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
     }
 
     marktvoorkeuren.forEach(vk => {
-        const branches = [];
-        let inrichting;
+        let branches = [];
+        let inrichting:string;
 
         if (vk.hasInrichting) {
             inrichting = 'eigen-materieel';
@@ -275,10 +276,6 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
 
         if (vk.branche) {
             branches.push(vk.branche as BrancheId);
-        }
-
-        if (vk.isBak) {
-            branches.push('bak' as BrancheId);
         }
 
         result.push({
@@ -291,8 +288,9 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
             kraaminrichting: inrichting,
             inrichting,
             anywhere: vk.anywhere,
-            branches,
-            verkoopinrichting: inrichting ? [inrichting] : [],
+            bakType: vk.bakType,
+            branches: branches,
+            verkoopinrichting: inrichting ? [inrichting]: [],
         });
 
         if (vk.absentFrom) result[result.length - 1].absentFrom = vk.absentFrom;
@@ -305,15 +303,15 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
 const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
     marktvoorkeur: IMarktondernemerVoorkeur,
 ): MMarktondernemerVoorkeur => {
-    // By nulling the fields 'isBak', 'hasInrichting' and 'branche'
+    // By nulling the fields 'bakType', 'hasInrichting' and 'branche'
     // we let the MM-api know that these fields
     // can be ignored in the update.
 
-    let isBak = null;
+    let bakType = null;
     let branche = null;
     if (marktvoorkeur.branches !== null) {
-        isBak = !!marktvoorkeur.branches.includes('bak');
         branche = marktvoorkeur.branches[0] as BrancheId;
+        bakType = marktvoorkeur.bakType;
     }
 
     let hasInrichting: boolean = null;
@@ -327,9 +325,9 @@ const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
         anywhere: marktvoorkeur.anywhere,
         minimum: marktvoorkeur.minimum,
         maximum: marktvoorkeur.maximum,
-        hasInrichting,
-        isBak,
-        branche,
+        hasInrichting: hasInrichting,
+        bakType: bakType,
+        branche: branche,
     };
 
     if (marktvoorkeur.absentFrom !== undefined) {
@@ -674,8 +672,10 @@ export async function getMarktBasics(marktId: string) {
         // (behalve in de indeling), worden de plaatsen nu simpelweg verwijderd.
         if (geblokkeerdePlaatsen) {
             const blocked = geblokkeerdePlaatsen.replace(/\s+/g, '').split(',');
-            legacyMarktConfig.marktplaatsen = legacyMarktConfig.marktplaatsen.filter(
-                ({ plaatsId }) => !blocked.includes(plaatsId),
+            legacyMarktConfig.marktplaatsen = legacyMarktConfig.marktplaatsen.map(plaats => {
+                    blocked.includes(plaats.plaatsId) ? plaats.inactive = true : null;
+                    return plaats;
+				}
             );
         }
         return {

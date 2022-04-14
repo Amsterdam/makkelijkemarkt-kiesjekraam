@@ -54,14 +54,13 @@ IndelingsLegenda.propTypes = {
 };
 
 const _isRelevantBrancheForLegend = (marktplaatsen, branche) => {
-    const brancheId = branche.brancheId;
-    const relevantForLegend = true;
-
-    if (!relevantForLegend) {
-        return false;
+    const brancheId         = branche.brancheId;
+    if (branche.brancheId === 'bak' || branche.brancheId === 'bak-licht'){
+        return true;
     }
-
-    return !!marktplaatsen.find(({ branches }) => branches && branches.includes(brancheId));
+    return !!marktplaatsen.find(({ branches }) =>
+        branches && branches.includes(brancheId)
+    );
 };
 
 const getAllBranchesForLegend = (allBranches, marktplaatsen) => {

@@ -69,6 +69,7 @@ module.exports = {
                     properties: {
                         plaatsId: { type: 'string', required: true },
                         inactive: { type: 'boolean' },
+                        bakType: { type: 'string' },
                         branches: {
                             type: 'array',
                             items: {
