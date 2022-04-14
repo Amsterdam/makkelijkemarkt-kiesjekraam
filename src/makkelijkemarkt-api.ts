@@ -38,7 +38,7 @@ import {
     MMOndernemer,
     MMOndernemerStandalone,
     MMSollicitatieStandalone,
-} from './makkelijkemarkt.model';
+} from './model/makkelijkemarkt.model';
 import packageJSON = require('../package.json');
 
 const MILLISECONDS_IN_SECOND = 1000;
@@ -547,14 +547,14 @@ export function getAllocations(marktId: string, date: string): Promise<any[]> {
     });
 }
 
-export function getAllocationsByOndernemerAndMarkt(erkenningsNummer: string, marktId: string): Promise<any[]> {
+function getAllocationsByOndernemerAndMarkt(erkenningsNummer: string, marktId: string): Promise<any[]> {
     const url = `allocation/markt/${marktId}/koopman/${erkenningsNummer}`;
     return apiBase(url, 'get').then(response => {
         return response.data;
     });
 }
 
-export function getAllocationsByOndernemer(erkenningsNummer: string): Promise<any[]> {
+function getAllocationsByOndernemer(erkenningsNummer: string): Promise<any[]> {
     const url = `allocation/koopman/${erkenningsNummer}`;
     return apiBase(url, 'get').then(response => {
         return response.data;

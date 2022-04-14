@@ -7,7 +7,7 @@ import {
 } from '../util';
 import { DAYS_CLOSED } from '../domain-knowledge';
 import { getMarkten } from '../makkelijkemarkt-api';
-import { MMMarkt } from 'makkelijkemarkt.model';
+import { MMMarkt } from './model/makkelijkemarkt.model';
 
 export const getMarktenByDate = (marktDate: string) => {
     return getMarkten().then(markten => {

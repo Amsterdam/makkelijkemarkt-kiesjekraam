@@ -5,7 +5,7 @@ import {
 import {
     MMMarkt,
     MMSollicitatie,
-} from '../makkelijkemarkt.model';
+} from './makkelijkemarkt.model';
 import {
     IRSVP,
 } from 'model/markt.model';

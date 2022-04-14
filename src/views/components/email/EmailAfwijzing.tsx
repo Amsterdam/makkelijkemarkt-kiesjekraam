@@ -14,7 +14,7 @@ import {
 } from '../../../model/markt.model';
 import {
     MMMarkt,
-} from 'makkelijkemarkt.model';
+} from '../../../model/makkelijkemarkt.model';
 
 type EmailIndelingProps = {
     ondernemer: IMarktondernemer;

@@ -1,6 +1,6 @@
 import * as path from 'path';
-
 import { readJSON } from '../util';
+import SCHEMAS from './markt-config.model.js';
 
 const CONFIG_DIR = path.resolve(__dirname, '../../config/markt');
 const CONFIG_PROPERTIES = ['locaties', 'markt', 'branches', 'geografie', 'paginas'];
@@ -8,7 +8,6 @@ const INDEX = {
     obstakelTypes: readJSON(`${CONFIG_DIR}/obstakeltypes.json`),
     plaatsEigenschappen: readJSON(`${CONFIG_DIR}/plaatseigenschappen.json`),
 };
-const SCHEMAS = require('../markt-config.model.js');
 
 export class MarktConfig {
     public id!: number;

@@ -16,7 +16,7 @@ import {
 } from 'keycloak-connect';
 import {
     MMSollicitatie,
-} from '../makkelijkemarkt.model';
+} from '../model/makkelijkemarkt.model';
 import {
     Response,
 } from 'express';

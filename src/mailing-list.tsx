@@ -44,7 +44,7 @@ import {
 } from './mail.js';
 import {
     MMMarkt,
-} from 'makkelijkemarkt.model';
+} from './model/makkelijkemarkt.model';
 import {
     retry,
 } from './rxjs-util';

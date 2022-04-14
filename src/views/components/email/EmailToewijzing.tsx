@@ -12,7 +12,7 @@ import EmailContent from '../EmailContent.jsx';
 import EmailTable from '../EmailTable.jsx';
 import {
     MMMarkt,
-} from 'makkelijkemarkt.model';
+} from '../../../model/makkelijkemarkt.model';
 
 type EmailIndelingProps = {
     ondernemer: IMarktondernemer;
