@@ -9,7 +9,7 @@ const {
 const {
     filterRsvpList,
     isExp,
-} = require('../domain-knowledge.js');
+} = require('../domain-knowledge.ts');
 const Page = require('./components/Page.jsx');
 const Header = require('./components/Header');
 const Content = require('./components/Content');

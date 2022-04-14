@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 const HeaderTitleButton = require('./HeaderTitleButton');
-const { isVast } = require('../../domain-knowledge.js');
+const { isVast } = require('../../domain-knowledge.ts');
 
 const OndernemerMarktVoorkeuren = ({ plaatsvoorkeuren, markt, mededelingen, sollicitatie, voorkeur }) => {
     const blockUrl = `../../voorkeuren/${markt.id}/`;

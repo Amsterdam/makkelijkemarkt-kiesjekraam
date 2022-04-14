@@ -9,7 +9,7 @@ const {
 } = require('../util');
 const {
     A_LIJST_DAYS,
-} = require('../domain-knowledge.js');
+} = require('../domain-knowledge.ts');
 const {
     isAanwezig,
 } = require('routes/markt-marktmeester');

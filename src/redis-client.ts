@@ -1,5 +1,5 @@
-import redis from 'redis';
 import util from 'util';
+const redis = require('redis');
 
 export class RedisClient {
     client: any;

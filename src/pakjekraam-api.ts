@@ -18,7 +18,7 @@ import {
 } from './model/markt.model';
 import {
     isVast
-} from './domain-knowledge.js';
+} from './domain-knowledge.ts';
 
 const loadJSON = <T>(path: string, defaultValue: T = null): Promise<T> =>
     new Promise((resolve, reject) => {

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 const ProfilePhoto = require('./ProfilePhoto');
-const { formatOndernemerName } = require('../../domain-knowledge.js');
+const { formatOndernemerName } = require('../../domain-knowledge.ts');
 
 const OndernemerProfileHeader = ({ user, inline }) => {
     return (

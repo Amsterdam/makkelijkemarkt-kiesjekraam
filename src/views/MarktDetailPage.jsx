@@ -18,7 +18,7 @@ const {
     tomorrow,
 } = require('../util.ts');
 
-const { getUpcomingMarktDays, parseMarktDag, A_LIJST_DAYS, isAfterAllocationTime } = require('../domain-knowledge.js');
+const { getUpcomingMarktDays, parseMarktDag, A_LIJST_DAYS, isAfterAllocationTime } = require('../domain-knowledge.ts');
 
 const today = () => toISODate(new Date());
 

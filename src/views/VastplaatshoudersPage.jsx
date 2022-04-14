@@ -3,7 +3,7 @@ import React from 'react';
 const {
     ondernemersToLocatieKeyValue,
     obstakelsToLocatieKeyValue,
-} = require('../domain-knowledge.js');
+} = require('../domain-knowledge.ts');
 const {
     arrayToObject,
 } = require('../util.ts');

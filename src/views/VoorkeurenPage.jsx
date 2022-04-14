@@ -12,7 +12,7 @@ const {
 } = require('../util');
 const {
     INDELINGSTIJDSTIP_TEXT,
-} = require('../domain-knowledge.js');
+} = require('../domain-knowledge.ts');
 
 class VoorkeurenPage extends React.Component {
     propTypes = {

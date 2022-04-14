@@ -31,7 +31,7 @@ import {
 } from '../model/markt.model';
 import {
     isExp,
-} from '../domain-knowledge.js';
+} from '../domain-knowledge.ts';
 
 export const plaatsvoorkeurenPage = (
     req: GrantedRequest,

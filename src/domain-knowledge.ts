@@ -48,7 +48,7 @@ const isoMarktDagen = {
 
 const DAYS_CLOSED = (function() {
     try {
-        const data = fs.readFileSync(`${__dirname}/../config/markt/daysClosed.json`);
+        const data = fs.readFileSync(`${__dirname}/../config/markt/daysClosed.json`, 'utf8');
         return data ? JSON.parse(data) : [];
     } catch (e) {
         console.error(`Could not read JSON file: config/markt/daysClosed.json`);
@@ -63,13 +63,13 @@ const INDELINGSTIJDSTIP_TEXT = "21 uur 's avonds";
 export const INDELING_DAG_OFFSET = 1;
 
 const indelingstijdstipInMinutes = () => {
-    const hours = parseInt(INDELINGSTIJDSTIP.split(':', 1), 10);
+    const hours = parseInt(INDELINGSTIJDSTIP.split(':', 1)[0], 10);
     const minutes = parseInt(INDELINGSTIJDSTIP.split(':', 2)[1], 10);
     return 60 * hours + minutes;
 };
 
 const allocationHours = () => {
-    return parseInt(INDELINGSTIJDSTIP.split(':', 1), 10);
+    return parseInt(INDELINGSTIJDSTIP.split(':', 1)[0], 10);
 };
 
 const allocationMinutes = () => {

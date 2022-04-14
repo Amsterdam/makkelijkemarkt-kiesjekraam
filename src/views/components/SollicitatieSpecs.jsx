@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-const { isTVPLZ } = require('../../domain-knowledge.js');
+const { isTVPLZ } = require('../../domain-knowledge.ts');
 
 const SollicitatieSpecs = ({ sollicitatie }) => {
     const aantalPlaatsen = sollicitatie.vastePlaatsen.length;
