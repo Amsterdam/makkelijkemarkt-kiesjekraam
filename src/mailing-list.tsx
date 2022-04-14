@@ -55,7 +55,7 @@ const timezoneTime = getTimezoneTime();
 timezoneTime.add(INDELING_DAG_OFFSET, 'days');
 const marktDate = timezoneTime.format('YYYY-MM-DD');
 
-const alternativeEmail = 'kiesjekraam@gmail.com';
+const alternativeEmail = 'Marktbureau.kiesjekraam@amsterdam.nl';
 
 const sendAllocationMail = (subject: string, mailTemplate: JSX.Element, emailaddress: string) => {
     return mail({
@@ -245,7 +245,7 @@ function sendUitslag(markt: any, marktDate: string, toewijzingen: any[], onderne
     if (process.env.APP_ENV === 'production') {
         isKraamzetter
             ? (to = markt.kiesJeKraamEmailKramenzetter)
-            : (to = 'Marktbureau.kiesjekraam@amsterdam.nl,kiesjekraam@gmail.com');
+            : (to = 'Marktbureau.kiesjekraam@amsterdam.nl');
     } else {
         to = alternativeEmail;
     }
