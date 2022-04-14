@@ -121,6 +121,7 @@ export interface IMarktondernemer extends IMarktdeelnemer {
 
 export interface IMarktplaats {
     plaatsId: PlaatsId;
+    bakType?: string;
     properties?: string[];
     branches?: BrancheId[];
     verkoopinrichting?: string[];
