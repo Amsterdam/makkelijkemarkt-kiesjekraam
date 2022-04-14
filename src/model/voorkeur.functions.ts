@@ -1,7 +1,5 @@
-import { isVast } from '../domain-knowledge';
-
 import { IMarktondernemerVoorkeurRow } from './markt.model';
-
+import { isVast } from '../domain-knowledge';
 import { MMSollicitatie } from './makkelijkemarkt.model';
 
 export const getDefaultVoorkeur = (sollicitatie: MMSollicitatie) => {

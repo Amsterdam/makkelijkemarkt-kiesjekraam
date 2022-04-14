@@ -46,7 +46,7 @@ const isoMarktDagen = {
     zo: ISO_SUNDAY,
 };
 
-const DAYS_CLOSED = (function() {
+export const DAYS_CLOSED = (function() {
     try {
         const data = fs.readFileSync(`${__dirname}/../config/markt/daysClosed.json`, 'utf8');
         return data ? JSON.parse(data) : [];
@@ -84,10 +84,10 @@ export const isVast = status =>
     status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_Z ||
     status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_OLD;
 const isTVPLZ = status => status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_Z;
-const isExp = status =>
+export const isExp = status =>
     status === DeelnemerStatus.EXPERIMENTAL ||
     status === DeelnemerStatus.EXPERIMENTAL_F;
-const isVastOfExp = status => isVast(status) || isExp(status);
+export const isVastOfExp = status => isVast(status) || isExp(status);
 
 const isAfterAllocationTime = () => {
     const timeNow = getTimezoneTime();
@@ -153,7 +153,7 @@ const getUpcomingMarktDays = (startDate, endDate, daysOfWeek) =>
 export const formatOndernemerName = ondernemer =>
     `${ondernemer.tussenvoegsels} ${ondernemer.achternaam} ${ondernemer.voorletters}`.replace(/\s+/g, ' ');
 
-const ondernemersToLocatieKeyValue = array =>
+export const ondernemersToLocatieKeyValue = array =>
     array.reduce((obj, item) => {
         item.plaatsen.reduce((ar, i) => {
             obj[i] = item;
@@ -164,7 +164,7 @@ const ondernemersToLocatieKeyValue = array =>
         return obj;
     }, {});
 
-const obstakelsToLocatieKeyValue = array =>
+export const obstakelsToLocatieKeyValue = array =>
     array.reduce((total, obstakel) => {
         total[obstakel.kraamA] = total[obstakel.kraamA] || obstakel.obstakel;
         total[obstakel.kraamA].concat(obstakel.obstakel);
@@ -172,7 +172,7 @@ const obstakelsToLocatieKeyValue = array =>
         return total;
     }, {});
 
-const filterRsvpList = (aanmeldingen, markt, startDate, endDate) => {
+export const filterRsvpList = (aanmeldingen, markt, startDate, endDate) => {
     const dates = getMarktDays(
         startDate
             ? startDate
@@ -195,7 +195,7 @@ const filterRsvpList = (aanmeldingen, markt, startDate, endDate) => {
 };
 
 const plaatsParts = plaatsId => plaatsId.replace(/([^0-9])([0-9])|([0-9])([^0-9])/g, '$1$3 $2$4').split(/\s+/);
-const plaatsSort = (plaatsA, plaatsB, byKey) => {
+export const plaatsSort = (plaatsA, plaatsB, byKey) => {
     const partsA = plaatsParts(byKey ? plaatsA[byKey] : plaatsA);
     const partsB = plaatsParts(byKey ? plaatsB[byKey] : plaatsB);
     const l = Math.min(partsA.length, partsB.length);
