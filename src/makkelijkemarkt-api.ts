@@ -40,6 +40,11 @@ import {
     MMSollicitatieStandalone,
 } from './model/makkelijkemarkt.model';
 import packageJSON = require('../package.json');
+import {
+    RedisClient,
+} from './redis-client';
+
+const redisClient = new RedisClient().getAsyncClient();
 
 const MILLISECONDS_IN_SECOND = 1000;
 const SECONDS_IN_MINUTE = 60;
@@ -63,6 +68,7 @@ const mmConfig = {
     sessionKey: 'mmsession',
     sessionLifetime: MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * 6,
 };
+
 const getApi = (): AxiosInstance =>
     axios.create({
         baseURL: mmConfig.baseUrl,
@@ -70,6 +76,7 @@ const getApi = (): AxiosInstance =>
             MmAppKey: mmConfig.appKey,
         },
     });
+
 const login = (api: AxiosInstance) =>
     api.post(mmConfig.loginUrl, {
         api_key: mmConfig.apiKey,
@@ -119,8 +126,8 @@ const apiBase = (
     let counter40xRetry = 0;
 
     const retry = (api: any) => {
-        //TODO: token opslaan in redis of memory?
         return login(api).then((res: any) => {
+            redisClient.set(mmConfig.sessionKey, res.data.uuid);
             return httpFunction(url, res.data.uuid, requestBody);
         });
     };
@@ -153,7 +160,9 @@ const apiBase = (
         },
     );
 
-    return retry(api);
+    return redisClient.get(mmConfig.sessionKey).then((mmApiSessionToken: any) => {
+        return mmApiSessionToken ? httpFunction(url, mmApiSessionToken, requestBody) : retry(api);
+    });
 };
 
 export const updateRsvp = (
