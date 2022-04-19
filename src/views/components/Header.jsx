@@ -1,18 +1,17 @@
-const LoginButton = require('./LoginButton');
-const PropTypes = require('prop-types');
-const React = require('react');
-
+import PropTypes from 'prop-types';
+import React from 'react';
 import {
     Roles,
 } from '../../authentication';
+const LoginButton = require('./LoginButton');
 
 const Header = ({ user, children, hideLogout, breadcrumbs, role }) => {
     if (!breadcrumbs && role !== Roles.MARKTBEWERKER) {
         breadcrumbs = [
             {
-                "title":"Markten",
-                "url":"/markt",
-            }
+                title: 'Markten',
+                url: '/markt',
+            },
         ];
     }
 
@@ -37,10 +36,8 @@ const Header = ({ user, children, hideLogout, breadcrumbs, role }) => {
                             <h1 className="Header__heading">Kies je kraam</h1>
                             <div className="Header__user">
                                 {!hideLogout ? <LoginButton user={user} /> : null}
-                                { role === 'marktmeester' ? <p className="Header__user__name">{user.name}</p> : null }
-                                { role === 'marktmeester' ? <p className="Header__user__role">Marktmeester</p> : null }
-                                {/* { role === 'marktondernemer' ? <p className="Header__user__name">{user.preferred_username}</p> : null }
-                                { role === 'marktondernemer' ? <p className="Header__user__role">Ondernemer</p> : null } */}
+                                {role === 'marktmeester' ? <p className="Header__user__name">{user.name}</p> : null}
+                                {role === 'marktmeester' ? <p className="Header__user__role">Marktmeester</p> : null}
                             </div>
                         </div>
                     </div>
@@ -51,15 +48,20 @@ const Header = ({ user, children, hideLogout, breadcrumbs, role }) => {
                     <div className="container__content">
                         <div className="Header__bottom-container">
                             <div className="Breadcrumbs">
-                                { breadcrumbs ? breadcrumbs.map((link, i) => (
-                                    <a className="Breadcrumb" href={link.url} key={i}>
-                                        {link.title}
-                                        <img className="Breadcrumb__icon" src="/images/chevron-right.svg" alt="Chevron-right"/>
-                                    </a>
-                                )) : null }
-
+                                {breadcrumbs
+                                    ? breadcrumbs.map((link, i) => (
+                                          <a className="Breadcrumb" href={link.url} key={i}>
+                                              {link.title}
+                                              <img
+                                                  className="Breadcrumb__icon"
+                                                  src="/images/chevron-right.svg"
+                                                  alt="Chevron-right"
+                                              />
+                                          </a>
+                                      ))
+                                    : null}
                             </div>
-                            { children }
+                            {children}
                         </div>
                     </div>
                 </div>

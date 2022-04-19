@@ -1,6 +1,4 @@
 .Table{
-    // background: orchid;
-    // overflow: auto;
     overflow-x: auto;
 
     &__table{
@@ -12,7 +10,6 @@
         font-size: .875rem;
 
         @media screen and (min-width: $screenMedium) {
-            // table-layout: fixed;
         }
 
         tbody{

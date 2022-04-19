@@ -1,7 +1,7 @@
+import PropTypes from 'prop-types';
+import React from 'react';
 const ProfilePhoto = require('./ProfilePhoto');
-const PropTypes = require('prop-types');
-const React = require('react');
-const { formatOndernemerName } = require('../../domain-knowledge.js');
+const { formatOndernemerName } = require('../../domain-knowledge.ts');
 
 const OndernemerProfileHeader = ({ user, inline }) => {
     return (
@@ -15,7 +15,6 @@ const OndernemerProfileHeader = ({ user, inline }) => {
                     <span className="OndernemerProfileHeader__id-label">registratienummer: </span>
                     <strong className="OndernemerProfileHeader__id-value">{user.erkenningsnummer}</strong>
                 </span>
-
             </div>
         </header>
     );

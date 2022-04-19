@@ -1,36 +1,15 @@
 import * as path from 'path';
-
-import {
-    DataTypes,
-    Model,
-    Sequelize,
-} from 'sequelize';
-
-// import * as NodeCache from 'node-cache';
-const NodeCache = require('node-cache');
-
 import { readJSON } from '../util';
+import SCHEMAS from './markt-config.model.js';
 
 const CONFIG_DIR = path.resolve(__dirname, '../../config/markt');
-const CONFIG_PROPERTIES = [
-    'locaties',
-    'markt',
-    'branches',
-    'geografie',
-    'paginas'
-];
+const CONFIG_PROPERTIES = ['locaties', 'markt', 'branches', 'geografie', 'paginas'];
 const INDEX = {
-    obstakelTypes       : readJSON(`${CONFIG_DIR}/obstakeltypes.json`),
-    plaatsEigenschappen : readJSON(`${CONFIG_DIR}/plaatseigenschappen.json`)
+    obstakelTypes: readJSON(`${CONFIG_DIR}/obstakeltypes.json`),
+    plaatsEigenschappen: readJSON(`${CONFIG_DIR}/plaatseigenschappen.json`),
 };
-const SCHEMAS = require('../markt-config.model.js');
 
-const marktCache = new NodeCache({
-    stdTTL    : 60, // in seconds
-    useClones : false
-});
-
-export class MarktConfig extends Model {
+export class MarktConfig {
     public id!: number;
     public marktAfkorting: string;
     public createdBy: number;
@@ -38,100 +17,12 @@ export class MarktConfig extends Model {
     public title!: string;
     public data!: object;
 
-    public static get(marktAfkorting) {
-        return this._get(marktAfkorting)
-        .then(configModel => {
-            if (!configModel) {
-                throw Error('Markt niet gevonden');
-            }
-
-            const marktplaatsen = configModel.data.locaties;
-            const rows          = configModel.data.markt.rows.map(row =>
-                row.map(plaatsId =>
-                    marktplaatsen.find(plaats => plaats.plaatsId === plaatsId)
-                )
-            );
-            return {
-                marktplaatsen,
-                rows,
-                branches      : configModel.data.branches,
-                obstakels     : configModel.data.geografie.obstakels,
-                paginas       : configModel.data.paginas
-            };
-        });
-    }
-
-    public static getNewestConfigName() {
-        return this.findOne({
-            order: [['createdAt', 'DESC']]
-        })
-        .then(newestConfigModel => {
-            return newestConfigModel ?
-                   newestConfigModel.title :
-                   undefined;
-        });
-    }
-
     public static mergeBranches(allBranches, marktBranches) {
-        return this._mergeBranches(allBranches, marktBranches)
+        return this._mergeBranches(allBranches, marktBranches);
     }
 
     public static homogenizeData(data) {
-        return this._homogenizeData(data)
-    }
-
-    public static store(configName, marktAfkorting, allBranches, configJSON) {
-        marktCache.flushAll();
-
-        return this._get(marktAfkorting)
-        .then(newestConfigModel => {
-            let marktConfig = {
-                ...configJSON,
-                branches: this._mergeBranches(allBranches, configJSON.branches)
-            };
-            // Hier valideren, omdat `_homogenizeData` aannames doet t.a.v. de
-            // data structuur van het config bestand. Als we dit een onderdeel
-            // van de model validatie zouden maken, dan zijn we te laat.
-            validateMarktConfig(marktConfig);
-            marktConfig = this._homogenizeData(marktConfig);
-
-            if (newestConfigModel) {
-                // Als deze data identiek is aan de meest recente config
-                const currentData = JSON.stringify(newestConfigModel.data);
-                const newData     = JSON.stringify(marktConfig);
-                if (currentData === newData) {
-                    return newestConfigModel;
-                }
-            }
-
-            return this.create({
-                title: configName,
-                marktAfkorting,
-                createdAt: new Date(),
-                data: marktConfig
-            });
-        });
-    }
-
-    private static _get(marktAfkorting) {
-        const cachedConfigModel = marktCache.get(marktAfkorting);
-
-        if (cachedConfigModel) {
-            // Update cached item's TTL.
-            marktCache.ttl(marktAfkorting);
-            return Promise.resolve(cachedConfigModel);
-        } else {
-            return this.findOne({
-                where: { marktAfkorting },
-                order: [['createdAt', 'DESC']]
-            })
-            .then(configModel => {
-                if (configModel) {
-                    marktCache.set(marktAfkorting, configModel);
-                }
-                return configModel;
-            });
-        }
+        return this._homogenizeData(data);
     }
 
     // Het kan nl zo zijn dat dit exact dezelfde config data is, maar dat enkel
@@ -147,8 +38,7 @@ export class MarktConfig extends Model {
         const geografie = { ...(data.geografie || {}) };
         geografie.obstakels = (geografie.obstakels || []).slice();
         geografie.obstakels.sort((a, b) => {
-            return Number(a.kraamA) - Number(b.kraamA) ||
-                   Number(a.kraamB) - Number(b.kraamB);
+            return Number(a.kraamA) - Number(b.kraamA) || Number(a.kraamB) - Number(b.kraamB);
         });
 
         const locaties = (data.locaties || []).sort((a, b) => {
@@ -159,7 +49,7 @@ export class MarktConfig extends Model {
             ...data,
             branches,
             geografie,
-            locaties
+            locaties,
         };
     }
 
@@ -194,61 +84,12 @@ export class MarktConfig extends Model {
     }
 }
 
-export const initMarktConfig = (sequelize: Sequelize) => {
-    MarktConfig.init({
-        id: {
-            primaryKey: true,
-            type: DataTypes.INTEGER,
-            autoIncrement: true
-        },
-        marktAfkorting: {
-            type: DataTypes.STRING(255),
-            allowNull: true
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW,
-            allowNull: false
-        },
-        createdBy: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-        title: {
-            type: DataTypes.STRING(255),
-            allowNull: true
-        },
-        type: {
-            type: DataTypes.STRING(32),
-            allowNull: false,
-            defaultValue: 'all'
-        },
-        data: {
-            type: DataTypes.JSON,
-            allowNull: false
-        }
-    }, {
-        sequelize,
-        freezeTableName: true,
-        modelName: 'marktconfig',
-        tableName: 'marktconfig',
-        timestamps: false,
-
-        indexes: [{
-            name: 'marktAfkorting',
-            fields: ['marktAfkorting', 'createdAt']
-        }],
-    });
-
-    return MarktConfig;
-};
-
-export const validateMarktConfig = (configData) => {
+export const validateMarktConfig = configData => {
     const index = {
         ...INDEX,
-        branches : indexBranches(configData.branches),
-        locaties : indexMarktPlaatsen(configData.locaties),
-        markt    : indexMarktRows(configData.markt)
+        branches: indexBranches(configData.branches),
+        locaties: indexMarktPlaatsen(configData.locaties),
+        markt: indexMarktRows(configData.markt),
     };
 
     let errors = {};
@@ -261,7 +102,7 @@ export const validateMarktConfig = (configData) => {
     }
 
     const validationError = Object.keys(errors).reduce((result, property) => {
-        const propErrors  = errors[property];
+        const propErrors = errors[property];
         const errorString = propErrors.reduce((errors, error) => `${errors}  ${error}\n`, '');
         return `${result}${property}\n${errorString}\n`;
     }, '');
@@ -270,8 +111,8 @@ export const validateMarktConfig = (configData) => {
 };
 
 const VALIDATORS = {
-    branches( errors, configData, property, index ) {
-        const validate = ( fileErrors, marketBranches ) => {
+    branches(errors, configData, property, index) {
+        const validate = (fileErrors, marketBranches) => {
             marketBranches.reduce((unique, { brancheId }, i) => {
                 if (unique.includes(brancheId)) {
                     fileErrors.push([`DATA[${i}] Duplicate branche '${brancheId}'`]);
@@ -287,8 +128,8 @@ const VALIDATORS = {
         return validateData(errors, configData, property, index, SCHEMAS.MarketBranches, validate, false);
     },
 
-    geografie( errors, configData, property, index ) {
-        const validate = ( fileErrors, { obstakels } ) => {
+    geografie(errors, configData, property, index) {
+        const validate = (fileErrors, { obstakels }) => {
             obstakels.reduce((unique, obstakel, i) => {
                 const current = [obstakel.kraamA, obstakel.kraamB].sort();
                 // Is obstakeldefinitie uniek?
@@ -303,15 +144,20 @@ const VALIDATORS = {
 
                     // Staan beide kramen in verschillende rijen in `markt`?
                     if (
-                        current[0] in index.markt && current[1] in index.markt &&
+                        current[0] in index.markt &&
+                        current[1] in index.markt &&
                         index.markt[current[0]] === index.markt[current[1]]
                     ) {
-                        fileErrors.push(`DATA.obstakels[${i}] kraamA and kraamB cannot be in the same row (kraamA: ${obstakel.kraamA}, kraamB: ${obstakel.kraamB})`);
+                        fileErrors.push(
+                            `DATA.obstakels[${i}] kraamA and kraamB cannot be in the same row (kraamA: ${obstakel.kraamA}, kraamB: ${obstakel.kraamB})`,
+                        );
                     }
 
                     unique.push(current);
                 } else {
-                    fileErrors.push(`DATA.obstakels[${i}] is not unique (kraamA: ${obstakel.kraamA}, kraamB: ${obstakel.kraamB})`);
+                    fileErrors.push(
+                        `DATA.obstakels[${i}] is not unique (kraamA: ${obstakel.kraamA}, kraamB: ${obstakel.kraamB})`,
+                    );
                 }
 
                 return unique;
@@ -323,8 +169,8 @@ const VALIDATORS = {
         return validateData(errors, configData, property, index, SCHEMAS.MarketGeografie, validate, false);
     },
 
-    locaties( errors, configData, property, index ) {
-        const validate = ( fileErrors, locaties ) => {
+    locaties(errors, configData, property, index) {
+        const validate = (fileErrors, locaties) => {
             locaties.reduce((unique, { plaatsId }, i) => {
                 if (unique.includes(plaatsId)) {
                     fileErrors.push(`DATA[${i}].plaatsId is not unique: ${plaatsId}`);
@@ -345,8 +191,8 @@ const VALIDATORS = {
         return validateData(errors, configData, property, index, SCHEMAS.MarketLocaties, validate, true);
     },
 
-    markt( errors, configData, property, index ) {
-        const validate = ( fileErrors, { rows } ) => {
+    markt(errors, configData, property, index) {
+        const validate = (fileErrors, { rows }) => {
             return rows.reduce((_fileErrors, row, i) => {
                 row.forEach((plaatsId, j) => {
                     if (!index.locaties.includes(plaatsId)) {
@@ -361,15 +207,17 @@ const VALIDATORS = {
         return validateData(errors, configData, property, index, SCHEMAS.Market, validate, true);
     },
 
-    paginas( errors, configData, property, index ) {
-        const validate = ( fileErrors, sections ) => {
+    paginas(errors, configData, property, index) {
+        const validate = (fileErrors, sections) => {
             sections.forEach((section, i) => {
                 section.indelingslijstGroup.forEach((group, j) => {
                     if ('plaatsList' in group) {
                         fileErrors = group.plaatsList.reduce((_fileErrors, plaatsId, k) => {
-                            return !index.locaties.includes(plaatsId) ?
-                                   _fileErrors.concat(`DATA[${i}].indelingslijstGroup[${j}].plaatsList[${k}] does not exist in locaties: ${plaatsId}`) :
-                                   _fileErrors;
+                            return !index.locaties.includes(plaatsId)
+                                ? _fileErrors.concat(
+                                      `DATA[${i}].indelingslijstGroup[${j}].plaatsList[${k}] does not exist in locaties: ${plaatsId}`,
+                                  )
+                                : _fileErrors;
                         }, fileErrors);
                     }
                 });
@@ -379,13 +227,13 @@ const VALIDATORS = {
         };
 
         return validateData(errors, configData, property, index, SCHEMAS.Paginas, validate, true);
-    }
+    },
 };
 
 function indexBranches(branches) {
     return branches.map(branche => branche.brancheId);
 }
-function indexMarktPlaatsen(plaatsen=[]) {
+function indexMarktPlaatsen(plaatsen = []) {
     return plaatsen.map(plaats => plaats.plaatsId);
 }
 function indexMarktRows(markt) {
@@ -402,15 +250,7 @@ function indexMarktRows(markt) {
     return index;
 }
 
-function validateData(
-    errors,
-    configData,
-    property,
-    index,
-    schema,
-    extraValidation,
-    required = true
-) {
+function validateData(errors, configData, property, index, schema, extraValidation, required = true) {
     let propErrors;
 
     if (required && !(property in configData)) {
@@ -429,7 +269,5 @@ function validateData(
         }
     }
 
-    return propErrors.length ?
-           { ...errors, [property]: propErrors } :
-           errors;
+    return propErrors.length ? { ...errors, [property]: propErrors } : errors;
 }

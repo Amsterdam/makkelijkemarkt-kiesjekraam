@@ -1,20 +1,18 @@
+import PropTypes from 'prop-types';
+import React from 'react';
 const Content = require('./components/Content');
-const React = require('react');
 const Page = require('./components/Page.jsx');
-const PropTypes = require('prop-types');
 const Header = require('./components/Header');
 
 class ErrorPage extends React.Component {
     propTypes = {
         message: PropTypes.string,
         stack: PropTypes.string,
-        errorCode: PropTypes.number,
         req: PropTypes.object,
     };
 
     render() {
-        const { message, stack, errorCode, req } = this.props;
-        const mmLoginError = 401;
+        const { message, stack, req } = this.props;
 
         return (
             <Page>

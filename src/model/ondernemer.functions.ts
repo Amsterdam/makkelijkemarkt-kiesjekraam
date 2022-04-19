@@ -1,21 +1,25 @@
 import {
+    getOndernemersByMarkt,
+    getVoorkeurenByMarkt,
+} from '../makkelijkemarkt-api';
+import {
     IMarktondernemer,
     IMarktondernemerVoorkeur,
     IRSVP,
     IToewijzing,
-} from '../markt.model';
-
-import { today } from '../util';
-
+} from './markt.model';
 import {
-    getOndernemersByMarkt,
-    getVoorkeurenByMarkt,
-} from '../makkelijkemarkt-api';
+    today,
+} from '../util';
 
-export const ondernemerIsAfgemeld = (ondernemer: IMarktondernemer, aanmeldingen: IRSVP[], currentMarktDate: String): Boolean => {
-
-    const rsvp = aanmeldingen.find(({ erkenningsNummer, marktDate }) =>
-        erkenningsNummer === ondernemer.erkenningsNummer && marktDate === currentMarktDate
+export const ondernemerIsAfgemeld = (
+    ondernemer: IMarktondernemer,
+    aanmeldingen: IRSVP[],
+    currentMarktDate: string,
+): boolean => {
+    const rsvp = aanmeldingen.find(
+        ({ erkenningsNummer, marktDate }) =>
+            erkenningsNummer === ondernemer.erkenningsNummer && marktDate === currentMarktDate,
     );
 
     // Bij de indeling van VPHs worden alleen expliciete afmeldingen in beschouwing
@@ -25,13 +29,12 @@ export const ondernemerIsAfgemeld = (ondernemer: IMarktondernemer, aanmeldingen:
     } else {
         return false;
     }
-
 };
 
-export const ondernemerIsAfgemeldPeriode = (voorkeur: IMarktondernemerVoorkeur, marktDate: Date): Boolean => {
-
+export const ondernemerIsAfgemeldPeriode = (voorkeur: IMarktondernemerVoorkeur, marktDate: Date): boolean => {
     if (
-        voorkeur.absentFrom && voorkeur.absentUntil &&
+        voorkeur.absentFrom &&
+        voorkeur.absentUntil &&
         marktDate >= voorkeur.absentFrom &&
         marktDate <= voorkeur.absentUntil
     ) {
@@ -39,17 +42,22 @@ export const ondernemerIsAfgemeldPeriode = (voorkeur: IMarktondernemerVoorkeur, 
     } else {
         return false;
     }
-
 };
 
-export const filterOndernemersAangemeld = (ondernemers: IMarktondernemer[], algemenevoorkeuren: IMarktondernemerVoorkeur[], aanmeldingen: IRSVP[], marktDate: Date): IMarktondernemer[] => {
-
+export const filterOndernemersAangemeld = (
+    ondernemers: IMarktondernemer[],
+    algemenevoorkeuren: IMarktondernemerVoorkeur[],
+    aanmeldingen: IRSVP[],
+    marktDate: Date,
+): IMarktondernemer[] => {
     ondernemers.map(ondernemer => {
-        ondernemer.voorkeur = algemenevoorkeuren.find(voorkeur => voorkeur.erkenningsNummer === ondernemer.erkenningsNummer);
+        ondernemer.voorkeur = algemenevoorkeuren.find(
+            voorkeur => voorkeur.erkenningsNummer === ondernemer.erkenningsNummer,
+        );
         return ondernemer;
     });
 
-    ondernemers = ondernemers.filter( ondernemer => {
+    ondernemers = ondernemers.filter(ondernemer => {
         if (ondernemer.voorkeur) {
             return !ondernemerIsAfgemeldPeriode(ondernemer.voorkeur, marktDate);
         } else {
@@ -61,7 +69,9 @@ export const filterOndernemersAangemeld = (ondernemers: IMarktondernemer[], alge
     let vphs = ondernemers.filter(ondernemer => ondernemer.status === 'vpl');
 
     sollicanten = sollicanten.filter(ondernemer => {
-        const aanmelding = aanmeldingen.find(aanmelding => (aanmelding.erkenningsNummer === ondernemer.erkenningsNummer));
+        const aanmelding = aanmeldingen.find(
+            aanmelding => aanmelding.erkenningsNummer === ondernemer.erkenningsNummer,
+        );
         if (aanmelding) {
             return aanmelding.attending;
         } else {
@@ -70,7 +80,9 @@ export const filterOndernemersAangemeld = (ondernemers: IMarktondernemer[], alge
     });
 
     vphs = vphs.filter(ondernemer => {
-        const aanmelding = aanmeldingen.find(aanmelding => (aanmelding.erkenningsNummer === ondernemer.erkenningsNummer));
+        const aanmelding = aanmeldingen.find(
+            aanmelding => aanmelding.erkenningsNummer === ondernemer.erkenningsNummer,
+        );
         if (aanmelding) {
             return aanmelding.attending;
         } else {
@@ -78,42 +90,44 @@ export const filterOndernemersAangemeld = (ondernemers: IMarktondernemer[], alge
         }
     });
 
-    return [ ...sollicanten, ...vphs ];
+    return [...sollicanten, ...vphs];
 };
 
-export const vphIsGewisseld = (ondernemer: IMarktondernemer, toewijzingen: IToewijzing[]): Boolean => {
-
-    const toewijzingVph = toewijzingen.find(toewijzing => toewijzing.erkenningsNummer === ondernemer.erkenningsNummer);
+export const vphIsGewisseld = (ondernemer: IMarktondernemer, toewijzingen: IToewijzing[]): boolean => {
+    const toewijzingVph = toewijzingen.find(
+        toewijzing => toewijzing.erkenningsNummer === ondernemer.erkenningsNummer,
+    );
 
     if (!toewijzingVph) {
         return false;
     }
 
-    toewijzingVph.plaatsen.sort(( a: any, b: any ) => a - b);
-    ondernemer.plaatsen.sort(( a: any, b: any ) => a - b);
+    toewijzingVph.plaatsen.sort((a: any, b: any) => a - b);
+    ondernemer.plaatsen.sort((a: any, b: any) => a - b);
 
     if (
         // Als de arrays hetzelfde zijn is er niet gewisseld
         JSON.stringify(toewijzingVph.plaatsen) !== JSON.stringify(ondernemer.plaatsen) &&
         // Als alle plaatsen van de ondernemer voorkomen in de toewijzing is er niet gewisseld
-        !ondernemer.plaatsen.every( (item) => toewijzingVph.plaatsen.indexOf(item) !== -1 )
+        !ondernemer.plaatsen.every(item => toewijzingVph.plaatsen.indexOf(item) !== -1)
     ) {
         return true;
     } else {
         return false;
     }
-
 };
 
-export const vphIsUitgebreid = (ondernemer: IMarktondernemer, toewijzingen: IToewijzing[]): Boolean => {
-    const toewijzingVph = toewijzingen.find(toewijzing => toewijzing.erkenningsNummer === ondernemer.erkenningsNummer);
+export const vphIsUitgebreid = (ondernemer: IMarktondernemer, toewijzingen: IToewijzing[]): boolean => {
+    const toewijzingVph = toewijzingen.find(
+        toewijzing => toewijzing.erkenningsNummer === ondernemer.erkenningsNummer,
+    );
 
     if (!toewijzingVph) {
         return false;
     }
 
-    toewijzingVph.plaatsen.sort(( a: any, b: any ) => a - b);
-    ondernemer.plaatsen.sort(( a: any, b: any ) => a - b);
+    toewijzingVph.plaatsen.sort((a: any, b: any) => a - b);
+    ondernemer.plaatsen.sort((a: any, b: any) => a - b);
 
     if (
         toewijzingVph.plaatsen.length > ondernemer.plaatsen.length &&
@@ -124,29 +138,28 @@ export const vphIsUitgebreid = (ondernemer: IMarktondernemer, toewijzingen: IToe
     } else {
         return false;
     }
-
 };
 
 export const getOndernemersLangdurigAfgemeldByMarkt = (marktId: string) => {
-    return Promise.all([
-        getVoorkeurenByMarkt(marktId),
-        getOndernemersByMarkt(marktId)
-    ])
-    .then( ([voorkeuren, ondernemers]) => {
-        const voorkeurenFiltered = voorkeuren.filter( voorkeur => {
-            const until = new Date(voorkeur.absentUntil);
-            const todayNow = new Date(today());
-            return +until >= +todayNow;
-        });
-        const ondernemersAbsentErkenningsnummers = voorkeurenFiltered.map( (voorkeur: any) => voorkeur.erkenningsNummer);
-        const ondenemersAbsent = ondernemers.filter( ondernemer =>
-            ondernemersAbsentErkenningsnummers.includes(ondernemer.erkenningsNummer)
-        );
-        return ondenemersAbsent.map(ondernemer => {
-            ondernemer.voorkeur = voorkeuren.find(voorkeur =>
-                voorkeur.erkenningsNummer === ondernemer.erkenningsNummer
+    return Promise.all([getVoorkeurenByMarkt(marktId), getOndernemersByMarkt(marktId)]).then(
+        ([voorkeuren, ondernemers]) => {
+            const voorkeurenFiltered = voorkeuren.filter(voorkeur => {
+                const until = new Date(voorkeur.absentUntil);
+                const todayNow = new Date(today());
+                return Number(until) >= Number(todayNow);
+            });
+            const ondernemersAbsentErkenningsnummers = voorkeurenFiltered.map(
+                (voorkeur: any) => voorkeur.erkenningsNummer,
             );
-            return ondernemer;
-        });
-    });
+            const ondenemersAbsent = ondernemers.filter(ondernemer =>
+                ondernemersAbsentErkenningsnummers.includes(ondernemer.erkenningsNummer),
+            );
+            return ondenemersAbsent.map(ondernemer => {
+                ondernemer.voorkeur = voorkeuren.find(
+                    voorkeur => voorkeur.erkenningsNummer === ondernemer.erkenningsNummer,
+                );
+                return ondernemer;
+            });
+        },
+    );
 };

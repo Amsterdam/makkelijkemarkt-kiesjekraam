@@ -1,4 +1,4 @@
-const { plaatsSort } = require('./domain-knowledge.js');
+const { plaatsSort } = require('./domain-knowledge.ts');
 
 describe('Sorteren marktkraamplaatsen', () => {
     it('Marktplaatsen moeten in logische volgorde staan', () => {

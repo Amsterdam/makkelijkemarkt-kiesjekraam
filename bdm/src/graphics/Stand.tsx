@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { AssignedBranche, Lot } from '../models'
 import SvgBak from './SvgBak'
+import SvgBakLight from './SvgBakLight'
 import SvgBench from './SvgBench'
 import SvgElectra from './SvgElectra'
 import SvgLight from './SvgLight'
@@ -29,7 +30,6 @@ export default class Stand extends Component<{
   }
 
   renderProperties = () => {
-    // Todo: Render ALL properties (how?)
     const { invert, stand } = this.props
     let propertyPosition: { x: number; y: number } = { x: 36, y: 31 }
     if (invert) {
@@ -71,8 +71,11 @@ export default class Stand extends Component<{
     // Contains bak?
     return (
       <>
-        {stand.branches && stand.branches.indexOf('bak') > -1 && (
+        {stand.bakType === 'bak' && (
           <SvgBak color={brancheColor} position={branchesPosition} />
+        )}
+        {stand.bakType === 'bak-licht' && (
+          <SvgBakLight color={brancheColor} position={branchesPosition} />
         )}
       </>
     )

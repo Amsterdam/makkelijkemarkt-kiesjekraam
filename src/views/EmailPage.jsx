@@ -33,5 +33,3 @@ export class EmailPage extends React.Component {
         );
     }
 }
-
-export default EmailPage;

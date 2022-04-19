@@ -1,32 +1,28 @@
 import * as React from 'react';
-
-import {
-    IRSVP,
-    IMarktplaats,
-    IMarktondernemer,
-    IToewijzing,
-    IMarkt,
-    IObstakelBetween,
-    IMarktondernemerVoorkeur,
-    IBranche,
-    IAfwijzing
-} from '../markt.model';
-import {
-    IAllocationPrintout
-} from '../model/printout.model';
-
-import {
-    ondernemersToLocatieKeyValue,
-    obstakelsToLocatieKeyValue
-} from '../domain-knowledge.js';
 import {
     arrayToObject,
     getBreadcrumbsMarkt
 } from '../util';
-
-import MarktDetailBase from './components/MarktDetailBase';
+import {
+    IAfwijzing,
+    IBranche,
+    IMarkt,
+    IMarktondernemer,
+    IMarktplaats,
+    IObstakelBetween,
+    IRSVP,
+    IToewijzing,
+} from '../model/markt.model';
+import {
+    obstakelsToLocatieKeyValue,
+    ondernemersToLocatieKeyValue,
+} from '../domain-knowledge';
+import {
+    IAllocationPrintout
+} from '../model/printout.model';
 import IndelingsLegenda from './components/IndelingsLegenda';
 import IndelingslijstGroup from './components/IndelingslijstGroup';
+import MarktDetailBase from './components/MarktDetailBase';
 import PrintPage from './components/PrintPage';
 import Street from './components/Street';
 

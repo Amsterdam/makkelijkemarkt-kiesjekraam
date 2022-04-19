@@ -22,6 +22,10 @@ td {
   padding: 0.25em;
 }
 
+input[type="radio"]{
+  margin: 0 10px 0 10px;
+}
+
 .fc {
   font-family: Avenir Next, Arial, sans-serif !important;
 }

@@ -1,4 +1,4 @@
-export enum DeelnemerStatus {
+enum DeelnemerStatus {
     VASTE_PLAATS = 'vpl',
     TIJDELIJKE_VASTE_PLAATS = 'vkk',
     SOLLICITANT = 'soll',
@@ -10,14 +10,14 @@ export interface MMSession {
     lifeTime: number;
 }
 
-export interface MMMarktRef {
-    id: number;
+interface MMMarktRef {
+    id: string;
     naam: string;
     afkorting: string;
 }
 
 export interface MMMarkt {
-    id: number;
+    id: string;
     afkorting: string;
     naam: string;
     geoArea: any;
@@ -52,7 +52,7 @@ export interface MMOndernemer {
     achternaam: string;
     telefoon: string;
     email: string;
-    handhavingsVerzoek?: any; // unknown type
+    handhavingsVerzoek?: any;
     fotoUrl: string;
     fotoMediumUrl: string;
     status: string;
@@ -66,7 +66,7 @@ export interface MMOndernemerStandalone extends MMOndernemer {
     sollicitaties: MMSollicitatie[];
 }
 
-export interface MMVervanger {
+interface MMVervanger {
     vervanger_id: number;
     pas_uid: string;
     erkenningsnummer: string;
@@ -94,7 +94,7 @@ export interface MMSollicitatie {
     doorgehaald: boolean;
     doorgehaaldReden: string;
     markt: MMMarktRef;
-    koppelveld: any; // unkown
+    koppelveld: any;
     aantalAfvaleiland: number;
 }
 
@@ -114,7 +114,7 @@ export interface MMarktondernemerVoorkeur {
     minimum?: number;
     maximum?: number;
     hasInrichting?: boolean;
-    isBak?: boolean;
+    bakType?: string;
     absentFrom?: Date;
     absentUntil?: Date;
     branche: string;

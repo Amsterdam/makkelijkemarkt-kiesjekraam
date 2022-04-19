@@ -1,11 +1,15 @@
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
 const MarktDetailBase = require('./components/MarktDetailBase');
 const OndernemerList = require('./components/OndernemerList.tsx');
 const PrintPage = require('./components/PrintPage');
-const PropTypes = require('prop-types');
-const { paginate, getBreadcrumbsMarkt } = require('../util');
-
-import Indeling from '../allocation/indeling';
+const {
+    paginate,
+    getBreadcrumbsMarkt,
+} = require('../util');
+const {
+    isAanwezig,
+} = require('../routes/markt-marktmeester');
 
 class template extends React.Component {
     propTypes = {
@@ -19,7 +23,7 @@ class template extends React.Component {
         algemenevoorkeuren: PropTypes.array,
         plaatsvoorkeuren: PropTypes.array,
         role: PropTypes.string,
-        user: PropTypes.object
+        user: PropTypes.object,
     };
 
     render() {
@@ -32,19 +36,16 @@ class template extends React.Component {
             algemenevoorkeuren,
             role,
             title,
-            ondernemers
+            ondernemers,
         } = this.props;
 
         let groups = [
-            ondernemers.filter(ondernemer => Indeling.isAanwezig(ondernemer, aanmeldingen, datum)),
-            ondernemers.filter(ondernemer => !Indeling.isAanwezig(ondernemer, aanmeldingen, datum))
+            ondernemers.filter(ondernemer => isAanwezig(ondernemer, aanmeldingen, datum)),
+            ondernemers.filter(ondernemer => !isAanwezig(ondernemer, aanmeldingen, datum)),
         ];
         groups = groups.map(group => paginate(paginate(group, 40), 2));
 
-        const titles = [
-            `Aangemeld: ${markt.naam}`,
-            `Niet aangemeld: ${markt.naam}`,
-        ];
+        const titles = [`Aangemeld: ${markt.naam}`, `Niet aangemeld: ${markt.naam}`];
 
         const breadcrumbs = getBreadcrumbsMarkt(markt, role);
 
@@ -63,29 +64,28 @@ class template extends React.Component {
                 {groups.map((group, i) =>
                     group.length > 0
                         ? group.map((page, k) => (
-                            <PrintPage
-                                key={k}
-                                title={`${titles[i]}${
-                                    group.length > 1 ? ' (' + (k + 1) + ' - ' + group.length + ')' : ''
-                                    }`}
-                                datum={datum}
-                            >
-                                {page.map((list, j) => (
-                                    <OndernemerList
-                                        key={j}
-                                        ondernemers={list}
-                                        markt={markt}
-                                        datum={datum}
-                                        aanmeldingen={aanmeldingen}
-                                        plaatsvoorkeuren={plaatsvoorkeuren}
-                                        algemenevoorkeuren={algemenevoorkeuren}
-                                    />
-                                ))}
-                            </PrintPage>
-                        ))
+                              <PrintPage
+                                  key={k}
+                                  title={`${titles[i]}${
+                                      group.length > 1 ? ' (' + (k + 1) + ' - ' + group.length + ')' : ''
+                                  }`}
+                                  datum={datum}
+                              >
+                                  {page.map((list, j) => (
+                                      <OndernemerList
+                                          key={j}
+                                          ondernemers={list}
+                                          markt={markt}
+                                          datum={datum}
+                                          aanmeldingen={aanmeldingen}
+                                          plaatsvoorkeuren={plaatsvoorkeuren}
+                                          algemenevoorkeuren={algemenevoorkeuren}
+                                      />
+                                  ))}
+                              </PrintPage>
+                          ))
                         : null,
                 )}
-
             </MarktDetailBase>
         );
     }

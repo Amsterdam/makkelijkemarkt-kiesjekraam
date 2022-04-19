@@ -1,9 +1,8 @@
+import PropTypes from 'prop-types';
+import React from 'react';
 const Content = require('./components/Content');
 const Header = require('./components/Header');
-const ActivateForm = require('./components/ActivateForm.jsx');
 const Page = require('./components/Page.jsx');
-const PropTypes = require('prop-types');
-const React = require('react');
 
 class AccountCreatedPage extends React.Component {
     propTypes = {

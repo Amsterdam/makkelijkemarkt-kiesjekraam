@@ -1,11 +1,15 @@
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
+const {
+    paginate,
+    getBreadcrumbsMarkt,
+} = require('../util');
+const {
+    filterOndernemersAangemeld,
+} = require('../model/ondernemer.functions');
 const MarktDetailBase = require('./components/MarktDetailBase');
 const OndernemerList = require('./components/OndernemerList.tsx');
 const PrintPage = require('./components/PrintPage');
-const PropTypes = require('prop-types');
-const { paginate, getBreadcrumbsMarkt } = require('../util');
-
-const { filterOndernemersAangemeld } = require('../model/ondernemer.functions');
 
 class template extends React.Component {
     propTypes = {
@@ -17,34 +21,32 @@ class template extends React.Component {
         toewijzingen: PropTypes.array.isRequired,
         algemenevoorkeuren: PropTypes.array,
         role: PropTypes.string,
-        user: PropTypes.object
+        user: PropTypes.object,
     };
 
     render() {
-        const {
-            markt,
-            aanmeldingen,
-            datum,
-            user,
-            algemenevoorkeuren,
-            role,
-            ondernemers,
-            toewijzingen
-        } = this.props;
-
+        const { markt, aanmeldingen, datum, user, algemenevoorkeuren, role, ondernemers, toewijzingen } = this.props;
 
         const ondernemersAangemeld = filterOndernemersAangemeld(ondernemers, algemenevoorkeuren, aanmeldingen, datum);
         const ondernemersNietAangemeld = ondernemers
-            .filter(ondernemer =>
-                !ondernemersAangemeld.find(ondernemerAangemeld => ondernemerAangemeld.erkenningsNummer === ondernemer.erkenningsNummer)
+            .filter(
+                ondernemer =>
+                    !ondernemersAangemeld.find(
+                        ondernemerAangemeld => ondernemerAangemeld.erkenningsNummer === ondernemer.erkenningsNummer,
+                    ),
             )
-            .filter( ondernemer => ondernemer.status === 'soll' );
+            .filter(ondernemer => ondernemer.status === 'soll');
 
         let groups = [
-            ondernemersAangemeld.filter(ondernemer => !toewijzingen.find(toewijzing => toewijzing.erkenningsNummer === ondernemer.erkenningsNummer)),
-            ondernemersNietAangemeld.filter(ondernemer => !toewijzingen.find(toewijzing => toewijzing.erkenningsNummer === ondernemer.erkenningsNummer)),
+            ondernemersAangemeld.filter(
+                ondernemer =>
+                    !toewijzingen.find(toewijzing => toewijzing.erkenningsNummer === ondernemer.erkenningsNummer),
+            ),
+            ondernemersNietAangemeld.filter(
+                ondernemer =>
+                    !toewijzingen.find(toewijzing => toewijzing.erkenningsNummer === ondernemer.erkenningsNummer),
+            ),
         ];
-
 
         groups = groups.map(group => paginate(paginate(group, 40), 2));
 
@@ -70,29 +72,26 @@ class template extends React.Component {
                 {groups.map((group, i) =>
                     group.length > 0
                         ? group.map((page, k) => (
-                            <PrintPage
-                                key={k}
-                                title={`${titles[i]}${
-                                    group.length > 1 ? ' (' + (k + 1) + ' - ' + group.length + ')' : ''
-                                    }`}
-                                datum={datum}
-                            >
-                                {page.map((list, j) => (
-                                    <OndernemerList
-                                        key={j}
-                                        ondernemers={list}
-                                        // markt={markt}
-                                        datum={datum}
-                                        aanmeldingen={aanmeldingen}
-                                        // plaatsvoorkeuren={plaatsvoorkeuren}
-                                        algemenevoorkeuren={algemenevoorkeuren}
-                                    />
-                                ))}
-                            </PrintPage>
-                        ))
+                              <PrintPage
+                                  key={k}
+                                  title={`${titles[i]}${
+                                      group.length > 1 ? ' (' + (k + 1) + ' - ' + group.length + ')' : ''
+                                  }`}
+                                  datum={datum}
+                              >
+                                  {page.map((list, j) => (
+                                      <OndernemerList
+                                          key={j}
+                                          ondernemers={list}
+                                          datum={datum}
+                                          aanmeldingen={aanmeldingen}
+                                          algemenevoorkeuren={algemenevoorkeuren}
+                                      />
+                                  ))}
+                              </PrintPage>
+                          ))
                         : null,
                 )}
-
             </MarktDetailBase>
         );
     }

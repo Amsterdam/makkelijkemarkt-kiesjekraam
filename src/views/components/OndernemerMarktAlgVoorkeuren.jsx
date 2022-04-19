@@ -1,10 +1,9 @@
-const Button = require('./Button');
 const HeaderTitleButton = require('./HeaderTitleButton');
 const PropTypes = require('prop-types');
 const React = require('react');
-const { formatDayOfWeek, formatDate, WEEK_DAYS, arrayToObject } = require('../../util.ts');
+const { arrayToObject } = require('../../util.ts');
 
-const OndernemerMarktAlgVoorkeuren = ({ markt, sollicitatie, ondernemer, voorkeur, branches }) => {
+const OndernemerMarktAlgVoorkeuren = ({ markt, voorkeur, branches }) => {
     const blockUrl = `../../algemene-voorkeuren/${markt.id}/`;
     const branchesObj = arrayToObject(branches, 'brancheId');
 
@@ -13,7 +12,7 @@ const OndernemerMarktAlgVoorkeuren = ({ markt, sollicitatie, ondernemer, voorkeu
             <a href={blockUrl} className="background-link" />
             <HeaderTitleButton title="Marktprofiel" url={blockUrl} />
             <div className="well">
-                {voorkeur  && branchesObj[voorkeur.brancheId] ? (
+                {voorkeur && branchesObj[voorkeur.brancheId] ? (
                     <dl>
                         <dt>Branche</dt>
                         <dd>{voorkeur.brancheId ? branchesObj[voorkeur.brancheId].description : 'geen'}</dd>
@@ -40,8 +39,6 @@ const OndernemerMarktAlgVoorkeuren = ({ markt, sollicitatie, ondernemer, voorkeu
 
 OndernemerMarktAlgVoorkeuren.propTypes = {
     markt: PropTypes.object.isRequired,
-    sollicitatie: PropTypes.object.isRequired,
-    ondernemer: PropTypes.object.isRequired,
     branches: PropTypes.object.isRequired,
     voorkeur: PropTypes.object,
 };

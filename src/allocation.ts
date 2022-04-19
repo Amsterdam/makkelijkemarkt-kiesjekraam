@@ -1,51 +1,35 @@
-const models = require('./model/index.ts');
-import { calculateIndelingslijst, getDaysClosed } from './pakjekraam-api';
-
-import { flatten, getTimezoneTime } from './util';
-import { INDELING_DAG_OFFSET } from './domain-knowledge.js';
-import { convertToewijzingForDB, getToewijzingEnriched } from './model/allocation.functions';
-import { convertAfwijzingForDB, getAfwijzingEnriched } from './model/afwijzing.functions';
-import { getMarktenByDate } from './model/markt.functions';
-
-import { sequelize } from './model/index';
-import { IToewijzing, IAfwijzing } from 'markt.model';
-import { MMMarkt } from 'makkelijkemarkt.model';
+import {
+    calculateIndelingslijst,
+    getDaysClosed,
+} from './pakjekraam-api';
+import {
+    createAllocations,
+    getAllocations,
+} from './makkelijkemarkt-api';
+import {
+    IAfwijzing,
+    IToewijzing,
+} from './model/markt.model';
+import {
+    getMarktenByDate,
+} from './model/markt.functions';
+import {
+    getTimezoneTime,
+} from './util';
+import {
+    INDELING_DAG_OFFSET,
+} from './domain-knowledge.js';
+import {
+    MMMarkt,
+} from './model/makkelijkemarkt.model';
+import {
+    RedisClient,
+} from './redis-client';
 
 const timezoneTime = getTimezoneTime();
 timezoneTime.add(INDELING_DAG_OFFSET, 'days');
 const marktDate = timezoneTime.format('YYYY-MM-DD');
-
-import { ConceptQueue } from './concept-queue';
-import { RedisClient } from './redis-client';
-const conceptQueue = new ConceptQueue();
 const redisClient = new RedisClient().getAsyncClient();
-import { createAllocations } from './makkelijkemarkt-api';
-import { getAllocations } from './makkelijkemarkt-api';
-
-const mapMarktenToToewijzingen = (markten: any): Promise<IToewijzing[]> => {
-    return markten
-        .map((markt: any) =>
-            markt.toewijzingen.map((toewijzing: any) => convertToewijzingForDB(toewijzing, markt, marktDate)),
-        )
-        .reduce(flatten, [])
-        .map((toewijzing: any) =>
-            toewijzing.plaatsen.map((plaatsId: string) => ({
-                marktId: toewijzing.marktId,
-                marktDate: toewijzing.marktDate,
-                plaatsId,
-                erkenningsNummer: toewijzing.erkenningsNummer,
-            })),
-        )
-        .reduce(flatten, []);
-};
-
-const mapMarktenToAfwijzingen = (markten: any): Promise<IAfwijzing[]> => {
-    return markten
-        .map((markt: any) =>
-            markt.afwijzingen.map((afwijzing: any) => convertAfwijzingForDB(afwijzing, markt, marktDate)),
-        )
-        .reduce(flatten, []);
-};
 
 async function createToewijzingenAfwijzingen(
     afkorting: string,
@@ -120,7 +104,7 @@ async function allocate() {
                     const marktId: string = data['markt']['id'];
                     await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
                     const allocs = await getAllocations(marktId, marktDate);
-                    console.log(allocs.data);
+                    console.log(allocs);
                 } else {
                     console.log(data);
                 }

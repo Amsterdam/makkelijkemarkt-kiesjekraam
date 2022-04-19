@@ -1,5 +1,9 @@
-import { Response } from 'express';
-import { stringify } from 'qs';
+import {
+    Response,
+} from 'express';
+import {
+    stringify,
+} from 'qs';
 
 interface ErrorMessage {
     code: string;
@@ -41,7 +45,7 @@ const humanReadableMessage = {
     [publicErrors.USERNAME_CONTAINS_DOT]: 'Het ingevoerde registratienummer mag geen punt bevatten.',
 };
 
-export const httpErrorPage = (res: Response, errorCode: number) => (err: Error | string) => {
+const httpErrorPage = (res: Response, errorCode: number) => (err: Error | string) => {
     console.log(err);
     res.render('ErrorPage.jsx', { errorCode });
 };
@@ -50,7 +54,7 @@ export const internalServerErrorPage = (res: Response) => {
     return httpErrorPage(res, HTTP_INTERNAL_SERVER_ERROR);
 };
 
-export const isAbsoluteUrl = (url: string): Boolean => url.indexOf('http://') === 0 || url.indexOf('https://') === 0;
+export const isAbsoluteUrl = (url: string): boolean => url.indexOf('http://') === 0 || url.indexOf('https://') === 0;
 
 export const forbiddenErrorPage = (res: Response) => httpErrorPage(res, HTTP_FORBIDDEN_ERROR);
 
@@ -74,15 +78,6 @@ export const getQueryErrors = (queryParams: any): ErrorMessage[] => {
             severity: 'error',
         }),
     );
-};
-
-export const errorPage = (res: Response, err: Error) => internalServerErrorPage(res)(err);
-
-export const jsonPage = (res: Response) => (data: any) => {
-    res.set({
-        'Content-Type': 'application/json; charset=UTF-8',
-    });
-    res.send(JSON.stringify(data, null, '  '));
 };
 
 export const redirectWithParams = (res: Response, params: Object) => {

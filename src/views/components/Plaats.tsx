@@ -1,13 +1,10 @@
 import * as React from 'react';
-import PrintableBackground from './PrintableBackground.jsx';
-import PropTypes from 'prop-types';
 import {
     IBranche,
-    IMarktplaats,
     IMarktondernemer,
-    IRSVP,
-    IToewijzing
-} from '../../markt.model';
+    IMarktplaats,
+    IToewijzing,
+ } from '../../model/markt.model';
 
 const Plaats = ({
     plaats,
@@ -22,7 +19,7 @@ const Plaats = ({
     opAfgemeld,
     opAfgemeldPeriode,
     ondernemerUitgebreid,
-    ondernemerGewisseld
+    ondernemerGewisseld,
 }: {
     plaats: IMarktplaats;
     branches?: IBranche[];
@@ -42,39 +39,41 @@ const Plaats = ({
     // `realBranche` om duidelijk te maken dat 'bak' niet als een echte branche gezien
     // wordt.
     const realBranche = branches.find(branche => branche.brancheId !== 'bak');
-    const wilBakken   = branches.find(branche => branche.brancheId === 'bak');
+    const wilBakken   = plaats.bakType == 'bak' || plaats.bakType == 'bak-licht';
     const evi         = plaats.verkoopinrichting.includes('eigen-materieel');
     const color       = realBranche ? realBranche.color : null;
     const tags        = (plaats.properties || []).filter(word =>
         ['experimentele-zone', 'standwerkersplaats', 'eigen-materiaal'].includes(word)
     );
-    const voorkeur    = vph && vph.voorkeur;
+    const voorkeur = vph && vph.voorkeur;
 
     return (
         <tr
             className={`
                 Plaats ${first && 'Plaats--first'} ${tags.join(' ')}
-                ${opAfgemeld || opAfgemeldPeriode ? ' Plaats--vph-attendance-not-attending': null }
+                ${opAfgemeld || opAfgemeldPeriode ? ' Plaats--vph-attendance-not-attending' : null}
             `}
             data-sollicitatie-nummer={vph && vph.sollicitatieNummer}
         >
             <td className="Plaats__prop Plaats__prop-properties">
                 <span className={`icon icon-${plaatsProps ? plaatsProps[0] : ''}`} />
             </td>
-            <td className="Plaats__prop Plaats__prop-plaats-nr">
-                {plaats.plaatsId}
-            </td>
+            <td className="Plaats__prop Plaats__prop-plaats-nr">{plaats.plaatsId}</td>
             <td
-                className={`Plaats__prop Plaats__prop-branche autoColor ${evi ? 'evi' : ''} ${wilBakken ? 'bak' : ''}`}
+                className={`Plaats__prop Plaats__prop-branche autoColor ${evi ? 'evi' : ''} ${wilBakken ? plaats.bakType : ''}`}
                 style={{ backgroundColor: color || 'transparent' }}
             >
-                {realBranche ? realBranche.brancheId.substring(0,3) : null}
+                {realBranche ? realBranche.brancheId.substring(0, 3) : null}
             </td>
             <td className="Plaats__prop Plaats__prop-soll Plaats__prop-vph">
-                {opUitgebreid ? <div className="Plaats__prop__icon Icon Icon--plus"></div> : null }
-                {opGewisseld ? <div className="Plaats__prop__icon Icon Icon--wissel"></div> : null }
-                {opAfgemeld ? <div className="Plaats__prop__icon Icon Icon--unchecked" ></div> : null }
-                {opAfgemeldPeriode ? <div className="Plaats__prop__icon"><img src="/images/Calendar.svg" alt="Unchecked"/></div> : null}
+                {opUitgebreid ? <div className="Plaats__prop__icon Icon Icon--plus"></div> : null}
+                {opGewisseld ? <div className="Plaats__prop__icon Icon Icon--wissel"></div> : null}
+                {opAfgemeld ? <div className="Plaats__prop__icon Icon Icon--unchecked"></div> : null}
+                {opAfgemeldPeriode ? (
+                    <div className="Plaats__prop__icon">
+                        <img src="/images/Calendar.svg" alt="Unchecked" />
+                    </div>
+                ) : null}
                 <span id={`soll-${vph && vph.sollicitatieNummer}`} />
                 {vph ? (
                     <a href={`/profile/${vph.erkenningsNummer}`}>
@@ -86,11 +85,17 @@ const Plaats = ({
                 <div>{vph ? vph.description : <strong>{tags.join(' ')}</strong>}</div>
             </td>
             <td className="Plaats__prop Plaats__prop-soll">
-                {ondernemerUitgebreid ? <div className="Plaats__prop__icon Icon Icon--plus"></div> : null }
-                {ondernemerGewisseld ? <div className="Plaats__prop__icon Icon Icon--wissel"></div> : null }
-                {type === 'wenperiode' && voorkeur ? <strong>({voorkeur.minimum ?
-                voorkeur.minimum : voorkeur.maximum}, {voorkeur.minimum ?
-                voorkeur.maximum - voorkeur.minimum : 0})</strong> : ''}{ondernemer ? (
+                {ondernemerUitgebreid ? <div className="Plaats__prop__icon Icon Icon--plus"></div> : null}
+                {ondernemerGewisseld ? <div className="Plaats__prop__icon Icon Icon--wissel"></div> : null}
+                {type === 'wenperiode' && voorkeur ? (
+                    <strong>
+                        ({voorkeur.minimum ? voorkeur.minimum : voorkeur.maximum},{' '}
+                        {voorkeur.minimum ? voorkeur.maximum - voorkeur.minimum : 0})
+                    </strong>
+                ) : (
+                    ''
+                )}
+                {ondernemer ? (
                     <a href={`/profile/${toewijzing.erkenningsNummer}`}>
                         <strong>{ondernemer.sollicitatieNummer}</strong>
                     </a>
@@ -99,7 +104,11 @@ const Plaats = ({
             <td className="Plaats__prop Plaats__prop-naam">
                 <div>{ondernemer ? ondernemer.description : null}</div>
             </td>
-            <td className={`Plaats__prop Plaats__prop-status Plaats__prop-status--${ondernemer ? ondernemer.status : 'none'}`}>
+            <td
+                className={`Plaats__prop Plaats__prop-status Plaats__prop-status--${
+                    ondernemer ? ondernemer.status : 'none'
+                }`}
+            >
                 {ondernemer ? ondernemer.status : null}
             </td>
         </tr>

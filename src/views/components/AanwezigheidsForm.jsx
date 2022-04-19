@@ -1,17 +1,18 @@
-const Form = require('./Form');
-const React = require('react');
-const PropTypes = require('prop-types');
-
-const SollicitatieSpecs = require('./SollicitatieSpecs');
-const Alert = require('./Alert');
-
-import { Roles } from '../../authentication';
-import { EMPTY_BRANCH } from '../../makkelijkemarkt-api';
-
-const {
+import {
     toDate,
-    WEEK_DAYS_SHORT
-} = require('../../util.ts');
+    WEEK_DAYS_SHORT,
+} from '../../util.ts';
+import Alert from './Alert';
+import {
+    EMPTY_BRANCH,
+} from '../../makkelijkemarkt-api';
+import Form from './Form';
+import PropTypes from 'prop-types';
+import React from 'react';
+import {
+    Roles,
+} from '../../authentication';
+import SollicitatieSpecs from './SollicitatieSpecs';
 
 class AanwezigheidsForm extends React.Component {
     propTypes = {
@@ -25,14 +26,7 @@ class AanwezigheidsForm extends React.Component {
     };
 
     render() {
-        const {
-            aanmeldingenPerMarktPerWeek = [],
-            csrfToken,
-            ondernemer,
-            role,
-            sollicitaties,
-            voorkeuren
-        } = this.props;
+        const { aanmeldingenPerMarktPerWeek = [], csrfToken, ondernemer, role, sollicitaties, voorkeuren } = this.props;
 
         // Wordt in de HTML gebruikt om de `rsvp` <input>s te nummeren.
         let index = -1;
@@ -45,7 +39,9 @@ class AanwezigheidsForm extends React.Component {
 
         const getVoorkeurenLink = markt => {
             let link;
-            role === Roles.MARKTMEESTER ? link = `/ondernemer/${ondernemer.erkenningsnummer}/algemene-voorkeuren/${markt.id}/` : link = `/algemene-voorkeuren/${markt.id}/`;
+            role === Roles.MARKTMEESTER
+                ? (link = `/ondernemer/${ondernemer.erkenningsnummer}/algemene-voorkeuren/${markt.id}/`)
+                : (link = `/algemene-voorkeuren/${markt.id}/`);
             return link;
         };
 
@@ -68,24 +64,32 @@ class AanwezigheidsForm extends React.Component {
                         <h2 className="Heading Heading--intro">
                             {markt.naam} <SollicitatieSpecs sollicitatie={sollicitaties[markt.id]} />
                         </h2>
-                        { hasNoBranche(markt) ? (
-                        <Alert type="error" inline={true} fullwidth={true}>
-                            <span>
-                                U hebt uw <strong>koopwaar</strong> nog niet doorgegeven in het {' '}
-                                <a href={getVoorkeurenLink(markt)}>marktprofiel</a>, daarom kunt u zich niet aanmelden voor deze markt.
-                            </span>
-                        </Alert> ) : null }
+                        {hasNoBranche(markt) ? (
+                            <Alert type="error" inline={true} fullwidth={true}>
+                                <span>
+                                    U hebt uw <strong>koopwaar</strong> nog niet doorgegeven in het{' '}
+                                    <a href={getVoorkeurenLink(markt)}>marktprofiel</a>, daarom kunt u zich niet
+                                    aanmelden voor deze markt.
+                                </span>
+                            </Alert>
+                        ) : null}
                         {aanmeldingenPerWeek.map((week, i) => (
                             <div className="week" key="{i}">
                                 <h4>{i === 0 ? 'Deze week' : 'Volgende week'}</h4>
-                                {[0, 1, 2, 3, 4, 5, 6].map(day => (
-                                    day in week ?
+                                {[0, 1, 2, 3, 4, 5, 6].map(day =>
+                                    day in week ? (
                                         <span className="day" key={++index}>
-                                            <input type="hidden" name={`rsvp[${index}][marktId]`}
-                                                disabled={week[day].isInThePast} defaultValue={markt.id}
+                                            <input
+                                                type="hidden"
+                                                name={`rsvp[${index}][marktId]`}
+                                                disabled={week[day].isInThePast}
+                                                defaultValue={markt.id}
                                             />
-                                            <input type="hidden" name={`rsvp[${index}][marktDate]`}
-                                                disabled={week[day].isInThePast} defaultValue={toDate(week[day].date)}
+                                            <input
+                                                type="hidden"
+                                                name={`rsvp[${index}][marktDate]`}
+                                                disabled={week[day].isInThePast}
+                                                defaultValue={toDate(week[day].date)}
                                             />
 
                                             <input
@@ -100,7 +104,7 @@ class AanwezigheidsForm extends React.Component {
                                                 <strong>{WEEK_DAYS_SHORT[day]}</strong>
                                             </label>
                                         </span>
-                                        :
+                                    ) : (
                                         <span className="day" key={++index}>
                                             <input
                                                 disabled={true}
@@ -112,7 +116,8 @@ class AanwezigheidsForm extends React.Component {
                                                 <strong>{WEEK_DAYS_SHORT[day]}</strong>
                                             </label>
                                         </span>
-                                ))}
+                                    ),
+                                )}
                             </div>
                         ))}
                     </div>
@@ -121,27 +126,26 @@ class AanwezigheidsForm extends React.Component {
                 <p className="InputField InputField--submit">
                     <a
                         className="Button Button--tertiary"
-                        href={`${role === 'marktmeester'
-                                ? `/profile/${ondernemer.erkenningsnummer}`
-                                : `/dashboard`
-                            }`}
+                        href={`${role === 'marktmeester' ? `/profile/${ondernemer.erkenningsnummer}` : `/dashboard`}`}
                     >
                         Voorkeuren
-                </a>
+                    </a>
                     <button
                         className="Button Button--secondary"
                         type="submit"
                         name="next"
-                        value={`${role === 'marktmeester'
+                        value={`${
+                            role === 'marktmeester'
                                 ? `/profile/${ondernemer.erkenningsnummer}?error=aanwezigheid-saved`
                                 : `/dashboard?error=aanwezigheid-saved`
-                            }`}
+                        }`}
                     >
                         Opslaan
-                </button>
+                    </button>
                 </p>
             </Form>
         );
     }
 }
+
 module.exports = AanwezigheidsForm;

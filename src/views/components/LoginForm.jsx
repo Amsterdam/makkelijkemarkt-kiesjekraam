@@ -1,5 +1,4 @@
-const React = require('react');
-const Page = require('./Page.jsx');
+import React from 'react';
 
 class LoginForm extends React.Component {
     render() {

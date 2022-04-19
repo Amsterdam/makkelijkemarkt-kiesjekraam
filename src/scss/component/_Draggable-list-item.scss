@@ -1,11 +1,7 @@
 .Draggable-list-item{
-
-    // padding: 6px 6px 6px 10px;
-    // padding: .65rem;
     background-color: $neutral-grey1;
     border: 1px solid $neutral-grey3;
     display: flex;
-    // justify-content: space-between;
     align-items: center;
     margin: 0 auto $gutter-sm;
     position: relative;
@@ -68,11 +64,9 @@
     }
 
     &__label{
-        // margin-left: 10px;
         font-size: 16px;
         @media screen and (min-width: $screenMedium) {
             font-size: 16px;
-            // margin-left: $gutter;
         }
     }
 
@@ -107,9 +101,6 @@
             display: inline-block;
             text-align: center;
             color: $primary-darkblue;
-            // @media screen and (min-width: $screenMedium) {
-            //     font-size: 20px;
-            // }
         }
 
     }

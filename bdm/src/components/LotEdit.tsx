@@ -40,16 +40,11 @@ export default class LotEdit extends Component<LotEditProps> {
     return _blist.indexOf('bak') > -1
   }
 
-  setBak = (e: CheckboxChangeEvent) => {
-    if (this.state.lot && this.state.lot) {
-      let _branches: string[] = this.state.lot.branches || []
-      if (e.target.checked) {
-        _branches.push('bak')
-      } else {
-        _branches = _branches?.filter((e) => e !== 'bak')
-      }
+  setBak = (e: any) => {
+    if (this.state.lot) {
+      let _bakType: string = e.target.value;
       this.setState({
-        lot: { ...this.state.lot, branches: _branches },
+        lot: { ...this.state.lot, bakType: _bakType },
       })
     }
   }
@@ -112,6 +107,13 @@ export default class LotEdit extends Component<LotEditProps> {
       return this.state.lot.verkoopinrichting.indexOf(value) > -1
     }
     return false
+  }
+
+  getBakState(){
+    if (this.state.lot) {
+	  return this.state.lot.bakType;
+	}
+	return 'geen';
   }
 
   getBlockState() {
@@ -338,6 +340,18 @@ export default class LotEdit extends Component<LotEditProps> {
                   </Col>
                 </Row>
                 <Row gutter={formGutter}>
+                  <Col {...firstColSpan}>Bak</Col>
+                  <Col {...secondColSpan}>
+                  {this.isBakPresent() && (
+                    <Radio.Group value={this.getBakState()} onChange={this.setBak}>
+                      <Radio value="geen">geen</Radio>
+                      <Radio value="bak">bak</Radio>
+                      <Radio value="bak-licht">bak-licht</Radio>
+                    </Radio.Group>
+                  )}
+				  </Col>
+				</Row>
+                <Row gutter={formGutter}>
                   <Col style={colStyle}>
                     <Checkbox
                       id="eigen-materieel"
@@ -349,13 +363,7 @@ export default class LotEdit extends Component<LotEditProps> {
                     <br />
                     materieel
                   </Col>
-                  {this.isBakPresent() && (
-                    <Col style={colStyle}>
-                      <Checkbox checked={this.getBak()} onChange={this.setBak} />
-                      <br />
-                      Bak
-                    </Col>
-                  )}
+
                   {this.context.plaatseigenschap.map((prop: INaam) => {
                     return (
                       <Col key={prop.id} style={colStyle}>

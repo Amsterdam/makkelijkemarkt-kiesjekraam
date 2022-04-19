@@ -1,7 +1,7 @@
+import PropTypes from 'prop-types';
+import React from 'react';
 const Content = require('./components/Content');
-const React = require('react');
 const Page = require('./components/Page.jsx');
-const PropTypes = require('prop-types');
 const Header = require('./components/Header');
 
 class AanmeldPage extends React.Component {
@@ -21,7 +21,6 @@ class AanmeldPage extends React.Component {
                     <p>API_MMAPPKEY: {process.env.API_MMAPPKEY}</p>
                     <p>API_URL: {process.env.API_URL}</p>
                     <p>APP_SECRET: {process.env.APP_SECRET}</p>
-                    <p>DATABASE_URL: {process.env.DATABASE_URL}</p>
                     <p>IAM_ADMIN_PASS: {process.env.IAM_ADMIN_PASS}</p>
                     <p>IAM_ADMIN_USER: {process.env.IAM_ADMIN_USER}</p>
                     <p>IAM_CLIENT_ID: {process.env.IAM_CLIENT_ID}</p>
@@ -33,11 +32,6 @@ class AanmeldPage extends React.Component {
                     <p>MAILER_URL: {process.env.MAILER_URL}</p>
                     <p>NODE_ENV: {process.env.NODE_ENV}</p>
                     <p>APP_ENV: {process.env.APP_ENV}</p>
-                    <p>POSTGRES_DB: {process.env.POSTGRES_DB}</p>
-                    <p>POSTGRES_PASSWORD: {process.env.POSTGRES_PASSWORD}</p>
-                    <p>POSTGRES_USER: {process.env.POSTGRES_USER}</p>
-                    <p>POSTGRES_HOST: {process.env.POSTGRES_HOST}</p>
-                    <p>POSTGRES_PORT: {process.env.POSTGRES_PORT}</p>
                 </Content>
             </Page>
         );

@@ -1,8 +1,8 @@
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
 const MarktDetailBase = require('./components/MarktDetailBase');
 const OndernemerList = require('./components/OndernemerList.tsx');
 const PrintPage = require('./components/PrintPage');
-const PropTypes = require('prop-types');
 const { paginate } = require('../util');
 
 class SollicitantenPage extends React.Component {

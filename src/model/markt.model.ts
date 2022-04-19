@@ -1,5 +1,3 @@
-import { MMMarkt } from './makkelijkemarkt.model';
-
 export type PlaatsId = string;
 
 export type ErkenningsNummer = string;
@@ -65,17 +63,11 @@ export interface IMarktindeling extends IMarkt, IMarktindelingSeed {
 }
 
 export interface IRSVP {
-    // `id` is used by Sequelize
-    id?: number;
     marktId?: string;
     marktDate: string;
     erkenningsNummer: ErkenningsNummer;
     attending: boolean;
 }
-
-export interface IMarktdeelnemer {}
-
-// TODO: Implement 'standwerker' en 'promoplek' als `IMarktdeelnemer`
 
 export interface IMarktondernemerVoorkeur {
     erkenningsNummer: string;
@@ -88,6 +80,7 @@ export interface IMarktondernemerVoorkeur {
     anywhere?: boolean;
     absentFrom?: Date;
     absentUntil?: Date;
+    bakType?: string;
     branches?: BrancheId[];
     verkoopinrichting?: string[];
 }
@@ -104,11 +97,12 @@ export interface IMarktondernemerVoorkeurRow {
     absentFrom?: Date;
     absentUntil?: Date;
     brancheId?: BrancheId;
+    bakType?: string;
     parentBrancheId?: BrancheId;
     inrichting?: string;
 }
 
-export interface IMarktondernemer extends IMarktdeelnemer {
+export interface IMarktondernemer {
     description: string;
     erkenningsNummer: ErkenningsNummer;
     sollicitatieNummer: number;
@@ -119,6 +113,7 @@ export interface IMarktondernemer extends IMarktdeelnemer {
 
 export interface IMarktplaats {
     plaatsId: PlaatsId;
+    bakType?: string;
     properties?: string[];
     branches?: BrancheId[];
     verkoopinrichting?: string[];
@@ -196,8 +191,6 @@ export interface IPlaatsvoorkeur {
 }
 
 export interface IPlaatsvoorkeurRow {
-    // `id` is used by Sequelize
-    id?: number;
     marktId: string;
     erkenningsNummer: string;
     plaatsId: string;
@@ -243,6 +236,7 @@ export interface Lot {
     branches?: string[];
     verkoopinrichting?: string[];
     properties?: string[];
+    inactive?: boolean;
     kraamA?: string;
     kraamB?: string;
     obstakel?: string[];

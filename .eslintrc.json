@@ -7,10 +7,8 @@
     "shared-node-browser": true
   },
   "parser": "@typescript-eslint/parser",
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:react/recommended", "prettier" ],
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:react/recommended", "prettier"],
+  "plugins": ["@typescript-eslint"],
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
@@ -60,7 +58,6 @@
     "guard-for-in": ["error"],
     "handle-callback-err": ["off"],
     "id-blacklist": ["error", "foo", "bar", "quux"],
-    "id-length": ["error", { "min": 1, "max": 28 }],
     "id-match": ["off"],
     "indent": ["off"],
     "init-declarations": ["off"],

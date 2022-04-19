@@ -194,6 +194,11 @@ export class Transformer {
             let _stand: Stand = {
               plaatsId: element.plaatsId || '',
             }
+            if (element.bakType){
+              _stand.bakType = element.bakType;
+            }else{
+              _stand.bakType = 'geen';
+            }
             if (element.branches) {
               _stand.branches = element.branches
             }

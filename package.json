@@ -2,40 +2,26 @@
   "name": "@fixxx/pakjekraam",
   "version": "0.0.1",
   "description": "",
-  "repository": "https://github.com/Amsterdam/fixxx-pakjekraam.git",
+  "repository": "https://git.data.amsterdam.nl:salmagundi/makkelijkemarkt/makkelijkemarkt-kiesjekraam.git",
   "main": "src/index.ts",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "db": "pg_ctl -D /usr/local/var/postgres start",
     "build": "gulp build",
     "build:typescript": "tsc --project tsconfig.json",
-    "deploy": "ts-node src/deploy.js",
     "clean": "rm -rf dist/* node_modules/.cache/",
-    "prestart": "npm run deploy",
     "dev-server": "( export $(cat .env) && npm run dev)",
     "start": "ts-node --transpile-only src/index.ts",
-    "predev": "npm run build && npm run deploy",
     "dev": "ENABLE_CORS_FOR_ORIGIN='http://localhost:3000' ts-node-dev --ignore-watch node_modules src/index.ts",
     "allocation": "ts-node src/allocation.ts",
-    "concept": "ts-node src/concept-allocation.ts",
-    "allocation-env": "( . .env && npm run allocation)",
-    "migrate": "( . .env && npx sequelize-cli db:migrate)",
-    "migrate:undo": "( . .env && npx sequelize-cli db:migrate:undo)",
-    "migrate-rsvp-to-mm-api": "ts-node src/migrate-rsvp.ts",
-    "migrate-marktvoorkeur-to-mm-api": "ts-node src/migrate-marktvoorkeur.ts",
-    "migrate-plaatsvoorkeur-to-mm-api": "ts-node src/migrate-plaatsvoorkeur.ts",
-    "migrate-marktconfiguratie-to-mm-api": "ts-node src/migrate-marktconfig.ts",
-    "import": "echo 'Import skipped. Temporarily disabled.' && exit 0",
     "tdd": "jest --watch --verbose --rootDir ./src/",
     "test": "jest --verbose --silent --rootDir ./src/",
     "lint": "npm run lint:eslint",
     "lint:eslint": "eslint './src/**/*.js' './src/**/*.jsx' './src/**/*.ts' './src/**/*.tsx'",
-    "lint-fix": "npm run lint-fix:eslint; npm run lint-fix:prettier; npm run lint-fix:tslint",
+    "lint-fix": "npm run lint-fix:eslint; npm run lint-fix:prettier",
     "lint-fix:eslint": "npm run lint:eslint -- --fix",
     "lint-fix:prettier": "prettier --write '**/*.js' '**/*.json' '**/*.jsx' '*.yml'",
-    "lint-fix:tslint": "npm run lint:tslint -- --fix",
     "lint-non-npm": "git ls-files '*.yml' | tr '\n' '\\0' | xargs -0 yamllint",
     "prewatch": "npm run clean && npm run build",
     "mailing-list": "ts-node src/mailing-list.tsx",
@@ -109,9 +95,6 @@
     "node-cache": "5.1.2",
     "node-stream-zip": "1.13.0",
     "nodemailer": "6.7.2",
-    "pg": "^8.7.3",
-    "pg-hstore": "^2.3.4",
-    "pg-pool": "^3.5.1",
     "prop-types": "15.7.2",
     "qs": "6.7.0",
     "react": "16.8.6",
@@ -121,8 +104,6 @@
     "redis": "4.0.6",
     "rxjs": "6.5.2",
     "sass": "1.49.9",
-    "sequelize": "5.22.5",
-    "sequelize-cli": "6.4.1",
     "sortablejs": "1.10.1",
     "ts-node-dev": "1.1.8",
     "webpack": "^4.46.0"
@@ -138,9 +119,6 @@
     ],
     "src/**/*.{ts,tsx}": [
       "npm run lint:tslint"
-    ],
-    "config/markt/**/*.json": [
-      "node ./src/check-markt-config.js"
     ]
   }
 }

@@ -1,34 +1,34 @@
 import * as fs from 'fs';
-
-import { numberSort } from './util';
-import { isVast } from './domain-knowledge.js';
-
-import { allocation, log } from './model/index';
-
-import { IMarktondernemer, IMarktondernemerVoorkeur, IMarktondernemerVoorkeurRow, IToewijzing } from './markt.model';
-
-import { Allocation } from './model/allocation.model';
-
-import { MarktConfig } from './model/marktconfig';
-
 import {
-    getALijst,
-    getMarkt,
+    ALLOCATION_MODE_SCHEDULED,
+    ConceptQueue,
+} from './concept-queue';
+import {
     getAanmeldingenByMarktAndDate,
+    getALijst,
+    getAllocations,
+    getIndelingVoorkeuren,
+    getMarkt,
+    getMarktBasics,
     getOndernemersByMarkt,
     getPlaatsvoorkeuren,
-    getIndelingVoorkeuren,
+    getToewijzingen,
     getVoorkeurenByMarkt,
-    getAllocations,
-    getMarktBasics,
 } from './makkelijkemarkt-api';
-
-import { ConceptQueue, ALLOCATION_MODE_SCHEDULED } from './concept-queue';
+import {
+    IMarktondernemer,
+    IMarktondernemerVoorkeur,
+    IMarktondernemerVoorkeurRow,
+} from './model/markt.model';
+import {
+    isVast,
+} from './domain-knowledge';
 import { RedisClient } from './redis-client';
 
 const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
 const client = new RedisClient().getAsyncClient();
+
 
 const loadJSON = <T>(path: string, defaultValue: T = null): Promise<T> =>
     new Promise((resolve, reject) => {
@@ -47,72 +47,6 @@ const loadJSON = <T>(path: string, defaultValue: T = null): Promise<T> =>
             }
         });
     });
-
-export const groupAllocationRows = (toewijzingen: IToewijzing[], row: Allocation): IToewijzing[] => {
-    const { marktId, marktDate, erkenningsNummer } = row;
-
-    const existing = toewijzingen.find(toewijzing => toewijzing.erkenningsNummer === erkenningsNummer);
-
-    const voorkeur: IToewijzing = {
-        marktId,
-        marktDate,
-        erkenningsNummer,
-        plaatsen: [...(existing ? existing.plaatsen : []), row.plaatsId],
-    };
-
-    if (existing) {
-        return [...toewijzingen.filter(toewijzing => toewijzing.erkenningsNummer !== erkenningsNummer), voorkeur];
-    } else {
-        return [...toewijzingen, voorkeur];
-    }
-};
-
-export const getToewijzingen = (marktId: string, marktDate: string): Promise<IToewijzing[]> =>
-    allocation
-        .findAll<Allocation>({
-            where: { marktId, marktDate },
-            raw: true,
-        })
-        .then(toewijzingen => toewijzingen.reduce(groupAllocationRows, []));
-
-const indelingVoorkeurPrio = (voorkeur: IMarktondernemerVoorkeur): number =>
-    (voorkeur.marktId ? 1 : 0) | (voorkeur.marktDate ? 2 : 0);
-
-export const indelingVoorkeurSort = (a: IMarktondernemerVoorkeur, b: IMarktondernemerVoorkeur) =>
-    numberSort(indelingVoorkeurPrio(b), indelingVoorkeurPrio(a));
-
-export const indelingVoorkeurMerge = (
-    a: IMarktondernemerVoorkeurRow,
-    b: IMarktondernemerVoorkeurRow,
-): IMarktondernemerVoorkeurRow => {
-    const merged = Object.assign({}, a);
-
-    if (b.minimum !== null) {
-        merged.minimum = b.minimum;
-    }
-    if (b.maximum !== null) {
-        merged.maximum = b.maximum;
-    }
-    if (b.krachtStroom !== null) {
-        merged.krachtStroom = b.krachtStroom;
-    }
-    if (b.kraaminrichting !== null) {
-        merged.kraaminrichting = b.kraaminrichting;
-    }
-    if (b.anywhere !== null) {
-        merged.anywhere = b.anywhere;
-    }
-    if (b.brancheId !== null) {
-        merged.brancheId = b.brancheId;
-    }
-    if (b.parentBrancheId !== null) {
-        merged.parentBrancheId = b.parentBrancheId;
-    }
-    if (b.inrichting !== null) {
-        merged.inrichting = b.inrichting;
-    }
-    return merged;
-};
 
 export const convertVoorkeur = (obj: IMarktondernemerVoorkeurRow): IMarktondernemerVoorkeur => ({
     ...obj,
@@ -144,7 +78,7 @@ export const getMededelingen = (): Promise<any> => loadJSON('./config/markt/mede
 
 export const getDaysClosed = (): Promise<any> => loadJSON('./config/markt/daysClosed.json', {});
 
-export const getMarktDetails = (marktId: string, marktDate: string) => {
+const getMarktDetails = (marktId: string, marktDate: string) => {
     console.log('get market details: ', marktId, marktDate);
     const marktBasics = getMarktBasics(marktId);
 
@@ -189,7 +123,7 @@ export const getCalculationInput = (marktId: string, marktDate: string) => {
 export const getIndelingslijst = (marktId: string, marktDate: string) => {
     return Promise.all([getMarktDetails(marktId, marktDate), getAllocations(marktId, marktDate)]).then(
         ([marktDetails, tws]) => {
-            let toewijzingen = tws['data'];
+            const toewijzingen = tws;
             return {
                 ...marktDetails,
                 toewijzingen,

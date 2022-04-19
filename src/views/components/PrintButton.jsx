@@ -1,5 +1,4 @@
-// const PropTypes = require('prop-types');
-const React = require('react');
+import React from 'react';
 
 const PrintButton = () => {
     /* eslint-disable no-script-url */
@@ -12,7 +11,6 @@ const PrintButton = () => {
     );
 };
 
-PrintButton.propTypes = {
-};
+PrintButton.propTypes = {};
 
 module.exports = PrintButton;

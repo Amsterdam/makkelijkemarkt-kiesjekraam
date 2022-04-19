@@ -1,9 +1,12 @@
-const React = require('react');
+import PropTypes from 'prop-types';
+import React from 'react';
 const MarktDetailBase = require('./components/MarktDetailBase');
 const OndernemerListAfwezig = require('./components/OndernemerListAfwezig.tsx');
 const PrintPage = require('./components/PrintPage');
-const PropTypes = require('prop-types');
-const { paginate, getBreadcrumbsMarkt } = require('../util');
+const {
+    paginate,
+    getBreadcrumbsMarkt
+} = require('../util');
 
 class AfmeldingenVPHPage extends React.Component {
     propTypes = {
@@ -16,13 +19,7 @@ class AfmeldingenVPHPage extends React.Component {
     };
 
     render() {
-        const {
-           datum,
-           markt,
-           vasteplaatshoudersAfgemeld,
-           role,
-           user
-        } = this.props;
+        const { datum, markt, vasteplaatshoudersAfgemeld, role, user } = this.props;
 
         const columns = paginate(vasteplaatshoudersAfgemeld, 40);
         const breadcrumbs = getBreadcrumbsMarkt(markt, role);
@@ -40,14 +37,9 @@ class AfmeldingenVPHPage extends React.Component {
                 role={role}
                 user={user}
             >
-                <PrintPage
-                    title={`Vasteplaatshouders afgemeld: ${markt.naam}`}
-                    datum={datum}>
+                <PrintPage title={`Vasteplaatshouders afgemeld: ${markt.naam}`} datum={datum}>
                     {columns.map((ondernemers, j) => (
-                        <OndernemerListAfwezig
-                            ondernemers={ondernemers}
-                            key={j}
-                        />
+                        <OndernemerListAfwezig ondernemers={ondernemers} key={j} />
                     ))}
                 </PrintPage>
             </MarktDetailBase>

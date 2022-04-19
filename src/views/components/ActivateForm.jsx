@@ -1,6 +1,5 @@
-const React = require('react');
-const Page = require('./Page.jsx');
-const PropTypes = require('prop-types');
+import PropTypes from 'prop-types';
+import React from 'react';
 
 class ActivateForm extends React.Component {
     propTypes = {
@@ -16,7 +15,9 @@ class ActivateForm extends React.Component {
                         <label className="Label" htmlFor="username">
                             Registratienummer:
                         </label>
-                        <span className="Fieldset__sub-header">Hier vult u uw registratienummer in <b>zonder punt</b>.</span>
+                        <span className="Fieldset__sub-header">
+                            Hier vult u uw registratienummer in <b>zonder punt</b>.
+                        </span>
                         <input
                             className="Input Input--text"
                             id="username"

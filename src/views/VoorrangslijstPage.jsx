@@ -1,13 +1,41 @@
-const React = require('react');
+import {
+    DeelnemerStatus,
+} from '../model/markt.model';
+import PropTypes from 'prop-types';
+import React from 'react';
 const MarktDetailBase = require('./components/MarktDetailBase');
 const OndernemerList = require('./components/OndernemerList.tsx');
 const PrintPage = require('./components/PrintPage');
-const PropTypes = require('prop-types');
-const { paginate, getBreadcrumbsMarkt } = require('../util');
-const { A_LIJST_DAYS } = require('../domain-knowledge.js');
+const {
+    paginate,
+    getBreadcrumbsMarkt,
+} = require('../util');
+const {
+    A_LIJST_DAYS,
+} = require('../domain-knowledge.ts');
+const {
+    isAanwezig,
+} = require('../routes/markt-marktmeester');
 
-import Indeling from '../allocation/indeling';
-import Ondernemers from '../allocation/ondernemers';
+
+
+const STATUS_PRIORITIES = [
+    DeelnemerStatus.SOLLICITANT,
+    DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS,
+    DeelnemerStatus.VASTE_PLAATS
+];
+
+const compare = (a, b, aLijst) => {
+    const sort1 = Number(aLijst.includes(b)) - Number(aLijst.includes(a));
+    const sort2 = Math.max(STATUS_PRIORITIES.indexOf(b.status), 0) - Math.max(STATUS_PRIORITIES.indexOf(a.status), 0);
+    const sort3 = a.sollicitatieNummer - b.sollicitatieNummer;
+
+    return sort1 || sort2 || sort3;
+};
+
+const sort = (ondernemers, aLijst = []) => {
+    return [...ondernemers].sort((a, b) => compare(a, b, aLijst));
+};
 
 class VoorrangslijstPage extends React.Component {
     propTypes = {
@@ -21,7 +49,7 @@ class VoorrangslijstPage extends React.Component {
         toewijzingen: PropTypes.array.isRequired,
         algemenevoorkeuren: PropTypes.array,
         role: PropTypes.string,
-        user: PropTypes.object
+        user: PropTypes.object,
     };
 
     render() {
@@ -35,7 +63,7 @@ class VoorrangslijstPage extends React.Component {
             user,
             toewijzingen,
             algemenevoorkeuren,
-            role
+            role,
         } = this.props;
         let { ondernemers } = this.props;
         const aLijstErkenningsNummers = aLijst.map(ondernemer => ondernemer.erkenningsnummer);
@@ -53,30 +81,36 @@ class VoorrangslijstPage extends React.Component {
                 !toewijzingen.find(({ erkenningsNummer }) => erkenningsNummer === ondernemer.erkenningsNummer),
         );
 
-        ondernemers = Ondernemers.sort(ondernemers, aLijst);
+        ondernemers = sort(ondernemers, aLijst);
         ondernemers = [
-            ...ondernemers.filter(ondernemer => Indeling.isAanwezig(ondernemer, aanmeldingen, datum)),
-            ...ondernemers.filter(ondernemer => !Indeling.isAanwezig(ondernemer, aanmeldingen, datum)),
+            ...ondernemers.filter(ondernemer => isAanwezig(ondernemer, aanmeldingen, datum)),
+            ...ondernemers.filter(ondernemer => isAanwezig(ondernemer, aanmeldingen, datum)),
         ];
-        const ondernemersErkenningsNummers = ondernemers.map(ondernemer => ondernemer.erkenningsNummer);
-        const ondernemersRest = aLijstErkenningsNummers.filter(nr => !ondernemersErkenningsNummers.includes(nr));
 
         const ondernemersGrouped = ondernemers
             .reduce(
                 (total, ondernemer) => {
                     total[
-                        Indeling.isAanwezig(ondernemer, aanmeldingen, datum) && aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
-                            ? aLijstAangemeld : Indeling.isAanwezig(ondernemer, aanmeldingen, datum) && !aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
-                            ? Aangemeld : !Indeling.isAanwezig(ondernemer, aanmeldingen, datum) && aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
-                            ? aLijstNietAangemeld : !Indeling.isAanwezig(ondernemer, aanmeldingen, datum) && !aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
-                            ? NietAangemeld : NietAangemeld
+                        isAanwezig(ondernemer, aanmeldingen, datum) &&
+                        aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
+                            ? aLijstAangemeld
+                            : isAanwezig(ondernemer, aanmeldingen, datum) &&
+                              !aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
+                            ? Aangemeld
+                            : !isAanwezig(ondernemer, aanmeldingen, datum) &&
+                              aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
+                            ? aLijstNietAangemeld
+                            : !isAanwezig(ondernemer, aanmeldingen, datum) &&
+                              !aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
+                            ? NietAangemeld
+                            : NietAangemeld
                     ].push(ondernemer);
                     return total;
                 },
                 [[], [], [], []],
             )
-            .map( (group, index) => {
-                if ( index === 1 || index === 2 || index === 3) {
+            .map((group, index) => {
+                if (index === 1 || index === 2 || index === 3) {
                     return group.filter(ondernemer => ondernemer.status !== 'vpl');
                 } else {
                     return group;

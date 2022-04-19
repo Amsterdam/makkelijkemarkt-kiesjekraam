@@ -1,6 +1,10 @@
-import PropTypes from 'prop-types';
 import * as React from 'react';
-import { IMarkt, IMarktondernemer, IRSVP } from '../../markt.model';
+import {
+    IMarkt,
+    IMarktondernemer,
+    IRSVP
+} from '../../model/markt.model';
+import PropTypes from 'prop-types';
 
 const OndernemerList = ({
     ondernemers,
@@ -19,7 +23,8 @@ const OndernemerList = ({
             <tbody>
                 {ondernemers.map(ondernemer => {
                     const aanmelding =
-                        ondernemer && aanmeldingen.find(rsvp => rsvp.erkenningsNummer === ondernemer.erkenningsNummer);
+                        ondernemer &&
+                        aanmeldingen.find(rsvp => rsvp.erkenningsNummer === ondernemer.erkenningsNummer);
                     const algemenevoorkeur = algemenevoorkeuren[ondernemer.erkenningsNummer];
 
                     return (
@@ -39,11 +44,15 @@ const OndernemerList = ({
                                 } ${aanmelding && aanmelding.attending ? 'OndernemerList__ondernemer--attending' : ''}`}
                             />
                             <td>
-                                {algemenevoorkeur ?
-                                <strong>({algemenevoorkeur.minimum}, {algemenevoorkeur.maximum - algemenevoorkeur.minimum}) </strong>
-                                 : ''}
+                                {algemenevoorkeur ? (
+                                    <strong>
+                                        ({algemenevoorkeur.minimum},{' '}
+                                        {algemenevoorkeur.maximum - algemenevoorkeur.minimum}){' '}
+                                    </strong>
+                                ) : (
+                                    ''
+                                )}
                             </td>
-
                         </tr>
                     );
                 })}

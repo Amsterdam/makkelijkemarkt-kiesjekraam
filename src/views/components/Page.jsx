@@ -1,6 +1,6 @@
+import PropTypes from 'prop-types';
+import React from 'react';
 const Alert = require('./Alert');
-const PropTypes = require('prop-types');
-const React = require('react');
 
 class Page extends React.Component {
     propTypes = {
@@ -26,7 +26,7 @@ class Page extends React.Component {
                 <body className={this.props.bodyClass}>
                     {(this.props.messages || []).map(message => (
                         <Alert key={message.code} type={message.code}>
-                            <span dangerouslySetInnerHTML={{ __html: message.message }}></span>
+                            <span dangerouslySetInnerHTML={{ __html: message.message }} />
                         </Alert>
                     ))}
 

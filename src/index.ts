@@ -1,80 +1,94 @@
-import express, { Request, Response, NextFunction, RequestHandler } from 'express';
-
+import * as reactViews from 'express-react-views';
+import {
+    afmeldingenVasteplaatshoudersPage,
+    alleOndernemersAanwezigheidLijst,
+    ondernemersNietIngedeeldPage,
+    sollicitantentAanwezigheidLijst,
+    vasteplaatshoudersPage,
+    voorrangslijstPage,
+} from './routes/markt-marktmeester';
+import {
+    attendancePage,
+    handleAttendanceUpdate,
+} from './routes/market-application';
+import {
+    conceptIndelingPage,
+    indelingErrorStacktracePage,
+    indelingInputJobPage,
+    indelingLogsPage,
+    indelingPage,
+    indelingWaitingPage,
+} from './routes/market-allocation';
+import express, {
+    NextFunction,
+    Request,
+    RequestHandler,
+    Response,
+} from 'express';
+import {
+    getMarkt,
+    getMarkten,
+} from './makkelijkemarkt-api';
+import {
+    GrantedRequest,
+    TokenContent,
+} from 'keycloak-connect';
+import {
+    internalServerErrorPage,
+    isAbsoluteUrl,
+} from './express-util';
+import {
+    keycloak,
+    Roles,
+    sessionMiddleware,
+} from './authentication';
+import {
+    keycloakHealth,
+    makkelijkeMarktHealth,
+    serverHealth,
+    serverTime,
+} from './routes/status';
+import {
+    langdurigAfgemeld,
+    marktDetail,
+} from './routes/markt';
+import {
+    marketPreferencesPage,
+    updateMarketPreferences,
+} from './routes/market-preferences';
+import {
+    plaatsvoorkeurenPage,
+    updatePlaatsvoorkeuren,
+} from './routes/market-location';
+import {
+    publicProfilePage,
+    toewijzingenAfwijzingenPage,
+} from './routes/ondernemer';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
+import {
+    dashboardPage,
+} from './routes/dashboard';
+import {
+    getKeycloakUser,
+} from './keycloak-api';
+import mmApiDispatch from './routes/mmApiDispatch';
 import morgan from 'morgan';
 import path from 'path';
-import * as reactViews from 'express-react-views';
-
-// Util
-// ----
-
-import { internalServerErrorPage, isAbsoluteUrl } from './express-util';
-
-import { requireEnv } from './util';
-
-// Authentication
-// --------------
-
-import { GrantedRequest, TokenContent } from 'keycloak-connect';
-import { getKeycloakUser } from './keycloak-api';
-import { Roles, keycloak, sessionMiddleware } from './authentication';
-
-// API
-// ---
-
-import { getMarkt, getMarkten } from './makkelijkemarkt-api';
-
-// Routes
-// ------
-
-import { serverHealth, serverTime, databaseHealth, keycloakHealth, makkelijkeMarktHealth } from './routes/status';
-
-import { attendancePage, handleAttendanceUpdate } from './routes/market-application';
-
-import { marketPreferencesPage, updateMarketPreferences } from './routes/market-preferences';
-
-import { dashboardPage } from './routes/dashboard';
-
-import { plaatsvoorkeurenPage, updatePlaatsvoorkeuren } from './routes/market-location';
-
-import { deleteUserPage, deleteUser, publicProfilePage, toewijzingenAfwijzingenPage } from './routes/ondernemer';
-
-import { langdurigAfgemeld, marktDetail } from './routes/markt';
-
-import { uploadMarktenPage, uploadMarktenZip } from './routes/marktbewerker';
-
 import {
-    vasteplaatshoudersPage,
-    voorrangslijstPage,
-    ondernemersNietIngedeeldPage,
-    afmeldingenVasteplaatshoudersPage,
-    sollicitantentAanwezigheidLijst,
-    alleOndernemersAanwezigheidLijst,
-} from './routes/markt-marktmeester';
-
-import {
-    conceptIndelingPage,
-    indelingPage,
-    indelingWaitingPage,
-    indelingLogsPage,
-    indelingInputJobPage,
-    indelingErrorStacktracePage,
-} from './routes/market-allocation';
-import mmApiDispatch from './routes/mmApiDispatch';
-
+    requireEnv,
+} from './util';
 
 const csrfProtection = csrf({ cookie: true });
 
-requireEnv('DATABASE_URL');
 requireEnv('APP_SECRET');
 
 const HTTP_DEFAULT_PORT = 8080;
 
 const isMarktondernemer = (req: GrantedRequest) => {
     const accessToken = req.kauth.grant.access_token.content;
-
+    console.log(accessToken.resource_access);
     return (
         !!accessToken.resource_access[process.env.IAM_CLIENT_ID] &&
         accessToken.resource_access[process.env.IAM_CLIENT_ID].roles.includes(Roles.MARKTONDERNEMER)
@@ -87,15 +101,6 @@ const isMarktmeester = (req: GrantedRequest) => {
     return (
         !!accessToken.resource_access[process.env.IAM_CLIENT_ID] &&
         accessToken.resource_access[process.env.IAM_CLIENT_ID].roles.includes(Roles.MARKTMEESTER)
-    );
-};
-
-const isMarktBewerker = (req: GrantedRequest) => {
-    const accessToken = req.kauth.grant.access_token.content;
-
-    return (
-        !!accessToken.resource_access[process.env.IAM_CLIENT_ID] &&
-        accessToken.resource_access[process.env.IAM_CLIENT_ID].roles.includes(Roles.MARKTBEWERKER)
     );
 };
 
@@ -118,10 +123,8 @@ app.engine('tsx', templateEngine);
 
 app.use(morgan(':date[iso] :method :status :url :response-time ms'));
 
-// The `/status/health` endpoint is required for Docker deployments
 app.get('/status/health', serverHealth);
 app.get('/status/time', serverTime);
-app.get('/status/database', databaseHealth);
 app.get('/status/keycloak', keycloakHealth);
 app.get('/status/makkelijkemarkt', makkelijkeMarktHealth);
 
@@ -159,8 +162,6 @@ app.get('/login', keycloak.protect(), (req: GrantedRequest, res: Response) => {
         res.redirect('/dashboard/');
     } else if (isMarktmeester(req)) {
         res.redirect('/markt/');
-    } else if (isMarktBewerker(req)) {
-        res.redirect('/upload-markten/');
     } else {
         res.redirect('/');
     }
@@ -402,30 +403,6 @@ app.post(
         updateMarketPreferences(req, res, next, getErkenningsNummer(req), Roles.MARKTONDERNEMER),
 );
 
-//TODO: https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
-app.get(
-    '/verwijder-ondernemer/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    csrfProtection,
-    (req: GrantedRequest, res: Response) => {
-        if (!req.url.endsWith('/')) {
-            res.redirect(301, `${req.url}/`);
-        } else {
-            deleteUserPage(req, res, null, null, req.csrfToken(), Roles.MARKTMEESTER);
-        }
-    },
-);
-
-//TODO: https://dev.azure.com/CloudCompetenceCenter/salmagundi/_workitems/edit/29217
-app.post(
-    '/verwijder-ondernemer/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    csrfProtection,
-    (req: GrantedRequest, res: Response) => {
-        deleteUser(req, res, req.body.erkenningsNummer);
-    },
-);
-
 app.get(
     '/ondernemer/:erkenningsNummer/algemene-voorkeuren/:marktId/',
     keycloak.protect(Roles.MARKTMEESTER),
@@ -463,41 +440,6 @@ app.get(
 
 app.get('/toewijzingen-afwijzingen/', keycloak.protect(Roles.MARKTONDERNEMER), (req: GrantedRequest, res: Response) =>
     toewijzingenAfwijzingenPage(req, res, getErkenningsNummer(req), Roles.MARKTONDERNEMER),
-);
-
-app.get(
-    '/upload-markten/',
-    keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER) /* ||
-        token.hasRole(Roles.MARKTMEESTER)*/),
-    (req: GrantedRequest, res: Response, next: NextFunction) => {
-        // TODO: Handmatig de rollen uit het token vissen zou eigenlijk centraal
-        //       moeten gebeuren. Bijvoorbeeld in components/Header.jsx, omdat het
-        //       erop lijkt dat dat de voornaamste plek is waar de rolnaam gebruikt
-        //       wordt? Verder uitzoeken!
-        //
-        //       Zie ook `keycloak-api.ts/getKeycloakUser`.
-
-        const token = req.kauth.grant.access_token;
-        // const roles = token.content.resource_access[token.clientId];
-        // console.log(roles, token.hasRole(Roles.MARKTMEESTER));
-
-        const mostImportantRole = token.hasRole(Roles.MARKTMEESTER) ? Roles.MARKTMEESTER : Roles.MARKTBEWERKER;
-
-        uploadMarktenPage(req, res, next, mostImportantRole);
-    },
-);
-
-app.post(
-    '/upload-markten/zip/',
-    keycloak.protect(token => token.hasRole(Roles.MARKTBEWERKER) /* ||
-        token.hasRole(Roles.MARKTMEESTER)*/),
-    (req: GrantedRequest, res: Response, next: NextFunction) => {
-        // TODO: Zie request hierboven voor extra info over dit stukje code.
-        const token = req.kauth.grant.access_token;
-        const mostImportantRole = token.hasRole(Roles.MARKTMEESTER) ? Roles.MARKTMEESTER : Roles.MARKTBEWERKER;
-
-        uploadMarktenZip(req, res, next, mostImportantRole);
-    },
 );
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

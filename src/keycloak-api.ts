@@ -1,7 +1,14 @@
+import {
+    requireEnv,
+    requireOne,
+} from './util';
+import {
+    Credentials,
+} from 'keycloak-admin/lib/utils/auth';
+import {
+    GrantedRequest,
+} from 'keycloak-connect';
 import KeycloakAdminClient from 'keycloak-admin';
-import { requireEnv, requireOne } from './util';
-import { GrantedRequest } from 'keycloak-connect';
-import {Credentials} from "keycloak-admin/lib/utils/auth";
 
 requireEnv('IAM_URL');
 requireEnv('IAM_REALM');
@@ -24,12 +31,6 @@ const authConfig: Credentials = {
 };
 
 export const getKeycloakAdmin = () => {
-    /*
-     * TODO: Use RxJS to return a Observable instead of a Promise and:
-     * - connects on demand
-     * - refreshes the access token
-     * - reconnects when refreshing fails
-     */
     const kcAdminClient = new KeycloakAdminClient(clientConfig);
 
     return kcAdminClient.auth(authConfig).then(() => kcAdminClient);
@@ -45,7 +46,10 @@ export const userExists = (username: string): Promise<boolean> =>
         .then(user => {
             return requireOne(user);
         })
-        .then(() => true, () => false);
+        .then(
+            () => true,
+            () => false,
+        );
 
 export const getAllUsers = () => getKeycloakAdmin().then(kcAdminClient => kcAdminClient.users.find({ max: -1 }));
 

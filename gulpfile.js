@@ -23,4 +23,3 @@ gulp.task('watch', () =>
             .pipe(gulp.dest(paths.cssMin)),
     ),
 );
-

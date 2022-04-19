@@ -45,6 +45,7 @@ export interface Market {
 
 // Kraam
 export interface Stand {
+  bakType?: string
   plaatsId: string
   branches?: string[]
   verkoopinrichting?: string[]
@@ -75,6 +76,7 @@ export interface Lot {
   blockStart?: boolean
   blockEnd?: boolean
   invalid?: boolean
+  bakType?: string
 }
 
 export interface Geography {
