@@ -46,7 +46,7 @@ ADD --chown=node ./ /srv/
 
 RUN if test "$NODE_ENV" != 'development'; \
 then \
-    echo "//registry.npmjs.org/:_authToken=\"${NPM_TOKEN}"\" >> .npmrc \
+    echo "//registry.npmjs.org/:_authToken=\"${NPM_TOKEN}\"" >> .npmrc \
     && NODE_ENV=development npm install \
     && rm .npmrc \
     && npm cache clean --force 2> /dev/null \
@@ -56,18 +56,6 @@ then \
 
 ARG BUILD_DATE
 ARG VCS_REF
-
-LABEL \
-    org.label-schema.build-date="${BUILD_DATE}" \
-    org.label-schema.description="KiesJeKraam" \
-    org.label-schema.name="kiesjekraam" \
-    org.label-schema.schema-version="2.0" \
-    org.label-schema.url="https://git.data.amsterdam.nl:salmagundi/makkelijkemarkt/makkelijkemarkt-kiesjekraam" \
-    org.label-schema.usage="https://git.data.amsterdam.nl:salmagundi/makkelijkemarkt/makkelijkemarkt-kiesjekraam" \
-    org.label-schema.vcs-ref="${VCS_REF}" \
-    org.label-schema.vcs-url="https://git.data.amsterdam.nl:salmagundi/makkelijkemarkt/makkelijkemarkt-kiesjekraam.git" \
-    org.label-schema.vendor="Amsterdam" \
-    org.label-schema.version="16.4.2"
 
 ENV \
     HTTP_PROXY=$HTTP_PROXY \
