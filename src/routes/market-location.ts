@@ -1,5 +1,6 @@
 
 import {
+    deletePlaatsvoorkeurenByMarktAndKoopman,
     getIndelingVoorkeur,
     getMarktBasics,
     getOndernemer,
@@ -122,6 +123,8 @@ export const updatePlaatsvoorkeuren = (
                 .filter(ignoreEmptyVoorkeur);
 
             return updatePlaatsvoorkeur(voorkeuren);
+        } else {
+            return deletePlaatsvoorkeurenByMarktAndKoopman(marktId, erkenningsNummer);
         }
     };
 
