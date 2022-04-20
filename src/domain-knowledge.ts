@@ -172,7 +172,7 @@ export const obstakelsToLocatieKeyValue = array =>
         return total;
     }, {});
 
-export const filterRsvpList = (aanmeldingen, markt, startDate, endDate) => {
+export const filterRsvpList = (aanmeldingen, markt, startDate?, endDate?) => {
     const dates = getMarktDays(
         startDate
             ? startDate
@@ -186,7 +186,7 @@ export const filterRsvpList = (aanmeldingen, markt, startDate, endDate) => {
         (markt.marktDagen || []).map(parseMarktDag),
     );
 
-    const rsvpList = dates.map(date => ({
+    const rsvpList = dates.map((date: Date) => ({
         date,
         rsvp: aanmeldingen.find(aanmelding => aanmelding.marktDate === date),
     }));
