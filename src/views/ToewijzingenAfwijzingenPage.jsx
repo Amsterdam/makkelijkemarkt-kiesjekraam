@@ -70,7 +70,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                 <th>Type</th>
                                 <th>Aantal</th>
                                 <th>Flex</th>
-                                <th>Bak</th>
+                                <th>Baktype</th>
                                 <th>Evi</th>
                                 <th>Voorkeuren</th>
                                 <th>Branche</th>
@@ -97,7 +97,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                                     : '-'
                                                 : null}
                                         </td>
-                                        <td>{item.bak !== null ? (item.bak === true ? 'AAN' : 'UIT') : null}</td>
+                                        <td>{item.bakType !== null ? item.bakType : 'geen'}</td>
                                         <td>
                                             {item.eigenMaterieel !== null
                                                 ? item.eigenMaterieel === true

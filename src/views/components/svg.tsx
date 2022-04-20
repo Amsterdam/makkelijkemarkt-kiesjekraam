@@ -22,3 +22,18 @@ export const TriangleSmallDown = ({ style }: Props) => {
         </svg>
     );
 };
+
+export const InfoCircle = ({ style }: Props) => {
+    return (
+        <svg className="svg-icon-info-circle" style={style} viewBox="0 0 16 16">
+            <path
+                fill="currentColor"
+                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+            />
+            <path
+                fill="currentColor"
+                d="M8.93 6.588l-2.29 0.287 -0.082 0.38 0.45 0.083c0.294 0.07 0.352 0.176 0.288 0.469l-0.738 3.468c-0.194 0.897 0.105 1.319 0.808 1.319 0.545 0 1.178 -0.252 1.465 -0.598l0.088 -0.416c-0.2 0.176 -0.492 0.246 -0.686 0.246 -0.275 0 -0.375 -0.193 -0.304 -0.533L8.93 6.588zM9 4.5a1 1 0 1 1 -2 0 1 1 0 0 1 2 0z"
+            />
+        </svg>
+    );
+};

@@ -2,6 +2,10 @@ import Form from './Form';
 import {
     getDefaultVoorkeur,
 } from '../../model/voorkeur.functions';
+import {
+    InfoCircle
+} from './svg';
+import ModalPopup from './ModalPopup';
 import PropTypes from 'prop-types';
 import React from 'react';
 import SollicitatieSpecs from './SollicitatieSpecs';
@@ -62,13 +66,16 @@ class AlgemeneVoorkeurenForm extends React.Component {
                         </div>
                     </div>
                     <div className="Fieldset">
-                        <h2 className="Fieldset__header">Hebt u een bakplaats nodig?</h2>
+                        <h2 className="Fieldset__header">
+                            Hebt u een bakplaats nodig?
+                            <BakTypeModalPopup />
+                        </h2>
                         <div className="InputField">
                             <div className="Select__wrapper">
                             <select id="bakType" name="bakType" className='Select'>
                                 <option selected={voorkeur.bakType === 'geen'} value="geen">Nee</option>
-                                <option selected={voorkeur.bakType === 'bak'} value="bak">Ja, ik ga koken, bakken of frituren.</option>
-                                <option selected={voorkeur.bakType === 'bak-licht'} value="bak-licht">Ja, ik ga electrisch verwarmen</option>
+                                <option selected={voorkeur.bakType === 'bak-licht'} value="bak-licht">Ja, Bakplaats licht (zonder open vuur en/of frituur)</option>
+                                <option selected={voorkeur.bakType === 'bak'} value="bak">Ja, Bakplaats (inclusief frituren)</option>
                             </select>
                             </div>
                         </div>
@@ -163,5 +170,31 @@ class AlgemeneVoorkeurenForm extends React.Component {
         );
     }
 }
+
+const BakTypeModalPopup = () => {
+    const options = [
+        {
+            header: "Bakplaats licht",
+            text: `Marktplaats waarop het is toegestaan om uw product te
+            bereiden met enkel gebruik van een elektrisch
+            verwarmingstoestel, bak- en/of kookinstallatie zonder
+            open vuur en/of frituur.`,
+        },
+        {
+            header: "Bakplaats",
+            text: `Marktplaats waarop het is toegestaan om uw product te
+            bereiden met gebruik van een verwarmings- toestel, bak-
+            en/of kookinstallatie inclusief frituren.`,
+        },
+    ];
+
+    return (
+        <ModalPopup options={options}>
+            <span>
+                <InfoCircle />
+            </span>
+        </ModalPopup>
+    );
+};
 
 module.exports = AlgemeneVoorkeurenForm;

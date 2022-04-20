@@ -128,7 +128,7 @@ class AanwezigheidsForm extends React.Component {
                         className="Button Button--tertiary"
                         href={`${role === 'marktmeester' ? `/profile/${ondernemer.erkenningsnummer}` : `/dashboard`}`}
                     >
-                        Voorkeuren
+                        Terug
                     </a>
                     <button
                         className="Button Button--secondary"

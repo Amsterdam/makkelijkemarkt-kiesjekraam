@@ -63,7 +63,7 @@ class VoorkeurenPage extends React.Component {
                         U kunt uw plaatsvoorkeuren tot {INDELINGSTIJDSTIP_TEXT} wijzigen.
                         <br />
                         Wijzigt u uw plaatsvoorkeuren na {INDELINGSTIJDSTIP_TEXT}? Dan gelden de wijzigingen voor de
-                        eerstvolgende marktdag.
+                        volgende marktdag.
                     </p>
                     {markt.kiesJeKraamFase ? (
                         <p dangerouslySetInnerHTML={{ __html: mededeling[markt.kiesJeKraamFase] }} />

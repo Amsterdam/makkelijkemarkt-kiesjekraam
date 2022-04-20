@@ -77,8 +77,8 @@ const OndernemerMarktVoorkeuren = ({ plaatsvoorkeuren, markt, mededelingen, soll
                             </strong>
                         ) : (
                             <strong>
-                                Geef uw <u>plaatsvoorkeuren</u> door. Het systeem probeert u in te delen op uw favoriete
-                                plaatsen.
+                                Geef uw <u>plaatsvoorkeuren</u> door. Het systeem probeert u in te delen op uw
+                                plaatsvoorkeuren.
                             </strong>
                         )}
                     </p>
