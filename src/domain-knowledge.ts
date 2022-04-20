@@ -82,7 +82,8 @@ export const isVast = status =>
     status === DeelnemerStatus.VASTE_PLAATS ||
     status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS ||
     status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_Z ||
-    status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_OLD;
+    status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_OLD ||
+    status === DeelnemerStatus.ECONOMISCHE_BINDING;
 const isTVPLZ = status => status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_Z;
 export const isExp = status =>
     status === DeelnemerStatus.EXPERIMENTAL ||
