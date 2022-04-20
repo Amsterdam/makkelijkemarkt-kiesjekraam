@@ -34,28 +34,15 @@ ARG NPM_TOKEN
 
 ARG NODE_ENV
 
-RUN if test "$NODE_ENV" = 'development'; \
-then \
-    echo "//registry.npmjs.org/:_authToken=\"${NPM_TOKEN}\"" > .npmrc \
-    && npm install \
-    && rm .npmrc \
-    && npm cache clean --force 2> /dev/null \
-; fi
 
 ADD --chown=node ./ /srv/
 
-RUN if test "$NODE_ENV" != 'development'; \
-then \
-    echo "//registry.npmjs.org/:_authToken=\"${NPM_TOKEN}\"" >> .npmrc \
+RUN echo "//registry.npmjs.org/:_authToken=\"${NPM_TOKEN}\"" >> .npmrc \
     && NODE_ENV=development npm install \
     && rm .npmrc \
     && npm cache clean --force 2> /dev/null \
     && npm run build \
-    && npm prune \
-; fi
-
-ARG BUILD_DATE
-ARG VCS_REF
+    && npm prune
 
 ENV \
     HTTP_PROXY=$HTTP_PROXY \
