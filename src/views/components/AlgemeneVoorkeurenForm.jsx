@@ -150,7 +150,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                     : `/markt-detail/${markt.id}#marktprofiel`
                             }`}
                         >
-                            Voorkeuren
+                            Terug
                         </a>
                         <button
                             className="Button Button--secondary"
