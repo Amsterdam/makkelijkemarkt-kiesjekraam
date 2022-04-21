@@ -1,3 +1,5 @@
+import MarktDetailBase from './components/MarktDetailBase';
+import PrintPage from './components/PrintPage';
 import PropTypes from 'prop-types';
 import React from 'react';
 const {
@@ -7,9 +9,7 @@ const {
 const {
     filterOndernemersAangemeld,
 } = require('../model/ondernemer.functions');
-const MarktDetailBase = require('./components/MarktDetailBase');
 const OndernemerList = require('./components/OndernemerList.tsx');
-const PrintPage = require('./components/PrintPage');
 
 class template extends React.Component {
     propTypes = {

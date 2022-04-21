@@ -69,4 +69,4 @@ MarktDetailBase.propTypes = {
     user: PropTypes.object.isRequired,
 };
 
-module.exports = MarktDetailBase;
+export default MarktDetailBase;

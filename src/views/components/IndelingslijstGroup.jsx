@@ -165,4 +165,4 @@ IndelingslijstGroup.propTypes = {
     branches: PropTypes.array.isRequired,
 };
 
-module.exports = IndelingslijstGroup;
+export default IndelingslijstGroup;

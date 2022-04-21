@@ -107,4 +107,4 @@ const countToewijzingenPerBranche = (allBranches, ondernemers, toewijzingen) => 
     }, {});
 };
 
-module.exports = IndelingsLegenda;
+export default IndelingsLegenda;
