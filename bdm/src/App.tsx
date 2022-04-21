@@ -11,6 +11,8 @@ import MarktGenericDataProvider from './components/providers/MarktGenericDataPro
 import MarktPageWrapper from './components/MarktPageWrapper'
 import { HOME_LINK } from './constants'
 
+import { DownloadPage, UploadPage } from './pages/DownloadUploadPage'
+
 if (process.env.REACT_APP_MOCK_SERVICE_WORKER) {
   const { worker } = require('./mocks/mmApiServiceWorker/browser')
   worker.start({
@@ -45,6 +47,12 @@ export default class App extends Component {
                     <MarktGenericDataProvider>
                       <BrancheListPage />
                     </MarktGenericDataProvider>
+                  </Route>
+                  <Route exact path="/download-config">
+                    <DownloadPage />
+                  </Route>
+                  <Route exact path="/upload-config">
+                    <UploadPage />
                   </Route>
                   <Route component={ErrorPage} />
                 </Switch>
