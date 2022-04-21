@@ -267,6 +267,11 @@ export const updatePlaatsvoorkeur = (plaatsvoorkeuren: IPlaatsvoorkeur[]): Promi
     return apiBase('plaatsvoorkeur', 'post', JSON.stringify(pv)).then(response => response.data);
 };
 
+export const deletePlaatsvoorkeurenByMarktAndKoopman = (marktId: string, erkenningsNummer: string) =>
+    apiBase(`plaatsvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`, 'delete').then(
+        response => response.data
+    );
+
 const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
     marktvoorkeuren: MMarktondernemerVoorkeur[],
 ): IMarktondernemerVoorkeur[] => {

@@ -1,0 +1,32 @@
+.modal-popup {
+    position: relative;
+    display: inline-block;
+}
+
+.modal-popup__outer {
+    padding: 5%
+}
+
+.modal-popup__content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: $primary-white;
+    font-style: normal;
+    font-size: .75rem;
+    line-height: normal;
+    min-width: 300px;
+    box-shadow: 0px 8px 16px 0px $overlay-black50;
+    z-index: 1;
+    h2 {
+        margin: 3%;
+        line-height: .75;
+    }
+    p {
+        margin: 5%;
+    }
+}
+
+.modal-popup:hover .modal-popup__content {
+    display: block;
+}

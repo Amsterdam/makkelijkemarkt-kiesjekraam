@@ -121,7 +121,7 @@ export const getCalculationInput = (marktId: string, marktDate: string) => {
 };
 
 export const getIndelingslijst = (marktId: string, marktDate: string) => {
-    return Promise.all([getMarktDetails(marktId, marktDate), getAllocations(marktId, marktDate)]).then(
+    return Promise.all([getMarktDetails(marktId, marktDate), getToewijzingen(marktId, marktDate)]).then(
         ([marktDetails, tws]) => {
             const toewijzingen = tws;
             return {

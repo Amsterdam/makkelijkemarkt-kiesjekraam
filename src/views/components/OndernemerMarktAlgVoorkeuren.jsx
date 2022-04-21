@@ -29,8 +29,8 @@ const OndernemerMarktAlgVoorkeuren = ({ markt, voorkeur, branches }) => {
                     </p>
                 )}
                 <span>
-                    Bij de indeling houden we rekening met voorrang op brancheplaatsen, bakplaatsen en plaatsen voor
-                    eigen materiaal/verkoopwagens
+                    Bij de indeling houden wij naast de anciënniteit rekening met voorrang op brancheplaatsen,
+                    bakplaatsen en plaatsen voor eigen materiaal en verkoopwagens.
                 </span>
             </div>
         </div>

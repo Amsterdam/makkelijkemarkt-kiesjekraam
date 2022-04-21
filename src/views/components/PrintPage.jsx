@@ -33,4 +33,4 @@ PrintPage.propTypes = {
     datum: PropTypes.string,
 };
 
-module.exports = PrintPage;
+export default PrintPage;

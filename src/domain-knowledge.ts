@@ -82,7 +82,8 @@ export const isVast = status =>
     status === DeelnemerStatus.VASTE_PLAATS ||
     status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS ||
     status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_Z ||
-    status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_OLD;
+    status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_OLD ||
+    status === DeelnemerStatus.ECONOMISCHE_BINDING;
 const isTVPLZ = status => status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_Z;
 export const isExp = status =>
     status === DeelnemerStatus.EXPERIMENTAL ||
@@ -172,7 +173,7 @@ export const obstakelsToLocatieKeyValue = array =>
         return total;
     }, {});
 
-export const filterRsvpList = (aanmeldingen, markt, startDate, endDate) => {
+export const filterRsvpList = (aanmeldingen, markt, startDate?, endDate?) => {
     const dates = getMarktDays(
         startDate
             ? startDate
@@ -186,7 +187,7 @@ export const filterRsvpList = (aanmeldingen, markt, startDate, endDate) => {
         (markt.marktDagen || []).map(parseMarktDag),
     );
 
-    const rsvpList = dates.map(date => ({
+    const rsvpList = dates.map((date: Date) => ({
         date,
         rsvp: aanmeldingen.find(aanmelding => aanmelding.marktDate === date),
     }));

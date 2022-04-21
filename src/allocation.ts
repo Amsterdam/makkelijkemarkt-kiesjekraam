@@ -18,7 +18,7 @@ import {
 } from './util';
 import {
     INDELING_DAG_OFFSET,
-} from './domain-knowledge.js';
+} from './domain-knowledge';
 import {
     MMMarkt,
 } from './model/makkelijkemarkt.model';

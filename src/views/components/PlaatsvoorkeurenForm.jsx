@@ -113,7 +113,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                         ) : null}
                         {maxNumKramen ? (
                             <p className="Fieldset__highlight-text">
-                                <i>Voor deze markt geldt een maximum van {maxNumKramen} plaatsen ondernemer.</i>
+                                <i>Voor deze markt geldt een maximum van {maxNumKramen} plaatsen per ondernemer.</i>
                             </p>
                         ) : null}
                         <h2 className="Fieldset__header">
@@ -177,16 +177,6 @@ class PlaatsvoorkeurenForm extends React.Component {
 
                     <div className="Fieldset">
                         <h2 className="Fieldset__header">Plaatsen selecteren</h2>
-                        <span className="Fieldset__sub-header">U kunt zoveel voorkeuren invullen als u wilt.</span>
-                        <div className="Icon-line">
-                            <img className="Icon-line__icon" src="/images/draggable.svg" alt="Unchecked" />
-                            <p className="Icon-line__text">
-                                Verander de volgorde van de plaatsnummers door ze op de juiste plaats te slepen.
-                            </p>
-                        </div>
-                        <h4 className="Fieldset__sub-header">
-                            <strong>Plaatsnummers</strong>
-                        </h4>
                         <div className="PlaatsvoorkeurenForm__list">
                             {plaatsvoorkeuren.map((entry, index) => (
                                 <div className="Draggable-list-item" id="plaatsvoorkeuren-list-item" key={entry.id}>
@@ -258,6 +248,12 @@ class PlaatsvoorkeurenForm extends React.Component {
                                 </div>
                             </div>
                         </div>
+                        <div className="Icon-line">
+                            <img className="Icon-line__icon" src="/images/draggable.svg" alt="Unchecked" />
+                            <p className="Icon-line__text">
+                                Verander de volgorde van de plaatsnummers door ze op de juiste plaats te slepen.
+                            </p>
+                        </div>
 
                         {/* Dit veld willen we alleen laten zien aan marktmeesters en sollicitanten */}
                         {role == 'marktmeester' || !isVastOfExp(sollicitatie.status) ? (
@@ -291,7 +287,7 @@ class PlaatsvoorkeurenForm extends React.Component {
 
                     <p className="InputField InputField--submit" id="bottom-buttons">
                         <Button
-                            label="Voorkeuren"
+                            label="Terug"
                             href={
                                 role === 'marktmeester'
                                     ? `/profile/${ondernemer.erkenningsnummer}`

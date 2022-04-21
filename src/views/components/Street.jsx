@@ -13,4 +13,4 @@ Street.propTypes = {
     title: PropTypes.string,
 };
 
-module.exports = Street;
+export default Street;

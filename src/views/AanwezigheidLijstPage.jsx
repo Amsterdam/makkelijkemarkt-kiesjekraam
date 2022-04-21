@@ -1,8 +1,8 @@
+import PrintPage from './components/PrintPage';
 import PropTypes from 'prop-types';
 import React from 'react';
-const MarktDetailBase = require('./components/MarktDetailBase');
+import MarktDetailBase from './components/MarktDetailBase';
 const OndernemerList = require('./components/OndernemerList.tsx');
-const PrintPage = require('./components/PrintPage');
 const {
     paginate,
     getBreadcrumbsMarkt,

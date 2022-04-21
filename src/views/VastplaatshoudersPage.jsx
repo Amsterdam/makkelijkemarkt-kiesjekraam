@@ -1,5 +1,9 @@
+import IndelingslijstGroup from './components/IndelingslijstGroup';
+import MarktDetailBase from './components/MarktDetailBase';
+import PrintPage from './components/PrintPage';
 import PropTypes from 'prop-types';
 import React from 'react';
+import Street from './components/Street';
 const {
     ondernemersToLocatieKeyValue,
     obstakelsToLocatieKeyValue,
@@ -7,10 +11,6 @@ const {
 const {
     arrayToObject,
 } = require('../util.ts');
-const IndelingslijstGroup = require('./components/IndelingslijstGroup');
-const MarktDetailBase = require('./components/MarktDetailBase');
-const PrintPage = require('./components/PrintPage');
-const Street = require('./components/Street');
 
 class VastplaatshoudersPage extends React.Component {
     propTypes = {

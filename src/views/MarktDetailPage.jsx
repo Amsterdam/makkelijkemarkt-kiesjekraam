@@ -1,7 +1,7 @@
+import MarktDetailBase from './components/MarktDetailBase';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const MarktDetailBase = require('./components/MarktDetailBase');
 const AlertLine = require('./components/AlertLine');
 
 const {

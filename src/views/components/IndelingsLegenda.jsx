@@ -96,7 +96,7 @@ const countToewijzingenPerBranche = (allBranches, ondernemers, toewijzingen) => 
             toewijzing.ondernemer ||
             ondernemers.find(({ erkenningsNummer }) => erkenningsNummer === toewijzing.erkenningsNummer);
 
-        if (!ondernemer.voorkeur || !ondernemer.voorkeur.branches) {
+        if ( !ondernemer || !ondernemer.voorkeur || !ondernemer.voorkeur.branches) {
             return result;
         }
 
@@ -107,4 +107,4 @@ const countToewijzingenPerBranche = (allBranches, ondernemers, toewijzingen) => 
     }, {});
 };
 
-module.exports = IndelingsLegenda;
+export default IndelingsLegenda;

@@ -1,8 +1,8 @@
+import MarktDetailBase from './components/MarktDetailBase';
+import PrintPage from './components/PrintPage';
 import PropTypes from 'prop-types';
 import React from 'react';
-const MarktDetailBase = require('./components/MarktDetailBase');
 const OndernemerListAfwezig = require('./components/OndernemerListAfwezig.tsx');
-const PrintPage = require('./components/PrintPage');
 const { paginate, getBreadcrumbsMarkt } = require('../util');
 
 class SollicitantenPage extends React.Component {

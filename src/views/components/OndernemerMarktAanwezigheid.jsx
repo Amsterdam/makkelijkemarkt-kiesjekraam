@@ -43,7 +43,7 @@ const OndernemerMarktAanwezigheid = ({ rsvpEntries, sollicitatie, disabled, mark
                         </span>
                     </Alert>
                 ) : null}
-                <span>Op welke dagen staat er iemand (vergunninghouder of vervanger) in de kraam?</span>
+                <span>Hieronder ziet u de dagen dat u zich heeft aan of afgemeld.</span>
                 {weekAanmeldingen.map((week, i) => (
                     <div key={i}>
                         <span className="OndernemerMarktAanwezigheid__divider">
