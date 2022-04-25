@@ -32,7 +32,7 @@ class template extends React.Component {
             .filter(
                 ondernemer =>
                     !ondernemersAangemeld.find(
-                        ondernemerAangemeld => ondernemerAangemeld.erkenningsNummer === ondernemer.erkenningsNummer,
+                        ondernemerAangemeld => ondernemerAangemeld.koopman === ondernemer.erkenningsNummer,
                     ),
             )
             .filter(ondernemer => ondernemer.status === 'soll');
@@ -40,11 +40,11 @@ class template extends React.Component {
         let groups = [
             ondernemersAangemeld.filter(
                 ondernemer =>
-                    !toewijzingen.find(toewijzing => toewijzing.erkenningsNummer === ondernemer.erkenningsNummer),
+                    !toewijzingen.find(toewijzing => toewijzing.koopman === ondernemer.erkenningsNummer),
             ),
             ondernemersNietAangemeld.filter(
                 ondernemer =>
-                    !toewijzingen.find(toewijzing => toewijzing.erkenningsNummer === ondernemer.erkenningsNummer),
+                    !toewijzingen.find(toewijzing => toewijzing.koopman === ondernemer.erkenningsNummer),
             ),
         ];
 
