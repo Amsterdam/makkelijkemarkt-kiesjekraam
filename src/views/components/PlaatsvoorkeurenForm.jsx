@@ -176,40 +176,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                     </div>
 
                     <div className="Fieldset">
-                        <h2 className="Fieldset__header">Plaatsen selecteren</h2>
-                        <div className="PlaatsvoorkeurenForm__list">
-                            {plaatsvoorkeuren.map((entry, index) => (
-                                <div className="Draggable-list-item" id="plaatsvoorkeuren-list-item" key={entry.id}>
-                                    <div className="Draggable-list-item__handle">
-                                        <div className="Draggable-list-item__handle__bar" />
-                                        <div className="Draggable-list-item__handle__bar" />
-                                    </div>
-                                    <div className="Draggable-list-item__left">
-                                        <span className="Draggable-list-item__label">
-                                            <strong>{entry.plaatsId}</strong>
-                                        </span>
-                                    </div>
-                                    <input
-                                        type="hidden"
-                                        name={`plaatsvoorkeuren[${index}][marktId]`}
-                                        defaultValue={entry.marktId}
-                                    />
-                                    <input
-                                        type="hidden"
-                                        name={`plaatsvoorkeuren[${index}][priority]`}
-                                        defaultValue={plaatsvoorkeuren.length - index}
-                                    />
-                                    <input
-                                        type="hidden"
-                                        name={`plaatsvoorkeuren[${index}][plaatsId]`}
-                                        value={entry.plaatsId}
-                                    />
-                                    <a href="#" data-handler="remove-voorkeur" className="Draggable-list-item__right">
-                                        <span className="Draggable-list-item__delete" />
-                                    </a>
-                                </div>
-                            ))}
-                        </div>
+
                         <div
                             className="PlaatsvoorkeurenForm__prototype"
                             data-plaatsvoorkeur-count={minimumCount}
@@ -247,6 +214,40 @@ class PlaatsvoorkeurenForm extends React.Component {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <h4 className="Fieldset__header">Prioriteit voorkeur wijzigen</h4>
+                        <div className="PlaatsvoorkeurenForm__list">
+                            {plaatsvoorkeuren.map((entry, index) => (
+                                <div className="Draggable-list-item" id="plaatsvoorkeuren-list-item" key={entry.id}>
+                                    <div className="Draggable-list-item__handle">
+                                        <div className="Draggable-list-item__handle__bar" />
+                                        <div className="Draggable-list-item__handle__bar" />
+                                    </div>
+                                    <div className="Draggable-list-item__left">
+                                        <span className="Draggable-list-item__label">
+                                            <strong>{entry.plaatsId}</strong>
+                                        </span>
+                                    </div>
+                                    <input
+                                        type="hidden"
+                                        name={`plaatsvoorkeuren[${index}][marktId]`}
+                                        defaultValue={entry.marktId}
+                                    />
+                                    <input
+                                        type="hidden"
+                                        name={`plaatsvoorkeuren[${index}][priority]`}
+                                        defaultValue={plaatsvoorkeuren.length - index}
+                                    />
+                                    <input
+                                        type="hidden"
+                                        name={`plaatsvoorkeuren[${index}][plaatsId]`}
+                                        value={entry.plaatsId}
+                                    />
+                                    <a href="#" data-handler="remove-voorkeur" className="Draggable-list-item__right">
+                                        <span className="Draggable-list-item__delete" />
+                                    </a>
+                                </div>
+                            ))}
                         </div>
                         <div className="Icon-line">
                             <img className="Icon-line__icon" src="/images/draggable.svg" alt="Unchecked" />
