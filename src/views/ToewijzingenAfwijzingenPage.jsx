@@ -47,7 +47,8 @@ class ToewijzingenAfwijzingenPage extends React.Component {
         }
 
         function getMarktAfkorting(marktId) {
-            const marktFound = markten.find(markt => markt.id === marktId);
+            console.log(marktId);
+            const marktFound = markten.find(markt => markt.id.toString() === marktId);
             return marktFound ? marktFound.afkorting : '';
         }
 
@@ -79,7 +80,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                 {toewijzingenAfwijzingen.map((item, index) => (
                                     <tr key={index}>
                                         <td>{moment(item.marktDate).format('DD-MM')}</td>
-                                        <td>{getMarktAfkorting(item.marktId)}</td>
+                                        <td>{getMarktAfkorting(item.markt)}</td>
                                         <td>{item.type}</td>
                                         <td>
                                             {item.minimum ? (
