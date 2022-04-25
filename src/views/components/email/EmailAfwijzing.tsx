@@ -36,8 +36,8 @@ export class EmailAfwijzing extends React.Component<EmailIndelingProps> {
             ['Reden:', <strong key="markt">{reason.message}</strong>],
         ];
 
-        const formattedDate = yyyyMmDdtoDDMMYYYY(afwijzing.marktDate);
-        const dayOfTheWeek = formatDayOfWeek(afwijzing.marktDate);
+        const formattedDate = yyyyMmDdtoDDMMYYYY(afwijzing.date);
+        const dayOfTheWeek = formatDayOfWeek(afwijzing.date);
         const infoLink = 'https://www.amsterdam.nl/ondernemen/markt-straathandel/digitaal-indelen/';
 
         return (

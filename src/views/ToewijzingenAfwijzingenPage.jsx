@@ -4,7 +4,7 @@ const Content = require('./components/Content');
 const Header = require('./components/Header');
 const Page = require('./components/Page.jsx');
 const OndernemerProfileHeader = require('./components/OndernemerProfileHeader');
-const moment = require('moment');
+const moment = require('moment-timezone');
 const {
     getBreadcrumbsOndernemer,
 } = require('../util');
@@ -36,7 +36,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
         let toewijzingenAfwijzingen = [...toewijzingen, ...afwijzingen];
 
         toewijzingenAfwijzingen = toewijzingenAfwijzingen.sort(
-            (a, b) => new Date(b.marktDate).getTime() - new Date(a.marktDate).getTime(),
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
         );
 
         toewijzingenAfwijzingen = toewijzingenAfwijzingen.slice(0, 13);
@@ -81,7 +81,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                             <tbody>
                                 {toewijzingenAfwijzingen.map((item, index) => (
                                     <tr key={index}>
-                                        <td>{moment(item.marktDate).format('DD-MM')}</td>
+                                        <td>{moment(item.date).tz('Europe/Amsterdam').format('DD-MM')}</td>
                                         <td>{getMarktAfkorting(item.markt)}</td>
                                         <td>{item.type}</td>
                                         <td>
