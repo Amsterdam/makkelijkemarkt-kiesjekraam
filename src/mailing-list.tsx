@@ -28,9 +28,6 @@ import {
     EmailToewijzing,
 } from './views/components/email/EmailToewijzing';
 import {
-    EmailWenperiode,
-} from './views/components/email/EmailWenperiode';
-import {
     getAllUsers,
 } from './keycloak-api';
 import {
@@ -75,14 +72,7 @@ const mailToewijzing = (toewijzingenCombined: any, markt: MMMarkt) => {
     let mailTemplate = null;
     let subject = null;
 
-    if (markt.kiesJeKraamFase === 'wenperiode') {
-        subject = `Indeling ${yyyyMmDdtoDDMMYYYY(marktDate)} ${markt.naam}`;
-        mailTemplate = (
-            <EmailWenperiode subject={subject} ondernemer={ondernemer} telefoonnummer={markt.telefoonNummerContact} />
-        );
-    }
-
-    if (markt.kiesJeKraamFase === 'live') {
+    if (markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode') {
         subject = `Toewijzing ${yyyyMmDdtoDDMMYYYY(marktDate)} ${markt.naam}`;
         mailTemplate = (
             <EmailToewijzing
@@ -92,6 +82,7 @@ const mailToewijzing = (toewijzingenCombined: any, markt: MMMarkt) => {
                 toewijzing={toewijzing}
                 marktDate={toewijzing.marktDate}
                 markt={markt}
+                isWenPeriode={markt.kiesJeKraamFase === 'wenperiode'}
             />
         );
     }
@@ -105,14 +96,7 @@ const mailAfwijzing = (afwijzingCombined: any, markt: MMMarkt) => {
     let mailTemplate = null;
     let subject = null;
 
-    if (markt.kiesJeKraamFase === 'wenperiode') {
-        subject = `Indeling ${yyyyMmDdtoDDMMYYYY(marktDate)} ${markt.naam}`;
-        mailTemplate = (
-            <EmailWenperiode subject={subject} ondernemer={ondernemer} telefoonnummer={markt.telefoonNummerContact} />
-        );
-    }
-
-    if (markt.kiesJeKraamFase === 'live') {
+    if (markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode') {
         (subject = `Niet ingedeeld ${yyyyMmDdtoDDMMYYYY(marktDate)} ${markt.naam}`),
             (mailTemplate = (
                 <EmailAfwijzing
@@ -121,6 +105,7 @@ const mailAfwijzing = (afwijzingCombined: any, markt: MMMarkt) => {
                     telefoonnummer={markt.telefoonNummerContact}
                     afwijzing={afwijzing}
                     markt={markt}
+                    isWenPeriode={markt.kiesJeKraamFase === 'wenperiode'}
                 />
             ));
     }
