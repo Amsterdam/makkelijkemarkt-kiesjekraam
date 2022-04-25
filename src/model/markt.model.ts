@@ -132,7 +132,7 @@ export interface IObstakelBetween {
 }
 
 export interface IToewijzing {
-    marktId: string;
+    markt: string;
     marktDate: string;
     plaatsen: PlaatsId[];
     erkenningsNummer: ErkenningsNummer;
@@ -152,7 +152,7 @@ export interface IAfwijzingReason {
 }
 
 export interface IAfwijzing {
-    marktId: string;
+    markt: string;
     marktDate: string;
     erkenningsNummer: string;
     ondernemer: IMarktondernemer;

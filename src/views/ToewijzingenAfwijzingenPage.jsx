@@ -42,7 +42,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
         toewijzingenAfwijzingen = toewijzingenAfwijzingen.slice(0, 13);
 
         function isVph(ondernemerObj, marktId) {
-            const sollicitatie = ondernemerObj.sollicitaties.find(soll => soll.markt.id === marktId);
+            const sollicitatie = ondernemerObj.sollicitaties.find(soll => soll.markt.id.toString() === marktId);
             return !!(sollicitatie.status === 'vpl');
         }
 
@@ -90,7 +90,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                         </td>
                                         <td>
                                             {item.anywhere !== null
-                                                ? !isVph(ondernemer, item.marktId)
+                                                ? !isVph(ondernemer, item.markt)
                                                     ? item.anywhere === true
                                                         ? 'AAN'
                                                         : 'UIT'
