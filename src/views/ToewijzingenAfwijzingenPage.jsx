@@ -102,8 +102,8 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                         </td>
                                         <td>{(item.bakType && item.bakType.length>0) ? item.bakType : 'geen'}</td>
                                         <td>
-                                            {item.eigenMaterieel !== null
-                                                ? item.eigenMaterieel === true
+                                            {item.hasInrichting !== null
+                                                ? item.hasInrichting === true
                                                     ? 'AAN'
                                                     : 'UIT'
                                                 : null}
