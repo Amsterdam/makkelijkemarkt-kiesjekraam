@@ -43,7 +43,9 @@ class ToewijzingenAfwijzingenPage extends React.Component {
 
         function isVph(ondernemerObj, marktId) {
             const sollicitatie = ondernemerObj.sollicitaties.find(soll => soll.markt.id.toString() === marktId);
-            return !!(sollicitatie.status === 'vpl');
+            console.log(sollicitatie);
+            console.log(marktId);
+            return !!(!sollicitatie || sollicitatie.status === 'vpl');
         }
 
         function getMarktAfkorting(marktId) {
@@ -98,7 +100,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                                     : '-'
                                                 : null}
                                         </td>
-                                        <td>{item.bakType !== null ? item.bakType : 'geen'}</td>
+                                        <td>{(item.bakType && item.bakType.length>0) ? item.bakType : 'geen'}</td>
                                         <td>
                                             {item.eigenMaterieel !== null
                                                 ? item.eigenMaterieel === true
@@ -109,7 +111,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                         <td>
                                             {item.plaatsvoorkeuren !== null ? item.plaatsvoorkeuren.join(',') : null}
                                         </td>
-                                        <td>{item.brancheId}</td>
+                                        <td>{item.branche}</td>
                                     </tr>
                                 ))}
                             </tbody>
