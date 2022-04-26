@@ -80,7 +80,7 @@ const mailToewijzing = (toewijzingenCombined: any, markt: MMMarkt) => {
                 ondernemer={ondernemer}
                 telefoonnummer={markt.telefoonNummerContact}
                 toewijzing={toewijzing}
-                marktDate={toewijzing.marktDate}
+                marktDate={toewijzing.date}
                 markt={markt}
                 isWenPeriode={markt.kiesJeKraamFase === 'wenperiode'}
             />

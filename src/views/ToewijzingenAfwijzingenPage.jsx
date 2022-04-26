@@ -4,7 +4,7 @@ const Content = require('./components/Content');
 const Header = require('./components/Header');
 const Page = require('./components/Page.jsx');
 const OndernemerProfileHeader = require('./components/OndernemerProfileHeader');
-const moment = require('moment');
+const moment = require('moment-timezone');
 const {
     getBreadcrumbsOndernemer,
 } = require('../util');
@@ -36,18 +36,21 @@ class ToewijzingenAfwijzingenPage extends React.Component {
         let toewijzingenAfwijzingen = [...toewijzingen, ...afwijzingen];
 
         toewijzingenAfwijzingen = toewijzingenAfwijzingen.sort(
-            (a, b) => new Date(b.marktDate).getTime() - new Date(a.marktDate).getTime(),
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
         );
 
         toewijzingenAfwijzingen = toewijzingenAfwijzingen.slice(0, 13);
 
         function isVph(ondernemerObj, marktId) {
-            const sollicitatie = ondernemerObj.sollicitaties.find(soll => soll.markt.id === marktId);
-            return !!(sollicitatie.status === 'vpl');
+            const sollicitatie = ondernemerObj.sollicitaties.find(soll => soll.markt.id.toString() === marktId);
+            console.log(sollicitatie);
+            console.log(marktId);
+            return !!(!sollicitatie || sollicitatie.status === 'vpl');
         }
 
         function getMarktAfkorting(marktId) {
-            const marktFound = markten.find(markt => markt.id === marktId);
+            console.log(marktId);
+            const marktFound = markten.find(markt => markt.id.toString() === marktId);
             return marktFound ? marktFound.afkorting : '';
         }
 
@@ -78,8 +81,8 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                             <tbody>
                                 {toewijzingenAfwijzingen.map((item, index) => (
                                     <tr key={index}>
-                                        <td>{moment(item.marktDate).format('DD-MM')}</td>
-                                        <td>{getMarktAfkorting(item.marktId)}</td>
+                                        <td>{moment(item.date).tz('Europe/Amsterdam').format('DD-MM')}</td>
+                                        <td>{getMarktAfkorting(item.markt)}</td>
                                         <td>{item.type}</td>
                                         <td>
                                             {item.minimum ? (
@@ -90,17 +93,17 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                         </td>
                                         <td>
                                             {item.anywhere !== null
-                                                ? !isVph(ondernemer, item.marktId)
+                                                ? !isVph(ondernemer, item.markt)
                                                     ? item.anywhere === true
                                                         ? 'AAN'
                                                         : 'UIT'
                                                     : '-'
                                                 : null}
                                         </td>
-                                        <td>{item.bakType !== null ? item.bakType : 'geen'}</td>
+                                        <td>{(item.bakType && item.bakType.length>0) ? item.bakType : 'geen'}</td>
                                         <td>
-                                            {item.eigenMaterieel !== null
-                                                ? item.eigenMaterieel === true
+                                            {item.hasInrichting !== null
+                                                ? item.hasInrichting === true
                                                     ? 'AAN'
                                                     : 'UIT'
                                                 : null}
@@ -108,7 +111,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                         <td>
                                             {item.plaatsvoorkeuren !== null ? item.plaatsvoorkeuren.join(',') : null}
                                         </td>
-                                        <td>{item.brancheId}</td>
+                                        <td>{item.branche}</td>
                                     </tr>
                                 ))}
                             </tbody>

@@ -31,6 +31,9 @@ import {
     internalServerErrorPage,
 } from '../express-util';
 import {
+    isVast,
+} from '../domain-knowledge';
+import {
     Roles,
 } from '../authentication';
 
@@ -60,15 +63,6 @@ export const sollicitantenPage = (req: Request, res: Response) => {
     );
 };
 
-const isVast = (ondernemer: IMarktondernemer): boolean => {
-    return (
-        ondernemer.status === 'vpl' ||
-        ondernemer.status === 'tvpl' ||
-        ondernemer.status === 'tvplz' ||
-        ondernemer.status === 'vkk'
-    );
-};
-
 const hasVastePlaatsen = (ondernemer: IMarktondernemer): boolean => {
     return ondernemer.plaatsen && ondernemer.plaatsen.length > 0;
 };
@@ -80,7 +74,7 @@ export const isAanwezig = (ondernemer: IMarktondernemer, aanmeldingen: IRSVP[], 
     }
 
     const rsvp = aanmeldingen.find(({ erkenningsNummer }) => erkenningsNummer === ondernemer.erkenningsNummer);
-    return isVast(ondernemer) && hasVastePlaatsen(ondernemer)
+    return isVast(ondernemer.status) && hasVastePlaatsen(ondernemer)
         ? !rsvp || !!rsvp.attending || rsvp.attending === null
         : !!rsvp && !!rsvp.attending;
 };
@@ -92,7 +86,7 @@ export const afmeldingenVasteplaatshoudersPage = (req: GrantedRequest, res: Resp
     getToewijzingslijst(marktId, datum)
         .then(data => {
             const { ondernemers, aanmeldingen } = data;
-            const vasteplaatshouders = ondernemers.filter(ondernemer => ondernemer.status === 'vpl');
+            const vasteplaatshouders = ondernemers.filter(ondernemer => isVast(ondernemer.status));
             const vasteplaatshoudersAfwezig = vasteplaatshouders.filter(ondernemer => {
                 return !isAanwezig(ondernemer, aanmeldingen, new Date(datum));
             });
@@ -121,7 +115,7 @@ export const voorrangslijstPage = (req: GrantedRequest, res: Response, next: Nex
 
             ondernemers =
                 markt.kiesJeKraamFase === 'wenperiode'
-                    ? ondernemers.filter(ondernemer => ondernemer.status !== 'vpl')
+                    ? ondernemers.filter(ondernemer => !isVast(ondernemer.status) )
                     : ondernemers;
             const toewijzingenOptional = markt.kiesJeKraamFase === 'wenperiode' ? [] : toewijzingen;
 
@@ -194,7 +188,7 @@ export const voorrangslijstVolledigPage = (req: GrantedRequest, res: Response, n
     getVoorrangslijstInput(req.params.marktId, req.params.datum)
         .then(result => {
             const { ondernemers, aanmeldingen, voorkeuren, markt, aLijst, algemenevoorkeuren } = result;
-            const ondernemersFiltered = ondernemers.filter(ondernemer => ondernemer.status !== 'vpl');
+            const ondernemersFiltered = ondernemers.filter(ondernemer => !isVast(ondernemer.status) );
             // const toewijzingenOptional = markt.fase === 'wenperiode' ? [] : toewijzingen;
 
             const type = 'wenperiode';
@@ -232,7 +226,7 @@ export const alleSollicitantenPage = (req: GrantedRequest, res: Response, next: 
         .then(([ondernemers, aanmeldingen, plaatsvoorkeuren, markt, toewijzingen, algemenevoorkeuren]) => {
             const role = Roles.MARKTMEESTER;
             res.render('AanwezigheidLijst', {
-                ondernemers: ondernemers.filter(ondernemer => ondernemer.status !== 'vpl'),
+                ondernemers: ondernemers.filter(ondernemer => !isVast(ondernemer.status)),
                 aanmeldingen,
                 plaatsvoorkeuren,
                 toewijzingen,
@@ -261,7 +255,7 @@ export const sollicitantentAanwezigheidLijst = (req: GrantedRequest, res: Respon
         .then(([ondernemers, aanmeldingen, plaatsvoorkeuren, markt, toewijzingen, algemenevoorkeuren]) => {
             const role = Roles.MARKTMEESTER;
             res.render('AanwezigheidLijstPage', {
-                ondernemers: ondernemers.filter(ondernemer => ondernemer.status !== 'vpl'),
+                ondernemers: ondernemers.filter(ondernemer => !isVast(ondernemer.status)),
                 aanmeldingen,
                 plaatsvoorkeuren,
                 toewijzingen,
