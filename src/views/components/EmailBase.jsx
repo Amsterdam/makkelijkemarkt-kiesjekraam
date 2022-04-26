@@ -297,4 +297,4 @@ EmailBase.propTypes = {
     lang: PropTypes.string,
 };
 
-module.exports = EmailBase;
+export default EmailBase;

@@ -26,4 +26,4 @@ EmailContent.propTypes = {
     children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
 };
 
-module.exports = EmailContent;
+export default EmailContent;

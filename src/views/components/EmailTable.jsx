@@ -34,4 +34,4 @@ EmailTable.propTypes = {
     title: PropTypes.string,
 };
 
-module.exports = EmailTable;
+export default EmailTable;
