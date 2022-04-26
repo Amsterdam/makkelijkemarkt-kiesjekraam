@@ -35,7 +35,7 @@ import {
 } from './model/markt.functions';
 import {
     INDELING_DAG_OFFSET,
-} from './domain-knowledge.ts';
+} from './domain-knowledge';
 import {
     mail,
 } from './mail.js';
