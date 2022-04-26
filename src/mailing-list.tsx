@@ -55,12 +55,12 @@ const marktDate = timezoneTime.format('YYYY-MM-DD');
 const alternativeEmail = 'Marktbureau.kiesjekraam@amsterdam.nl';
 
 const sendAllocationMail = (subject: string, mailTemplate: JSX.Element, emailaddress: string) => {
+    if (process.env.TEST_EMAIL && process.env.TEST_EMAIL != 'false') emailaddress = process.env.TEST_EMAIL;
+    else if (process.env.APP_ENV === 'acceptance' || process.env.APP_ENV === 'development') emailaddress = alternativeEmail;
+
     return mail({
         from: process.env.MAILER_FROM,
-        to:
-            process.env.APP_ENV === 'acceptance' || process.env.APP_ENV === 'development'
-                ? alternativeEmail
-                : emailaddress,
+        to: emailaddress,
         subject,
         react: mailTemplate,
     });
