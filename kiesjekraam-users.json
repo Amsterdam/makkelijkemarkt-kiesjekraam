@@ -1,0 +1,14 @@
+[
+  {
+    "name": "kjk_marktmeester",
+    "roles": ["marktmeester", "marktbewerker"]
+  },
+  {
+    "name": "kjk_marktbureau",
+    "roles": ["marktbureau"]
+  },
+  {
+    "name": "12345678",
+    "roles": ["marktondernemer"]
+  }
+]
