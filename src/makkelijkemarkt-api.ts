@@ -559,7 +559,7 @@ export function getAllocations(marktId: string, date: string): Promise<any[]> {
     });
 }
 
-function getAllocationsByOndernemerAndMarkt(erkenningsNummer: string, marktId: string): Promise<any[]> {
+function getAllocationsByOndernemerAndMarkt(marktId: string, erkenningsNummer: string): Promise<any[]> {
     const url = `allocation/markt/${marktId}/koopman/${erkenningsNummer}`;
     return apiBase(url, 'get').then(response => {
         return response.data;
