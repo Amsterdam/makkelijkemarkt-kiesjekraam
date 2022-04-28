@@ -1,0 +1,14 @@
+[
+  {
+    "name": "kjk_marktmeester",
+    "clientRoles": ["marktmeester", "marktbewerker"]
+  },
+  {
+    "name": "kjk_marktbureau",
+    "clientRoles": ["marktbureau"]
+  },
+  {
+    "name": "12345678",
+    "clientRoles": ["marktondernemer"]
+  }
+]
