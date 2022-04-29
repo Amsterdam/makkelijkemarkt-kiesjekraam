@@ -336,8 +336,12 @@ app.post(
     ['/voorkeuren/:marktId/'],
     keycloak.protect(Roles.MARKTONDERNEMER),
     csrfProtection,
-    (req: GrantedRequest, res: Response, next: NextFunction) =>
-        updatePlaatsvoorkeuren(req, res, next, req.params.marktId, getErkenningsNummer(req)),
+    (req: GrantedRequest, res: Response, next: NextFunction) => {
+        if (req.body['minimum'] === undefined){
+            req.body['minimum'] = parseInt(req.body['maximum']) - parseInt(req.body['extra-count']);
+        }
+        return updatePlaatsvoorkeuren(req, res, next, req.params.marktId, getErkenningsNummer(req))
+    },
 );
 
 app.get(
