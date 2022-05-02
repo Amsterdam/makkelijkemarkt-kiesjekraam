@@ -153,11 +153,13 @@ makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]
                                     ({ erkenningsNummer }) => erkenningsNummer === toewijzing.koopman,
                                 );
                                 const user = users.find(({ username }) => username === toewijzing.koopman);
-                                return {
+                                const tw =  {
                                     toewijzing,
                                     ondernemer,
                                     user,
                                 };
+                                console.log(tw);
+                                return tw;
                             })
                             .filter(({ user }) => !!user && !!user.email);
 
