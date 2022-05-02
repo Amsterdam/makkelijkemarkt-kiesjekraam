@@ -150,9 +150,9 @@ makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]
                         const toewijzingenCombined = toewijzingen
                             .map(toewijzing => {
                                 const ondernemer = ondernemers.find(
-                                    ({ erkenningsNummer }) => erkenningsNummer === toewijzing.erkenningsNummer,
+                                    ({ erkenningsNummer }) => erkenningsNummer === toewijzing.koopman,
                                 );
-                                const user = users.find(({ username }) => username === toewijzing.erkenningsNummer);
+                                const user = users.find(({ username }) => username === toewijzing.koopman);
                                 return {
                                     toewijzing,
                                     ondernemer,
@@ -166,10 +166,10 @@ makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]
                         const afwijzingenCombined = afwijzingen
                             .map(afwijzing => {
                                 const ondernemer = ondernemers.find(
-                                    ({ erkenningsNummer }) => erkenningsNummer === afwijzing.erkenningsNummer,
+                                    ({ erkenningsNummer }) => erkenningsNummer === afwijzing.koopman,
                                 );
 
-                                const user = users.find(({ username }) => username === afwijzing.erkenningsNummer);
+                                const user = users.find(({ username }) => username === afwijzing.koopman);
                                 return {
                                     afwijzing,
                                     ondernemer,
