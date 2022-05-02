@@ -38,8 +38,13 @@ export class EmailDataUitslag extends React.Component<Properties> {
                         <tbody>
                             {toewijzingen.map((toewijzing, index) => {
                                 const ondernemerResult = ondernemers.find(
-                                    ondernemer => ondernemer.erkenningsNummer === toewijzing.erkenningsNummer,
+                                    ondernemer => ondernemer.erkenningsNummer === toewijzing.koopman,
                                 );
+                                if (ondernemerResult === undefined){
+                                    console.log("Error, ondernemer niet gevonden: ");
+                                    console.log(toewijzing);
+                                    return "";
+                                }
                                 return (
                                     <tr key={index}>
                                         <td>{toewijzing.plaatsen.sort((a: any, b: any) => a - b).join(', ')}</td>
