@@ -4,9 +4,11 @@ import React from 'react';
 const IndelingsLegenda = ({ branches, marktplaatsen, ondernemers, aanmeldingen, toewijzingen }) => {
     const relevantBranches = getAllBranchesForLegend(branches, marktplaatsen);
     const showToewijzingen = !!toewijzingen.length;
-    const indelingenPerBranche = showToewijzingen
+    const _indelingenPerBranche = showToewijzingen
         ? countToewijzingenPerBranche(branches, ondernemers, toewijzingen)
         : {};
+    const bakCount = countBak(ondernemers, toewijzingen);
+    const indelingenPerBranche = {..._indelingenPerBranche, ...bakCount}
     return (
         <div className="IndelingsLegenda">
             <table>
@@ -14,6 +16,7 @@ const IndelingsLegenda = ({ branches, marktplaatsen, ondernemers, aanmeldingen, 
                     <tr>
                         <th className="nr">Nr.</th>
                         <th>Beschrijving</th>
+                        <th>Verplicht</th>
                         <th>Maximum</th>
                         {showToewijzingen && <th>Toegewezen</th>}
                     </tr>
@@ -29,6 +32,7 @@ const IndelingsLegenda = ({ branches, marktplaatsen, ondernemers, aanmeldingen, 
                                 {branche.brancheId.substring(0, 3)}
                             </td>
                             <td>{branche.description}</td>
+                            <td>{branche.verplicht ? "x": ""}</td>
                             <td className={!branche.maximumPlaatsen ? 'nvt' : ''}>{branche.maximumPlaatsen || '—'}</td>
                             {showToewijzingen && <td>{indelingenPerBranche[branche.brancheId] || 0}</td>}
                         </tr>
@@ -36,6 +40,7 @@ const IndelingsLegenda = ({ branches, marktplaatsen, ondernemers, aanmeldingen, 
                     <tr key="evi-stand">
                         <td className="autoColor evi background-light">evi</td>
                         <td>Eigen verkoopinrichting plaats</td>
+                        <td />
                         <td />
                         {showToewijzingen && <td />}
                     </tr>
@@ -58,9 +63,19 @@ const _isRelevantBrancheForLegend = (marktplaatsen, branche) => {
     if (branche.brancheId === 'bak' || branche.brancheId === 'bak-licht'){
         return true;
     }
-    return !!marktplaatsen.find(({ branches }) =>
+    if(branche.verplicht === true){
+        return true;
+    }
+    if(branche.maximumPlaatsen !== undefined){
+        return true
+    }
+    const pl = marktplaatsen.find(({ branches }) =>
         branches && branches.includes(brancheId)
     );
+    if(pl !== undefined){
+        return true;
+    }
+    return false;
 };
 
 const getAllBranchesForLegend = (allBranches, marktplaatsen) => {
@@ -68,12 +83,6 @@ const getAllBranchesForLegend = (allBranches, marktplaatsen) => {
         .reduce((result, branche) => {
             if (!_isRelevantBrancheForLegend(marktplaatsen, branche)) {
                 return result;
-            }
-            if (!branche.maximumPlaatsen && branche.verplicht) {
-                const branchePlaatsen = marktplaatsen.filter(
-                    plaats => plaats.branches && plaats.branches.includes(branche.brancheId),
-                );
-                branche = { ...branche, maximumPlaatsen: branchePlaatsen.length };
             }
             return result.concat(branche);
         }, [])
@@ -85,6 +94,22 @@ const getAllBranchesForLegend = (allBranches, marktplaatsen) => {
             b.brancheId !== 'bak' ? String(a.description).localeCompare(b.description, { sensitivity: 'base' }) : 1,
         );
 };
+
+const countBak = (ondernemers, toewijzingen) => {
+    return toewijzingen.reduce((result, toewijzing) => {
+        const ondernemer =
+            toewijzing.ondernemer ||
+            ondernemers.find(({ erkenningsNummer }) => erkenningsNummer === toewijzing.erkenningsNummer);
+        if ( !ondernemer || !ondernemer.voorkeur) {
+            return result;
+        }
+        if(["bak", "bak-licht"].includes(ondernemer.voorkeur.bakType)){
+            result[ondernemer.voorkeur.bakType] += toewijzing.plaatsen.length;
+            return result;
+        }
+        return result;
+    }, {"bak": 0, "bak-licht": 0});
+}
 
 const countToewijzingenPerBranche = (allBranches, ondernemers, toewijzingen) => {
     return toewijzingen.reduce((result, toewijzing) => {
