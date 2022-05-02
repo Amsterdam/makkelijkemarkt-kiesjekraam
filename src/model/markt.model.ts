@@ -136,6 +136,7 @@ export interface IToewijzing {
     date: string;
     plaatsen: PlaatsId[];
     erkenningsNummer: ErkenningsNummer;
+    koopman: ErkenningsNummer;
     ondernemer?: IMarktondernemer;
     anywhere?: boolean;
     minimum?: number;
@@ -155,6 +156,7 @@ export interface IAfwijzing {
     markt: string;
     date: string;
     erkenningsNummer: string;
+    koopman: string;
     ondernemer: IMarktondernemer;
     reason: IAfwijzingReason;
     anywhere?: boolean;
