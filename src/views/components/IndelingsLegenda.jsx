@@ -58,9 +58,13 @@ const _isRelevantBrancheForLegend = (marktplaatsen, branche) => {
     if (branche.brancheId === 'bak' || branche.brancheId === 'bak-licht'){
         return true;
     }
-    return !!marktplaatsen.find(({ branches }) =>
-        branches && branches.includes(brancheId)
-    );
+    if(branche.verplicht === true){
+        return true;
+    }
+    if(branche.maximumPlaatsen !== undefined){
+        return true
+    }
+    return false;
 };
 
 const getAllBranchesForLegend = (allBranches, marktplaatsen) => {
@@ -68,12 +72,6 @@ const getAllBranchesForLegend = (allBranches, marktplaatsen) => {
         .reduce((result, branche) => {
             if (!_isRelevantBrancheForLegend(marktplaatsen, branche)) {
                 return result;
-            }
-            if (!branche.maximumPlaatsen && branche.verplicht) {
-                const branchePlaatsen = marktplaatsen.filter(
-                    plaats => plaats.branches && plaats.branches.includes(branche.brancheId),
-                );
-                branche = { ...branche, maximumPlaatsen: branchePlaatsen.length };
             }
             return result.concat(branche);
         }, [])
