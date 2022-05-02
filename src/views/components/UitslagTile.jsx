@@ -14,7 +14,7 @@ const UitslagTile = ({ date, aanmelding, sollicitatie, markt, toewijzing, afwijz
     const aangemeld =
         (aanmelding && aanmelding.attending && sollicitatie.status === '?') ||
         (aanmelding && aanmelding.attending && sollicitatie.status === 'soll') ||
-        ((!aanmelding || aanmelding.attending) && sollicitatie.status === 'vpl');
+        ((!aanmelding || aanmelding.attending) && ['vpl', 'eb'].includes(sollicitatie.status));
 
     function plaatsenDuiding(plaatsen) {
         if (plaatsen.length == 1) {

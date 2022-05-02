@@ -9,7 +9,7 @@ const OndernemerMarktAanwezigheid = ({ rsvpEntries, sollicitatie, disabled, mark
     const weekAanmeldingen = rsvpEntries.reduce(
         (t, { date, rsvp }, i) => {
             const week = new Date(date) > new Date(endOfWeek()) ? 1 : 0;
-            const attending = rsvp ? rsvp.attending : sollicitatie.status === 'vkk' || sollicitatie.status === 'vpl';
+            const attending = rsvp ? rsvp.attending : sollicitatie.status === 'vkk' || sollicitatie.status === 'vpl' || sollicitatie.status === 'eb';
             t[week].push([
                 <span key={date}>
                     {relativeHumanDay(date) ? (
