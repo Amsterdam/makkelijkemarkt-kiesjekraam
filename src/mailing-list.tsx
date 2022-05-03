@@ -49,7 +49,11 @@ import {
 requireEnv('MAILER_FROM');
 
 const timezoneTime = getTimezoneTime();
-timezoneTime.add(INDELING_DAG_OFFSET, 'days');
+if(process.env.INDELING_DAG_OFFSET && process.env.INDELING_DAG_OFFSET != 'false'){
+    timezoneTime.add(parseInt(process.env.INDELING_DAG_OFFSET) , 'days');
+}else{
+    timezoneTime.add(INDELING_DAG_OFFSET, 'days');
+}
 const marktDate = timezoneTime.format('YYYY-MM-DD');
 
 const alternativeEmail = 'Marktbureau.kiesjekraam@amsterdam.nl';
