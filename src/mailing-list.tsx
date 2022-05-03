@@ -81,6 +81,10 @@ const mailToewijzing = (toewijzingenCombined: any, markt: MMMarkt) => {
     let mailTemplate = null;
     let subject = null;
 
+    if(ondernemer === undefined){
+        return null;
+    }
+
     if (markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode') {
         subject = `Toewijzing ${yyyyMmDdtoDDMMYYYY(marktDate)} ${markt.naam}`;
         mailTemplate = (
@@ -107,6 +111,10 @@ const mailAfwijzing = (afwijzingCombined: any, markt: MMMarkt) => {
 
     let mailTemplate = null;
     let subject = null;
+
+    if(ondernemer === undefined){
+        return null;
+    }
 
     if (markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode') {
         (subject = `Niet ingedeeld ${yyyyMmDdtoDDMMYYYY(marktDate)} ${markt.naam}`),
