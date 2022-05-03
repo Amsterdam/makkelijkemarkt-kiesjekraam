@@ -87,6 +87,9 @@ const mailToewijzing = (toewijzingenCombined: any, markt: MMMarkt) => {
         );
     }
 
+    if(user === undefined){
+        return sendAllocationMail(subject, mailTemplate, alternativeEmail);
+    }
     return sendAllocationMail(subject, mailTemplate, user.email);
 };
 
@@ -108,6 +111,9 @@ const mailAfwijzing = (afwijzingCombined: any, markt: MMMarkt) => {
                     isWenPeriode={markt.kiesJeKraamFase === 'wenperiode'}
                 />
             ));
+    }
+    if(user === undefined){
+        return sendAllocationMail(subject, mailTemplate, alternativeEmail);
     }
     return sendAllocationMail(subject, mailTemplate, user.email);
 };
@@ -147,7 +153,7 @@ makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]
                         console.log('Toewijzingen', toewijzingen ? toewijzingen.length : 0);
                         console.log('Afwijzingen', afwijzingen ? afwijzingen.length : 0);
 
-                        const toewijzingenCombined = toewijzingen
+                        let toewijzingenCombined = toewijzingen
                             .map(toewijzing => {
                                 const ondernemer = ondernemers.find(
                                     ({ erkenningsNummer }) => erkenningsNummer === toewijzing.koopman,
@@ -158,14 +164,17 @@ makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]
                                     ondernemer,
                                     user,
                                 };
-                                console.log(tw);
+                                // console.log(tw);
                                 return tw;
-                            })
-                            .filter(({ user }) => !!user && !!user.email);
+                            });
+
+                        if (process.env.APP_ENV === 'production') {
+                            toewijzingenCombined = toewijzingenCombined.filter(({ user }) => !!user && !!user.email);
+                        }
 
                         console.log('Toewijzingen combined', toewijzingenCombined ? toewijzingenCombined.length : 0);
 
-                        const afwijzingenCombined = afwijzingen
+                        let afwijzingenCombined = afwijzingen
                             .map(afwijzing => {
                                 const ondernemer = ondernemers.find(
                                     ({ erkenningsNummer }) => erkenningsNummer === afwijzing.koopman,
@@ -177,8 +186,11 @@ makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]
                                     ondernemer,
                                     user,
                                 };
-                            })
-                            .filter(({ user }) => !!user && !!user.email);
+                            });
+
+                        if (process.env.APP_ENV === 'production') {
+                            afwijzingenCombined = afwijzingenCombined.filter(({ user }) => !!user && !!user.email);
+                        }
 
                         console.log('Afwijzingen combined', afwijzingenCombined ? afwijzingenCombined.length : 0);
 
