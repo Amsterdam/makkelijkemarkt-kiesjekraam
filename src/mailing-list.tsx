@@ -50,7 +50,8 @@ requireEnv('MAILER_FROM');
 
 const timezoneTime = getTimezoneTime();
 
-console.log("BUILD PARAMS: ", process.env.INDELING_DAG_OFFSET, process.env.TEST_EMAIL);
+console.log("BUILD PARAM, TEST_EMAIL: ", process.env.TEST_EMAIL);
+console.log("BUILD PARAM, INDELING_DAG_OFFSET: ", process.env.INDELING_DAG_OFFSET);
 
 if(process.env.INDELING_DAG_OFFSET && process.env.INDELING_DAG_OFFSET != 'false'){
     console.log("Get the day offset from parameter!", process.env.INDELING_DAG_OFFSET);
