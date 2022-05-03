@@ -173,7 +173,6 @@ makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]
                                     ondernemer,
                                     user,
                                 };
-                                // console.log(tw);
                                 return tw;
                             });
 
