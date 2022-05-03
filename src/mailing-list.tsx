@@ -49,7 +49,16 @@ import {
 requireEnv('MAILER_FROM');
 
 const timezoneTime = getTimezoneTime();
-timezoneTime.add(INDELING_DAG_OFFSET, 'days');
+
+console.log("BUILD PARAM, TEST_EMAIL: ", process.env.TEST_EMAIL);
+console.log("BUILD PARAM, INDELING_DAG_OFFSET: ", process.env.INDELING_DAG_OFFSET);
+
+if(process.env.INDELING_DAG_OFFSET && process.env.INDELING_DAG_OFFSET != 'false'){
+    console.log("Get the day offset from parameter!", process.env.INDELING_DAG_OFFSET);
+    timezoneTime.add(parseInt(process.env.INDELING_DAG_OFFSET) , 'days');
+}else{
+    timezoneTime.add(INDELING_DAG_OFFSET, 'days');
+}
 const marktDate = timezoneTime.format('YYYY-MM-DD');
 
 const alternativeEmail = 'Marktbureau.kiesjekraam@amsterdam.nl';
@@ -87,6 +96,9 @@ const mailToewijzing = (toewijzingenCombined: any, markt: MMMarkt) => {
         );
     }
 
+    if(user === undefined){
+        return sendAllocationMail(subject, mailTemplate, alternativeEmail);
+    }
     return sendAllocationMail(subject, mailTemplate, user.email);
 };
 
@@ -108,6 +120,9 @@ const mailAfwijzing = (afwijzingCombined: any, markt: MMMarkt) => {
                     isWenPeriode={markt.kiesJeKraamFase === 'wenperiode'}
                 />
             ));
+    }
+    if(user === undefined){
+        return sendAllocationMail(subject, mailTemplate, alternativeEmail);
     }
     return sendAllocationMail(subject, mailTemplate, user.email);
 };
@@ -147,23 +162,27 @@ makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]
                         console.log('Toewijzingen', toewijzingen ? toewijzingen.length : 0);
                         console.log('Afwijzingen', afwijzingen ? afwijzingen.length : 0);
 
-                        const toewijzingenCombined = toewijzingen
+                        let toewijzingenCombined = toewijzingen
                             .map(toewijzing => {
                                 const ondernemer = ondernemers.find(
                                     ({ erkenningsNummer }) => erkenningsNummer === toewijzing.koopman,
                                 );
                                 const user = users.find(({ username }) => username === toewijzing.koopman);
-                                return {
+                                const tw =  {
                                     toewijzing,
                                     ondernemer,
                                     user,
                                 };
-                            })
-                            .filter(({ user }) => !!user && !!user.email);
+                                return tw;
+                            });
+
+                        if (process.env.APP_ENV === 'production') {
+                            toewijzingenCombined = toewijzingenCombined.filter(({ user }) => !!user && !!user.email);
+                        }
 
                         console.log('Toewijzingen combined', toewijzingenCombined ? toewijzingenCombined.length : 0);
 
-                        const afwijzingenCombined = afwijzingen
+                        let afwijzingenCombined = afwijzingen
                             .map(afwijzing => {
                                 const ondernemer = ondernemers.find(
                                     ({ erkenningsNummer }) => erkenningsNummer === afwijzing.koopman,
@@ -175,8 +194,11 @@ makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]
                                     ondernemer,
                                     user,
                                 };
-                            })
-                            .filter(({ user }) => !!user && !!user.email);
+                            });
+
+                        if (process.env.APP_ENV === 'production') {
+                            afwijzingenCombined = afwijzingenCombined.filter(({ user }) => !!user && !!user.email);
+                        }
 
                         console.log('Afwijzingen combined', afwijzingenCombined ? afwijzingenCombined.length : 0);
 
