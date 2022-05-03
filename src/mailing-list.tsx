@@ -49,6 +49,9 @@ import {
 requireEnv('MAILER_FROM');
 
 const timezoneTime = getTimezoneTime();
+
+console.log("ENV: ", process.env)
+
 if(process.env.INDELING_DAG_OFFSET && process.env.INDELING_DAG_OFFSET != 'false'){
     console.log("Get the day offset from parameter!", process.env.INDELING_DAG_OFFSET);
     timezoneTime.add(parseInt(process.env.INDELING_DAG_OFFSET) , 'days');
