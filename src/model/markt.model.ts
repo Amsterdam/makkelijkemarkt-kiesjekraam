@@ -149,6 +149,7 @@ export interface IToewijzing {
 
 export interface IAfwijzingReason {
     message: string;
+    db_id: string;
     code?: number;
 }
 

@@ -67,6 +67,13 @@ const sendAllocationMail = (subject: string, mailTemplate: JSX.Element, emailadd
     if (process.env.TEST_EMAIL && process.env.TEST_EMAIL != 'false') emailaddress = process.env.TEST_EMAIL;
     else if (process.env.APP_ENV === 'acceptance' || process.env.APP_ENV === 'development') emailaddress = alternativeEmail;
 
+    if(process.env.DEBUG_MODE && process.env.DEBUG_MODE != 'false'){
+        console.log("- - - - - - Allocation email - - - - -");
+        console.log(subject);
+        console.log(mailTemplate);
+        return;
+    }
+
     return mail({
         from: process.env.MAILER_FROM,
         to: emailaddress,
