@@ -29,7 +29,7 @@ export class EmailAfwijzing extends React.Component<EmailIndelingProps> {
     public render() {
         const { subject, ondernemer, markt, telefoonnummer, afwijzing, isWenPeriode } = this.props;
 
-        const reason = getAfwijzingReason(afwijzing.reasonCode);
+        const reason = getAfwijzingReason(afwijzing.rejectReason);
 
         const tableData = [
             ['Markt:', <strong key="markt">{markt.naam}</strong>],

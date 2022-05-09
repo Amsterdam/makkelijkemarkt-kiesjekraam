@@ -46,44 +46,27 @@ export class EmailToewijzing extends React.Component<EmailIndelingProps> {
                     <p>Beste {ondernemer.description},</p>
                     {isWenPeriode &&
                         <p>
-                            Dit is een testmail tijdens de wenperiode van digitaal indelen. U ontvangt deze e-mail omdat u
-                            zich digitaal heeft aangemeld.
+                            Dit is een testmail tijdens de wenperiode van digitaal indelen.
+                            U kunt geen rechten ontlenen aan deze de toegewezen plaats(en).
+                            De loting vindt, zoals u gewend bent plaats, door de marktmeester ochtends op de markt.
                         </p>
                     }
                     <p>
                         Op {dayOfTheWeek} {formattedDate} bent u ingedeeld op de markt.
                     </p>
                     <EmailTable data={tableData} />
+                    <h4>Meer informatie</h4>
                     <p>
-                        Als u onverwachts toch niet kunt komen verzoeken wij u dit uiterlijk 08.45 uur aan de
-                        marktmeester te melden zodat een andere ondernemer uw plaats kan krijgen.
+                        Op <a href='https://www.amsterdam.nl/ondernemen/markt-straathandel/digitaal-indelen/'>
+                                https://www.amsterdam.nl/ondernemen/markt-straathandel/digitaal-indelen/
+                            </a> kunt u informatie vinden over digitaal indelen.
+                        Wij raden u aan de website te bezoeken als u wilt
+                        weten hoe digitaal indelen precies werkt.
                     </p>
-                    <p>Dit kan telefonisch via: {telefoonnummer}.</p>
                     <p>
-                        Alleen als er sprake is van overmacht hoeft u het marktgeld niet te betalen. Overmacht betekent
-                        dat u de avond van tevoren nog niet kon weten dat u niet naar de markt kunt komen. De
-                        marktmeester beoordeelt uw situatie.
+                        Heeft u een andere plaats toegewezen gekregen dan u verwacht had, of heeft u vragen,
+                        dan kunt u deze aan de marktmeester stellen of mailen naar <a href='mailto: marktbureau@amsterdam.nl'>marktbureau@amsterdam.nl</a>
                     </p>
-                    {isWenPeriode &&
-                        <p>
-                            <strong>Meer informatie?</strong>
-                            <br />
-                            Op deze{' '}
-                            <a href={infoLink} target="_blank" rel="noopener noreferrer">
-                                website
-                            </a>{' '}
-                            kunt u veel informatie vinden over digitaal indelen. Wij raden u aan dit te lezen als u wilt
-                            weten hoe het precies werkt.
-                        </p>
-                    }
-                    {isWenPeriode &&
-                        <p>
-                            Hebt u daarna nog vragen? Stuur ons dan een e-mail via{' '}
-                            <a href="mailto: marktbureau@amsterdam.nl">marktbureau@amsterdam.nl</a>
-                            {telefoonnummer && 'of bel ons via ' + telefoonnummer}
-                            .
-                        </p>
-                    }
                     <p>
                         Met vriendelijke groet,
                         <br />

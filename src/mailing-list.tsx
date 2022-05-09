@@ -67,6 +67,11 @@ const sendAllocationMail = (subject: string, mailTemplate: JSX.Element, emailadd
     if (process.env.TEST_EMAIL && process.env.TEST_EMAIL != 'false') emailaddress = process.env.TEST_EMAIL;
     else if (process.env.APP_ENV === 'acceptance' || process.env.APP_ENV === 'development') emailaddress = alternativeEmail;
 
+    if(process.env.DEBUG_MODE && process.env.DEBUG_MODE != 'false'){
+        console.log("- - - - - - Allocation email - - - - -");
+        console.log(subject);
+    }
+
     return mail({
         from: process.env.MAILER_FROM,
         to: emailaddress,
@@ -80,6 +85,10 @@ const mailToewijzing = (toewijzingenCombined: any, markt: MMMarkt) => {
 
     let mailTemplate = null;
     let subject = null;
+
+    if(ondernemer === undefined){
+        return null;
+    }
 
     if (markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode') {
         subject = `Toewijzing ${yyyyMmDdtoDDMMYYYY(marktDate)} ${markt.naam}`;
@@ -107,6 +116,10 @@ const mailAfwijzing = (afwijzingCombined: any, markt: MMMarkt) => {
 
     let mailTemplate = null;
     let subject = null;
+
+    if(ondernemer === undefined){
+        return null;
+    }
 
     if (markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode') {
         (subject = `Niet ingedeeld ${yyyyMmDdtoDDMMYYYY(marktDate)} ${markt.naam}`),
@@ -146,8 +159,15 @@ const makkelijkeMarkt$ = defer(() => checkLogin()).pipe(
 );
 
 makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]) => {
-    return getMarktenByDate(marktDate).then(markten => {
-        return markten
+    getMarktenByDate(marktDate).then(markten => {
+        let numMarkten = markten
+            .filter(markt => markt.kiesJeKraamFase)
+            .filter(markt => markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode').length;
+		if(numMarkten == 0){
+			process.exit(0);
+		}
+		let marktCounter = 0;
+        markten
             .filter(markt => markt.kiesJeKraamFase)
             .filter(markt => markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode')
             .map(markt =>
@@ -219,13 +239,16 @@ makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]
                         ]).then(result => {
                             console.log(`${result[0].length} toewijzingen verstuurd.`);
                             console.log(`${result[1].length} afwijzingen verstuurd.`);
-                            console.log(`Resultaat versturen uitslag naar marktbureau: ${result[2].message}`);
+                            console.log(`Resultaat versturen uitslag naar marktbureau: ${result[2].response}`);
                             console.log(
                                 markt.kiesJeKraamEmailKramenzetter
-                                    ? `Resultaat versturen uitslag naar kraamzetter: ${result[3].message}`
+                                    ? `Resultaat versturen uitslag naar kraamzetter: ${result[3].response}`
                                     : 'Geen emailadres kramenzetter in makkelijke markt',
                             );
-                            process.exit(0);
+							marktCounter += 1;
+							if(marktCounter >= numMarkten){
+								process.exit(0);
+							}
                         });
                     })
                     .catch(e => {
@@ -255,6 +278,10 @@ function sendUitslag(markt: any, marktDate: string, toewijzingen: any[], onderne
             : (to = 'Marktbureau.kiesjekraam@amsterdam.nl');
     } else {
         to = alternativeEmail;
+    }
+    if(process.env.DEBUG_MODE && process.env.DEBUG_MODE != 'false'){
+        console.log("- - - - - - Marktbureau email - - - - -");
+        console.log(subject);
     }
     return mail({
         from: process.env.MAILER_FROM,
