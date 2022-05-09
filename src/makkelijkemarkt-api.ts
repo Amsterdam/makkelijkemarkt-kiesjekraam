@@ -637,13 +637,31 @@ export const getAfwijzingenByOndernemer = (erkenningsNummer: string): Promise<IA
 
 const getGenericBranches = async (): Promise<IGenericBranche[]> => {
     const url = '/branche/all';
+
+    const cachedResp: any = await redisClient.get('CACHE_' + url);
+    if(cachedResp){
+        console.log("CACHE HIT, url: ",url);
+        const parsedResponse = JSON.parse(cachedResp);
+        return parsedResponse as unknown as IGenericBranche[];
+    }
+
     const genericBranches = await callApiGeneric(url, 'get');
+    await redisClient.set('CACHE_' + url, JSON.stringify(genericBranches), 'EX', 60*10);
     return genericBranches as unknown as IGenericBranche[];
 };
 
 const getLatestMarktConfig = async (marktId: string): Promise<IMarktConfiguratie> => {
     const url = `/markt/${marktId}/marktconfiguratie/latest`;
+
+    const cachedResp: any = await redisClient.get('CACHE_' + url);
+    if(cachedResp){
+        console.log("CACHE HIT, url: ",url);
+        const parsedResponse = JSON.parse(cachedResp);
+        return parsedResponse as unknown as IMarktConfiguratie;
+    }
+
     const marktConfig = await callApiGeneric(url, 'get');
+    await redisClient.set('CACHE_' + url, JSON.stringify(marktConfig), 'EX', 60*10);
     return marktConfig as unknown as IMarktConfiguratie;
 };
 
