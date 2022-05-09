@@ -91,9 +91,12 @@ const createHttpFunction = (
     httpMethod: HttpMethod,
 ): ((url: string, token: string, data?) => Promise<AxiosResponse>) => {
     return (url: string, token: string, data?: JSON): Promise<AxiosResponse> => {
-        console.log(`## MM API ${httpMethod} CALL: `, url);
+        // console.log(`## MM API ${httpMethod} CALL: `, url);
+        // console.time(url);
+        console.log('MM-API REQUEST', httpMethod, url);
         const headers = {
             Authorization: `Bearer ${token}`,
+            requestStartTime: new Date().getTime(),
         };
 
         switch (httpMethod) {
@@ -134,10 +137,19 @@ const apiBase = (
 
     api.interceptors.response.use(
         (response: any) => {
+            const currentTime = new Date().getTime()
+            const startTime = response.config.headers['requestStartTime'];
+            console.log('MM-API RESPONSE', response.status, response.config.method, response.config.url, currentTime - startTime, 'ms');
+            // console.timeEnd(response.config.url);
             return response;
         },
         (error: any) => {
-            console.log(`MM-API ERROR: ${error.response.data.error}`);
+            // console.log(error);
+            // console.log(`MM-API ERROR: ${error.response?.data?.error}`);
+            const currentTime = new Date().getTime()
+            const startTime = error.config.headers['requestStartTime'];
+            console.log('MM-API ERROR', error.response?.status || 'NO_STATUS', error.config.method, error.config.url, currentTime - startTime, 'ms', error.response?.data?.error);
+
             if (error.response.status === 504 || error.response.status === 503) {
                 counter50xRetry++;
                 if (counter50xRetry < MAX_RETRY_50X) {
