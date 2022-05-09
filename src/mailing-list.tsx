@@ -159,8 +159,15 @@ const makkelijkeMarkt$ = defer(() => checkLogin()).pipe(
 );
 
 makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]) => {
-    return getMarktenByDate(marktDate).then(markten => {
-        return markten
+    getMarktenByDate(marktDate).then(markten => {
+        let numMarkten = markten
+            .filter(markt => markt.kiesJeKraamFase)
+            .filter(markt => markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode').length;
+		if(numMarkten == 0){
+			process.exit(0);
+		}
+		let marktCounter = 0;
+        markten
             .filter(markt => markt.kiesJeKraamFase)
             .filter(markt => markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode')
             .map(markt =>
@@ -232,12 +239,16 @@ makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]
                         ]).then(result => {
                             console.log(`${result[0].length} toewijzingen verstuurd.`);
                             console.log(`${result[1].length} afwijzingen verstuurd.`);
-                            console.log(`Resultaat versturen uitslag naar marktbureau: ${result[2].message}`);
+                            console.log(`Resultaat versturen uitslag naar marktbureau: ${result[2].response}`);
                             console.log(
                                 markt.kiesJeKraamEmailKramenzetter
-                                    ? `Resultaat versturen uitslag naar kraamzetter: ${result[3].message}`
+                                    ? `Resultaat versturen uitslag naar kraamzetter: ${result[3].response}`
                                     : 'Geen emailadres kramenzetter in makkelijke markt',
                             );
+							marktCounter += 1;
+							if(marktCounter >= numMarkten){
+								process.exit(0);
+							}
                         });
                     })
                     .catch(e => {
