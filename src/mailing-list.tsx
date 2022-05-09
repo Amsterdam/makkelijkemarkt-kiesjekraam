@@ -70,8 +70,6 @@ const sendAllocationMail = (subject: string, mailTemplate: JSX.Element, emailadd
     if(process.env.DEBUG_MODE && process.env.DEBUG_MODE != 'false'){
         console.log("- - - - - - Allocation email - - - - -");
         console.log(subject);
-        console.log(mailTemplate);
-        return;
     }
 
     return mail({
@@ -240,7 +238,6 @@ makkelijkeMarkt$.pipe(combineLatest(users$)).subscribe(([makkelijkeMarkt, users]
                                     ? `Resultaat versturen uitslag naar kraamzetter: ${result[3].message}`
                                     : 'Geen emailadres kramenzetter in makkelijke markt',
                             );
-                            process.exit(0);
                         });
                     })
                     .catch(e => {
@@ -270,6 +267,10 @@ function sendUitslag(markt: any, marktDate: string, toewijzingen: any[], onderne
             : (to = 'Marktbureau.kiesjekraam@amsterdam.nl');
     } else {
         to = alternativeEmail;
+    }
+    if(process.env.DEBUG_MODE && process.env.DEBUG_MODE != 'false'){
+        console.log("- - - - - - Marktbureau email - - - - -");
+        console.log(subject);
     }
     return mail({
         from: process.env.MAILER_FROM,
