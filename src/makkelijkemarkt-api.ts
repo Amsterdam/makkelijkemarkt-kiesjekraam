@@ -103,10 +103,13 @@ const createHttpFunction = (
             case 'get':
                 return api.get(url, { headers });
             case 'post':
+                invalidateCacheForUrl(url);
                 return api.post(url, data, { headers });
             case 'put':
+                invalidateCacheForUrl(url);
                 return api.put(url, data, { headers });
             case 'delete':
+                invalidateCacheForUrl(url);
                 return api.delete(url, { headers });
             default:
                 return api.get(url, { headers });
@@ -634,6 +637,18 @@ export const getAfwijzingenByOndernemer = (erkenningsNummer: string): Promise<IA
         return removeAllocatedAllocations(response);
     });
 };
+
+const invalidateCacheForUrl = async (url:string): Promise<any> => {
+    if(url.startsWith("/markt/") && url.includes("marktconfiguratie")){
+        const invalidUrl = 'CACHE_'+ url+ "/latest"
+        console.log("invaldate cached url:", invalidUrl);
+        return await redisClient.del(invalidUrl);
+    }else if(url.startsWith("/branche/")){
+        const invalidUrl = 'CACHE_/branche/all';
+        console.log("invaldate cached url:", invalidUrl);
+        return await redisClient.del(invalidUrl);
+    }
+}
 
 const getGenericBranches = async (): Promise<IGenericBranche[]> => {
     const url = '/branche/all';
