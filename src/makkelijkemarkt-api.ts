@@ -54,6 +54,9 @@ const MAX_RETRY_50X = 10;
 const MAX_RETRY_40X = 10;
 export const EMPTY_BRANCH: BrancheId = '000-EMPTY';
 
+const CACHE_PREFIX = 'CACHE_';
+const CACHE_TTL = 60*10;
+
 requireEnv('API_URL');
 requireEnv('API_MMAPPKEY');
 requireEnv('API_KEY');
@@ -103,13 +106,10 @@ const createHttpFunction = (
             case 'get':
                 return api.get(url, { headers });
             case 'post':
-                invalidateCacheForUrl(url);
                 return api.post(url, data, { headers });
             case 'put':
-                invalidateCacheForUrl(url);
                 return api.put(url, data, { headers });
             case 'delete':
-                invalidateCacheForUrl(url);
                 return api.delete(url, { headers });
             default:
                 return api.get(url, { headers });
@@ -638,45 +638,50 @@ export const getAfwijzingenByOndernemer = (erkenningsNummer: string): Promise<IA
     });
 };
 
-const invalidateCacheForUrl = async (url:string): Promise<any> => {
-    if(url.startsWith("/markt/") && url.includes("marktconfiguratie")){
-        const invalidUrl = 'CACHE_'+ url+ "/latest"
-        console.log("invalidate cached url:", invalidUrl);
-        return await redisClient.del(invalidUrl);
-    }else if(url.startsWith("/branche/")){
-        const invalidUrl = 'CACHE_/branche/all';
-        console.log("invalidate cached url:", invalidUrl);
-        return await redisClient.del(invalidUrl);
+export const CACHE_KEY_GENERIC_BRANCHES = 'genericBranches';
+export const getCacheKeyForMarktConfiguratie = (marktId:string) => `marktconfiguratie/${marktId}`;
+const prefixCacheKey = (key: string): string => `${CACHE_PREFIX}${key}`;
+
+export const invalidateCache = async (key:string): Promise<void> => {
+    console.log(`CACHE invalidate ${prefixCacheKey(key)}`);
+    await redisClient.del(prefixCacheKey(key));
+}
+
+const getCachedJSONResponse = async (key: string): Promise<JSON|void> => {
+    const cachedResponse: any = await redisClient.get(prefixCacheKey(key));
+    if (cachedResponse) {
+        console.log(`CACHE hit ${key}`);
+        return JSON.parse(cachedResponse);
     }
+}
+
+const cacheJSONResponse = async (key: string, response: unknown): Promise<void> => {
+    console.log(`CACHE set ${key} ttl ${CACHE_TTL}`);
+    await redisClient.set(prefixCacheKey(key), JSON.stringify(response), 'EX', CACHE_TTL);
 }
 
 const getGenericBranches = async (): Promise<IGenericBranche[]> => {
     const url = '/branche/all';
-
-    const cachedResp: any = await redisClient.get('CACHE_' + url);
-    if(cachedResp){
-        console.log("CACHE HIT, url: ",url);
-        const parsedResponse = JSON.parse(cachedResp);
-        return parsedResponse as unknown as IGenericBranche[];
+    const cachedResponse = await getCachedJSONResponse(CACHE_KEY_GENERIC_BRANCHES);
+    if (cachedResponse) {
+        return cachedResponse as unknown as IGenericBranche[];
     }
 
     const genericBranches = await callApiGeneric(url, 'get');
-    await redisClient.set('CACHE_' + url, JSON.stringify(genericBranches), 'EX', 60*10);
+    await cacheJSONResponse(CACHE_KEY_GENERIC_BRANCHES, genericBranches);
     return genericBranches as unknown as IGenericBranche[];
 };
 
 const getLatestMarktConfig = async (marktId: string): Promise<IMarktConfiguratie> => {
     const url = `/markt/${marktId}/marktconfiguratie/latest`;
-
-    const cachedResp: any = await redisClient.get('CACHE_' + url);
-    if(cachedResp){
-        console.log("CACHE HIT, url: ",url);
-        const parsedResponse = JSON.parse(cachedResp);
-        return parsedResponse as unknown as IMarktConfiguratie;
+    const cacheKey = getCacheKeyForMarktConfiguratie(marktId);
+    const cachedResponse = await getCachedJSONResponse(cacheKey);
+    if (cachedResponse) {
+        return cachedResponse as unknown as IMarktConfiguratie;
     }
 
     const marktConfig = await callApiGeneric(url, 'get');
-    await redisClient.set('CACHE_' + url, JSON.stringify(marktConfig), 'EX', 60*10);
+    await cacheJSONResponse(cacheKey, marktConfig);
     return marktConfig as unknown as IMarktConfiguratie;
 };
 
