@@ -641,11 +641,11 @@ export const getAfwijzingenByOndernemer = (erkenningsNummer: string): Promise<IA
 const invalidateCacheForUrl = async (url:string): Promise<any> => {
     if(url.startsWith("/markt/") && url.includes("marktconfiguratie")){
         const invalidUrl = 'CACHE_'+ url+ "/latest"
-        console.log("invaldate cached url:", invalidUrl);
+        console.log("invalidate cached url:", invalidUrl);
         return await redisClient.del(invalidUrl);
     }else if(url.startsWith("/branche/")){
         const invalidUrl = 'CACHE_/branche/all';
-        console.log("invaldate cached url:", invalidUrl);
+        console.log("invalidate cached url:", invalidUrl);
         return await redisClient.del(invalidUrl);
     }
 }
