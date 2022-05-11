@@ -54,6 +54,7 @@ const MAX_RETRY_50X = 10;
 const MAX_RETRY_40X = 10;
 export const EMPTY_BRANCH: BrancheId = '000-EMPTY';
 
+const HTTP_HEADER_REQUEST_START_TIME = 'requestStartTime';
 const CACHE_PREFIX = 'CACHE_';
 const CACHE_TTL = 60*10;
 
@@ -94,8 +95,6 @@ const createHttpFunction = (
     httpMethod: HttpMethod,
 ): ((url: string, token: string, data?) => Promise<AxiosResponse>) => {
     return (url: string, token: string, data?: JSON): Promise<AxiosResponse> => {
-        // console.log(`## MM API ${httpMethod} CALL: `, url);
-        // console.time(url);
         console.log('MM-API REQUEST', httpMethod, url);
         const headers = {
             Authorization: `Bearer ${token}`,
@@ -141,17 +140,14 @@ const apiBase = (
     api.interceptors.response.use(
         (response: any) => {
             const currentTime = new Date().getTime()
-            const startTime = response.config.headers['requestStartTime'];
+            const startTime = response.config.headers[HTTP_HEADER_REQUEST_START_TIME];
             console.log('MM-API RESPONSE', response.status, response.config.method, response.config.url, currentTime - startTime, 'ms');
-            // console.timeEnd(response.config.url);
             return response;
         },
         (error: any) => {
-            // console.log(error);
-            // console.log(`MM-API ERROR: ${error.response?.data?.error}`);
             const currentTime = new Date().getTime()
-            const startTime = error.config.headers['requestStartTime'];
-            console.log('MM-API ERROR', error.response?.status || 'NO_STATUS', error.config.method, error.config.url, currentTime - startTime, 'ms', error.response?.data?.error);
+            const startTime = error.config.headers[HTTP_HEADER_REQUEST_START_TIME];
+            console.log('MM-API ERROR', error.response?.status || 'NO_HTTP_STATUS', error.config.method, error.config.url, currentTime - startTime, 'ms', error.response?.data?.error);
 
             if (error.response.status === 504 || error.response.status === 503) {
                 counter50xRetry++;
