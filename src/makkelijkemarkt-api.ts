@@ -54,6 +54,10 @@ const MAX_RETRY_50X = 10;
 const MAX_RETRY_40X = 10;
 export const EMPTY_BRANCH: BrancheId = '000-EMPTY';
 
+const HTTP_HEADER_REQUEST_START_TIME = 'requestStartTime';
+const CACHE_PREFIX = 'CACHE_';
+const CACHE_TTL = 30;  // seconds
+
 requireEnv('API_URL');
 requireEnv('API_MMAPPKEY');
 requireEnv('API_KEY');
@@ -91,9 +95,10 @@ const createHttpFunction = (
     httpMethod: HttpMethod,
 ): ((url: string, token: string, data?) => Promise<AxiosResponse>) => {
     return (url: string, token: string, data?: JSON): Promise<AxiosResponse> => {
-        console.log(`## MM API ${httpMethod} CALL: `, url);
+        console.log('MM-API REQUEST', httpMethod, url);
         const headers = {
             Authorization: `Bearer ${token}`,
+            requestStartTime: new Date().getTime(),
         };
 
         switch (httpMethod) {
@@ -134,10 +139,16 @@ const apiBase = (
 
     api.interceptors.response.use(
         (response: any) => {
+            const currentTime = new Date().getTime()
+            const startTime = response.config.headers[HTTP_HEADER_REQUEST_START_TIME];
+            console.log('MM-API RESPONSE', response.status, response.config.method, response.config.url, currentTime - startTime, 'ms');
             return response;
         },
         (error: any) => {
-            console.log(`MM-API ERROR: ${error.response.data.error}`);
+            const currentTime = new Date().getTime()
+            const startTime = error.config.headers[HTTP_HEADER_REQUEST_START_TIME];
+            console.log('MM-API ERROR', error.response?.status || 'NO_HTTP_STATUS', error.config.method, error.config.url, currentTime - startTime, 'ms', error.response?.data?.error);
+
             if (error.response.status === 504 || error.response.status === 503) {
                 counter50xRetry++;
                 if (counter50xRetry < MAX_RETRY_50X) {
@@ -623,15 +634,50 @@ export const getAfwijzingenByOndernemer = (erkenningsNummer: string): Promise<IA
     });
 };
 
+export const CACHE_KEY_GENERIC_BRANCHES = 'genericBranches';
+export const getCacheKeyForMarktConfiguratie = (marktId:string) => `marktconfiguratie/${marktId}`;
+const prefixCacheKey = (key: string): string => `${CACHE_PREFIX}${key}`;
+
+export const invalidateCache = async (key:string): Promise<void> => {
+    console.log(`CACHE invalidate ${prefixCacheKey(key)}`);
+    await redisClient.del(prefixCacheKey(key));
+}
+
+const getCachedJSONResponse = async (key: string): Promise<JSON|void> => {
+    const cachedResponse: any = await redisClient.get(prefixCacheKey(key));
+    if (cachedResponse) {
+        console.log(`CACHE hit ${key}`);
+        return JSON.parse(cachedResponse);
+    }
+}
+
+const cacheJSONResponse = async (key: string, response: unknown): Promise<void> => {
+    console.log(`CACHE set ${key} ttl ${CACHE_TTL}`);
+    await redisClient.set(prefixCacheKey(key), JSON.stringify(response), 'EX', CACHE_TTL);
+}
+
 const getGenericBranches = async (): Promise<IGenericBranche[]> => {
     const url = '/branche/all';
+    const cachedResponse = await getCachedJSONResponse(CACHE_KEY_GENERIC_BRANCHES);
+    if (cachedResponse) {
+        return cachedResponse as unknown as IGenericBranche[];
+    }
+
     const genericBranches = await callApiGeneric(url, 'get');
+    await cacheJSONResponse(CACHE_KEY_GENERIC_BRANCHES, genericBranches);
     return genericBranches as unknown as IGenericBranche[];
 };
 
 const getLatestMarktConfig = async (marktId: string): Promise<IMarktConfiguratie> => {
     const url = `/markt/${marktId}/marktconfiguratie/latest`;
+    const cacheKey = getCacheKeyForMarktConfiguratie(marktId);
+    const cachedResponse = await getCachedJSONResponse(cacheKey);
+    if (cachedResponse) {
+        return cachedResponse as unknown as IMarktConfiguratie;
+    }
+
     const marktConfig = await callApiGeneric(url, 'get');
+    await cacheJSONResponse(cacheKey, marktConfig);
     return marktConfig as unknown as IMarktConfiguratie;
 };
 
