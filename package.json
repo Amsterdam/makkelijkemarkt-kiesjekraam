@@ -89,7 +89,7 @@
     "jsonschema": "1.2.5",
     "keycloak-admin": "1.14.22",
     "keycloak-connect": "6.0.1",
-    "moment": "2.24.0",
+    "moment": "2.29.2",
     "moment-timezone": "0.5.27",
     "morgan": "1.9.1",
     "node-cache": "5.1.2",
