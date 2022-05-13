@@ -46,8 +46,8 @@ export class EmailAfwijzing extends React.Component<EmailIndelingProps> {
                     <p>Beste {ondernemer.description},</p>
                     {isWenPeriode &&
                         <p>
-                            Dit is een testmail tijdens de wenperiode van digitaal indelen. U ontvangt deze e-mail omdat u
-                            zich digitaal heeft aangemeld.
+                            Dit is een <b>testmail</b> tijdens de wenperiode van digitaal indelen.{' '}
+                            <b>De loting vindt, zoals u gewend bent plaats, door de marktmeester, ’s ochtens op de markt.</b>
                         </p>
                     }
                     <p>
@@ -55,28 +55,27 @@ export class EmailAfwijzing extends React.Component<EmailIndelingProps> {
                     </p>
                     <EmailTable data={tableData} />
                     <p>
-                        Omdat u zich wel digitaal heeft aangemeld, maar niet bent ingedeeld, mag u eerder een plek
-                        kiezen bij de dagelijkse indeling door de marktmeester om 09.00 uur. Hiervoor dient u zich te
-                        melden bij de marktmeester vóór 8.45 uur. U kunt dan kiezen uit de overgebleven plekken.
+                        Omdat u zich wel digitaal heeft aangemeld, maar niet bent ingedeeld, mag u bij de ochtendindeling om 09:00 uur,{' '}
+                        die door de marktmeester wordt gedaan, eerder een marktplaats kiezen dan de ondernemers die zicht niet digitaal hebben aangemeld.{' '}
+                        Hiervoor dient u zich te melden bij de marktmeester vóór 8:45 uur.{' '}
+                        U kunt dan bij geschiktheid zoals Branche, Bakplaats en/ of EVI een keuze maken uit de overgebleven marktplaatsen.
                     </p>
                     {isWenPeriode &&
                         <p>
                             <strong>Meer informatie?</strong>
                             <br />
-                            Op deze{' '}
+                            Op {' '}
                             <a href={infoLink} target="_blank" rel="noopener noreferrer">
-                                website
+                                { infoLink }
                             </a>{' '}
-                            kunt u veel informatie vinden over digitaal indelen. Wij raden u aan dit te lezen als u wilt
-                            weten hoe het precies werkt.
+                            kunt u informatie vinden over digitaal indelen. Wij raden u aan de website te bezoeken als u wilt weten hoe digitaal indelen precies werkt.
                         </p>
                     }
                     {isWenPeriode &&
                         <p>
-                            Hebt u daarna nog vragen? Stuur ons dan een e-mail via{' '}
-                            <a href="mailto: marktbureau@amsterdam.nl">marktbureau@amsterdam.nl</a>
-                            {telefoonnummer && 'of bel ons via ' + telefoonnummer}
-                            .
+                            Heeft u geen marktplaats toegewezen gekregen terwijl u dit wel verwacht had,{' '}
+                            of heeft u vragen, dan kunt u deze aan de marktmeester stellen of mailen naar{' '}
+                            <a href="mailto:marktbureau@amsterdam.nl">marktbureau@amsterdam.nl</a>
                         </p>
                     }
                     <p>
