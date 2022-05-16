@@ -71,6 +71,9 @@ export class Transformer {
 
     // replace row items with locations
 
+    let bak = 0;
+    let bak_licht = 0;
+
     if (_r && _r.rows.length > 0) {
       _r.rows.forEach((row: string[], rowsetindex: number) => {
         row.forEach((lot: string, rowindex: number) => {
@@ -82,6 +85,12 @@ export class Transformer {
             }
             if (rowindex === row.length - 1) {
               _Lot.blockEnd = true
+            }
+            if (_Lot.bakType === "bak"){
+                bak += 1;
+            }
+            if (_Lot.bakType === "bak-licht"){
+                bak_licht += 1;
             }
             // Set allocated on branches for the given lot
             if (_Lot.branches) {
@@ -98,6 +107,16 @@ export class Transformer {
         })
       })
     }
+
+    _b.forEach((br: AssignedBranche, i) => {
+        if(_b[i].brancheId === "bak"){
+           _b[i].allocated = bak;
+        }
+        if(_b[i].brancheId === "bak-licht"){
+           _b[i].allocated = bak_licht;
+        }
+    })
+
     if (_g && _g.obstakels.length > 0) {
       // Insert obstacles between lots.
       _g.obstakels.forEach((o: Obstacle) => {
