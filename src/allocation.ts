@@ -27,7 +27,12 @@ import {
 } from './redis-client';
 
 const timezoneTime = getTimezoneTime();
-timezoneTime.add(INDELING_DAG_OFFSET, 'days');
+if(process.env.INDELING_DAG_OFFSET && process.env.INDELING_DAG_OFFSET != 'false'){
+    console.log("Get the day offset from parameter!", process.env.INDELING_DAG_OFFSET);
+    timezoneTime.add(parseInt(process.env.INDELING_DAG_OFFSET) , 'days');
+}else{
+    timezoneTime.add(INDELING_DAG_OFFSET, 'days');
+}
 const marktDate = timezoneTime.format('YYYY-MM-DD');
 const redisClient = new RedisClient().getAsyncClient();
 
