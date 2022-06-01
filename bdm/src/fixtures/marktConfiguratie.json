@@ -1,0 +1,234 @@
+{
+  "marktId": 204,
+  "id": 1,
+  "aanmaakDatumtijd": "2022-06-01 12:05:24",
+  "geografie": {
+    "obstakels": [
+      {
+        "kraamA": "1",
+        "kraamB": "3",
+        "obstakel": ["loopje"]
+      },
+      {
+        "kraamA": "5",
+        "kraamB": "7",
+        "obstakel": ["loopje"]
+      },
+      {
+        "kraamA": "8",
+        "kraamB": "10",
+        "obstakel": ["loopje"]
+      },
+      {
+        "kraamA": "10",
+        "kraamB": "12",
+        "obstakel": ["loopje"]
+      },
+      {
+        "kraamA": "15",
+        "kraamB": "21",
+        "obstakel": ["doorloop"]
+      }
+    ]
+  },
+  "locaties": [
+    {
+      "bakType": "geen",
+      "plaatsId": "1",
+      "branches": ["101 - FM - AGF (v)"],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "3",
+      "branches": [],
+      "properties": ["lantaarnpaal"],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "5",
+      "branches": [],
+      "properties": ["electra"],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "7",
+      "branches": ["103 - FM - Brood & Banket"],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "9",
+      "branches": ["103 - FM - Brood & Banket"],
+      "properties": ["electra"],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "11",
+      "branches": ["103 - FM - Brood & Banket"],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "2",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "4",
+      "branches": [],
+      "properties": ["boom"],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "6",
+      "branches": [],
+      "properties": ["electra"],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "8",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "10",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "12",
+      "branches": [],
+      "properties": ["bankje"],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "13",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "15",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "21",
+      "branches": [],
+      "properties": ["electra"],
+      "verkoopinrichting": []
+    }
+  ],
+  "marktOpstelling": {
+    "rows": [["1"], ["3", "5"], ["7", "9", "11"], ["2", "4", "6", "8"], ["10"], ["12"], ["13"], ["15"], ["21"]]
+  },
+  "paginas": [
+    {
+      "title": "Markt 1",
+      "indelingslijstGroup": [
+        {
+          "class": "block-left",
+          "title": "Rij 1",
+          "landmarkTop": "Eerste straat",
+          "landmarkBottom": "Tweede straat",
+          "plaatsList": ["1", "3", "5", "7", "9", "11"]
+        },
+        {
+          "class": "block-right",
+          "title": "Rij 2",
+          "landmarkTop": "Eerste steeg",
+          "landmarkBottom": "Tweede steeg",
+          "plaatsList": ["2", "4", "6", "8", "10", "12"]
+        }
+      ]
+    },
+    {
+      "title": "Markt 2",
+      "indelingslijstGroup": [
+        {
+          "class": "block-left",
+          "title": "Rij 3",
+          "landmarkTop": "Derde straat",
+          "landmarkBottom": "Vierde straat",
+          "plaatsList": ["13", "15", "21"]
+        }
+      ]
+    }
+  ],
+  "branches": [
+    {
+      "brancheId": "101 - FM - AGF (v)",
+      "maximumPlaatsen": 2,
+      "verplicht": false
+    },
+    {
+      "brancheId": "103 - FM - Brood & Banket",
+      "maximumPlaatsen": 3,
+      "verplicht": false
+    },
+    {
+      "brancheId": "104 - FM - Hummus & olijven",
+      "maximumPlaatsen": 1,
+      "verplicht": false
+    },
+    {
+      "brancheId": "105 -  FM - Noten & zuidvruchten",
+      "verplicht": false
+    },
+    {
+      "brancheId": "107 -  FM - Vis (nat)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "109 -  FM - Zuivel",
+      "verplicht": false
+    },
+    {
+      "brancheId": "110 -  FM - Poelier",
+      "verplicht": false
+    },
+    {
+      "brancheId": "205 -  FC - Loempia's & Oosterse keuken",
+      "verplicht": false
+    },
+    {
+      "brancheId": "206 -  FC - Stroopwafels",
+      "verplicht": false
+    },
+    {
+      "brancheId": "207 -  FC - Frituur",
+      "verplicht": false
+    },
+    {
+      "brancheId": "209 -  FC - Vis (gebakken)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "bak",
+      "verplicht": false
+    },
+    {
+      "brancheId": "bak-licht",
+      "verplicht": false
+    }
+  ]
+}
