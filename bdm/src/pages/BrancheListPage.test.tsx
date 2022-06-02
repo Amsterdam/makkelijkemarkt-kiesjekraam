@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import * as reducers from '../reducers'
 
 import BrancheListPage from './BrancheListPage'
@@ -11,7 +11,6 @@ import { errorHandlers } from '../mocks/mmApiServiceWorker/handlers'
 
 const REACT_QUERY_RETRY_TIMEOUT = { timeout: 1200 }
 const queryClient = new QueryClient()
-const queryCache = new QueryCache()
 const GENERIC_BRANCHE_1 = '101 - FM - AGF (v)'
 
 beforeAll(() => {
@@ -22,6 +21,8 @@ beforeEach(() => {
   jest.spyOn(console, 'error')
   // @ts-ignore jest.spyOn adds this functionallity
   console.error.mockImplementation(() => null)
+  queryClient.clear() // clear cache
+
   render(
     <QueryClientProvider client={queryClient}>
       <MarktGenericDataProvider>
@@ -33,7 +34,6 @@ beforeEach(() => {
 
 afterEach(() => {
   server.resetHandlers()
-  queryCache.clear()
   // @ts-ignore jest.spyOn adds this functionallity
   console.error.mockRestore()
 })
