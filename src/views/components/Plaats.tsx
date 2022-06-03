@@ -38,11 +38,11 @@ const Plaats = ({
     const plaatsProps = plaats.properties;
     // `realBranche` om duidelijk te maken dat 'bak' niet als een echte branche gezien
     // wordt.
-    const realBranche = branches.find(branche => branche.brancheId !== 'bak');
-    const wilBakken   = plaats.bakType == 'bak' || plaats.bakType == 'bak-licht';
-    const evi         = plaats.verkoopinrichting.includes('eigen-materieel');
-    const color       = realBranche ? realBranche.color : null;
-    const tags        = (plaats.properties || []).filter(word =>
+    const realBranche   = branches.find(branche => branche.brancheId !== 'bak');
+    const wilBakken     = plaats.bakType == 'bak' || plaats.bakType == 'bak-licht';
+    const evi           = plaats.verkoopinrichting.includes('eigen-materieel');
+    const color         = realBranche ? realBranche.color : null;
+    const tags          = (plaats.properties || []).filter(word =>
         ['experimentele-zone', 'standwerkersplaats', 'eigen-materiaal'].includes(word)
     );
     const voorkeur = vph && vph.voorkeur;
@@ -101,7 +101,7 @@ const Plaats = ({
                     </a>
                 ) : null}
             </td>
-            <td className="Plaats__prop Plaats__prop-naam">
+            <td className={`Plaats__prop Plaats__prop-naam ${ ondernemer && !ondernemer?.voorkeur?.branches ? 'missing-voorkeur' : '' }`}>
                 <div>{ondernemer ? ondernemer.description : null}</div>
             </td>
             <td
