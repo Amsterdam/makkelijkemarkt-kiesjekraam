@@ -44,6 +44,13 @@ const IndelingsLegenda = ({ branches, marktplaatsen, ondernemers, aanmeldingen, 
                         <td />
                         {showToewijzingen && <td />}
                     </tr>
+                    <tr key="missing-voorkeur">
+                        <td className="autoColor missing-voorkeur background-light"></td>
+                        <td>Ondernemer heeft geen voorkeuren</td>
+                        <td />
+                        <td />
+                        <td />
+                    </tr>
                 </tbody>
             </table>
         </div>

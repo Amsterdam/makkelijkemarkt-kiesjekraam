@@ -71,6 +71,21 @@
                 right: -8px;
             }
         }
+        td.missing-voorkeur {
+            position: relative;
+
+            &::after {
+                border: 5px solid $primary-red;
+                border-color: $primary-red transparent transparent transparent;
+                content: '';
+                transform: rotate(225deg);
+                height: 0;
+                position: absolute;
+                width: 0;
+                top: -8px;
+                right: -8px;
+            }
+        }
         td.nvt {
             color: #7F7F7F;
         }

@@ -94,6 +94,17 @@ $plaatsCellHeight: 16px;
                 text-overflow: ellipsis;
                 white-space: nowrap;
             }
+            &.missing-voorkeur::before {
+                border: 5px solid $primary-red;
+                border-color: $primary-red transparent transparent transparent;
+                content: '';
+                transform: rotate(225deg);
+                height: 0;
+                position: absolute;
+                width: 0;
+                top: -5px;
+                right: -5px;
+            }
         }
         &-properties {
             border-right: none;
