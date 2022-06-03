@@ -75,7 +75,7 @@
             position: relative;
 
             &::after {
-                border: 5px solid $primary-red;
+                border: 8px solid $primary-red;
                 border-color: $primary-red transparent transparent transparent;
                 content: '';
                 transform: rotate(225deg);
