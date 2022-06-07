@@ -11,6 +11,7 @@ export default class SvgBak extends Component<{ color: string; invert?: boolean;
         viewBox="0 0 3.1750002 2.6458334"
         version="1.1"
         id="bak"
+        data-testid="icon-bak"
       >
         <defs id="defs2" />
         <metadata id="metadata5"></metadata>

@@ -1,26 +1,584 @@
 [
   {
+    "id": 1,
+    "afkorting": "101 - FM - AGF (v)",
+    "omschrijving": "101 - FM - AGF (v) omschrijving",
+    "color": "876DE5"
+  },
+  {
+    "id": 2,
+    "afkorting": "109 -  FM - Zuivel",
+    "omschrijving": "109 -  FM - Zuivel",
+    "color": "85C49F"
+  },
+  {
+    "id": 3,
+    "afkorting": "106 -  FM - O&K - Oliebollen",
+    "omschrijving": "106 -  FM - O&K - Oliebollen",
+    "color": "E383F8"
+  },
+  {
+    "id": 4,
+    "afkorting": "113 -  FN - Kruiden & eetbare planten",
+    "omschrijving": "113 -  FN - Kruiden & eetbare planten",
+    "color": "B2B2AD"
+  },
+  {
+    "id": 5,
+    "afkorting": "112 -  FM - Eieren",
+    "omschrijving": "112 -  FM - Eieren",
+    "color": "84D6A9"
+  },
+  {
+    "id": 6,
+    "afkorting": "111 -  FM - Exotische groenten (v)",
+    "omschrijving": "111 -  FM - Exotische groenten (v)",
+    "color": "91DCCA"
+  },
+  {
+    "id": 7,
+    "afkorting": "201 -  FC - Broodjes belegd (v)",
+    "omschrijving": "201 -  FC - Broodjes belegd (v)",
+    "color": "837CAE"
+  },
+  {
+    "id": 8,
+    "afkorting": "202 -  FC - Hotdogs (v)",
+    "omschrijving": "202 -  FC - Hotdogs (v)",
+    "color": "C4F5CB"
+  },
+  {
+    "id": 9,
+    "afkorting": "103 - FM - Brood & Banket",
+    "omschrijving": "103 - FM - Brood & Banket",
+    "color": "AE8D96"
+  },
+  {
+    "id": 10,
+    "afkorting": "110 -  FM - Poelier",
+    "omschrijving": "110 -  FM - Poelier",
+    "color": "66CBB0"
+  },
+  {
+    "id": 11,
+    "afkorting": "102 - FM - Paddenstoelen",
+    "omschrijving": "102 - FM - Paddenstoelen",
+    "color": "74B09A"
+  },
+  {
+    "id": 12,
+    "afkorting": "104 - FM - Hummus & olijven",
+    "omschrijving": "104 - FM - Hummus & olijven",
+    "color": "EE7F7D"
+  },
+  {
+    "id": 13,
+    "afkorting": "108 -  FM - Vleeswaren (geen poelier)",
+    "omschrijving": "108 -  FM - Vleeswaren (geen poelier)",
+    "color": "D7EA76"
+  },
+  {
+    "id": 14,
+    "afkorting": "210 -  FC - Snoepwaren",
+    "omschrijving": "210 -  FC - Snoepwaren",
+    "color": "85C0C7"
+  },
+  {
+    "id": 15,
+    "afkorting": "105 -  FM - Noten & zuidvruchten",
+    "omschrijving": "105 -  FM - Noten & zuidvruchten",
+    "color": "9AFCF8"
+  },
+  {
+    "id": 16,
+    "afkorting": "204 -  FC - Koffie & versnaperingen (v)",
+    "omschrijving": "204 -  FC - Koffie & versnaperingen (v)",
+    "color": "6E92F8"
+  },
+  {
+    "id": 17,
+    "afkorting": "207 -  FC - Frituur",
+    "omschrijving": "207 -  FC - Frituur",
+    "color": "9DCBC4"
+  },
+  {
+    "id": 18,
+    "afkorting": "209 -  FC - Vis (gebakken)",
+    "omschrijving": "209 -  FC - Vis (gebakken)",
+    "color": "82A8CC"
+  },
+  {
+    "id": 19,
+    "afkorting": "107 -  FM - Vis (nat)",
+    "omschrijving": "107 -  FM - Vis (nat)",
+    "color": "B27AF3"
+  },
+  {
+    "id": 20,
+    "afkorting": "205 -  FC - Loempia's & Oosterse keuken",
+    "omschrijving": "205 -  FC - Loempia's & Oosterse keuken",
+    "color": "6CC2AA"
+  },
+  {
+    "id": 21,
+    "afkorting": "208 -  FC - Smoothies / Verssappen",
+    "omschrijving": "208 -  FC - Smoothies / Verssappen",
+    "color": "937EF0"
+  },
+  {
+    "id": 22,
+    "afkorting": "211 -  FC - Delicatessen (hapjes)",
+    "omschrijving": "211 -  FC - Delicatessen (hapjes)",
+    "color": "9D7C78"
+  },
+  {
+    "id": 23,
+    "afkorting": "212 -  FC - Pannenkoeken & poffertjes",
+    "omschrijving": "212 -  FC - Pannenkoeken & poffertjes",
+    "color": "9BEED5"
+  },
+  {
+    "id": 24,
+    "afkorting": "203 -  FC - IJs (v)",
+    "omschrijving": "203 -  FC - IJs (v)",
+    "color": "D3D9B2"
+  },
+  {
+    "id": 25,
+    "afkorting": "206 -  FC - Stroopwafels",
+    "omschrijving": "206 -  FC - Stroopwafels",
+    "color": "868B7C"
+  },
+  {
+    "id": 26,
+    "afkorting": "301 -  NF - Antiek & brocante",
+    "omschrijving": "301 -  NF - Antiek & brocante",
+    "color": "896978"
+  },
+  {
+    "id": 27,
+    "afkorting": "215 -  FC - Haring",
+    "omschrijving": "215 -  FC - Haring",
+    "color": "C087BD"
+  },
+  {
+    "id": 28,
+    "afkorting": "306 -  NF - Huishoudelijke artikelen, meubels & apparatuur ",
+    "omschrijving": "306 -  NF - Huishoudelijke artikelen, meubels & apparatuur ",
+    "color": "7A7B6F"
+  },
+  {
+    "id": 29,
+    "afkorting": "214 -  FC - Vega/ Falafel",
+    "omschrijving": "214 -  FC - Vega/ Falafel",
+    "color": "FB8EF5"
+  },
+  {
+    "id": 30,
+    "afkorting": "213 -  FC - Patat",
+    "omschrijving": "213 -  FC - Patat",
+    "color": "C7BCEA"
+  },
+  {
+    "id": 31,
+    "afkorting": "216 -  FC - Mediterrane keuken",
+    "omschrijving": "216 -  FC - Mediterrane keuk",
+    "color": "CCD0F9"
+  },
+  {
+    "id": 32,
+    "afkorting": "305 -  NF - Horloges, brillen & sieraden ",
+    "omschrijving": "305 -  NF - Horloges, brillen & sieraden ",
+    "color": "98E182"
+  },
+  {
+    "id": 33,
+    "afkorting": "308 -  NF - KLEDING - onder, beenmode en sokken ",
+    "omschrijving": "308 -  NF - KLEDING - onder, beenmode en sokken ",
+    "color": "F3C8BD"
+  },
+  {
+    "id": 34,
+    "afkorting": "302 -  NF - Bloemen & planten  (v)",
+    "omschrijving": "302 -  NF - Bloemen & planten  (v)",
+    "color": "87C290"
+  },
+  {
+    "id": 35,
+    "afkorting": "303 -  NF - Boeken/ stripboeken/ muziek & film",
+    "omschrijving": "303 -  NF - Boeken/ stripboeken/ muziek & film",
+    "color": "E58F69"
+  },
+  {
+    "id": 36,
+    "afkorting": "314 -  NF - Partijhandel & inboedels",
+    "omschrijving": "314 -  NF - Partijhandel & inboedels",
+    "color": "91D28D"
+  },
+  {
+    "id": 37,
+    "afkorting": "307 -  NF - KLEDING - baby & kinderen",
+    "omschrijving": "307 -  NF - KLEDING - baby & kinderen",
+    "color": "C4D073"
+  },
+  {
+    "id": 38,
+    "afkorting": "310 -  NF - KLEDING - vintage/ 2e hands",
+    "omschrijving": "310 -  NF - KLEDING - vintage/ 2e hands",
+    "color": "66BCBB"
+  },
+  {
+    "id": 39,
+    "afkorting": "304 -  NF - Dierenbenodigdheden ",
+    "omschrijving": "304 -  NF - Dierenbenodigdheden ",
+    "color": "E1C6CA"
+  },
+  {
+    "id": 40,
+    "afkorting": "312 -  NF - O&K - Kerstbomen ",
+    "omschrijving": "312 -  NF - O&K - Kerstbomen ",
+    "color": "EE6BF7"
+  },
+  {
+    "id": 41,
+    "afkorting": "309 -  NF - KLEDING - volwassenen/ hoofddeksels",
+    "omschrijving": "309 -  NF - KLEDING - volwassenen/ hoofddeksels",
+    "color": "B8B86A"
+  },
+  {
+    "id": 42,
+    "afkorting": "311 -  NF - Lampen ",
+    "omschrijving": "311 -  NF - Lampen ",
+    "color": "9F72D8"
+  },
+  {
+    "id": 43,
+    "afkorting": "319 -  NF - TECHNIEK - Elektronica, mobieltjes en accessoires ",
+    "omschrijving": "319 -  NF - TECHNIEK - Elektronica, mobieltjes en accessoires ",
+    "color": "E58366"
+  },
+  {
+    "id": 44,
+    "afkorting": "315 -  NF - Schoenen, tassen en lederwaren ",
+    "omschrijving": "315 -  NF - Schoenen, tassen en lederwaren ",
+    "color": "CAE3DB"
+  },
+  {
+    "id": 45,
+    "afkorting": "317 -  NF - Speelgoed & spellen ",
+    "omschrijving": "317 -  NF - Speelgoed & spellen ",
+    "color": "B7DAE0"
+  },
+  {
+    "id": 46,
+    "afkorting": "313 -  NF - Parfumerie/ drogisterij & persoonlijke verzorging ",
+    "omschrijving": "313 -  NF - Parfumerie/ drogisterij & persoonlijke verzorging ",
+    "color": "937C8F"
+  },
+  {
+    "id": 47,
+    "afkorting": "321 -  NF - TEXTIEL - Stoffen, textiel & fournituren ",
+    "omschrijving": "321 -  NF - TEXTIEL - Stoffen, textiel & fournituren ",
+    "color": "D3C17C"
+  },
+  {
+    "id": 48,
+    "afkorting": "316 -  NF - Souvenirs ",
+    "omschrijving": "316 -  NF - Souvenirs ",
+    "color": "D6C1CE"
+  },
+  {
+    "id": 49,
+    "afkorting": "318 -  NF - TECHNIEK - Doe-het-zelf, gereedschap & ijzerwaren ",
+    "omschrijving": "318 -  NF - TECHNIEK - Doe-het-zelf, gereedschap & ijzerwaren ",
+    "color": "F1D9CF"
+  },
+  {
+    "id": 50,
+    "afkorting": "320 -  NF - TECHNIEK - Fietsen & auto accessoires ",
+    "omschrijving": "320 -  NF - TECHNIEK - Fietsen & auto accessoires ",
+    "color": "81F47C"
+  },
+  {
+    "id": 51,
+    "afkorting": "323 -  NF - TEXTIEL - Raam & muur (wand) decoratie",
+    "omschrijving": "323 -  NF - TEXTIEL - Raam & muur (wand) decoratie",
+    "color": "D6E9BA"
+  },
+  {
+    "id": 52,
+    "afkorting": "325 -  NF - Kunst",
+    "omschrijving": "325 -  NF - Kunst",
+    "color": "D777A7"
+  },
+  {
+    "id": 53,
+    "afkorting": "322 -  NF - TEXTIEL - Tapijten en vloerkleden ",
+    "omschrijving": "322 -  NF - TEXTIEL - Tapijten en vloerkleden ",
+    "color": "F9A6A9"
+  },
+  {
+    "id": 54,
+    "afkorting": "403 -  Overig markt - Standwerker",
+    "omschrijving": "403 -  Overig markt - Standwerker",
+    "color": "96B1A2"
+  },
+  {
+    "id": 55,
+    "afkorting": "324 -  NF - Ambachtelijk & handgemaakt (traditioneel)",
+    "omschrijving": "324 -  NF - Ambachtelijk & handgemaakt (traditioneel)",
+    "color": "F6B787"
+  },
+  {
+    "id": 56,
+    "afkorting": "502 -  NF - Gebruikte kleding - gesorteerd",
+    "omschrijving": "502 -  NF - Gebruikte kleding - gesorteerd",
+    "color": "DFC6BE"
+  },
+  {
+    "id": 57,
+    "afkorting": "402 -  Overig markt - Promotieplaats",
+    "omschrijving": "402 -  Overig markt - Promotieplaats",
+    "color": "7CC37E"
+  },
+  {
+    "id": 58,
+    "afkorting": "503 -  NF - Gebruikte kleding \u2013 vintage algemeen",
+    "omschrijving": "503 -  NF - Gebruikte kleding \u2013 vintage algemeen",
+    "color": "8A87DE"
+  },
+  {
+    "id": 59,
+    "afkorting": "504 - NF - Gebruikte kleding \u2013 vintage gespecialiseerd",
+    "omschrijving": "504 - NF - Gebruikte kleding \u2013 vintage gespecialiseerd",
+    "color": "79DCFF"
+  },
+  {
+    "id": 60,
+    "afkorting": "401 -  Overig markt - Experimentele zone",
+    "omschrijving": "401 -  Overig markt - Experimentele zone",
+    "color": "C3D96C"
+  },
+  {
+    "id": 61,
+    "afkorting": "531 -  NF - Gebruikte techniek - gespecialiseerde fietsen",
+    "omschrijving": "531 -  NF - Gebruikte techniek - gespecialiseerde fietsen",
+    "color": "BF9DD0"
+  },
+  {
+    "id": 62,
+    "afkorting": "404 - Overig markt -Evi",
+    "omschrijving": "404 - Overig markt -Evi",
+    "color": "87756F"
+  },
+  {
+    "id": 63,
+    "afkorting": "507 -  NF - Gebruikte schoenen, tassen en lederwaren",
+    "omschrijving": "507 -  NF - Gebruikte schoenen, tassen en lederwaren",
+    "color": "7390B8"
+  },
+  {
+    "id": 64,
+    "afkorting": "405 - Overig markt - Bakplaats",
+    "omschrijving": "405 - Overig markt - Bakplaats",
+    "color": "98CDDF"
+  },
+  {
+    "id": 65,
+    "afkorting": "501 -  NF - Gebruikte kleding - ongesorteerd",
+    "omschrijving": "501 -  NF - Gebruikte kleding - ongesorteerd",
+    "color": "737AF1"
+  },
+  {
+    "id": 66,
+    "afkorting": "505 -  NF - Gebruikte kleding - antiek",
+    "omschrijving": "505 -  NF - Gebruikte kleding - antiek",
+    "color": "B8837A"
+  },
+  {
+    "id": 67,
+    "afkorting": "510 -  NF - Opnieuw gemaakte kleding -algemeen",
+    "omschrijving": "510 -  NF - Opnieuw gemaakte kleding -algemeen",
+    "color": "C2C5BF"
+  },
+  {
+    "id": 68,
+    "afkorting": "561 -  NF - Kunst van hergebruikte materialen en kunst benodigdheden",
+    "omschrijving": "561 -  NF - Kunst van hergebruikte materialen en kunst benodigdheden",
+    "color": "D9A484"
+  },
+  {
+    "id": 69,
+    "afkorting": "506 -  NF - Gebruikte modeaccessoires",
+    "omschrijving": "506 - NF - Gebruikte modeaccessoires",
+    "color": "719790"
+  },
+  {
+    "id": 70,
+    "afkorting": "512 -  NF - Opnieuw gemaakte schoenen, tassen en lederwaren",
+    "omschrijving": "512 -  NF - Opnieuw gemaakte schoenen, tassen en lederwaren",
+    "color": "90F191"
+  },
+  {
+    "id": 71,
+    "afkorting": "508 -  NF - Gebruikte horloges, brillen en sieraden - algemeen",
+    "omschrijving": "508 -  NF - Gebruikte horloges, brillen en sieraden - algemeen",
+    "color": "97E6AB"
+  },
+  {
+    "id": 72,
+    "afkorting": "513 -  NF - Gebruikte of nieuwe identiteits-kleding en identiteit-accessoires",
+    "omschrijving": "513 -  NF - Gebruikte of nieuwe identiteits-kleding en identiteit-accessoires",
+    "color": "E8B481"
+  },
+  {
+    "id": 73,
+    "afkorting": "511 -  NF - Opnieuw gemaakte modeaccessoires ",
+    "omschrijving": "511 -  NF - Opnieuw gemaakte modeaccessoires ",
+    "color": "AAF383"
+  },
+  {
+    "id": 74,
+    "afkorting": "532 -  NF - Gebruikte techniek - gereedschappen",
+    "omschrijving": "532 -  NF - Gebruikte techniek - gereedschappen",
+    "color": "C3658B"
+  },
+  {
+    "id": 75,
+    "afkorting": "552 -  NF - Gebruikt speelgoed en spellen",
+    "omschrijving": "552 -  NF - Gebruikt speelgoed en spellen",
+    "color": "8B648D"
+  },
+  {
+    "id": 76,
+    "afkorting": "550 -  NF - Gebruikte boeken en strips algemeen",
+    "omschrijving": "550 -  NF - Gebruikte boeken en strips algemeen",
+    "color": "A66F98"
+  },
+  {
+    "id": 77,
+    "afkorting": "553 -  NF - Gebruikte muziekdragers",
+    "omschrijving": "553 -  NF - Gebruikte muziekdragers",
+    "color": "EAE8C5"
+  },
+  {
+    "id": 78,
+    "afkorting": "543 -  NF - Gebruikte lampen",
+    "omschrijving": "543 -  NF - Gebruikte lampen",
+    "color": "9AA9D0"
+  },
+  {
+    "id": 79,
+    "afkorting": "522 -  NF - Opnieuw gemaakt textiel",
+    "omschrijving": "522 -  NF - Opnieuw gemaakt textiel",
+    "color": "E3D5FF"
+  },
+  {
+    "id": 80,
+    "afkorting": "540 -  NF - Gebruikte goederen algemeen (geen witgoed)",
+    "omschrijving": "540 -  NF - Gebruikte goederen algemeen (geen witgoed)",
+    "color": "FFC89E"
+  },
+  {
+    "id": 81,
+    "afkorting": "544 -  NF - Opnieuw gemaakte lampen",
+    "omschrijving": "544 -  NF - Opnieuw gemaakte lampen",
+    "color": "947EBA"
+  },
+  {
+    "id": 82,
+    "afkorting": "542 -  NF - Opnieuw gemaakte gebruiks- en siervoorwerpen",
+    "omschrijving": "542 -  NF - Opnieuw gemaakte gebruiks- en siervoorwerpen",
+    "color": "C098FE"
+  },
+  {
+    "id": 83,
+    "afkorting": "541 -  NF - Gebruikte (huishoudelijke) gebruiksvoorwerpen en woonaccessoires",
+    "omschrijving": "541 -  NF - Gebruikte (huishoudelijke) gebruiksvoorwerpen en woonaccessoires",
+    "color": "BC9691"
+  },
+  {
+    "id": 84,
+    "afkorting": "533 -  NF - Gebruikte techniek \u2013 elektronica en elektrische apparaten ",
+    "omschrijving": "533 -  NF - Gebruikte techniek \u2013 elektronica en elektrische apparaten ",
+    "color": "E1B4BF"
+  },
+  {
+    "id": 85,
+    "afkorting": "521 -  NF - Gebruikt textiel gespecialiseerd",
+    "omschrijving": "521 -  NF - Gebruikt textiel gespecialiseerd",
+    "color": "8DE688"
+  },
+  {
+    "id": 86,
+    "afkorting": "554 -  NF - Gebruikte muziekinstrumenten",
+    "omschrijving": "554 -  NF - Gebruikte muziekinstrumenten",
+    "color": "C367D9"
+  },
+  {
+    "id": 87,
+    "afkorting": "520 -  NF - Gebruikt textiel algemeen",
+    "omschrijving": "520 -  NF - Gebruikt textiel algemeen",
+    "color": "A08770"
+  },
+  {
+    "id": 88,
+    "afkorting": "530 -  NF - Gebruikte techniek - stadsfietsen",
+    "omschrijving": "530 -  NF - Gebruikte techniek - stadsfietsen",
+    "color": "ECEBC6"
+  },
+  {
+    "id": 89,
+    "afkorting": "509 -  NF - Gebruikte horloges, brillen en sieraden \u2013 vintage en/of antiek",
+    "omschrijving": "509 -  NF - Gebruikte horloges, brillen en sieraden \u2013 vintage en/of antiek",
+    "color": "E9C278"
+  },
+  {
+    "id": 90,
+    "afkorting": "551 -  NF - Gebruikte boeken en strips antiquarisch",
+    "omschrijving": "551 -  NF - Gebruikte boeken en strips antiquarisch",
+    "color": "BDF46F"
+  },
+  {
+    "id": 91,
+    "afkorting": "bak",
+    "omschrijving": "Bakplaats",
+    "color": ""
+  },
+  {
+    "id": 92,
+    "afkorting": "560 -  NF - Antiek en Brocante (Thema)",
+    "omschrijving": "560 -  NF - Antiek en Brocante (Thema)",
+    "color": "A276C8"
+  },
+  {
+    "id": 95,
+    "afkorting": "406 - Overig markt - Terras",
+    "omschrijving": "406 - Overig markt - Terras",
+    "color": "e78531"
+  },
+  {
+    "id": 96,
+    "afkorting": "407 - Overig markt - Uitgiftepunt",
+    "omschrijving": "407 - Overig markt - Uitgiftepunt",
+    "color": "1f14f6"
+  },
+  {
+    "id": 97,
+    "afkorting": "408 -  NF - Economische binding",
+    "omschrijving": "408 -  NF - Economische binding",
+    "color": "f7ff00"
+  },
+  {
     "id": 101,
-    "afkorting": "101-agf",
-    "omschrijving": "AGF",
-    "color": "73ab4f"
+    "afkorting": "bak-licht",
+    "omschrijving": "Lichte Bakplaats",
+    "color": ""
   },
   {
     "id": 102,
-    "afkorting": "102-bio-health-fairtrade",
-    "omschrijving": "Biologisch, health & fairtrade producten",
-    "color": "abce92"
-  },
-  {
-    "id": 103,
-    "afkorting": "103-brood-banket",
-    "omschrijving": "Brood & banket",
-    "color": "c75819"
-  },
-  {
-    "id": 104,
-    "afkorting": "104-hummus-kruiden-olijven",
-    "omschrijving": "Hummus, kruiden & olijven",
-    "color": "385527"
+    "afkorting": "000-EMPTY",
+    "omschrijving": "lege branche",
+    "color": ""
   }
 ]

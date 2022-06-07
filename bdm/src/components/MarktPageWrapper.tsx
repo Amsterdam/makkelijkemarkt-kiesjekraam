@@ -17,7 +17,9 @@ const MarktPageWrapper: React.FC = () => {
   if (isLoading || marktGenericContext.isLoading) {
     return (
       <CenterStageStyled>
-        <Progress type="circle" percent={Math.floor(queryProgress * 100)} />
+        <div data-testid="circular-progress">
+          <Progress type="circle" percent={Math.floor(queryProgress * 100)} />
+        </div>
       </CenterStageStyled>
     )
   }

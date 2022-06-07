@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import * as reducers from '../reducers'
 
 import BrancheListPage from './BrancheListPage'
@@ -11,7 +11,7 @@ import { errorHandlers } from '../mocks/mmApiServiceWorker/handlers'
 
 const REACT_QUERY_RETRY_TIMEOUT = { timeout: 1200 }
 const queryClient = new QueryClient()
-const queryCache = new QueryCache()
+const GENERIC_BRANCHE_1 = '101 - FM - AGF (v)'
 
 beforeAll(() => {
   server.listen()
@@ -21,6 +21,8 @@ beforeEach(() => {
   jest.spyOn(console, 'error')
   // @ts-ignore jest.spyOn adds this functionallity
   console.error.mockImplementation(() => null)
+  queryClient.clear() // clear cache
+
   render(
     <QueryClientProvider client={queryClient}>
       <MarktGenericDataProvider>
@@ -32,7 +34,6 @@ beforeEach(() => {
 
 afterEach(() => {
   server.resetHandlers()
-  queryCache.clear()
   // @ts-ignore jest.spyOn adds this functionallity
   console.error.mockRestore()
 })
@@ -53,7 +54,7 @@ describe('Fetching branches', () => {
   })
 
   it('Replaces skeleton loading elements with actual branches after fetching', async () => {
-    const brancheAfkortingInput = await screen.findByDisplayValue('101-agf')
+    const brancheAfkortingInput = await screen.findByDisplayValue(GENERIC_BRANCHE_1)
     expect(brancheAfkortingInput).toBeInTheDocument()
 
     const skeletonLoadingButtons = screen.queryAllByTestId('skeleton-button')
@@ -63,7 +64,7 @@ describe('Fetching branches', () => {
 
 describe('Afkorting input and save button', () => {
   const getSaveButtonAfterTypingInAfkortingInput = async () => {
-    const brancheAfkortingInput = await screen.findByDisplayValue('101-agf')
+    const brancheAfkortingInput = await screen.findByDisplayValue(GENERIC_BRANCHE_1)
     userEvent.type(brancheAfkortingInput, '_more-text')
     return screen.getByText('Opslaan')
   }
@@ -93,7 +94,7 @@ describe('Afkorting input and save button', () => {
         type: 'REPLACE_ITEM',
         payload: expect.objectContaining({
           newItem: expect.objectContaining({
-            afkorting: '101-agf_more-text',
+            afkorting: `${GENERIC_BRANCHE_1}_more-text`,
           }),
         }),
       })
