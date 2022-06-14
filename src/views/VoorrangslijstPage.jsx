@@ -83,8 +83,7 @@ class VoorrangslijstPage extends React.Component {
 
         ondernemers = sort(ondernemers, aLijst);
         ondernemers = [
-            ...ondernemers.filter(ondernemer => isAanwezig(ondernemer, aanmeldingen, datum)),
-            ...ondernemers.filter(ondernemer => isAanwezig(ondernemer, aanmeldingen, datum)),
+            ...ondernemers.filter(ondernemer => isAanwezig(ondernemer, aanmeldingen, datum))
         ];
 
         const ondernemersGrouped = ondernemers
