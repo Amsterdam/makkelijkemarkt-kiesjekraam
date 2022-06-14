@@ -11,8 +11,8 @@ getKeycloakAdmin().then(kcAdminClient => {
         kcAdminClient.clients.find(),
         kcAdminClient.users.find(),
     ]).then( ([keycloakDefaultRole, keycloakClients, keycloakUsers]) => {
-        const keycloakClient = keycloakClients.filter( (client) => client.name === "pakjekraam")[0];
-        kcAdminClient.clients.listRoles()
+        const keycloakClient = keycloakClients.filter( (client) => client.clientId === "pakjekraam")[0];
+        kcAdminClient.clients.listRoles({id: keycloakClient.id})
             .then(roles => roles.map( (role):RoleMappingPayload => ({
             id: role.id,
             name: role.name,
