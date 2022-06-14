@@ -1,6 +1,6 @@
 import { RoleMappingPayload } from "keycloak-admin/lib/defs/roleRepresentation";
-import { getKeycloakAdmin } from "keycloak-api";
-import { getOndernemer } from "makkelijkemarkt-api";
+import { getKeycloakAdmin } from "./keycloak-api";
+import { getOndernemer } from "./makkelijkemarkt-api";
 
 var ROLES_NAME = 'default-roles-pakjekraam';
 if (process.env.APP_ENV === 'acceptance') ROLES_NAME = 'default-roles-pakjekraam-acc';
