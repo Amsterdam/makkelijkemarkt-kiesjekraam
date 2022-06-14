@@ -11,6 +11,7 @@ import {
 } from '../keycloak-api';
 import {
     checkActivationCode,
+    getOndernemer,
 } from '../makkelijkemarkt-api';
 import {
     Router,
@@ -92,10 +93,13 @@ const handleRegistration = (req, res) => {
         );
     }
 
-    getKeycloakAdmin().then(kcAdminClient => {
+    Promise.all([getKeycloakAdmin(), getOndernemer(req.session.activation.username)])
+        .then(([kcAdminClient, ondernemer]) => {
         kcAdminClient.users
             .create({
                 username: req.session.activation.username,
+                firstName: ondernemer.voorletters,
+                lastName: ondernemer.tussenvoegsels + ' ' + ondernemer.achternaam,
                 email,
                 enabled: true,
             })
