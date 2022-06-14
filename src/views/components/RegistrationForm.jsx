@@ -63,6 +63,7 @@ class RegistrationForm extends React.Component {
                             type="email"
                             autoComplete="email"
                             defaultValue={this.props.email}
+                            required="required"
                         />
                     </p>
                     <p className="InputField InputField--submit">
