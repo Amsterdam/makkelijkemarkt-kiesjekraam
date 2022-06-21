@@ -38,7 +38,7 @@ ARG NODE_ENV
 ADD --chown=node ./ /srv/
 
 RUN echo "//registry.npmjs.org/:_authToken=\"${NPM_TOKEN}\"" >> .npmrc \
-    && NODE_ENV=development npm install \
+    && npm install \
     && rm .npmrc \
     && npm cache clean --force 2> /dev/null \
     && npm run build \
