@@ -8,8 +8,8 @@ if (process.env.APP_ENV === 'acceptance') ROLES_NAME = 'default-roles-pakjekraam
 const getKeycloakData = async () => {
     const kcAdminClient = await getKeycloakAdmin();
     const keycloakDefaultRole = await kcAdminClient.roles.findOneByName({name: ROLES_NAME});
-    const keycloakClients = await kcAdminClient.clients.find({ max: -1 });
-    const keycloakUsers = await kcAdminClient.users.find();
+    const keycloakClients = await kcAdminClient.clients.find();
+    const keycloakUsers = await kcAdminClient.users.find({ max: -1 });
     const keycloakClient = keycloakClients.filter( (client) => client.clientId === "pakjekraam")[0];
     const keycloakClientRoles = await kcAdminClient.clients.listRoles({id: keycloakClient.id})
     const keycloakClientRolesPayload = keycloakClientRoles.map(
