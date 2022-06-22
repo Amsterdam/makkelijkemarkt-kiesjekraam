@@ -27,23 +27,27 @@ getKeycloakAdmin().then(kcAdminClient => {
                                 firstName: ondernemer.voorletters,
                                 lastName: ondernemer.tussenvoegsels + ' ' + ondernemer.achternaam,   
                             }
-                        );
-                        kcAdminClient.users.delClientRoleMappings(
-                        {
-                                id: user.id,
-                                clientUniqueId: keycloakClient.id,
-                                roles: keycloakClientRoles,
-                        });
-                        kcAdminClient.users.addRealmRoleMappings(
-                        {
-                            id: user.id,
-                            roles: [
+                        ).then( () =>
+                            kcAdminClient.users.delClientRoleMappings(
+                            {
+                                    id: user.id,
+                                    clientUniqueId: keycloakClient.id,
+                                    roles: keycloakClientRoles,
+                            }).then( () =>
+                                kcAdminClient.users.addRealmRoleMappings(
                                 {
-                                    id: keycloakDefaultRole.id,
-                                    name: keycloakDefaultRole.name,
-                                }
-                            ]
-                        });
+                                    id: user.id,
+                                    roles: [
+                                        {
+                                            id: keycloakDefaultRole.id,
+                                            name: keycloakDefaultRole.name,
+                                        }
+                                    ]
+                                }).then( () => 
+                                    console.log(user.username + " DONE")
+                                ).catch( () => console.log("ERROR adding default role") )
+                            ).catch( () => console.log("ERROR deleting client roles") )
+                        ).catch( () => console.log("ERROR adding first and last name") )
                 }
             ).catch(() => console.log("ondernemer " + user.username + "not found"));
         });
