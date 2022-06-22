@@ -5,48 +5,62 @@ import { getOndernemer } from "./makkelijkemarkt-api";
 var ROLES_NAME = 'default-roles-pakjekraam';
 if (process.env.APP_ENV === 'acceptance') ROLES_NAME = 'default-roles-pakjekraam-acc';
 
-getKeycloakAdmin().then(kcAdminClient => {
-    Promise.all([
-        kcAdminClient.roles.findOneByName({name: ROLES_NAME}),
-        kcAdminClient.clients.find(),
-        kcAdminClient.users.find(),
-    ]).then( ([keycloakDefaultRole, keycloakClients, keycloakUsers]) => {
-        const keycloakClient = keycloakClients.filter( (client) => client.clientId === "pakjekraam")[0];
-        kcAdminClient.clients.listRoles({id: keycloakClient.id})
-            .then(roles => roles.map( (role):RoleMappingPayload => ({
-            id: role.id,
-            name: role.name,
-        })))
-        .then( (keycloakClientRoles) => {
-            keycloakUsers.forEach(user => {
-                getOndernemer(user.username).then(
-                    ondernemer => {
-                        kcAdminClient.users.update(
-                            {id: user.id},
+const getKeycloakData = async () => {
+    const kcAdminClient = await getKeycloakAdmin();
+    const keycloakDefaultRole = await kcAdminClient.roles.findOneByName({name: ROLES_NAME});
+    const keycloakClients = await kcAdminClient.clients.find();
+    const keycloakUsers = await kcAdminClient.users.find();
+    const keycloakClient = keycloakClients.filter( (client) => client.clientId === "pakjekraam")[0];
+    const keycloakClientRoles = await kcAdminClient.clients.listRoles({id: keycloakClient.id})
+    const keycloakClientRolesPayload = keycloakClientRoles.map(
+        (role):RoleMappingPayload =>
+        (
+            {
+                id: role.id,
+                name: role.name,
+            }
+        )
+    );
+
+    keycloakUsers.forEach(user => {
+        console.log(user.username);
+        return getOndernemer(user.username).then(
+            async (ondernemer) => {
+                await kcAdminClient.users.update(
+                    {id: user.id},
+                    {
+                        firstName: ondernemer.voorletters,
+                        lastName: ondernemer.tussenvoegsels + ' ' + ondernemer.achternaam,
+                    }
+                );
+                await kcAdminClient.users.delClientRoleMappings(
+                    {
+                        id: user.id,
+                        clientUniqueId: keycloakClient.id,
+                        roles: keycloakClientRolesPayload,
+
+                    }
+                );
+                await kcAdminClient.users.addRealmRoleMappings(
+                    {
+                        id: user.id,
+                        roles: [
                             {
-                                firstName: ondernemer.voorletters,
-                                lastName: ondernemer.tussenvoegsels + ' ' + ondernemer.achternaam,   
+                                id: keycloakDefaultRole.id,
+                                name: keycloakDefaultRole.name,
                             }
-                        );
-                        kcAdminClient.users.delClientRoleMappings(
-                        {
-                                id: user.id,
-                                clientUniqueId: keycloakClient.id,
-                                roles: keycloakClientRoles,
-                        });
-                        kcAdminClient.users.addRealmRoleMappings(
-                        {
-                            id: user.id,
-                            roles: [
-                                {
-                                    id: keycloakDefaultRole.id,
-                                    name: keycloakDefaultRole.name,
-                                }
-                            ]
-                        });
-                }
-            ).catch(() => console.log("ondernemer " + user.username + "not found"));
-        });
-        })
-    })
-})
+                        ]
+                    }
+                );
+            }
+        ).catch(() => console.log("ondernemer " + user.username + " not found"));
+    });
+}
+
+getKeycloakData().then(() => {
+    console.log("script DONE");
+    process.exit(0);
+}).catch(() => {
+    console.log("script FAILED")
+    process.exit(1);
+});
