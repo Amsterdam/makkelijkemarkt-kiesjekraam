@@ -55,6 +55,7 @@ const getKeycloakData = async () => {
         }
     ).catch(() => console.log("ondernemer " + user.username + " not found"));
     });
+    console.log("foreach DONE");
 }
 
 getKeycloakData()
