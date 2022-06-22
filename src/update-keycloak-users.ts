@@ -24,38 +24,33 @@ const getKeycloakData = async () => {
        
     keycloakUsers.forEach(user => {
         return getOndernemer(user.username).then(
-            ondernemer => {
-                return kcAdminClient.users.update(
+            async (ondernemer) => {
+                await kcAdminClient.users.update(
                     {id: user.id},
                     {
                         firstName: ondernemer.voorletters,
                         lastName: ondernemer.tussenvoegsels + ' ' + ondernemer.achternaam,   
-                    }
-                ).then( () =>
-                    kcAdminClient.users.delClientRoleMappings(
+                    }).then(() => console.log("kcAdminClient.users.update DONE").catch(() => console.log("kcAdminClient.users.update FAILED")));
+                await kcAdminClient.users.delClientRoleMappings(
                     {
-                            id: user.id,
-                            clientUniqueId: keycloakClient.id,
-                            roles: keycloakClientRolesPayload,
-                    }).then( () =>
-                        kcAdminClient.users.addRealmRoleMappings(
-                        {
-                            id: user.id,
-                            roles: [
-                                {
-                                    id: keycloakDefaultRole.id,
-                                    name: keycloakDefaultRole.name,
-                                }
-                            ]
-                        }).then( () => 
-                            console.log(user.username + " DONE")
-                        ).catch( () => console.log("ERROR adding default role") )
-                    ).catch( () => console.log("ERROR deleting client roles") )
-                ).catch( () => console.log("ERROR adding first and last name") )
-        }
-    ).catch(() => console.log("ondernemer " + user.username + " not found"));
+                        id: user.id,
+                        clientUniqueId: keycloakClient.id,
+                        roles: keycloakClientRolesPayload,
+                    
+                    }).then(() => console.log("kcAdminClient.users.delClientRoleMappings DONE")).catch(() => console.log("kcAdminClient.users.delClientRoleMappings FAILED"));
+                await kcAdminClient.users.addRealmRoleMappings(
+                    {
+                        id: user.id,
+                        roles: [
+                            {
+                                id: keycloakDefaultRole.id,
+                                name: keycloakDefaultRole.name,
+                            }
+                        ]
+                    }).then(() => console.log("kcAdminClient.users.addRealmRoleMappings DONE")).catch(() => console.log("kcAdminClient.users.addRealmRoleMappings FAILED"));
+            }
+        ).catch(() => console.log("ondernemer " + user.username + " not found"));
     });
-    console.log("foreach DONE");
 }
 
-getKeycloakData()
+getKeycloakData().then(() => console.log("script DONE")).catch(() => console.log("script FAILED"));
