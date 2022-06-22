@@ -30,14 +30,14 @@ const getKeycloakData = async () => {
                     {
                         firstName: ondernemer.voorletters,
                         lastName: ondernemer.tussenvoegsels + ' ' + ondernemer.achternaam,   
-                    }).then(() => console.log("kcAdminClient.users.update DONE").catch(() => console.log("kcAdminClient.users.update FAILED")));
+                    });
                 await kcAdminClient.users.delClientRoleMappings(
                     {
                         id: user.id,
                         clientUniqueId: keycloakClient.id,
                         roles: keycloakClientRolesPayload,
                     
-                    }).then(() => console.log("kcAdminClient.users.delClientRoleMappings DONE")).catch(() => console.log("kcAdminClient.users.delClientRoleMappings FAILED"));
+                    });
                 await kcAdminClient.users.addRealmRoleMappings(
                     {
                         id: user.id,
@@ -47,7 +47,7 @@ const getKeycloakData = async () => {
                                 name: keycloakDefaultRole.name,
                             }
                         ]
-                    }).then(() => console.log("kcAdminClient.users.addRealmRoleMappings DONE")).catch(() => console.log("kcAdminClient.users.addRealmRoleMappings FAILED"));
+                    });
             }
         ).catch(() => console.log("ondernemer " + user.username + " not found"));
     });
