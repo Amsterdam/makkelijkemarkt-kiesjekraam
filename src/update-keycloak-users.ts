@@ -23,9 +23,9 @@ const getKeycloakData = async () => {
     );
        
     keycloakUsers.forEach(user => {
-        getOndernemer(user.username).then(
+        return getOndernemer(user.username).then(
             ondernemer => {
-                kcAdminClient.users.update(
+                return kcAdminClient.users.update(
                     {id: user.id},
                     {
                         firstName: ondernemer.voorletters,
@@ -52,10 +52,8 @@ const getKeycloakData = async () => {
                         ).catch( () => console.log("ERROR adding default role") )
                     ).catch( () => console.log("ERROR deleting client roles") )
                 ).catch( () => console.log("ERROR adding first and last name") )
-                return
         }
     ).catch(() => console.log("ondernemer " + user.username + " not found"));
-    console.log("foreach for " + user.username + " done")
     });
 }
 
