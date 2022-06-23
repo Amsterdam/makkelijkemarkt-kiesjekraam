@@ -106,11 +106,6 @@ class PlaatsvoorkeurenForm extends React.Component {
                             (isMarktmeesterEnVph ? 'Fieldset--highlighted' : null)
                         }
                     >
-                        {isMarktmeesterEnVph ? (
-                            <p className="Fieldset__highlight-text">
-                                Verouderde functie! Alleen aanpassen als je weet wat je doet.
-                            </p>
-                        ) : null}
                         {maxNumKramen ? (
                             <p className="Fieldset__highlight-text">
                                 <i>Voor deze markt geldt een maximum van {maxNumKramen} plaatsen per ondernemer.</i>
@@ -259,11 +254,6 @@ class PlaatsvoorkeurenForm extends React.Component {
                         {/* Dit veld willen we alleen laten zien aan marktmeesters en sollicitanten */}
                         {role == 'marktmeester' || !isVastOfExp(sollicitatie.status) ? (
                             <div className={`Fieldset ${isMarktmeesterEnVph ? 'Fieldset--highlighted' : null}`}>
-                                {isMarktmeesterEnVph ? (
-                                    <p className="Fieldset__highlight-text">
-                                        Verouderde functie! Alleen aanpassen als je weet wat je doet.
-                                    </p>
-                                ) : null}
                                 <h2 className="Fieldset__header">Automatisch indelen?</h2>
                                 <p>
                                     <i>
