@@ -1,7 +1,6 @@
-import isEb from '../../domain-knowledge';
 import PropTypes from 'prop-types';
 import React from 'react';
-const { plaatsSort, isVastOfExp } = require('../../domain-knowledge.ts');
+const { plaatsSort, isVastOfExp, isEb } = require('../../domain-knowledge.ts');
 const { getDefaultVoorkeur } = require('../../model/voorkeur.functions');
 const MarktplaatsSelect = require('./MarktplaatsSelect');
 const Button = require('./Button');
