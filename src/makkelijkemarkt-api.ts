@@ -219,7 +219,7 @@ const convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray = (
                 marktId: pv.markt,
                 erkenningsNummer: pv.koopman,
                 plaatsId: plaats,
-                priority: index,
+                priority: plaatsvoorkeuren.length - index,
             })),
         );
     });
