@@ -183,7 +183,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                         >
                             <div className="PlaatsvoorkeurenForm__list-item" id="plaatsvoorkeuren-list-item">
                                 <h4 className="PlaatsvoorkeurenForm__list-item__heading Fieldset__sub-header">
-                                    {isEb(sollicitatie.status)?"Uitbreidingsvoorkeur":"Plaatsvoorkeur"} toevoegen
+                                    {isEb(sollicitatie.status) ? "Uitbreidingsvoorkeur" : "Plaatsvoorkeur"} toevoegen
                                 </h4>
                                 <div className="well well--small">
                                     <span className="PlaatsvoorkeurenForm__list-item__label">Kies een marktplaats</span>
