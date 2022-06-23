@@ -1,3 +1,4 @@
+import isEb from 'domain-knowledge';
 import PropTypes from 'prop-types';
 import React from 'react';
 const { plaatsSort, isVastOfExp } = require('../../domain-knowledge.ts');
@@ -183,7 +184,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                         >
                             <div className="PlaatsvoorkeurenForm__list-item" id="plaatsvoorkeuren-list-item">
                                 <h4 className="PlaatsvoorkeurenForm__list-item__heading Fieldset__sub-header">
-                                    Plaatsvoorkeur toevoegen
+                                    {isEb(sollicitatie.status)?"Uitbreidingsvoorkeur":"Plaatsvoorkeur"} toevoegen
                                 </h4>
                                 <div className="well well--small">
                                     <span className="PlaatsvoorkeurenForm__list-item__label">Kies een marktplaats</span>
