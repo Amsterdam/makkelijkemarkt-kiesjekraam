@@ -1,4 +1,4 @@
-import isEb from 'domain-knowledge';
+import isEb from '../../domain-knowledge';
 import PropTypes from 'prop-types';
 import React from 'react';
 const { plaatsSort, isVastOfExp } = require('../../domain-knowledge.ts');
