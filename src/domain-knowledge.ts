@@ -89,6 +89,7 @@ export const isExp = status =>
     status === DeelnemerStatus.EXPERIMENTAL ||
     status === DeelnemerStatus.EXPERIMENTAL_F;
 export const isVastOfExp = status => isVast(status) || isExp(status);
+export const isEb = status => status === DeelnemerStatus.ECONOMISCHE_BINDING;
 
 const isAfterAllocationTime = () => {
     const timeNow = getTimezoneTime();

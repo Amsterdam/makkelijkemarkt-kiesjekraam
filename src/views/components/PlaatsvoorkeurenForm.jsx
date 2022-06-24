@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-const { plaatsSort, isVastOfExp } = require('../../domain-knowledge.ts');
+const { plaatsSort, isVastOfExp, isEb } = require('../../domain-knowledge.ts');
 const { getDefaultVoorkeur } = require('../../model/voorkeur.functions');
 const MarktplaatsSelect = require('./MarktplaatsSelect');
 const Button = require('./Button');
@@ -106,11 +106,6 @@ class PlaatsvoorkeurenForm extends React.Component {
                             (isMarktmeesterEnVph ? 'Fieldset--highlighted' : null)
                         }
                     >
-                        {isMarktmeesterEnVph ? (
-                            <p className="Fieldset__highlight-text">
-                                Verouderde functie! Alleen aanpassen als je weet wat je doet.
-                            </p>
-                        ) : null}
                         {maxNumKramen ? (
                             <p className="Fieldset__highlight-text">
                                 <i>Voor deze markt geldt een maximum van {maxNumKramen} plaatsen per ondernemer.</i>
@@ -188,7 +183,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                         >
                             <div className="PlaatsvoorkeurenForm__list-item" id="plaatsvoorkeuren-list-item">
                                 <h4 className="PlaatsvoorkeurenForm__list-item__heading Fieldset__sub-header">
-                                    Plaatsvoorkeur toevoegen
+                                    {isEb(sollicitatie.status) ? "Uitbreidingsvoorkeur" : "Plaatsvoorkeur"} toevoegen
                                 </h4>
                                 <div className="well well--small">
                                     <span className="PlaatsvoorkeurenForm__list-item__label">Kies een marktplaats</span>
@@ -259,11 +254,6 @@ class PlaatsvoorkeurenForm extends React.Component {
                         {/* Dit veld willen we alleen laten zien aan marktmeesters en sollicitanten */}
                         {role == 'marktmeester' || !isVastOfExp(sollicitatie.status) ? (
                             <div className={`Fieldset ${isMarktmeesterEnVph ? 'Fieldset--highlighted' : null}`}>
-                                {isMarktmeesterEnVph ? (
-                                    <p className="Fieldset__highlight-text">
-                                        Verouderde functie! Alleen aanpassen als je weet wat je doet.
-                                    </p>
-                                ) : null}
                                 <h2 className="Fieldset__header">Automatisch indelen?</h2>
                                 <p>
                                     <i>
