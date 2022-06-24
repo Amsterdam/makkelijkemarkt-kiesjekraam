@@ -457,10 +457,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 const port = process.env.PORT || HTTP_DEFAULT_PORT;
 
-app.listen(port, (err: Error | null) => {
-    if (err) {
-        console.error(err);
-    } else {
-        console.log(`Listening on port ${port}`);
-    }
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`);
 });
