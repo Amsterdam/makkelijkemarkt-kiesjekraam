@@ -233,6 +233,7 @@ module.exports = {
     isTVPLZ,
     isExp,
     isVastOfExp,
+    isEb,
     getMarktDays,
     indelingstijdstipInMinutes,
     getMarktThresholdDate,
