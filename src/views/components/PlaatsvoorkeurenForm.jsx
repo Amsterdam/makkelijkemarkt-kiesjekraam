@@ -78,7 +78,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                     newItem: false,
                 };
             })
-            .sort((a, b) => b.priority - a.priority);
+            .sort((a, b) => a.priority - b.priority);
 
         marktplaatsen
             .sort((a, b) => plaatsSort(a, b, 'plaatsId'))
