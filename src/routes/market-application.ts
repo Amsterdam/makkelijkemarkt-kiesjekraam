@@ -1,5 +1,6 @@
 import {
     getAanmeldingenByOndernemer,
+    getRsvpPatroonByOndernemer,
     getMarktenForOndernemer,
     getOndernemer,
     getVoorkeurenByOndernemer,
@@ -73,10 +74,11 @@ export const attendancePage = (
     const includeInactive = role === Roles.MARKTMEESTER;
     const marktenPromise = getMarktenForOndernemer(ondernemerPromise, includeInactive);
     const aanmeldingenPromise = getAanmeldingenByOndernemer(erkenningsNummer);
+    const rsvpPatroonPromise = getRsvpPatroonByOndernemer(erkenningsNummer);
     const voorkeurenPromise = getVoorkeurenByOndernemer(erkenningsNummer);
 
-    return Promise.all([ondernemerPromise, aanmeldingenPromise, marktenPromise, getMededelingen(), voorkeurenPromise])
-        .then(([ondernemer, aanmeldingen, markten, mededelingen, voorkeuren]) => {
+    return Promise.all([ondernemerPromise, aanmeldingenPromise, rsvpPatroonPromise, marktenPromise, getMededelingen(), voorkeurenPromise])
+        .then(([ondernemer, aanmeldingen, rsvpPatroon, markten, mededelingen, voorkeuren]) => {
             const sollicitaties = ondernemer.sollicitaties.reduce((result, sollicitatie) => {
                 result[sollicitatie.markt.id] = sollicitatie;
                 return result;
@@ -98,13 +100,15 @@ export const attendancePage = (
                 ondernemer,
                 sollicitaties,
                 groupAanmeldingenPerMarktPerWeek(markten, sollicitaties, aanmeldingen, thresholdDate),
+                rsvpPatroon,
                 mededelingen,
                 voorkeuren,
             ];
         })
-        .then(([ondernemer, sollicitaties, aanmeldingenPerMarktPerWeek, mededelingen, voorkeuren]) => {
+        .then(([ondernemer, sollicitaties, aanmeldingenPerMarktPerWeek, rsvpPatroon, mededelingen, voorkeuren]) => {
             res.render('AanwezigheidPage', {
                 aanmeldingenPerMarktPerWeek,
+                rsvpPatroon,
                 csrfToken,
                 mededelingen,
                 voorkeuren,

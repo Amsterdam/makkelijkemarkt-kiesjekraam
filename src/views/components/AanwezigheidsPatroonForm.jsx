@@ -14,11 +14,10 @@ import {
 } from '../../authentication';
 import SollicitatieSpecs from './SollicitatieSpecs';
 
-class AanwezigheidsForm extends React.Component {
+class AanwezigheidsPatroonForm extends React.Component {
     propTypes = {
         ondernemer: PropTypes.object.isRequired,
         aanmeldingenPerMarktPerWeek: PropTypes.array,
-        rsvpPatroon: PropTypes.array,
         sollicitaties: PropTypes.array.isRequired,
         query: PropTypes.string,
         role: PropTypes.string,
@@ -74,7 +73,7 @@ class AanwezigheidsForm extends React.Component {
                                 </span>
                             </Alert>
                         ) : null}
-                        {...aanmeldingenPerWeek.map((week, i) => (
+                        {aanmeldingenPerWeek.map((week, i) => (
                             <div className="week" key="{i}">
                                 <h4>{i === 0 ? 'Deze week' : 'Volgende week'}</h4>
                                 {[0, 1, 2, 3, 4, 5, 6].map(day =>
@@ -114,54 +113,13 @@ class AanwezigheidsForm extends React.Component {
                                                 defaultValue="0"
                                             />
                                             <label htmlFor={`rsvp-${index}`}>
-                                                <strong>{day}</strong>
+                                                <strong>{WEEK_DAYS_SHORT[day]}</strong>
                                             </label>
                                         </span>
                                     ),
                                 )}
                             </div>
                         ))}
-                        <div className="week" key="3">
-                            <h4>Rsvp Patroon</h4>
-                            {[
-                                "sunday",
-                                "monday",
-                                "tuesday",
-                                "wednesday",
-                                "thursday",
-                                "friday",
-                                "saturday",
-                            ].map( (day, j) => {
-                                return (
-                                    <span className="day" key={++index}>
-                                        <input
-                                            type="hidden"
-                                            name={`rsvp_patroon[${index}][marktId]`}
-                                            disabled={false}
-                                            defaultValue={markt.id}
-                                        />
-                                        <input
-                                            type="hidden"
-                                            name={`rsvp_patroon[${index}][patternDate]`}
-                                            disabled={false}
-                                            defaultValue={false}
-                                        />
-
-                                        <input
-                                            type="checkbox"
-                                            id={`rsvp_patroon-${index}`}
-                                            name={`rsvp_patroon[${index}][attending]`}
-                                            disabled={false}
-                                            defaultValue="1"
-                                            defaultChecked={false}
-                                        />
-                                        <label htmlFor={`rsvp_patroon-${index}`}>
-                                            <strong>{WEEK_DAYS_SHORT[j]}</strong>
-                                        </label>
-                                    </span>
-                                )
-                            })}
-                        </div>
                     </div>
                 ))}
 
@@ -190,4 +148,4 @@ class AanwezigheidsForm extends React.Component {
     }
 }
 
-module.exports = AanwezigheidsForm;
+module.exports = AanwezigheidsPatroonForm;
