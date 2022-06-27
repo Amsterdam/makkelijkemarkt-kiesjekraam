@@ -25,6 +25,7 @@ import {
     IMarktondernemerVoorkeurRow,
     IPlaatsvoorkeur,
     IRSVP,
+    IRsvpPattern,
     IToewijzing,
 } from './model/markt.model';
 import {
@@ -206,6 +207,10 @@ export const getAanmeldingenByOndernemerEnMarkt = (marktId: string, erkenningsNu
 
 export const getAanmeldingenByOndernemer = (erkenningsNummer: string): Promise<IRSVP[]> =>
     getAanmeldingen(`rsvp/koopman/${erkenningsNummer}`);
+
+export const getRsvpPatroonByOndernemer = (erkenningsNummer: string): Promise<IRsvpPattern[]> => {
+    return apiBase(`/rsvp_pattern/markt/258/koopman/${erkenningsNummer}`).then(response => response.data);
+}
 
 const convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray = (
     plaatsvoorkeuren: MMMarktPlaatsvoorkeuren[],

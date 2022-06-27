@@ -4,6 +4,7 @@ const {
     getBreadcrumbsOndernemer,
 } = require('../util');
 const AanwezigheidsForm = require('./components/AanwezigheidsForm.jsx');
+const AanwezigheidsPatroonForm = require('./components/AanwezigheidsPatroonForm.jsx');
 const Alert = require('./components/Alert.jsx');
 const Content = require('./components/Content');
 const Header = require('./components/Header');
@@ -27,6 +28,7 @@ class AanwezigheidPage extends React.Component {
     render() {
         const {
             aanmeldingenPerMarktPerWeek,
+            rsvpPatroon,
             csrfToken,
             date,
             voorkeuren,
@@ -68,6 +70,7 @@ class AanwezigheidPage extends React.Component {
                         ondernemer={ondernemer}
                         sollicitaties={sollicitaties}
                         aanmeldingenPerMarktPerWeek={aanmeldingenPerMarktPerWeek}
+                        rsvpPatroon={rsvpPatroon}
                         query={query}
                         role={role}
                         voorkeuren={voorkeuren}
