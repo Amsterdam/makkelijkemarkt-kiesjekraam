@@ -7,6 +7,7 @@ import {
     getAanmeldingenByMarktAndDate,
     getALijst,
     getAllocations,
+    getBLijst,
     getIndelingVoorkeuren,
     getMarkt,
     getMarktBasics,
@@ -179,14 +180,16 @@ export const getVoorrangslijstInput = (marktId: string, marktDate: string) =>
         getPlaatsvoorkeuren(marktId),
         getMarkt(marktId),
         getALijst(marktId, marktDate),
+        getBLijst(marktId, marktDate),
         getToewijzingen(marktId, marktDate),
         getIndelingVoorkeuren(marktId),
-    ]).then(([ondernemers, aanmeldingen, voorkeuren, markt, aLijst, toewijzingen, algemenevoorkeuren]) => ({
+    ]).then(([ondernemers, aanmeldingen, voorkeuren, markt, aLijst, bLijst, toewijzingen, algemenevoorkeuren]) => ({
         ondernemers,
         aanmeldingen,
         voorkeuren,
         markt,
         aLijst,
+        bLijst,
         toewijzingen,
         algemenevoorkeuren,
     }));

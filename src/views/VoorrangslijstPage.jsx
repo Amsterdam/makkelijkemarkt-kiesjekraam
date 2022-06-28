@@ -41,6 +41,7 @@ class VoorrangslijstPage extends React.Component {
     propTypes = {
         markt: PropTypes.object.isRequired,
         aLijst: PropTypes.array,
+        bLijst: PropTypes.array,
         ondernemers: PropTypes.object,
         aanmeldingen: PropTypes.object,
         voorkeuren: PropTypes.object,
@@ -56,6 +57,7 @@ class VoorrangslijstPage extends React.Component {
         const {
             markt,
             aLijst,
+            bLijst,
             aanmeldingen,
             voorkeuren,
             datum,
@@ -67,62 +69,36 @@ class VoorrangslijstPage extends React.Component {
         } = this.props;
         let { ondernemers } = this.props;
         const aLijstErkenningsNummers = aLijst.map(ondernemer => ondernemer.erkenningsnummer);
+        const bLijstErkenningsNummers = bLijst.map(ondernemer => ondernemer.erkenningsnummer);
 
         const aLijstDay = A_LIJST_DAYS.includes(new Date(datum).getDay());
 
         const itemsOnPage = 40;
-        const aLijstAangemeld = 0;
-        const aLijstNietAangemeld = 1;
-        const Aangemeld = 2;
-        const NietAangemeld = 3;
-
-        ondernemers = ondernemers.filter(
-            ondernemer =>
-                !toewijzingen.find(({ erkenningsNummer }) => erkenningsNummer === ondernemer.erkenningsNummer),
-        );
+        const aLijstResult = 0;
+        const bLijstResult = 1;
 
         ondernemers = sort(ondernemers, aLijst);
-        ondernemers = [
-            ...ondernemers.filter(ondernemer => isAanwezig(ondernemer, aanmeldingen, datum))
-        ];
 
         const ondernemersGrouped = ondernemers
             .reduce(
                 (total, ondernemer) => {
-                    total[
-                        isAanwezig(ondernemer, aanmeldingen, datum) &&
-                        aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
-                            ? aLijstAangemeld
-                            : isAanwezig(ondernemer, aanmeldingen, datum) &&
-                              !aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
-                            ? Aangemeld
-                            : !isAanwezig(ondernemer, aanmeldingen, datum) &&
-                              aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
-                            ? aLijstNietAangemeld
-                            : !isAanwezig(ondernemer, aanmeldingen, datum) &&
-                              !aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)
-                            ? NietAangemeld
-                            : NietAangemeld
-                    ].push(ondernemer);
+                    if (aLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)){
+                        total[aLijstResult].push(ondernemer)
+                    } else if (bLijstErkenningsNummers.includes(ondernemer.erkenningsNummer)) {
+                        total[bLijstResult].push(ondernemer)
+                    }
                     return total;
                 },
-                [[], [], [], []],
+                [[], []],
             )
-            .map((group, index) => {
-                if (index === 1 || index === 2 || index === 3) {
-                    return group.filter(ondernemer => ondernemer.status !== 'vpl');
-                } else {
-                    return group;
-                }
+            .map((group) => {
+                return group.filter(ondernemer => ondernemer.status === 'soll');
             })
             .map(group => paginate(paginate(group, itemsOnPage), 2));
 
-        const titleBase = type === 'wenperiode' ? 'Alle sollicitanten' : 'Ondernemers niet ingedeeld';
-        const titles = [
-            `${titleBase}${aLijstDay ? ', A lijst' : ''} aangemeld: ${markt.naam}`,
-            `${titleBase}${aLijstDay ? ', A lijst' : ''} niet aangemeld: ${markt.naam}`,
-            `${titleBase}${aLijstDay ? ', B lijst' : ''} aangemeld: ${markt.naam}`,
-            `${titleBase}${aLijstDay ? ', B lijst' : ''} niet aangemeld: ${markt.naam}`,
+            const titles = [
+                `${aLijstDay ? 'A lijst' : ''} ${markt.naam}`,
+                `${aLijstDay ? 'B lijst' : ''} ${markt.naam}`,
         ];
         const plaatsvoorkeuren = voorkeuren.reduce((t, voorkeur) => {
             if (!t[voorkeur.erkenningsNummer]) {
@@ -142,7 +118,7 @@ class VoorrangslijstPage extends React.Component {
         return (
             <MarktDetailBase
                 bodyClass="page-markt-sollicitanten page-print"
-                title={titleBase}
+                title="A/B Lijst"
                 markt={markt}
                 datum={datum}
                 type={type}

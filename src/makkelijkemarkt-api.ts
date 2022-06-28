@@ -43,6 +43,7 @@ import packageJSON = require('../package.json');
 import {
     RedisClient,
 } from './redis-client';
+import moment = require('moment');
 
 const redisClient = new RedisClient().getAsyncClient();
 
@@ -533,6 +534,13 @@ export const getALijst = (marktId: string, marktDate: string): Promise<MMOnderne
     } else {
         return new Promise(resolve => resolve([]));
     }
+};
+
+export const getBLijst = (marktId: string, marktDate: string): Promise<MMOndernemer[]> => {
+    const day = moment(marktDate).format('YYYY-MM-DD');
+    const twoMonthsEarlier = moment(marktDate).subtract(2, 'months').format('YYYY-MM-DD');
+
+    return apiBase(`rapport/aanwezigheid/${marktId}/${twoMonthsEarlier}/${day}`).then(response => response.data);
 };
 
 export const checkActivationCode = (username: string, code: string): Promise<any> =>
