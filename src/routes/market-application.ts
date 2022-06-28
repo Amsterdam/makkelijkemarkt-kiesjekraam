@@ -5,6 +5,7 @@ import {
     getOndernemer,
     getVoorkeurenByOndernemer,
     updateRsvp,
+    updateRsvpPattern,
 } from '../makkelijkemarkt-api';
 import {
     HTTP_CREATED_SUCCESS,
@@ -30,12 +31,13 @@ import {
     groupAanmeldingenPerMarktPerWeek,
 } from '../model/rsvp.functions';
 import {
-    IRSVP,
+    IRSVP, IRsvpPattern,
 } from '../model/markt.model';
 import moment from 'moment-timezone';
 import {
     Roles,
 } from '../authentication';
+import { allowedNodeEnvironmentFlags } from 'process';
 
 moment.locale('nl');
 
@@ -45,9 +47,21 @@ interface RSVPFormData {
     attending: string;
 }
 
+interface RsvpPatternFormData {
+    marktId: string;
+    monday?: boolean;
+    tuesday?: boolean;
+    wenesday?: boolean;
+    thursday?: boolean;
+    friday?: boolean;
+    saturday?: boolean;
+    sunday?: boolean;
+}
+
 interface AttendanceFormData {
     erkenningsNummer: string;
     rsvp: RSVPFormData[];
+    rsvp_patroon: RsvpPatternFormData;
     next: string;
 }
 
@@ -161,6 +175,26 @@ export const handleAttendanceUpdate = (
         return result;
     }, {});
 
+    const rsvpDefaultAttendence = {
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+    }
+    
+    let rsvpPattern: IRsvpPattern = Object.assign(rsvpDefaultAttendence, {
+        erkenningsNummer,
+        ...data.rsvp_patroon,
+    });
+
+    // Parse string values from form to booleans
+    for (const day in rsvpDefaultAttendence) {
+        rsvpPattern[day] = JSON.parse(rsvpPattern[day]);
+    }
+
     // Controleer per dag of het maximum wordt overschreden. Zo ja, geef dan een
     // foutmelding weer.
     getOndernemer(erkenningsNummer)
@@ -199,7 +233,9 @@ export const handleAttendanceUpdate = (
                 );
             }, []);
 
-            Promise.all(queries).then(() => res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next));
+            const pattern = updateRsvpPattern(rsvpPattern);
+
+            Promise.all([queries, pattern]).then(() => res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next));
         })
         .catch(error => {
             internalServerErrorPage(res)(String(error));

@@ -27,7 +27,7 @@ class AanwezigheidsForm extends React.Component {
     };
 
     render() {
-        const { aanmeldingenPerMarktPerWeek = [], csrfToken, ondernemer, role, sollicitaties, voorkeuren } = this.props;
+        const { aanmeldingenPerMarktPerWeek = [], rsvpPatroon, csrfToken, ondernemer, role, sollicitaties, voorkeuren } = this.props;
 
         // Wordt in de HTML gebruikt om de `rsvp` <input>s te nummeren.
         let index = -1;
@@ -74,7 +74,7 @@ class AanwezigheidsForm extends React.Component {
                                 </span>
                             </Alert>
                         ) : null}
-                        {...aanmeldingenPerWeek.map((week, i) => (
+                        {aanmeldingenPerWeek.map((week, i) => (
                             <div className="week" key="{i}">
                                 <h4>{i === 0 ? 'Deze week' : 'Volgende week'}</h4>
                                 {[0, 1, 2, 3, 4, 5, 6].map(day =>
@@ -114,7 +114,7 @@ class AanwezigheidsForm extends React.Component {
                                                 defaultValue="0"
                                             />
                                             <label htmlFor={`rsvp-${index}`}>
-                                                <strong>{day}</strong>
+                                                <strong>{WEEK_DAYS_SHORT[day]}</strong>
                                             </label>
                                         </span>
                                     ),
@@ -123,6 +123,12 @@ class AanwezigheidsForm extends React.Component {
                         ))}
                         <div className="week" key="3">
                             <h4>Rsvp Patroon</h4>
+                            <input
+                                type="hidden"
+                                name={`rsvp_patroon[marktId]`}
+                                disabled={false}
+                                defaultValue={markt.id}
+                            />
                             {[
                                 "sunday",
                                 "monday",
@@ -134,26 +140,13 @@ class AanwezigheidsForm extends React.Component {
                             ].map( (day, j) => {
                                 return (
                                     <span className="day" key={++index}>
-                                        <input
-                                            type="hidden"
-                                            name={`rsvp_patroon[${index}][marktId]`}
-                                            disabled={false}
-                                            defaultValue={markt.id}
-                                        />
-                                        <input
-                                            type="hidden"
-                                            name={`rsvp_patroon[${index}][patternDate]`}
-                                            disabled={false}
-                                            defaultValue={false}
-                                        />
 
                                         <input
                                             type="checkbox"
                                             id={`rsvp_patroon-${index}`}
-                                            name={`rsvp_patroon[${index}][attending]`}
-                                            disabled={false}
-                                            defaultValue="1"
-                                            defaultChecked={false}
+                                            name={`rsvp_patroon[${day}]`}
+                                            defaultValue={true}
+                                            defaultChecked={rsvpPatroon[0][day]}
                                         />
                                         <label htmlFor={`rsvp_patroon-${index}`}>
                                             <strong>{WEEK_DAYS_SHORT[j]}</strong>
