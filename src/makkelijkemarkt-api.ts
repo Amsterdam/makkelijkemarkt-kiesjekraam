@@ -208,9 +208,20 @@ export const getAanmeldingenByOndernemerEnMarkt = (marktId: string, erkenningsNu
 export const getAanmeldingenByOndernemer = (erkenningsNummer: string): Promise<IRSVP[]> =>
     getAanmeldingen(`rsvp/koopman/${erkenningsNummer}`);
 
-export const getRsvpPatroonByOndernemer = (erkenningsNummer: string): Promise<IRsvpPattern[]> => {
-    return apiBase(`/rsvp_pattern/markt/258/koopman/${erkenningsNummer}`).then(response => response.data);
-}
+
+
+
+export const updateRsvpPattern = (rsvpPattern: IRsvpPattern): Promise<IRsvpPattern> => 
+    apiBase('/rsvp_pattern', 'post', rsvpPattern).then(response => {
+        console.log("RESPONSE", response)
+        return response.data
+    })
+
+export const getRsvpPatroonByOndernemer = (erkenningsNummer: string): Promise<IRsvpPattern[]> =>
+    apiBase(`/rsvp_pattern/markt/303/koopman/${erkenningsNummer}`).then(response => {
+        console.log("RESPONSE", response.data)
+        return response.data
+    });
 
 const convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray = (
     plaatsvoorkeuren: MMMarktPlaatsvoorkeuren[],
