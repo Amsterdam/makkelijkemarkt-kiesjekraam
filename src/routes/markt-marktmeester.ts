@@ -110,28 +110,13 @@ export const voorrangslijstPage = (req: GrantedRequest, res: Response, next: Nex
 
     getVoorrangslijstInput(req.params.marktId, req.params.datum)
         .then(result => {
-            let { ondernemers } = result;
-            const { aanmeldingen, voorkeuren, markt, toewijzingen, aLijst, algemenevoorkeuren } = result;
-
-            ondernemers =
-                markt.kiesJeKraamFase === 'wenperiode'
-                    ? ondernemers.filter(ondernemer => !isVast(ondernemer.status) )
-                    : ondernemers;
-            const toewijzingenOptional = markt.kiesJeKraamFase === 'wenperiode' ? [] : toewijzingen;
+            const { ondernemers, aanmeldingen, voorkeuren, markt, toewijzingen, aLijst, bLijst, algemenevoorkeuren } = result;
 
             ondernemers.map(ondernemer => {
                 ondernemer.voorkeur = algemenevoorkeuren.find(
                     voorkeur => voorkeur.erkenningsNummer === ondernemer.erkenningsNummer,
                 );
                 return ondernemer;
-            });
-
-            ondernemers = ondernemers.filter(ondernemer => {
-                if (ondernemer.voorkeur) {
-                    return !ondernemer.voorkeur.absentFrom && !ondernemer.voorkeur.absentUntil;
-                } else {
-                    return true;
-                }
             });
 
             const role = Roles.MARKTMEESTER;
@@ -142,10 +127,11 @@ export const voorrangslijstPage = (req: GrantedRequest, res: Response, next: Nex
                 aanmeldingen,
                 voorkeuren,
                 aLijst,
+                bLijst,
                 markt,
                 datum,
                 type,
-                toewijzingen: toewijzingenOptional,
+                toewijzingen: toewijzingen,
                 algemenevoorkeuren,
                 role,
                 user: getKeycloakUser(req),
@@ -174,35 +160,6 @@ export const ondernemersNietIngedeeldPage = (req: GrantedRequest, res: Response,
                 markt,
                 datum,
                 toewijzingen,
-                algemenevoorkeuren,
-                role,
-                user: getKeycloakUser(req),
-            });
-        }, internalServerErrorPage(res))
-        .catch(next);
-};
-
-export const voorrangslijstVolledigPage = (req: GrantedRequest, res: Response, next: NextFunction) => {
-    const datum = req.params.datum;
-
-    getVoorrangslijstInput(req.params.marktId, req.params.datum)
-        .then(result => {
-            const { ondernemers, aanmeldingen, voorkeuren, markt, aLijst, algemenevoorkeuren } = result;
-            const ondernemersFiltered = ondernemers.filter(ondernemer => !isVast(ondernemer.status) );
-            // const toewijzingenOptional = markt.fase === 'wenperiode' ? [] : toewijzingen;
-
-            const type = 'wenperiode';
-            const role = Roles.MARKTMEESTER;
-
-            res.render('VoorrangslijstPage', {
-                ondernemers: ondernemersFiltered,
-                aanmeldingen,
-                voorkeuren,
-                aLijst,
-                markt,
-                datum,
-                type,
-                toewijzingen: [],
                 algemenevoorkeuren,
                 role,
                 user: getKeycloakUser(req),
