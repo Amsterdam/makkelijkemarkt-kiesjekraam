@@ -43,7 +43,7 @@ import packageJSON = require('../package.json');
 import {
     RedisClient,
 } from './redis-client';
-import moment = require('moment');
+import moment from 'moment';
 
 const redisClient = new RedisClient().getAsyncClient();
 
