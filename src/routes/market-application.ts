@@ -62,6 +62,7 @@ interface RsvpPatternFormData {
 interface AttendanceFormData {
     erkenningsNummer: string;
     rsvp: RSVPFormData[];
+    previousRsvpData: RSVPFormData[];
     rsvp_patroon: RsvpPatternFormData;
     next: string;
 }
@@ -155,7 +156,13 @@ export const handleAttendanceUpdate = (
     // doorgegeven aan de `attendancePage` call hieronder indien er een error is.
     const rsvpFormData: RSVPFormData[] =
         data.rsvp && !Array.isArray(data.rsvp) ? Object.values(data.rsvp) : data.rsvp || [];
-    const rsvps: IRSVP[] = rsvpFormData.map(rsvpData => ({
+
+    // Stringify previous data so it can be compared with new data
+    const prevRsvpFormData: string[] = data.previousRsvpData.map(item => JSON.stringify(item))
+    // Only update difference between old and new form data
+    const newRsvpData: RSVPFormData[] = rsvpFormData.filter(item => !prevRsvpFormData.includes(JSON.stringify(item)));
+    
+    const rsvps: IRSVP[] = newRsvpData.map(rsvpData => ({
         ...rsvpData,
         erkenningsNummer,
         attending: rsvpData.attending === '1',
