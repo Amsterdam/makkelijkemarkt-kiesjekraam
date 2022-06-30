@@ -81,6 +81,27 @@ class AanwezigheidsForm extends React.Component {
                                 {[0, 1, 2, 3, 4, 5, 6].map(day =>
                                     day in week ? (
                                         <span className="day" key={++index}>
+                                            {/* Old values sent as well so difference can be stored */}
+                                            <input
+                                                type="hidden"
+                                                name={`previousRsvpData[${index}][marktId]`}
+                                                disabled={week[day].isInThePast}
+                                                defaultValue={JSON.stringify(markt.id)}
+                                            />
+                                            <input
+                                                type="hidden"
+                                                name={`previousRsvpData[${index}][marktDate]`}
+                                                disabled={week[day].isInThePast}
+                                                defaultValue={toDate(week[day].date)}
+                                            />
+                                            <input
+                                                type="hidden"
+                                                name={`previousRsvpData[${index}][attending]`}
+                                                disabled={week[day].isInThePast || hasNoBranche(markt) || !week[day].attending}
+                                                defaultValue={JSON.stringify(week[day].attending ? 1 : undefined)}
+                                            />
+                                            {/* End of old values */}
+                                            
                                             <input
                                                 type="hidden"
                                                 name={`rsvp[${index}][marktId]`}
