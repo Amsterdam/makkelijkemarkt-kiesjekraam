@@ -58,8 +58,8 @@ export const DAYS_CLOSED = (function() {
 
 export const A_LIJST_DAYS = [FRIDAY, SATURDAY, SUNDAY];
 
-const INDELINGSTIJDSTIP = '21:00';
-const INDELINGSTIJDSTIP_TEXT = "21 uur 's avonds";
+const INDELINGSTIJDSTIP = '15:00';
+const INDELINGSTIJDSTIP_TEXT = "3 uur 's middags";
 export const INDELING_DAG_OFFSET = 1;
 
 const indelingstijdstipInMinutes = () => {
