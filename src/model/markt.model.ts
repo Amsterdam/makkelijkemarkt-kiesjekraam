@@ -70,7 +70,7 @@ export interface IRSVP {
 }
 
 export interface IRsvpPattern {
-    marktId: string;
+    markt: string;
     erkenningsNummer: ErkenningsNummer;
     monday: boolean;
     tuesday: boolean;
