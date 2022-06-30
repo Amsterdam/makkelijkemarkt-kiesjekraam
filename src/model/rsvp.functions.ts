@@ -7,7 +7,7 @@ import {
     MMSollicitatie,
 } from './makkelijkemarkt.model';
 import {
-    IRSVP,
+    IRSVP, IRsvpPattern,
 } from 'model/markt.model';
 import moment from 'moment-timezone';
 
@@ -74,3 +74,16 @@ export const groupAanmeldingenPerMarktPerWeek = (
     });
     return aanmeldingenPerMarktPerWeek;
 };
+
+export const rsvpPatroonPerMarkt = (
+    markten: MMMarkt[],
+    rsvpPatronen: IRsvpPattern[]
+) => {
+    const marktIds : number[] = markten.map(markt => +markt.id);
+
+    // Filter RsvpPatterns for given markets
+    const rsvpPatronenInMarkten = rsvpPatronen.filter(rsvpPatroon => marktIds.includes(+rsvpPatroon.markt));
+    // Maps RsvpPattern to markt {marktId: pattern, ...}
+    const mapped : {[key: string]: IRsvpPattern}= rsvpPatronenInMarkten.reduce((prev, cur)  => ({...prev, [cur.markt]: cur}), {});
+    return mapped;
+}

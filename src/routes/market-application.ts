@@ -29,6 +29,7 @@ import {
 } from 'keycloak-connect';
 import {
     groupAanmeldingenPerMarktPerWeek,
+    rsvpPatroonPerMarkt,
 } from '../model/rsvp.functions';
 import {
     IRSVP, IRsvpPattern,
@@ -48,7 +49,7 @@ interface RSVPFormData {
 }
 
 interface RsvpPatternFormData {
-    marktId: string;
+    markt: string;
     monday?: boolean;
     tuesday?: boolean;
     wenesday?: boolean;
@@ -114,7 +115,7 @@ export const attendancePage = (
                 ondernemer,
                 sollicitaties,
                 groupAanmeldingenPerMarktPerWeek(markten, sollicitaties, aanmeldingen, thresholdDate),
-                rsvpPatroon,
+                rsvpPatroonPerMarkt(markten, rsvpPatroon),
                 mededelingen,
                 voorkeuren,
             ];

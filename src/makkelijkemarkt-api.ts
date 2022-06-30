@@ -209,16 +209,13 @@ export const getAanmeldingenByOndernemer = (erkenningsNummer: string): Promise<I
 
 
 
-
 export const updateRsvpPattern = (rsvpPattern: IRsvpPattern): Promise<IRsvpPattern> => 
-    apiBase('/rsvp_pattern', 'post', rsvpPattern).then(response => {
-        console.log("RESPONSE", response)
+    apiBase('rsvp_pattern', 'post', rsvpPattern).then(response => {
         return response.data
     })
 
 export const getRsvpPatroonByOndernemer = (erkenningsNummer: string): Promise<IRsvpPattern[]> =>
-    apiBase(`/rsvp_pattern/markt/303/koopman/${erkenningsNummer}`).then(response => {
-        console.log("RESPONSE", response.data)
+    apiBase(`rsvp_pattern/koopman/${erkenningsNummer}`).then(response => {
         return response.data
     });
 

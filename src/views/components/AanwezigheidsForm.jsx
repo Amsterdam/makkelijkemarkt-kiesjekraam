@@ -61,6 +61,7 @@ class AanwezigheidsForm extends React.Component {
                 />
 
                 {aanmeldingenPerMarktPerWeek.map(({ markt, aanmeldingenPerWeek }) => (
+
                     <div className="markt" key="{markt.id}">
                         <h2 className="Heading Heading--intro">
                             {markt.naam} <SollicitatieSpecs sollicitatie={sollicitaties[markt.id]} />
@@ -140,15 +141,14 @@ class AanwezigheidsForm extends React.Component {
                             ].map( (day, j) => {
                                 return (
                                     <span className="day" key={++index}>
-
                                         <input
                                             type="checkbox"
-                                            id={`rsvp_patroon-${index}`}
+                                            id={`rsvp_patroon-${day}`}
                                             name={`rsvp_patroon[${day}]`}
                                             defaultValue={true}
-                                            defaultChecked={rsvpPatroon[0][day]}
+                                            defaultChecked={rsvpPatroon[markt.id] ? rsvpPatroon[markt.id][day] : false}
                                         />
-                                        <label htmlFor={`rsvp_patroon-${index}`}>
+                                        <label htmlFor={`rsvp_patroon-${day}`}>
                                             <strong>{WEEK_DAYS_SHORT[j]}</strong>
                                         </label>
                                     </span>
