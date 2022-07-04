@@ -146,7 +146,7 @@ class AanwezigheidsForm extends React.Component {
                         {rsvpPatroon[markt.id] == undefined ? (
                             <Alert type="error" inline={true} fullwidth={true}>
                                 <span>
-                                    U heeft nog geen <strong>aanweziheidspatroon</strong> ingevuld. Het opslaan hiervan heeft effect op uw aanwezigheid.
+                                    U heeft nog geen <strong>aanwezigheidspatroon</strong> ingevuld. Het opslaan hiervan heeft effect op uw aanwezigheid.
                                 </span>
                             </Alert>
                         ) : null }
