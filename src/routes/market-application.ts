@@ -1,6 +1,6 @@
 import {
     getAanmeldingenByOndernemer,
-    getRsvpPatroonByOndernemer,
+    getRsvpPatternByOndernemer,
     getMarktenForOndernemer,
     getOndernemer,
     getVoorkeurenByOndernemer,
@@ -29,7 +29,7 @@ import {
 } from 'keycloak-connect';
 import {
     groupAanmeldingenPerMarktPerWeek,
-    rsvpPatroonPerMarkt,
+    rsvpPatternPerMarkt,
 } from '../model/rsvp.functions';
 import {
     IRSVP, IRsvpPattern,
@@ -62,7 +62,7 @@ interface AttendanceFormData {
     erkenningsNummer: string;
     rsvp: RSVPFormData[];
     previousRsvpData: RSVPFormData[];
-    rsvpPatroon: RsvpPatternFormData;
+    rsvpPattern: RsvpPatternFormData;
     next: string;
 }
 
@@ -89,11 +89,11 @@ export const attendancePage = (
     const includeInactive = role === Roles.MARKTMEESTER;
     const marktenPromise = getMarktenForOndernemer(ondernemerPromise, includeInactive);
     const aanmeldingenPromise = getAanmeldingenByOndernemer(erkenningsNummer);
-    const rsvpPatroonPromise = getRsvpPatroonByOndernemer(erkenningsNummer);
+    const rsvpPatternPromise = getRsvpPatternByOndernemer(erkenningsNummer);
     const voorkeurenPromise = getVoorkeurenByOndernemer(erkenningsNummer);
 
-    return Promise.all([ondernemerPromise, aanmeldingenPromise, rsvpPatroonPromise, marktenPromise, getMededelingen(), voorkeurenPromise])
-        .then(([ondernemer, aanmeldingen, rsvpPatroon, markten, mededelingen, voorkeuren]) => {
+    return Promise.all([ondernemerPromise, aanmeldingenPromise, rsvpPatternPromise, marktenPromise, getMededelingen(), voorkeurenPromise])
+        .then(([ondernemer, aanmeldingen, rsvpPattern, markten, mededelingen, voorkeuren]) => {
             const sollicitaties = ondernemer.sollicitaties.reduce((result, sollicitatie) => {
                 result[sollicitatie.markt.id] = sollicitatie;
                 return result;
@@ -115,15 +115,15 @@ export const attendancePage = (
                 ondernemer,
                 sollicitaties,
                 groupAanmeldingenPerMarktPerWeek(markten, sollicitaties, aanmeldingen, thresholdDate),
-                rsvpPatroonPerMarkt(markten, rsvpPatroon),
+                rsvpPatternPerMarkt(markten, rsvpPattern),
                 mededelingen,
                 voorkeuren,
             ];
         })
-        .then(([ondernemer, sollicitaties, aanmeldingenPerMarktPerWeek, rsvpPatroon, mededelingen, voorkeuren]) => {
+        .then(([ondernemer, sollicitaties, aanmeldingenPerMarktPerWeek, rsvpPattern, mededelingen, voorkeuren]) => {
             res.render('AanwezigheidPage', {
                 aanmeldingenPerMarktPerWeek,
-                rsvpPatroon,
+                rsvpPattern,
                 csrfToken,
                 mededelingen,
                 voorkeuren,
@@ -194,7 +194,7 @@ export const handleAttendanceUpdate = (
     
     let rsvpPattern: IRsvpPattern = {
         ...rsvpDefaultAttendence,
-        ...data.rsvpPatroon,
+        ...data.rsvpPattern,
         erkenningsNummer,
     };
 

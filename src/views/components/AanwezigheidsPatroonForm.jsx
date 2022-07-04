@@ -14,7 +14,7 @@ import {
 } from '../../authentication';
 import SollicitatieSpecs from './SollicitatieSpecs';
 
-class AanwezigheidsPatroonForm extends React.Component {
+class AanwezigheidsPatternForm extends React.Component {
     propTypes = {
         ondernemer: PropTypes.object.isRequired,
         aanmeldingenPerMarktPerWeek: PropTypes.array,
@@ -148,4 +148,4 @@ class AanwezigheidsPatroonForm extends React.Component {
     }
 }
 
-module.exports = AanwezigheidsPatroonForm;
+module.exports = AanwezigheidsPatternForm;

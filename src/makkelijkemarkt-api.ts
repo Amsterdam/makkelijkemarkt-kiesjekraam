@@ -214,7 +214,7 @@ export const updateRsvpPattern = (rsvpPattern: IRsvpPattern): Promise<IRsvpPatte
         return response.data
     })
 
-export const getRsvpPatroonByOndernemer = (erkenningsNummer: string): Promise<IRsvpPattern[]> =>
+export const getRsvpPatternByOndernemer = (erkenningsNummer: string): Promise<IRsvpPattern[]> =>
     apiBase(`rsvp_pattern/koopman/${erkenningsNummer}`).then(response => {
         return response.data
     });

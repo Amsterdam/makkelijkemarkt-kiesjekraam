@@ -18,7 +18,7 @@ class AanwezigheidsForm extends React.Component {
     propTypes = {
         ondernemer: PropTypes.object.isRequired,
         aanmeldingenPerMarktPerWeek: PropTypes.array,
-        rsvpPatroon: PropTypes.array,
+        rsvpPattern: PropTypes.array,
         sollicitaties: PropTypes.array.isRequired,
         query: PropTypes.string,
         role: PropTypes.string,
@@ -27,7 +27,7 @@ class AanwezigheidsForm extends React.Component {
     };
 
     render() {
-        const { aanmeldingenPerMarktPerWeek = [], rsvpPatroon, csrfToken, ondernemer, role, sollicitaties, voorkeuren } = this.props;
+        const { aanmeldingenPerMarktPerWeek = [], rsvpPattern, csrfToken, ondernemer, role, sollicitaties, voorkeuren } = this.props;
 
         // Wordt in de HTML gebruikt om de `rsvp` <input>s te nummeren.
         let day_index = -1;
@@ -143,7 +143,7 @@ class AanwezigheidsForm extends React.Component {
                                 )}
                             </div>
                         ))}
-                        {rsvpPatroon[markt.id] == undefined ? (
+                        {rsvpPattern[markt.id] == undefined ? (
                             <Alert type="error" inline={true} fullwidth={true}>
                                 <span>
                                     U heeft nog geen <strong>aanwezigheidspatroon</strong> ingevuld. Het opslaan hiervan heeft effect op uw aanwezigheid.
@@ -154,7 +154,7 @@ class AanwezigheidsForm extends React.Component {
                             <h4>Aanwezigheidspatroon</h4>
                             <input
                                 type="hidden"
-                                name={`rsvpPatroon[marktId]`}
+                                name={`rsvpPattern[marktId]`}
                                 disabled={false}
                                 defaultValue={markt.id}
                             />
@@ -171,13 +171,13 @@ class AanwezigheidsForm extends React.Component {
                                     <span className="day" key={`day-${++day_index}`}>
                                         <input
                                             type="checkbox"
-                                            id={`rsvpPatroon-${day}`}
-                                            name={`rsvpPatroon[${day}]`}
+                                            id={`rsvpPattern-${day}`}
+                                            name={`rsvpPattern[${day}]`}
                                             disabled={hasNoBranche(markt) || !markt.marktDagen.includes(WEEK_DAYS_SHORT[dayNr])}
                                             defaultValue={true}
-                                            defaultChecked={rsvpPatroon[markt.id] ? rsvpPatroon[markt.id][day] : false}
+                                            defaultChecked={rsvpPattern[markt.id] ? rsvpPattern[markt.id][day] : false}
                                         />
-                                        <label htmlFor={`rsvpPatroon-${day}`}>
+                                        <label htmlFor={`rsvpPattern-${day}`}>
                                             <strong>{WEEK_DAYS_SHORT[dayNr]}</strong>
                                         </label>
                                     </span>
