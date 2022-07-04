@@ -4,7 +4,6 @@ const {
     getBreadcrumbsOndernemer,
 } = require('../util');
 const AanwezigheidsForm = require('./components/AanwezigheidsForm.jsx');
-const AanwezigheidsPatternForm = require('./components/AanwezigheidsPatternForm.jsx');
 const Alert = require('./components/Alert.jsx');
 const Content = require('./components/Content');
 const Header = require('./components/Header');
