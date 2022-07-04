@@ -166,19 +166,19 @@ class AanwezigheidsForm extends React.Component {
                                 "thursday",
                                 "friday",
                                 "saturday",
-                            ].map( (day, j) => {
+                            ].map( (day, dayNr) => {
                                 return (
                                     <span className="day" key={++index}>
                                         <input
                                             type="checkbox"
                                             id={`rsvp_patroon-${day}`}
                                             name={`rsvp_patroon[${day}]`}
-                                            disabled={hasNoBranche(markt)}
+                                            disabled={hasNoBranche(markt) || !markt.marktDagen.includes(WEEK_DAYS_SHORT[dayNr])}
                                             defaultValue={true}
                                             defaultChecked={rsvpPatroon[markt.id] ? rsvpPatroon[markt.id][day] : false}
                                         />
                                         <label htmlFor={`rsvp_patroon-${day}`}>
-                                            <strong>{WEEK_DAYS_SHORT[j]}</strong>
+                                            <strong>{WEEK_DAYS_SHORT[dayNr]}</strong>
                                         </label>
                                     </span>
                                 )
