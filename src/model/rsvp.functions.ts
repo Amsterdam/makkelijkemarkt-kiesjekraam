@@ -78,12 +78,11 @@ export const groupAanmeldingenPerMarktPerWeek = (
 export const rsvpPatroonPerMarkt = (
     markten: MMMarkt[],
     rsvpPatronen: IRsvpPattern[]
-) => {
+) : {[key: string]: IRsvpPattern} => {
     const marktIds : number[] = markten.map(markt => +markt.id);
 
     // Filter RsvpPatterns for given markets
     const rsvpPatronenInMarkten = rsvpPatronen.filter(rsvpPatroon => marktIds.includes(+rsvpPatroon.markt));
     // Maps RsvpPattern to markt {marktId: pattern, ...}
-    const mapped : {[key: string]: IRsvpPattern}= rsvpPatronenInMarkten.reduce((prev, cur)  => ({...prev, [cur.markt]: cur}), {});
-    return mapped;
+    return rsvpPatronenInMarkten.reduce((prev, cur)  => ({...prev, [cur.markt]: cur}), {});
 }

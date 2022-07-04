@@ -38,7 +38,6 @@ import moment from 'moment-timezone';
 import {
     Roles,
 } from '../authentication';
-import { allowedNodeEnvironmentFlags } from 'process';
 
 moment.locale('nl');
 
@@ -52,7 +51,7 @@ interface RsvpPatternFormData {
     markt: string;
     monday?: boolean;
     tuesday?: boolean;
-    wenesday?: boolean;
+    wednesday?: boolean;
     thursday?: boolean;
     friday?: boolean;
     saturday?: boolean;
@@ -63,7 +62,7 @@ interface AttendanceFormData {
     erkenningsNummer: string;
     rsvp: RSVPFormData[];
     previousRsvpData: RSVPFormData[];
-    rsvp_patroon: RsvpPatternFormData;
+    rsvpPatroon: RsvpPatternFormData;
     next: string;
 }
 
@@ -195,7 +194,7 @@ export const handleAttendanceUpdate = (
     
     let rsvpPattern: IRsvpPattern = Object.assign(rsvpDefaultAttendence, {
         erkenningsNummer,
-        ...data.rsvp_patroon,
+        ...data.rsvpPatroon,
     });
 
     // Parse string values from form to booleans
