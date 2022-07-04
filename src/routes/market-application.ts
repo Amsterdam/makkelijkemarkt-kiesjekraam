@@ -192,10 +192,11 @@ export const handleAttendanceUpdate = (
         sunday: false,
     }
     
-    let rsvpPattern: IRsvpPattern = Object.assign(rsvpDefaultAttendence, {
-        erkenningsNummer,
+    let rsvpPattern: IRsvpPattern = {
+        ...rsvpDefaultAttendence,
         ...data.rsvpPatroon,
-    });
+        erkenningsNummer,
+    };
 
     // Parse string values from form to booleans
     for (const day in rsvpDefaultAttendence) {
