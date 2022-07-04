@@ -143,8 +143,15 @@ class AanwezigheidsForm extends React.Component {
                                 )}
                             </div>
                         ))}
+                        {rsvpPatroon[markt.id] == undefined ? (
+                            <Alert type="error" inline={true} fullwidth={true}>
+                                <span>
+                                    U heeft nog geen <strong>aanweziheidspatroon</strong> ingevuld. Het opslaan hiervan heeft effect op uw aanwezigheid.
+                                </span>
+                            </Alert>
+                        ) : null }
                         <div className="week" key="3">
-                            <h4>Rsvp Patroon</h4>
+                            <h4>Aanwezigheidspatroon</h4>
                             <input
                                 type="hidden"
                                 name={`rsvp_patroon[marktId]`}
@@ -166,6 +173,7 @@ class AanwezigheidsForm extends React.Component {
                                             type="checkbox"
                                             id={`rsvp_patroon-${day}`}
                                             name={`rsvp_patroon[${day}]`}
+                                            disabled={hasNoBranche(markt)}
                                             defaultValue={true}
                                             defaultChecked={rsvpPatroon[markt.id] ? rsvpPatroon[markt.id][day] : false}
                                         />

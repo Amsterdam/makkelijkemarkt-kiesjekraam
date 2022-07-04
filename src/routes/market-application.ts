@@ -160,9 +160,9 @@ export const handleAttendanceUpdate = (
     // Stringify previous data so it can be compared with new data
     const prevRsvpFormData: string[] = data.previousRsvpData.map(item => JSON.stringify(item))
     // Only update difference between old and new form data
-    const newRsvpData: RSVPFormData[] = rsvpFormData.filter(item => !prevRsvpFormData.includes(JSON.stringify(item)));
+    const differentRsvpData: RSVPFormData[] = rsvpFormData.filter(item => !prevRsvpFormData.includes(JSON.stringify(item)));
     
-    const rsvps: IRSVP[] = newRsvpData.map(rsvpData => ({
+    const rsvps: IRSVP[] = differentRsvpData.map(rsvpData => ({
         ...rsvpData,
         erkenningsNummer,
         attending: rsvpData.attending === '1',
