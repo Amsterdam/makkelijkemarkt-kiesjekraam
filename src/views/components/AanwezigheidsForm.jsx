@@ -158,6 +158,12 @@ class AanwezigheidsForm extends React.Component {
                             <h4>Aanwezigheidspatroon</h4>
                             <input
                                 type="hidden"
+                                name={`previousRsvpPattern[marktId]`}
+                                disabled={false}
+                                defaultValue={JSON.stringify(markt.id)}
+                            />
+                            <input
+                                type="hidden"
                                 name={`rsvpPattern[marktId]`}
                                 disabled={false}
                                 defaultValue={markt.id}
@@ -166,6 +172,18 @@ class AanwezigheidsForm extends React.Component {
                                 (day, dayNr) => {
                                     return (
                                         <span className="day" key={`day-${dayNr}`}>
+                                            <input
+                                                type="hidden"
+                                                name={`previousRsvpPattern[${day}]`}
+                                                disabled={
+                                                    hasNoBranche(markt) ||
+                                                    !markt.marktDagen.includes(WEEK_DAYS_SHORT[dayNr]) ||
+                                                    !rsvpPattern[markt.id][day]
+                                                }
+                                                defaultValue={JSON.stringify(
+                                                    rsvpPattern[markt.id] ? rsvpPattern[markt.id][day] : undefined,
+                                                )}
+                                            />
                                             <input
                                                 type="checkbox"
                                                 id={`rsvpPattern-${day}`}

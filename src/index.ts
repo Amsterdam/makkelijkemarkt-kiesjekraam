@@ -251,7 +251,6 @@ app.post(
     keycloak.protect(Roles.MARKTMEESTER),
     csrfProtection,
     (req: GrantedRequest, res: Response, next: NextFunction) => {
-        // const messages = getQueryErrors(req.query);
         handleAttendanceUpdate(req, res, next, Roles.MARKTMEESTER, req.params.erkenningsNummer);
     },
 );
@@ -262,7 +261,7 @@ app.get(
     csrfProtection,
     (req: GrantedRequest, res: Response, next: NextFunction) => {
         const messages = getQueryErrors(req.query);
-        attendancePage(req, res, next, Roles.MARKTONDERNEMER, getErkenningsNummer(req), req.csrfToken());
+        attendancePage(req, res, next, Roles.MARKTONDERNEMER, getErkenningsNummer(req), req.csrfToken(), messages);
     },
 );
 
@@ -271,7 +270,6 @@ app.post(
     keycloak.protect(Roles.MARKTONDERNEMER),
     csrfProtection,
     (req: GrantedRequest, res: Response, next: NextFunction) => {
-        // const messages = getQueryErrors(req.query);
         handleAttendanceUpdate(req, res, next, Roles.MARKTONDERNEMER, getErkenningsNummer(req));
     },
 );
