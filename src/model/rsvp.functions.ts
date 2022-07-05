@@ -79,7 +79,7 @@ export const rsvpPatternPerMarkt = (
     markten: MMMarkt[],
     rsvpPatronen: IRsvpPattern[]
 ) : {[key: string]: IRsvpPattern} => {
-    const marktIds : string[] = markten.map(markt => markt.id);
+    const marktIds : string[] = markten.map(markt => markt.id.toString());
 
     // Filter RsvpPatterns for given markets
     const rsvpPatronenInMarkten = rsvpPatronen.filter(rsvpPattern => marktIds.includes(rsvpPattern.markt));
