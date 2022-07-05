@@ -158,16 +158,11 @@ class AanwezigheidsForm extends React.Component {
                             <h4>Aanwezigheidspatroon</h4>
                             <input
                                 type="hidden"
-                                name={`previousRsvpPattern[marktId]`}
+                                name={`previousRsvpPattern[markt]`}
                                 disabled={false}
                                 defaultValue={JSON.stringify(markt.id)}
                             />
-                            <input
-                                type="hidden"
-                                name={`rsvpPattern[marktId]`}
-                                disabled={false}
-                                defaultValue={markt.id}
-                            />
+                            <input type="hidden" name={`rsvpPattern[markt]`} disabled={false} defaultValue={markt.id} />
                             {['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map(
                                 (day, dayNr) => {
                                     return (
