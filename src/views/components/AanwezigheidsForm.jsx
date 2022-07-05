@@ -76,11 +76,12 @@ class AanwezigheidsForm extends React.Component {
                             </Alert>
                         ) : null}
                         {aanmeldingenPerWeek.map((week, i) => (
-                            <div className="week" key="week-{i}">
+                            <div className="week" key={`week-${i}`}>
                                 <h4>{i === 0 ? 'Deze week' : 'Volgende week'}</h4>
-                                {[0, 1, 2, 3, 4, 5, 6].map(day =>
-                                    day in week ? (
-                                        <span className="day" key={`day-${++day_index}`}>
+                                {[0, 1, 2, 3, 4, 5, 6].map(day => {
+                                    day_index++;
+                                    return day in week ? (
+                                        <span className="day" key={`day-${day}`}>
                                             {/* Old values sent as well so difference can be stored */}
                                             <input
                                                 type="hidden"
@@ -128,7 +129,7 @@ class AanwezigheidsForm extends React.Component {
                                             </label>
                                         </span>
                                     ) : (
-                                        <span className="day" key={++day_index}>
+                                        <span className="day" key={`day-${day}`}>
                                             <input
                                                 disabled={true}
                                                 id={`rsvp-${day_index}`}
@@ -139,8 +140,8 @@ class AanwezigheidsForm extends React.Component {
                                                 <strong>{WEEK_DAYS_SHORT[day]}</strong>
                                             </label>
                                         </span>
-                                    ),
-                                )}
+                                    )
+                                })}
                             </div>
                         ))}
                         {rsvpPattern[markt.id] == undefined ? (
@@ -168,7 +169,7 @@ class AanwezigheidsForm extends React.Component {
                                 "saturday",
                             ].map( (day, dayNr) => {
                                 return (
-                                    <span className="day" key={`day-${++day_index}`}>
+                                    <span className="day" key={`day-${dayNr}`}>
                                         <input
                                             type="checkbox"
                                             id={`rsvpPattern-${day}`}
