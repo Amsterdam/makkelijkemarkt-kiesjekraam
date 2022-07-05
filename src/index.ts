@@ -7,10 +7,7 @@ import {
     vasteplaatshoudersPage,
     voorrangslijstPage,
 } from './routes/markt-marktmeester';
-import {
-    attendancePage,
-    handleAttendanceUpdate,
-} from './routes/market-application';
+import { attendancePage, handleAttendanceUpdate } from './routes/market-application';
 import {
     conceptIndelingPage,
     indelingErrorStacktracePage,
@@ -19,66 +16,25 @@ import {
     indelingPage,
     indelingWaitingPage,
 } from './routes/market-allocation';
-import express, {
-    NextFunction,
-    Request,
-    RequestHandler,
-    Response,
-} from 'express';
-import {
-    getMarkt,
-    getMarkten,
-} from './makkelijkemarkt-api';
-import {
-    GrantedRequest,
-    TokenContent,
-} from 'keycloak-connect';
-import {
-    internalServerErrorPage,
-    isAbsoluteUrl,
-} from './express-util';
-import {
-    keycloak,
-    Roles,
-    sessionMiddleware,
-} from './authentication';
-import {
-    keycloakHealth,
-    makkelijkeMarktHealth,
-    serverHealth,
-    serverTime,
-} from './routes/status';
-import {
-    langdurigAfgemeld,
-    marktDetail,
-} from './routes/markt';
-import {
-    marketPreferencesPage,
-    updateMarketPreferences,
-} from './routes/market-preferences';
-import {
-    plaatsvoorkeurenPage,
-    updatePlaatsvoorkeuren,
-} from './routes/market-location';
-import {
-    publicProfilePage,
-    toewijzingenAfwijzingenPage,
-} from './routes/ondernemer';
+import express, { NextFunction, Request, RequestHandler, Response } from 'express';
+import { getMarkt, getMarkten } from './makkelijkemarkt-api';
+import { GrantedRequest, TokenContent } from 'keycloak-connect';
+import { getQueryErrors, internalServerErrorPage, isAbsoluteUrl } from './express-util';
+import { keycloak, Roles, sessionMiddleware } from './authentication';
+import { keycloakHealth, makkelijkeMarktHealth, serverHealth, serverTime } from './routes/status';
+import { langdurigAfgemeld, marktDetail } from './routes/markt';
+import { marketPreferencesPage, updateMarketPreferences } from './routes/market-preferences';
+import { plaatsvoorkeurenPage, updatePlaatsvoorkeuren } from './routes/market-location';
+import { publicProfilePage, toewijzingenAfwijzingenPage } from './routes/ondernemer';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
-import {
-    dashboardPage,
-} from './routes/dashboard';
-import {
-    getKeycloakUser,
-} from './keycloak-api';
+import { dashboardPage } from './routes/dashboard';
+import { getKeycloakUser } from './keycloak-api';
 import mmApiDispatch from './routes/mmApiDispatch';
 import morgan from 'morgan';
 import path from 'path';
-import {
-    requireEnv,
-} from './util';
+import { requireEnv } from './util';
 
 const csrfProtection = csrf({ cookie: true });
 
@@ -197,7 +153,7 @@ app.get(
     keycloak.protect(Roles.MARKTMEESTER),
     (req: GrantedRequest, res: Response, next: NextFunction) => {
         getMarkt(req.params.marktId)
-            .then(mmarkt => {
+            .then((mmarkt) => {
                 res.render('MarktDetailPage', {
                     role: Roles.MARKTMEESTER,
                     user: getKeycloakUser(req),
@@ -285,7 +241,8 @@ app.get(
     keycloak.protect(Roles.MARKTMEESTER),
     csrfProtection,
     (req: GrantedRequest, res: Response, next: NextFunction) => {
-        attendancePage(req, res, next, Roles.MARKTMEESTER, req.params.erkenningsNummer, req.csrfToken());
+        const messages = getQueryErrors(req.query);
+        attendancePage(req, res, next, Roles.MARKTMEESTER, req.params.erkenningsNummer, req.csrfToken(), messages);
     },
 );
 
@@ -294,6 +251,7 @@ app.post(
     keycloak.protect(Roles.MARKTMEESTER),
     csrfProtection,
     (req: GrantedRequest, res: Response, next: NextFunction) => {
+        // const messages = getQueryErrors(req.query);
         handleAttendanceUpdate(req, res, next, Roles.MARKTMEESTER, req.params.erkenningsNummer);
     },
 );
@@ -303,6 +261,7 @@ app.get(
     keycloak.protect(Roles.MARKTONDERNEMER),
     csrfProtection,
     (req: GrantedRequest, res: Response, next: NextFunction) => {
+        const messages = getQueryErrors(req.query);
         attendancePage(req, res, next, Roles.MARKTONDERNEMER, getErkenningsNummer(req), req.csrfToken());
     },
 );
@@ -311,8 +270,10 @@ app.post(
     '/aanwezigheid/',
     keycloak.protect(Roles.MARKTONDERNEMER),
     csrfProtection,
-    (req: GrantedRequest, res: Response, next: NextFunction) =>
-        handleAttendanceUpdate(req, res, next, Roles.MARKTONDERNEMER, getErkenningsNummer(req)),
+    (req: GrantedRequest, res: Response, next: NextFunction) => {
+        // const messages = getQueryErrors(req.query);
+        handleAttendanceUpdate(req, res, next, Roles.MARKTONDERNEMER, getErkenningsNummer(req));
+    },
 );
 
 app.get(
@@ -337,10 +298,10 @@ app.post(
     keycloak.protect(Roles.MARKTONDERNEMER),
     csrfProtection,
     (req: GrantedRequest, res: Response, next: NextFunction) => {
-        if (req.body['minimum'] === undefined){
+        if (req.body['minimum'] === undefined) {
             req.body['minimum'] = parseInt(req.body['maximum']) - parseInt(req.body['extra-count']);
         }
-        return updatePlaatsvoorkeuren(req, res, next, req.params.marktId, getErkenningsNummer(req))
+        return updatePlaatsvoorkeuren(req, res, next, req.params.marktId, getErkenningsNummer(req));
     },
 );
 
