@@ -1,14 +1,6 @@
-import {
-    filterRsvpList,
-    isVast,
-} from '../domain-knowledge';
-import {
-    MMMarkt,
-    MMSollicitatie,
-} from './makkelijkemarkt.model';
-import {
-    IRSVP, IRsvpPattern,
-} from 'model/markt.model';
+import { filterRsvpList, isVast } from '../domain-knowledge';
+import { MMMarkt, MMSollicitatie } from './makkelijkemarkt.model';
+import { IRSVP, IRsvpPattern } from 'model/markt.model';
 import moment from 'moment-timezone';
 
 const { endOfWeek } = require('../util.ts');
@@ -33,10 +25,9 @@ export const groupAanmeldingenPerMarktPerWeek = (
         result[marktId] = result[marktId] ? result[marktId].concat(aanmelding) : [aanmelding];
 
         return result;
-    }, {}
-    );
+    }, {});
 
-    const aanmeldingenPerMarktPerWeek = markten.map(markt => {
+    const aanmeldingenPerMarktPerWeek = markten.map((markt) => {
         const aanmeldingen = (aanmeldingenPerMarkt[markt.id] || []).filter(
             ({ marktId }) => Number(marktId) === Number(markt.id),
         );
@@ -77,12 +68,12 @@ export const groupAanmeldingenPerMarktPerWeek = (
 
 export const rsvpPatternPerMarkt = (
     markten: MMMarkt[],
-    rsvpPatronen: IRsvpPattern[]
-) : {[key: string]: IRsvpPattern} => {
-    const marktIds : string[] = markten.map(markt => markt.id.toString());
+    rsvpPatronen: IRsvpPattern[],
+): { [key: string]: IRsvpPattern } => {
+    const marktIds: string[] = markten.map((markt) => markt.id.toString());
 
     // Filter RsvpPatterns for given markets
-    const rsvpPatronenInMarkten = rsvpPatronen.filter(rsvpPattern => marktIds.includes(rsvpPattern.markt));
+    const rsvpPatronenInMarkten = rsvpPatronen.filter((rsvpPattern) => marktIds.includes(rsvpPattern.markt));
     // Maps RsvpPattern to markt {marktId: pattern, ...}
-    return rsvpPatronenInMarkten.reduce((prev, cur)  => ({...prev, [cur.markt]: cur}), {});
-}
+    return rsvpPatronenInMarkten.reduce((prev, cur) => ({ ...prev, [cur.markt]: cur }), {});
+};
