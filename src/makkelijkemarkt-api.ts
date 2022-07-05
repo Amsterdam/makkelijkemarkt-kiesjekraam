@@ -187,7 +187,6 @@ export const updateRsvp = (
 
 export const clearFutureRsvps = async (marktId: string, erkenningsNummer: string): Promise<number> => {
     const response = await apiBase(`rsvp/markt/${marktId}/koopman/${erkenningsNummer}`, 'delete');
-    console.log('CLEAR+=====', response);
     return response.status;
 };
 

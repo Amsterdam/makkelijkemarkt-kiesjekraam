@@ -234,7 +234,6 @@ export const handleAttendanceUpdate = (
             let queries = [];
 
             if (patternHasChanges) {
-                console.log('has changes', rsvpPattern.markt);
                 queries = [clearFutureRsvps(rsvpPattern.markt, erkenningsNummer)];
             } else {
                 queries = Object.keys(rsvpsByDate).reduce((result, marktDate) => {
