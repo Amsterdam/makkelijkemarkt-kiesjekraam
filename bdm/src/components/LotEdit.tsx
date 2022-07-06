@@ -1,5 +1,5 @@
 import React, { Component, createRef, CSSProperties, RefObject } from 'react'
-import { Col, Input, Row, Select, Checkbox, Radio, Button } from 'antd'
+import { Col, Input, InputRef, Row, Select, Checkbox, Radio, Button } from 'antd'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { RadioChangeEvent } from 'antd/lib/radio'
@@ -18,7 +18,7 @@ interface LotEditProps {
 
 export default class LotEdit extends Component<LotEditProps> {
   static contextType = MarktGenericContext
-  NameRef: RefObject<Input>
+  NameRef: RefObject<InputRef>
   readonly state: { lot?: Lot; currentPosition?: [number, number, number] } = {}
 
   constructor(props: any) {
