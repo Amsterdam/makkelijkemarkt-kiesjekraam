@@ -173,7 +173,7 @@ class AanwezigheidsForm extends React.Component {
                                                 disabled={
                                                     hasNoBranche(markt) ||
                                                     !markt.marktDagen.includes(WEEK_DAYS_SHORT[dayNr]) ||
-                                                    !rsvpPattern[markt.id][day]
+                                                    !rsvpPattern[markt.id]
                                                 }
                                                 defaultValue={JSON.stringify(
                                                     rsvpPattern[markt.id] ? rsvpPattern[markt.id][day] : undefined,
