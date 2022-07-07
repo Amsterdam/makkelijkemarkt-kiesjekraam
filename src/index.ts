@@ -153,11 +153,11 @@ app.get(
     keycloak.protect(Roles.MARKTMEESTER),
     (req: GrantedRequest, res: Response, next: NextFunction) => {
         getMarkt(req.params.marktId)
-            .then((mmarkt) => {
+            .then((markt) => {
                 res.render('MarktDetailPage', {
                     role: Roles.MARKTMEESTER,
                     user: getKeycloakUser(req),
-                    markt: mmarkt,
+                    markt: markt,
                 });
             })
             .catch(next);

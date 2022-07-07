@@ -1,4 +1,5 @@
 import { toDate, WEEK_DAYS_SHORT } from '../../util.ts';
+import { isVast } from '../../domain-knowledge';
 import Alert from './Alert';
 import { EMPTY_BRANCH } from '../../makkelijkemarkt-api';
 import Form from './Form';
@@ -50,6 +51,13 @@ class AanwezigheidsForm extends React.Component {
         const hasNoBranche = (markt) => {
             const voorkeur = getVoorkeurForMarkt(markt.id);
             return !voorkeur || !voorkeur.branches || voorkeur.branches[0] === EMPTY_BRANCH;
+        };
+
+        const solStatus = (markt, sollicitaties) => {
+            const solMatchedByMarkt = sollicitaties.filter((solicitatie) => {
+                return solicitatie.markt.id === markt.id;
+            })[0];
+            return solMatchedByMarkt.status;
         };
 
         return (
@@ -173,7 +181,7 @@ class AanwezigheidsForm extends React.Component {
                                                 disabled={
                                                     hasNoBranche(markt) ||
                                                     !markt.marktDagen.includes(WEEK_DAYS_SHORT[dayNr]) ||
-                                                    !rsvpPattern[markt.id]
+                                                    (rsvpPattern[markt.id] && !rsvpPattern[markt.id][day])
                                                 }
                                                 defaultValue={JSON.stringify(
                                                     rsvpPattern[markt.id] ? rsvpPattern[markt.id][day] : undefined,
@@ -189,7 +197,9 @@ class AanwezigheidsForm extends React.Component {
                                                 }
                                                 defaultValue={true}
                                                 defaultChecked={
-                                                    rsvpPattern[markt.id] ? rsvpPattern[markt.id][day] : false
+                                                    rsvpPattern[markt.id]
+                                                        ? rsvpPattern[markt.id][day]
+                                                        : isVast(solStatus(markt, ondernemer.sollicitaties))
                                                 }
                                             />
                                             <label htmlFor={`rsvpPattern-${day}`}>
