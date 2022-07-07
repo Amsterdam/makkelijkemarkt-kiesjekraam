@@ -69,6 +69,18 @@ export interface IRSVP {
     attending: boolean;
 }
 
+export interface IRsvpPattern {
+    markt: string;
+    erkenningsNummer: ErkenningsNummer;
+    monday: boolean;
+    tuesday: boolean;
+    wednesday: boolean;
+    thursday: boolean;
+    friday: boolean;
+    saturday: boolean;
+    sunday: boolean;
+}
+
 export interface IMarktondernemerVoorkeur {
     erkenningsNummer: string;
     marktId?: string;

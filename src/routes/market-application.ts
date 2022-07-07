@@ -1,40 +1,23 @@
 import {
     getAanmeldingenByOndernemer,
+    getRsvpPatternByOndernemer,
     getMarktenForOndernemer,
     getOndernemer,
     getVoorkeurenByOndernemer,
     updateRsvp,
+    clearFutureRsvps,
+    updateRsvpPattern,
 } from '../makkelijkemarkt-api';
-import {
-    HTTP_CREATED_SUCCESS,
-    internalServerErrorPage,
-} from '../express-util';
-import {
-    NextFunction,
-    Response,
-} from 'express';
-import {
-    getKeycloakUser,
-} from '../keycloak-api';
-import {
-    getMarktThresholdDate,
-} from '../domain-knowledge';
-import {
-    getMededelingen,
-} from '../pakjekraam-api';
-import {
-    GrantedRequest,
-} from 'keycloak-connect';
-import {
-    groupAanmeldingenPerMarktPerWeek,
-} from '../model/rsvp.functions';
-import {
-    IRSVP,
-} from '../model/markt.model';
+import { HTTP_CREATED_SUCCESS, internalServerErrorPage } from '../express-util';
+import { NextFunction, Response } from 'express';
+import { getKeycloakUser } from '../keycloak-api';
+import { getMarktThresholdDate } from '../domain-knowledge';
+import { getMededelingen } from '../pakjekraam-api';
+import { GrantedRequest } from 'keycloak-connect';
+import { groupAanmeldingenPerMarktPerWeek, rsvpPatternPerMarkt } from '../model/rsvp.functions';
+import { IRSVP, IRsvpPattern } from '../model/markt.model';
 import moment from 'moment-timezone';
-import {
-    Roles,
-} from '../authentication';
+import { Roles } from '../authentication';
 
 moment.locale('nl');
 
@@ -44,9 +27,23 @@ interface RSVPFormData {
     attending: string;
 }
 
+interface RsvpPatternFormData {
+    markt: string;
+    monday?: boolean;
+    tuesday?: boolean;
+    wednesday?: boolean;
+    thursday?: boolean;
+    friday?: boolean;
+    saturday?: boolean;
+    sunday?: boolean;
+}
+
 interface AttendanceFormData {
     erkenningsNummer: string;
     rsvp: RSVPFormData[];
+    previousRsvpData: RSVPFormData[];
+    rsvpPattern: RsvpPatternFormData;
+    previousRsvpPattern: RsvpPatternFormData;
     next: string;
 }
 
@@ -54,8 +51,8 @@ interface RSVPsGrouped {
     [marktDate: string]: IRSVP[];
 }
 
-const isEqualAanmelding = aanmelding => {
-    return a => Number(a.marktId) === Number(aanmelding.marktId) && a.marktDate === aanmelding.marktDate;
+const isEqualAanmelding = (aanmelding) => {
+    return (a) => Number(a.marktId) === Number(aanmelding.marktId) && a.marktDate === aanmelding.marktDate;
 };
 
 export const attendancePage = (
@@ -73,10 +70,18 @@ export const attendancePage = (
     const includeInactive = role === Roles.MARKTMEESTER;
     const marktenPromise = getMarktenForOndernemer(ondernemerPromise, includeInactive);
     const aanmeldingenPromise = getAanmeldingenByOndernemer(erkenningsNummer);
+    const rsvpPatternPromise = getRsvpPatternByOndernemer(erkenningsNummer);
     const voorkeurenPromise = getVoorkeurenByOndernemer(erkenningsNummer);
 
-    return Promise.all([ondernemerPromise, aanmeldingenPromise, marktenPromise, getMededelingen(), voorkeurenPromise])
-        .then(([ondernemer, aanmeldingen, markten, mededelingen, voorkeuren]) => {
+    return Promise.all([
+        ondernemerPromise,
+        aanmeldingenPromise,
+        rsvpPatternPromise,
+        marktenPromise,
+        getMededelingen(),
+        voorkeurenPromise,
+    ])
+        .then(([ondernemer, aanmeldingen, rsvpPattern, markten, mededelingen, voorkeuren]) => {
             const sollicitaties = ondernemer.sollicitaties.reduce((result, sollicitatie) => {
                 result[sollicitatie.markt.id] = sollicitatie;
                 return result;
@@ -98,13 +103,15 @@ export const attendancePage = (
                 ondernemer,
                 sollicitaties,
                 groupAanmeldingenPerMarktPerWeek(markten, sollicitaties, aanmeldingen, thresholdDate),
+                rsvpPatternPerMarkt(markten, rsvpPattern),
                 mededelingen,
                 voorkeuren,
             ];
         })
-        .then(([ondernemer, sollicitaties, aanmeldingenPerMarktPerWeek, mededelingen, voorkeuren]) => {
+        .then(([ondernemer, sollicitaties, aanmeldingenPerMarktPerWeek, rsvpPattern, mededelingen, voorkeuren]) => {
             res.render('AanwezigheidPage', {
                 aanmeldingenPerMarktPerWeek,
+                rsvpPattern,
                 csrfToken,
                 mededelingen,
                 voorkeuren,
@@ -115,7 +122,7 @@ export const attendancePage = (
                 user: getKeycloakUser(req),
             });
         })
-        .catch(err => internalServerErrorPage(res)(err));
+        .catch((err) => internalServerErrorPage(res)(err));
 };
 
 export const handleAttendanceUpdate = (
@@ -136,7 +143,15 @@ export const handleAttendanceUpdate = (
     // doorgegeven aan de `attendancePage` call hieronder indien er een error is.
     const rsvpFormData: RSVPFormData[] =
         data.rsvp && !Array.isArray(data.rsvp) ? Object.values(data.rsvp) : data.rsvp || [];
-    const rsvps: IRSVP[] = rsvpFormData.map(rsvpData => ({
+
+    // Stringify previous data so it can be compared with new data
+    const prevRsvpFormData: string[] = data.previousRsvpData.map((item) => JSON.stringify(item));
+    // Only update difference between old and new form data
+    const differentRsvpData: RSVPFormData[] = rsvpFormData.filter(
+        (item) => !prevRsvpFormData.includes(JSON.stringify(item)),
+    );
+
+    const rsvps: IRSVP[] = differentRsvpData.map((rsvpData) => ({
         ...rsvpData,
         erkenningsNummer,
         attending: rsvpData.attending === '1',
@@ -157,6 +172,36 @@ export const handleAttendanceUpdate = (
         return result;
     }, {});
 
+    // Get intersection of prev and new pattern
+    const patternIntersectionSize = Object.keys(data.previousRsvpPattern).filter(
+        {}.hasOwnProperty.bind(data.rsvpPattern),
+    ).length;
+
+    const patternHasChanges =
+        Object.keys(data.previousRsvpPattern).length !== patternIntersectionSize ||
+        Object.keys(data.rsvpPattern).length !== patternIntersectionSize;
+
+    const rsvpDefaultAttendence = {
+        monday: false,
+        tuesday: false,
+        wednesday: false,
+        thursday: false,
+        friday: false,
+        saturday: false,
+        sunday: false,
+    };
+
+    let rsvpPattern: IRsvpPattern = {
+        ...rsvpDefaultAttendence,
+        ...data.rsvpPattern,
+        erkenningsNummer,
+    };
+
+    // Parse string values from form to booleans
+    for (const day in rsvpDefaultAttendence) {
+        rsvpPattern[day] = JSON.parse(rsvpPattern[day]);
+    }
+
     // Controleer per dag of het maximum wordt overschreden. Zo ja, geef dan een
     // foutmelding weer.
     getOndernemer(erkenningsNummer)
@@ -165,14 +210,14 @@ export const handleAttendanceUpdate = (
             const errorDays = [];
 
             for (const marktDate in rsvpsByDate) {
-                const attending = rsvpsByDate[marktDate].filter(rsvp => rsvp.attending);
+                const attending = rsvpsByDate[marktDate].filter((rsvp) => rsvp.attending);
                 if (attending.length > dailyMax) {
                     errorDays.push(marktDate);
                 }
             }
 
             if (errorDays.length) {
-                const errorDaysPretty = errorDays.map(marktDate => moment(marktDate).format('dddd D MMM'));
+                const errorDaysPretty = errorDays.map((marktDate) => moment(marktDate).format('dddd D MMM'));
                 const errorMessage = {
                     code: 'error',
                     title: 'Onvoldoende vervangers',
@@ -186,18 +231,26 @@ export const handleAttendanceUpdate = (
                 return;
             }
 
-            const queries = Object.keys(rsvpsByDate).reduce((result, marktDate) => {
-                return result.concat(
-                    rsvpsByDate[marktDate].map(rsvp => {
-                        const { marktId, marktDate, attending } = rsvp;
-                        return updateRsvp(marktId, marktDate, erkenningsNummer, attending);
-                    }),
-                );
-            }, []);
+            let queries = [];
 
-            Promise.all(queries).then(() => res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next));
+            if (patternHasChanges) {
+                queries = [clearFutureRsvps(rsvpPattern.markt, erkenningsNummer)];
+            } else {
+                queries = Object.keys(rsvpsByDate).reduce((result, marktDate) => {
+                    return result.concat(
+                        rsvpsByDate[marktDate].map((rsvp) => {
+                            const { marktId, marktDate, attending } = rsvp;
+                            return updateRsvp(marktId, marktDate, erkenningsNummer, attending);
+                        }),
+                    );
+                }, []);
+            }
+
+            const pattern = updateRsvpPattern(rsvpPattern);
+
+            Promise.all([queries, pattern]).then(() => res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next));
         })
-        .catch(error => {
+        .catch((error) => {
             internalServerErrorPage(res)(String(error));
         });
 };

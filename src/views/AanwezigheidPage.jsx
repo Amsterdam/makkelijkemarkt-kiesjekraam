@@ -27,6 +27,7 @@ class AanwezigheidPage extends React.Component {
     render() {
         const {
             aanmeldingenPerMarktPerWeek,
+            rsvpPattern,
             csrfToken,
             date,
             voorkeuren,
@@ -68,6 +69,7 @@ class AanwezigheidPage extends React.Component {
                         ondernemer={ondernemer}
                         sollicitaties={sollicitaties}
                         aanmeldingenPerMarktPerWeek={aanmeldingenPerMarktPerWeek}
+                        rsvpPattern={rsvpPattern}
                         query={query}
                         role={role}
                         voorkeuren={voorkeuren}
