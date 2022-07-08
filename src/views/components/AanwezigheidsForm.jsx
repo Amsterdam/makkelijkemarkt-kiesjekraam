@@ -32,7 +32,7 @@ class AanwezigheidsForm extends React.Component {
         } = this.props;
 
         // Wordt in de HTML gebruikt om de `rsvp` <input>s te nummeren.
-        let day_index = -1;
+        let dayIndex = -1;
 
         const getVoorkeurForMarkt = (marktId) => {
             return voorkeuren.find((voorkeur) => {
@@ -84,28 +84,28 @@ class AanwezigheidsForm extends React.Component {
                             </Alert>
                         ) : null}
                         {aanmeldingenPerWeek.map((week, i) => (
-                            <div className="week" key={`week-${i}`}>
+                            <div className="week" key={`markt-${markt.id}-week-${i}`}>
                                 <h4>{i === 0 ? 'Deze week' : 'Volgende week'}</h4>
                                 {[0, 1, 2, 3, 4, 5, 6].map((day) => {
-                                    day_index++;
+                                    dayIndex++;
                                     return day in week ? (
-                                        <span className="day" key={`day-${day}`}>
+                                        <span className="day" key={`markt-${markt.id}-week-${week}-day-${day}`}>
                                             {/* Old values sent as well so difference can be stored */}
                                             <input
                                                 type="hidden"
-                                                name={`previousRsvpData[${day_index}][marktId]`}
+                                                name={`previousRsvpData[${dayIndex}][marktId]`}
                                                 disabled={week[day].isInThePast}
                                                 defaultValue={JSON.stringify(markt.id)}
                                             />
                                             <input
                                                 type="hidden"
-                                                name={`previousRsvpData[${day_index}][marktDate]`}
+                                                name={`previousRsvpData[${dayIndex}][marktDate]`}
                                                 disabled={week[day].isInThePast}
                                                 defaultValue={toDate(week[day].date)}
                                             />
                                             <input
                                                 type="hidden"
-                                                name={`previousRsvpData[${day_index}][attending]`}
+                                                name={`previousRsvpData[${dayIndex}][attending]`}
                                                 disabled={
                                                     week[day].isInThePast || hasNoBranche(markt) || !week[day].attending
                                                 }
@@ -115,38 +115,38 @@ class AanwezigheidsForm extends React.Component {
 
                                             <input
                                                 type="hidden"
-                                                name={`rsvp[${day_index}][marktId]`}
+                                                name={`rsvp[${dayIndex}][marktId]`}
                                                 disabled={week[day].isInThePast}
                                                 defaultValue={markt.id}
                                             />
                                             <input
                                                 type="hidden"
-                                                name={`rsvp[${day_index}][marktDate]`}
+                                                name={`rsvp[${dayIndex}][marktDate]`}
                                                 disabled={week[day].isInThePast}
                                                 defaultValue={toDate(week[day].date)}
                                             />
 
                                             <input
                                                 type="checkbox"
-                                                id={`rsvp-${day_index}`}
-                                                name={`rsvp[${day_index}][attending]`}
+                                                id={`rsvp-${dayIndex}`}
+                                                name={`rsvp[${dayIndex}][attending]`}
                                                 disabled={week[day].isInThePast || hasNoBranche(markt)}
                                                 defaultValue="1"
                                                 defaultChecked={week[day].attending}
                                             />
-                                            <label htmlFor={`rsvp-${day_index}`}>
+                                            <label htmlFor={`rsvp-${dayIndex}`}>
                                                 <strong>{WEEK_DAYS_SHORT[day]}</strong>
                                             </label>
                                         </span>
                                     ) : (
-                                        <span className="day" key={`day-${day}`}>
+                                        <span className="day" key={`markt-${markt.id}-week-${week}-day-${day}`}>
                                             <input
                                                 disabled={true}
-                                                id={`rsvp-${day_index}`}
+                                                id={`rsvp-${dayIndex}`}
                                                 type="checkbox"
                                                 defaultValue="0"
                                             />
-                                            <label htmlFor={`rsvp-${day_index}`}>
+                                            <label htmlFor={`rsvp-${dayIndex}`}>
                                                 <strong>{WEEK_DAYS_SHORT[day]}</strong>
                                             </label>
                                         </span>
@@ -162,22 +162,28 @@ class AanwezigheidsForm extends React.Component {
                                 </span>
                             </Alert>
                         ) : null}
-                        <div className="week" key="3">
+                        <div className="week" key={`rsvpPattern-markt-${markt.id}`}>
                             <h4>Aanwezigheidspatroon</h4>
                             <input
                                 type="hidden"
-                                name={`previousRsvpPattern[markt]`}
+                                name={`previousRsvpPattern[${markt.id}][markt]`}
                                 disabled={false}
                                 defaultValue={JSON.stringify(markt.id)}
                             />
-                            <input type="hidden" name={`rsvpPattern[markt]`} disabled={false} defaultValue={markt.id} />
+                            <input
+                                type="hidden"
+                                class=""
+                                name={`rsvpPattern[${markt.id}][markt]`}
+                                disabled={false}
+                                defaultValue={markt.id}
+                            />
                             {['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map(
                                 (day, dayNr) => {
                                     return (
                                         <span className="day" key={`day-${dayNr}`}>
                                             <input
                                                 type="hidden"
-                                                name={`previousRsvpPattern[${day}]`}
+                                                name={`previousRsvpPattern[${markt.id}][${day}]`}
                                                 disabled={
                                                     hasNoBranche(markt) ||
                                                     !markt.marktDagen.includes(WEEK_DAYS_SHORT[dayNr]) ||
@@ -190,7 +196,7 @@ class AanwezigheidsForm extends React.Component {
                                             <input
                                                 type="checkbox"
                                                 id={`rsvpPattern-${day}`}
-                                                name={`rsvpPattern[${day}]`}
+                                                name={`rsvpPattern[${markt.id}][${day}]`}
                                                 disabled={
                                                     hasNoBranche(markt) ||
                                                     !markt.marktDagen.includes(WEEK_DAYS_SHORT[dayNr])

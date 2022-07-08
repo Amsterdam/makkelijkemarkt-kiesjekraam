@@ -42,8 +42,8 @@ interface AttendanceFormData {
     erkenningsNummer: string;
     rsvp: RSVPFormData[];
     previousRsvpData: RSVPFormData[];
-    rsvpPattern: RsvpPatternFormData;
-    previousRsvpPattern: RsvpPatternFormData;
+    rsvpPattern: RsvpPatternFormData[];
+    previousRsvpPattern: RsvpPatternFormData[];
     next: string;
 }
 
@@ -172,14 +172,10 @@ export const handleAttendanceUpdate = (
         return result;
     }, {});
 
-    // Get intersection of prev and new pattern
-    const patternIntersectionSize = Object.keys(data.previousRsvpPattern).filter(
-        {}.hasOwnProperty.bind(data.rsvpPattern),
-    ).length;
+    const rsvpPatternFormData: RsvpPatternFormData[] =
+        data.rsvpPattern && !Array.isArray(data.rsvpPattern) ? Object.values(data.rsvpPattern) : data.rsvpPattern || [];
 
-    const patternHasChanges =
-        Object.keys(data.previousRsvpPattern).length !== patternIntersectionSize ||
-        Object.keys(data.rsvpPattern).length !== patternIntersectionSize;
+    const patternHasChanges = JSON.stringify(data.previousRsvpPattern) !== JSON.stringify(data.rsvpPattern);
 
     const rsvpDefaultAttendence = {
         monday: false,
@@ -191,15 +187,19 @@ export const handleAttendanceUpdate = (
         sunday: false,
     };
 
-    let rsvpPattern: IRsvpPattern = {
-        ...rsvpDefaultAttendence,
-        ...data.rsvpPattern,
-        erkenningsNummer,
-    };
+    let rsvpPatterns: IRsvpPattern[] = rsvpPatternFormData.map((pattern) => {
+        return {
+            ...rsvpDefaultAttendence,
+            ...pattern,
+            erkenningsNummer,
+        };
+    });
 
     // Parse string values from form to booleans
     for (const day in rsvpDefaultAttendence) {
-        rsvpPattern[day] = JSON.parse(rsvpPattern[day]);
+        for (const i in rsvpPatterns) {
+            rsvpPatterns[i][day] = JSON.parse(rsvpPatterns[i][day]);
+        }
     }
 
     // Controleer per dag of het maximum wordt overschreden. Zo ja, geef dan een
@@ -234,21 +234,23 @@ export const handleAttendanceUpdate = (
             let queries = [];
 
             if (patternHasChanges) {
-                queries = [clearFutureRsvps(rsvpPattern.markt, erkenningsNummer)];
+                queries.concat(rsvpPatterns.map((pattern) => clearFutureRsvps(pattern.markt, erkenningsNummer)));
             } else {
-                queries = Object.keys(rsvpsByDate).reduce((result, marktDate) => {
-                    return result.concat(
-                        rsvpsByDate[marktDate].map((rsvp) => {
-                            const { marktId, marktDate, attending } = rsvp;
-                            return updateRsvp(marktId, marktDate, erkenningsNummer, attending);
-                        }),
-                    );
-                }, []);
+                queries.concat(
+                    Object.keys(rsvpsByDate).reduce((result, marktDate) => {
+                        return result.concat(
+                            rsvpsByDate[marktDate].map((rsvp) => {
+                                const { marktId, marktDate, attending } = rsvp;
+                                return updateRsvp(marktId, marktDate, erkenningsNummer, attending);
+                            }),
+                        );
+                    }, []),
+                );
             }
 
-            const pattern = updateRsvpPattern(rsvpPattern);
+            queries.concat(rsvpPatterns.map((pattern) => updateRsvpPattern(pattern)));
 
-            Promise.all([queries, pattern]).then(() => res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next));
+            Promise.all(queries).then(() => res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next));
         })
         .catch((error) => {
             internalServerErrorPage(res)(String(error));
