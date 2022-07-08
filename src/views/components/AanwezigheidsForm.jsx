@@ -195,7 +195,7 @@ class AanwezigheidsForm extends React.Component {
                                             />
                                             <input
                                                 type="checkbox"
-                                                id={`rsvpPattern-${day}`}
+                                                id={`rsvpPattern-${markt.id}-${day}`}
                                                 name={`rsvpPattern[${markt.id}][${day}]`}
                                                 disabled={
                                                     hasNoBranche(markt) ||
@@ -205,10 +205,11 @@ class AanwezigheidsForm extends React.Component {
                                                 defaultChecked={
                                                     rsvpPattern[markt.id]
                                                         ? rsvpPattern[markt.id][day]
-                                                        : isVast(solStatus(markt, ondernemer.sollicitaties))
+                                                        : isVast(solStatus(markt, ondernemer.sollicitaties)) &&
+                                                          markt.marktDagen.includes(WEEK_DAYS_SHORT[dayNr])
                                                 }
                                             />
-                                            <label htmlFor={`rsvpPattern-${day}`}>
+                                            <label htmlFor={`rsvpPattern-${markt.id}-${day}`}>
                                                 <strong>{WEEK_DAYS_SHORT[dayNr]}</strong>
                                             </label>
                                         </span>
