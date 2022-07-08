@@ -157,8 +157,8 @@ class AanwezigheidsForm extends React.Component {
                         {rsvpPattern[markt.id] == undefined ? (
                             <Alert type="error" inline={true} fullwidth={true}>
                                 <span>
-                                    U heeft nog geen <strong>aanwezigheidspatroon</strong> ingevuld. Het opslaan hiervan
-                                    heeft effect op uw aanwezigheid.
+                                    U heeft nog geen <strong>aanwezigheidspatroon</strong> ingevuld. De eerste keer dat
+                                    u opslaat zal alleen het aanwezigheidspatroon worden opgeslagen.
                                 </span>
                             </Alert>
                         ) : null}
