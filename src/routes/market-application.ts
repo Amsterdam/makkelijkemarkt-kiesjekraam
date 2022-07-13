@@ -18,6 +18,7 @@ import { groupAanmeldingenPerMarktPerWeek, rsvpPatternPerMarkt } from '../model/
 import { IRSVP, IRsvpPattern } from '../model/markt.model';
 import moment from 'moment-timezone';
 import { Roles } from '../authentication';
+import marktConfigModel from 'model/markt-config.model';
 
 moment.locale('nl');
 
@@ -175,7 +176,12 @@ export const handleAttendanceUpdate = (
     const rsvpPatternFormData: RsvpPatternFormData[] =
         data.rsvpPattern && !Array.isArray(data.rsvpPattern) ? Object.values(data.rsvpPattern) : data.rsvpPattern || [];
 
-    const patternHasChanges = JSON.stringify(data.previousRsvpPattern) !== JSON.stringify(data.rsvpPattern);
+    // check for each markt if there are changes in pattern.
+    let patternHasChangesPerMarkt = {};
+    for (const [i, pattern] of Object.entries(data.rsvpPattern)) {
+        patternHasChangesPerMarkt[pattern.markt] =
+            JSON.stringify(pattern) !== JSON.stringify(data.previousRsvpPattern[i]);
+    }
 
     const rsvpDefaultAttendence = {
         monday: false,
@@ -233,9 +239,15 @@ export const handleAttendanceUpdate = (
 
             let queries = [];
 
-            if (patternHasChanges) {
-                queries.concat(rsvpPatterns.map((pattern) => clearFutureRsvps(pattern.markt, erkenningsNummer)));
-            } else {
+            let clearedRsvps = false;
+            for (const [markt, hasChanges] of Object.entries(patternHasChangesPerMarkt)) {
+                if (hasChanges) {
+                    queries.concat(clearFutureRsvps(markt, erkenningsNummer));
+                    clearedRsvps = true;
+                }
+            }
+
+            if (!clearedRsvps) {
                 queries.concat(
                     Object.keys(rsvpsByDate).reduce((result, marktDate) => {
                         return result.concat(
