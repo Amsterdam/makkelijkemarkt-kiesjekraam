@@ -18,6 +18,7 @@ import { groupAanmeldingenPerMarktPerWeek, rsvpPatternPerMarkt } from '../model/
 import { IRSVP, IRsvpPattern } from '../model/markt.model';
 import moment from 'moment-timezone';
 import { Roles } from '../authentication';
+import marktConfigModel from 'model/markt-config.model';
 
 moment.locale('nl');
 
@@ -42,8 +43,8 @@ interface AttendanceFormData {
     erkenningsNummer: string;
     rsvp: RSVPFormData[];
     previousRsvpData: RSVPFormData[];
-    rsvpPattern: RsvpPatternFormData;
-    previousRsvpPattern: RsvpPatternFormData;
+    rsvpPattern: RsvpPatternFormData[];
+    previousRsvpPattern: RsvpPatternFormData[];
     next: string;
 }
 
@@ -172,14 +173,15 @@ export const handleAttendanceUpdate = (
         return result;
     }, {});
 
-    // Get intersection of prev and new pattern
-    const patternIntersectionSize = Object.keys(data.previousRsvpPattern).filter(
-        {}.hasOwnProperty.bind(data.rsvpPattern),
-    ).length;
+    const rsvpPatternFormData: RsvpPatternFormData[] =
+        data.rsvpPattern && !Array.isArray(data.rsvpPattern) ? Object.values(data.rsvpPattern) : data.rsvpPattern || [];
 
-    const patternHasChanges =
-        Object.keys(data.previousRsvpPattern).length !== patternIntersectionSize ||
-        Object.keys(data.rsvpPattern).length !== patternIntersectionSize;
+    // check for each markt if there are changes in pattern.
+    let patternHasChangesPerMarkt = {};
+    for (const [i, pattern] of Object.entries(data.rsvpPattern)) {
+        patternHasChangesPerMarkt[pattern.markt] =
+            JSON.stringify(pattern) !== JSON.stringify(data.previousRsvpPattern[i]);
+    }
 
     const rsvpDefaultAttendence = {
         monday: false,
@@ -191,15 +193,19 @@ export const handleAttendanceUpdate = (
         sunday: false,
     };
 
-    let rsvpPattern: IRsvpPattern = {
-        ...rsvpDefaultAttendence,
-        ...data.rsvpPattern,
-        erkenningsNummer,
-    };
+    let rsvpPatterns: IRsvpPattern[] = rsvpPatternFormData.map((pattern) => {
+        return {
+            ...rsvpDefaultAttendence,
+            ...pattern,
+            erkenningsNummer,
+        };
+    });
 
     // Parse string values from form to booleans
     for (const day in rsvpDefaultAttendence) {
-        rsvpPattern[day] = JSON.parse(rsvpPattern[day]);
+        for (const i in rsvpPatterns) {
+            rsvpPatterns[i][day] = JSON.parse(rsvpPatterns[i][day]);
+        }
     }
 
     // Controleer per dag of het maximum wordt overschreden. Zo ja, geef dan een
@@ -233,22 +239,30 @@ export const handleAttendanceUpdate = (
 
             let queries = [];
 
-            if (patternHasChanges) {
-                queries = [clearFutureRsvps(rsvpPattern.markt, erkenningsNummer)];
-            } else {
-                queries = Object.keys(rsvpsByDate).reduce((result, marktDate) => {
-                    return result.concat(
-                        rsvpsByDate[marktDate].map((rsvp) => {
-                            const { marktId, marktDate, attending } = rsvp;
-                            return updateRsvp(marktId, marktDate, erkenningsNummer, attending);
-                        }),
-                    );
-                }, []);
+            let clearedRsvps = false;
+            for (const [markt, hasChanges] of Object.entries(patternHasChangesPerMarkt)) {
+                if (hasChanges) {
+                    queries.concat(clearFutureRsvps(markt, erkenningsNummer));
+                    clearedRsvps = true;
+                }
             }
 
-            const pattern = updateRsvpPattern(rsvpPattern);
+            if (!clearedRsvps) {
+                queries.concat(
+                    Object.keys(rsvpsByDate).reduce((result, marktDate) => {
+                        return result.concat(
+                            rsvpsByDate[marktDate].map((rsvp) => {
+                                const { marktId, marktDate, attending } = rsvp;
+                                return updateRsvp(marktId, marktDate, erkenningsNummer, attending);
+                            }),
+                        );
+                    }, []),
+                );
+            }
 
-            Promise.all([queries, pattern]).then(() => res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next));
+            queries.concat(rsvpPatterns.map((pattern) => updateRsvpPattern(pattern)));
+
+            Promise.all(queries).then(() => res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next));
         })
         .catch((error) => {
             internalServerErrorPage(res)(String(error));
