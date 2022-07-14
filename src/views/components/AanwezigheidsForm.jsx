@@ -154,14 +154,15 @@ class AanwezigheidsForm extends React.Component {
                                 })}
                             </div>
                         ))}
-                        {rsvpPattern[markt.id] == undefined ? (
+                        { process.env.RSVP_PATTERN_FEATURE_TOGGLE && rsvpPattern[markt.id] == undefined ? (
                             <Alert type="error" inline={true} fullwidth={true}>
                                 <span>
                                     U heeft nog geen <strong>aanwezigheidspatroon</strong> ingevuld. De eerste keer dat
                                     u opslaat zal alleen het aanwezigheidspatroon worden opgeslagen.
                                 </span>
                             </Alert>
-                        ) : null}
+                        ) : null }
+                        { process.env.RSVP_PATTERN_FEATURE_TOGGLE ? (
                         <div className="week" key={`rsvpPattern-markt-${markt.id}`}>
                             <h4>Aanwezigheidspatroon</h4>
                             <input
@@ -217,6 +218,7 @@ class AanwezigheidsForm extends React.Component {
                                 },
                             )}
                         </div>
+                        ) : null }
                     </div>
                 ))}
 
