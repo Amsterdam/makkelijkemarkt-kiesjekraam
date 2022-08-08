@@ -4,6 +4,7 @@ import {
     getOndernemer,
     getVoorkeurenByOndernemer,
     updateRsvp,
+    getAllAuditLogs,
 } from '../makkelijkemarkt-api';
 import {
     HTTP_CREATED_SUCCESS,
@@ -200,4 +201,31 @@ export const handleAttendanceUpdate = (
         .catch(error => {
             internalServerErrorPage(res)(String(error));
         });
+};
+
+export const auditLogPage = async (req: GrantedRequest, res: Response, next: NextFunction, role: string) => {
+    const logs = await getAllAuditLogs();
+
+    const tsv = logs2tsv(logs);
+    res.attachment('audit_logs.tsv').send(tsv);
+};
+
+const logs2tsv = (data): string => {
+    if (data.length < 1) {
+        return '';
+    }
+    let tsvString: string = '';
+    const header = Object.keys(data[0]);
+    tsvString += header.join('\t') + '\n';
+    for (const row of data) {
+        let stringified = { ...row };
+        stringified.result = JSON.stringify(stringified.result);
+        stringified.datetime = JSON.stringify(stringified.datetime);
+
+        let values = Object.values(stringified);
+
+        tsvString += values.join('\t') + '\n';
+    }
+
+    return tsvString;
 };

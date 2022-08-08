@@ -7,6 +7,7 @@ import {
     vasteplaatshoudersPage,
     voorrangslijstPage,
 } from './routes/markt-marktmeester';
+import { attendancePage, handleAttendanceUpdate, auditLogPage } from './routes/market-application';
 import {
     attendancePage,
     handleAttendanceUpdate,
@@ -444,6 +445,14 @@ app.get(
 
 app.get('/toewijzingen-afwijzingen/', keycloak.protect(Roles.MARKTONDERNEMER), (req: GrantedRequest, res: Response) =>
     toewijzingenAfwijzingenPage(req, res, getErkenningsNummer(req), Roles.MARKTONDERNEMER),
+);
+
+app.get(
+    '/audit-logs/',
+    keycloak.protect(Roles.MARKTMEESTER),
+    (req: GrantedRequest, res: Response, next: NextFunction) => {
+        auditLogPage(req, res, next, Roles.MARKTMEESTER);
+    },
 );
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

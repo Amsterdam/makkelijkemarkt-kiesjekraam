@@ -26,6 +26,7 @@ import {
     IPlaatsvoorkeur,
     IRSVP,
     IToewijzing,
+    IAuditLog,
 } from './model/markt.model';
 import {
     MarktConfig,
@@ -94,10 +95,12 @@ export type HttpMethod = 'get' | 'post' | 'put' | 'delete';
 const createHttpFunction = (
     api: AxiosInstance,
     httpMethod: HttpMethod,
-): ((url: string, token: string, data?) => Promise<AxiosResponse>) => {
-    return (url: string, token: string, data?: JSON): Promise<AxiosResponse> => {
+): ((url: string, token: string, data?, additionalHeaders?) => Promise<AxiosResponse>) => {
+    return (url: string, token: string, data?: JSON, additionalHeaders?): Promise<AxiosResponse> => {
         console.log('MM-API REQUEST', httpMethod, url);
+
         const headers = {
+            ...additionalHeaders,
             Authorization: `Bearer ${token}`,
             requestStartTime: new Date().getTime(),
         };
@@ -117,16 +120,13 @@ const createHttpFunction = (
     };
 };
 
-const apiBase = (
-    url: string,
-    httpMethod: HttpMethod = 'get',
-    requestBody?,
-    throwError = false,
-): Promise<AxiosResponse> => {
-
+const apiBase = (url: string, httpMethod: HttpMethod = 'get', request?, throwError = false): Promise<AxiosResponse> => {
     const api = getApi();
 
     const httpFunction = createHttpFunction(api, httpMethod);
+
+    const requestBody = request ? request.body : null;
+    const headers = request ? request.headers : null;
 
     let counter50xRetry = 0;
     let counter40xRetry = 0;
@@ -134,7 +134,7 @@ const apiBase = (
     const retry = (api: any) => {
         return login(api).then((res: any) => {
             redisClient.set(mmConfig.sessionKey, res.data.uuid);
-            return httpFunction(url, res.data.uuid, requestBody);
+            return httpFunction(url, res.data.uuid, requestBody, headers);
         });
     };
 
@@ -173,7 +173,7 @@ const apiBase = (
     );
 
     return redisClient.get(mmConfig.sessionKey).then((mmApiSessionToken: any) => {
-        return mmApiSessionToken ? httpFunction(url, mmApiSessionToken, requestBody) : retry(api);
+        return mmApiSessionToken ? httpFunction(url, mmApiSessionToken, requestBody, headers) : retry(api);
     });
 };
 
@@ -182,12 +182,13 @@ export const updateRsvp = (
     marktDate: string,
     erkenningsNummer: string,
     attending: boolean,
-): Promise<IRSVP> =>
-    apiBase(
-        'rsvp',
-        'post',
-        `{"marktDate": "${marktDate}", "attending": ${attending}, "marktId": ${marktId}, "koopmanErkenningsNummer": "${erkenningsNummer}"}`,
-    ).then(response => response.data);
+    user: object,
+): Promise<IRSVP> => {
+    return apiBase('rsvp', 'post', {
+        body: `{"marktDate": "${marktDate}", "attending": ${attending}, "marktId": ${marktId}, "koopmanErkenningsNummer": "${erkenningsNummer}"}`,
+        headers: { user },
+    }).then((response) => response.data);
+};
 
 const getAanmeldingen = (url: string): Promise<IRSVP[]> =>
     apiBase(url).then(response => {
@@ -274,9 +275,11 @@ export const getPlaatsvoorkeurenByMarktEnOndernemer = (
         convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray(response.data),
     );
 
-export const updatePlaatsvoorkeur = (plaatsvoorkeuren: IPlaatsvoorkeur[]): Promise<IPlaatsvoorkeur> => {
+export const updatePlaatsvoorkeur = (plaatsvoorkeuren: IPlaatsvoorkeur[], user: object): Promise<IPlaatsvoorkeur> => {
     const pv = convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren(plaatsvoorkeuren);
-    return apiBase('plaatsvoorkeur', 'post', JSON.stringify(pv)).then(response => response.data);
+    return apiBase('plaatsvoorkeur', 'post', { body: JSON.stringify(pv), headers: { user } }).then(
+        (response) => response.data,
+    );
 };
 
 export const deletePlaatsvoorkeurenByMarktAndKoopman = (marktId: string, erkenningsNummer: string) =>
@@ -558,15 +561,15 @@ export const checkLogin = (): Promise<any> => {
 };
 
 export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?: JSON): Promise<AxiosResponse> => {
-    const result = await apiBase(endpoint, method, body, true);
+    const result = await apiBase(endpoint, method, { body }, true);
 
     return result.data;
 };
 
 export function createAllocations(marktId: string, date: string, data: Object): Promise<any> {
     const url = `allocation/markt/${marktId}/date/${date}`;
-    const obj: string = JSON.stringify(data);
-    return apiBase(url, 'post', obj).then(response => {
+    const body: string = JSON.stringify(data);
+    return apiBase(url, 'post', { body }).then((response) => {
         return response;
     });
 }
@@ -755,3 +758,5 @@ export async function getMarktBasics(marktId: string) {
         throw error;
     }
 }
+
+export const getAllAuditLogs = (): Promise<IAuditLog[]> => apiBase('/kjklogs/ALL').then((response) => response.data);
