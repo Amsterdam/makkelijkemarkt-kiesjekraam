@@ -295,3 +295,11 @@ export interface IMarktConfiguratieInput {
     paginas: any;
     branches: any;
 }
+
+export interface IAuditLog {
+    actor: string;
+    action: string;
+    entityType: string;
+    result: string;
+    datetime: string;
+}

@@ -74,6 +74,9 @@ class MarktDetailPage extends React.Component {
                     <a href={`/bdm/markt/${this.props.markt.id}`} className="Link">
                         Bewerk deze markt
                     </a>
+                    <a href={`/audit-logs`} className="Link">
+                        Download marktvoorkeur logs
+                    </a>
                 </div>
                 {markt.kiesJeKraamGeblokkeerdePlaatsen ? (
                     <AlertLine
@@ -91,7 +94,7 @@ class MarktDetailPage extends React.Component {
                         titleSmall={true}
                         message={`Data: ${markt.kiesJeKraamGeblokkeerdeData
                             .split(',')
-                            .map(date => yyyyMmDdtoDDMMYYYY(date))}`}
+                            .map((date) => yyyyMmDdtoDDMMYYYY(date))}`}
                         inline={true}
                     />
                 ) : null}
@@ -120,7 +123,7 @@ class MarktDetailPage extends React.Component {
     }
 
     renderWeek(markt, marktWeek) {
-        return marktWeek.map(marktDay => {
+        return marktWeek.map((marktDay) => {
             const options = this._determineDayViewOptions(markt, marktDay);
             return this.renderDay(marktDay, options);
         });
