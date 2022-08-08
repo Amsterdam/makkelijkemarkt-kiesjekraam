@@ -74,7 +74,7 @@ class MarktDetailPage extends React.Component {
                     <a href={`/bdm/markt/${this.props.markt.id}`} className="Link">
                         Bewerk deze markt
                     </a>
-                    <a href={`/audit-logs`} className="Link">
+                    <a href={`/audit-logs`} className="Link" target="_blank">
                         Download marktvoorkeur logs
                     </a>
                 </div>
