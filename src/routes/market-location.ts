@@ -1,4 +1,3 @@
-
 import {
     deletePlaatsvoorkeurenByMarktAndKoopman,
     getIndelingVoorkeur,
@@ -8,31 +7,13 @@ import {
     updateMarktVoorkeur,
     updatePlaatsvoorkeur,
 } from '../makkelijkemarkt-api';
-import {
-    getQueryErrors,
-    HTTP_CREATED_SUCCESS,
-    internalServerErrorPage
-} from '../express-util';
-import {
-    NextFunction,
-    Request,
-    Response,
-} from 'express';
-import {
-    getKeycloakUser,
-} from '../keycloak-api';
-import {
-    getMededelingen,
-} from '../pakjekraam-api';
-import {
-    GrantedRequest,
-} from 'keycloak-connect';
-import {
-    IPlaatsvoorkeurRow,
-} from '../model/markt.model';
-import {
-    isExp,
-} from '../domain-knowledge';
+import { getQueryErrors, HTTP_CREATED_SUCCESS, internalServerErrorPage } from '../express-util';
+import { NextFunction, Request, Response } from 'express';
+import { getKeycloakUser } from '../keycloak-api';
+import { getMededelingen } from '../pakjekraam-api';
+import { GrantedRequest } from 'keycloak-connect';
+import { IPlaatsvoorkeurRow } from '../model/markt.model';
+import { isExp } from '../domain-knowledge';
 
 export const plaatsvoorkeurenPage = (
     req: GrantedRequest,
@@ -45,9 +26,9 @@ export const plaatsvoorkeurenPage = (
 ) => {
     const messages = getQueryErrors(req.query);
     const ondernemerPromise = getOndernemer(erkenningsNummer);
-    const marktPromise = ondernemerPromise.then(ondernemer => {
+    const marktPromise = ondernemerPromise.then((ondernemer) => {
         const sollicitatie = ondernemer.sollicitaties.find(
-            sollicitatie => String(sollicitatie.markt.id) === currentMarktId,
+            (sollicitatie) => String(sollicitatie.markt.id) === currentMarktId,
         );
         if (!sollicitatie) {
             throw Error('Geen sollicitatie voor deze markt gevonden');
@@ -64,7 +45,7 @@ export const plaatsvoorkeurenPage = (
         getMededelingen(),
     ]).then(
         ([ondernemer, marktBasics, plaatsvoorkeuren, indelingVoorkeur, mededelingen]) => {
-            const sollicitatie = ondernemer.sollicitaties.find(soll => soll.markt.id === marktBasics.markt.id);
+            const sollicitatie = ondernemer.sollicitaties.find((soll) => soll.markt.id === marktBasics.markt.id);
 
             // Als iemand de status experimenteel heeft mag degene zijn plaatsvoorkeuren niet wijzigen
             if (role === 'marktondernemer' && isExp(sollicitatie.status)) {
@@ -86,7 +67,7 @@ export const plaatsvoorkeurenPage = (
                 user: getKeycloakUser(req),
             });
         },
-        err => internalServerErrorPage(res)(err),
+        (err) => internalServerErrorPage(res)(err),
     );
 };
 
@@ -122,7 +103,7 @@ export const updatePlaatsvoorkeuren = (
                 )
                 .filter(ignoreEmptyVoorkeur);
 
-            return updatePlaatsvoorkeur(voorkeuren);
+            return updatePlaatsvoorkeur(voorkeuren, getKeycloakUser(req).email);
         } else {
             return deletePlaatsvoorkeurenByMarktAndKoopman(marktId, erkenningsNummer);
         }
@@ -151,6 +132,6 @@ export const updatePlaatsvoorkeuren = (
         .then(insertAlgVoorkeurFormData)
         .then(
             () => res.status(HTTP_CREATED_SUCCESS).redirect(redirectTo),
-            error => internalServerErrorPage(res)(error),
+            (error) => internalServerErrorPage(res)(error),
         );
 };

@@ -7,6 +7,7 @@ import {
     updateRsvp,
     clearFutureRsvps,
     updateRsvpPattern,
+    getAllAuditLogs,
 } from '../makkelijkemarkt-api';
 import { HTTP_CREATED_SUCCESS, internalServerErrorPage } from '../express-util';
 import { NextFunction, Response } from 'express';
@@ -242,7 +243,7 @@ export const handleAttendanceUpdate = (
             let clearedRsvps = false;
             for (const [markt, hasChanges] of Object.entries(patternHasChangesPerMarkt)) {
                 if (hasChanges) {
-                    queries.concat(clearFutureRsvps(markt, erkenningsNummer));
+                    queries.concat(clearFutureRsvps(markt, erkenningsNummer, getKeycloakUser(req).email));
                     clearedRsvps = true;
                 }
             }
@@ -253,18 +254,51 @@ export const handleAttendanceUpdate = (
                         return result.concat(
                             rsvpsByDate[marktDate].map((rsvp) => {
                                 const { marktId, marktDate, attending } = rsvp;
-                                return updateRsvp(marktId, marktDate, erkenningsNummer, attending);
+                                return updateRsvp(
+                                    marktId,
+                                    marktDate,
+                                    erkenningsNummer,
+                                    attending,
+                                    getKeycloakUser(req).email,
+                                );
                             }),
                         );
                     }, []),
                 );
             }
 
-            queries.concat(rsvpPatterns.map((pattern) => updateRsvpPattern(pattern)));
+            queries.concat(rsvpPatterns.map((pattern) => updateRsvpPattern(pattern, getKeycloakUser(req).email)));
 
             Promise.all(queries).then(() => res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next));
         })
         .catch((error) => {
             internalServerErrorPage(res)(String(error));
         });
+};
+
+export const auditLogPage = async (req: GrantedRequest, res: Response, next: NextFunction, role: string) => {
+    const logs = await getAllAuditLogs();
+
+    const tsv = logs2tsv(logs);
+    res.attachment('audit_logs.tsv').send(tsv);
+};
+
+const logs2tsv = (data): string => {
+    if (data.length < 1) {
+        return '';
+    }
+    let tsvString: string = '';
+    const header = Object.keys(data[0]);
+    tsvString += header.join('\t') + '\n';
+    for (const row of data) {
+        let stringified = { ...row };
+        stringified.result = JSON.stringify(stringified.result);
+        stringified.datetime = JSON.stringify(stringified.datetime);
+
+        let values = Object.values(stringified);
+
+        tsvString += values.join('\t') + '\n';
+    }
+
+    return tsvString;
 };
