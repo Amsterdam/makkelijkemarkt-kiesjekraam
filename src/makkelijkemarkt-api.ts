@@ -1,19 +1,6 @@
-import {
-    A_LIJST_DAYS,
-    formatOndernemerName,
-} from './domain-knowledge';
-import {
-    addDays,
-    MONDAY,
-    numberSort,
-    requireEnv,
-    THURSDAY,
-} from './util';
-import axios,
-{
-    AxiosInstance,
-    AxiosResponse,
-} from 'axios';
+import { A_LIJST_DAYS, formatOndernemerName } from './domain-knowledge';
+import { addDays, MONDAY, numberSort, requireEnv, THURSDAY } from './util';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import {
     BrancheId,
     IAfwijzing,
@@ -28,10 +15,7 @@ import {
     IToewijzing,
     IAuditLog,
 } from './model/markt.model';
-import {
-    MarktConfig,
-    validateMarktConfig,
-} from './model/marktconfig';
+import { MarktConfig, validateMarktConfig } from './model/marktconfig';
 import {
     MMarktondernemerVoorkeur,
     MMMarkt,
@@ -41,9 +25,7 @@ import {
     MMSollicitatieStandalone,
 } from './model/makkelijkemarkt.model';
 import packageJSON = require('../package.json');
-import {
-    RedisClient,
-} from './redis-client';
+import { RedisClient } from './redis-client';
 import moment from 'moment';
 
 const redisClient = new RedisClient().getAsyncClient();
@@ -58,7 +40,7 @@ export const EMPTY_BRANCH: BrancheId = '000-EMPTY';
 
 const HTTP_HEADER_REQUEST_START_TIME = 'requestStartTime';
 const CACHE_PREFIX = 'CACHE_';
-const CACHE_TTL = 30;  // seconds
+const CACHE_TTL = 30; // seconds
 
 requireEnv('API_URL');
 requireEnv('API_MMAPPKEY');
@@ -140,15 +122,30 @@ const apiBase = (url: string, httpMethod: HttpMethod = 'get', request?, throwErr
 
     api.interceptors.response.use(
         (response: any) => {
-            const currentTime = new Date().getTime()
+            const currentTime = new Date().getTime();
             const startTime = response.config.headers[HTTP_HEADER_REQUEST_START_TIME];
-            console.log('MM-API RESPONSE', response.status, response.config.method, response.config.url, currentTime - startTime, 'ms');
+            console.log(
+                'MM-API RESPONSE',
+                response.status,
+                response.config.method,
+                response.config.url,
+                currentTime - startTime,
+                'ms',
+            );
             return response;
         },
         (error: any) => {
-            const currentTime = new Date().getTime()
+            const currentTime = new Date().getTime();
             const startTime = error.config.headers[HTTP_HEADER_REQUEST_START_TIME];
-            console.log('MM-API ERROR', error.response?.status || 'NO_HTTP_STATUS', error.config.method, error.config.url, currentTime - startTime, 'ms', error.response?.data?.error);
+            console.log(
+                'MM-API ERROR',
+                error.response?.status || 'NO_HTTP_STATUS',
+                error.config.method,
+                error.config.url,
+                currentTime - startTime,
+                'ms',
+                error.response?.data?.error,
+            );
 
             if (error.response.status === 504 || error.response.status === 503) {
                 counter50xRetry++;
@@ -191,7 +188,7 @@ export const updateRsvp = (
 };
 
 const getAanmeldingen = (url: string): Promise<IRSVP[]> =>
-    apiBase(url).then(response => {
+    apiBase(url).then((response) => {
         for (let i = 0; i < response.data.length; i++) {
             response.data[i].marktId = response.data[i].markt;
             response.data[i].erkenningsNummer = response.data[i].koopman;
@@ -215,7 +212,7 @@ const convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray = (
     if (plaatsvoorkeuren === undefined) {
         return result;
     }
-    plaatsvoorkeuren.forEach(pv => {
+    plaatsvoorkeuren.forEach((pv) => {
         result = result.concat(
             pv.plaatsen.map((plaats, index) => ({
                 marktId: pv.markt,
@@ -239,7 +236,7 @@ const convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren = (
     const markt = plaatsvoorkeuren[0].marktId;
     const koopman = plaatsvoorkeuren[0].erkenningsNummer;
 
-    plaatsvoorkeuren.reverse().forEach(pv => {
+    plaatsvoorkeuren.reverse().forEach((pv) => {
         if (pv.marktId !== markt || pv.erkenningsNummer !== koopman) {
             console.log('call to convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren has wrong input data');
             return null;
@@ -251,19 +248,19 @@ const convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren = (
     return {
         markt: plaatsvoorkeuren[0].marktId,
         koopman: plaatsvoorkeuren[0].erkenningsNummer,
-        plaatsen: plaatsvoorkeuren.map(pv => pv.plaatsId),
+        plaatsen: plaatsvoorkeuren.map((pv) => pv.plaatsId),
     };
 };
 
 export const getPlaatsvoorkeuren = (marktId: string): Promise<IPlaatsvoorkeur[]> => getPlaatsvoorkeurenByMarkt(marktId);
 
 export const getPlaatsvoorkeurenOndernemer = (erkenningsNummer: string): Promise<IPlaatsvoorkeur[]> =>
-    apiBase(`plaatsvoorkeur/koopman/${erkenningsNummer}`).then(response =>
+    apiBase(`plaatsvoorkeur/koopman/${erkenningsNummer}`).then((response) =>
         convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray(response.data),
     );
 
 export const getPlaatsvoorkeurenByMarkt = (marktId: string): Promise<IPlaatsvoorkeur[]> =>
-    apiBase(`plaatsvoorkeur/markt/${marktId}`).then(response =>
+    apiBase(`plaatsvoorkeur/markt/${marktId}`).then((response) =>
         convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray(response.data),
     );
 
@@ -271,7 +268,7 @@ export const getPlaatsvoorkeurenByMarktEnOndernemer = (
     marktId: string,
     erkenningsNummer: string,
 ): Promise<IPlaatsvoorkeur[]> =>
-    apiBase(`plaatsvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`).then(response =>
+    apiBase(`plaatsvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`).then((response) =>
         convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray(response.data),
     );
 
@@ -283,9 +280,7 @@ export const updatePlaatsvoorkeur = (plaatsvoorkeuren: IPlaatsvoorkeur[], user: 
 };
 
 export const deletePlaatsvoorkeurenByMarktAndKoopman = (marktId: string, erkenningsNummer: string) =>
-    apiBase(`plaatsvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`, 'delete').then(
-        response => response.data
-    );
+    apiBase(`plaatsvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`, 'delete').then((response) => response.data);
 
 const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
     marktvoorkeuren: MMarktondernemerVoorkeur[],
@@ -295,9 +290,9 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
         return result;
     }
 
-    marktvoorkeuren.forEach(vk => {
+    marktvoorkeuren.forEach((vk) => {
         let branches = [];
-        let inrichting:string;
+        let inrichting: string;
 
         if (vk.hasInrichting) {
             inrichting = 'eigen-materieel';
@@ -319,7 +314,7 @@ const convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur = (
             anywhere: vk.anywhere,
             bakType: vk.bakType,
             branches: branches,
-            verkoopinrichting: inrichting ? [inrichting]: [],
+            verkoopinrichting: inrichting ? [inrichting] : [],
         });
 
         if (vk.absentFrom) result[result.length - 1].absentFrom = vk.absentFrom;
@@ -370,11 +365,9 @@ const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
 };
 
 export const updateMarktVoorkeur = (marktvoorkeur: IMarktondernemerVoorkeur): Promise<MMarktondernemerVoorkeur> =>
-    apiBase(
-        'marktvoorkeur',
-        'post',
-        JSON.stringify(convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur(marktvoorkeur)),
-    ).then(response => response.data);
+    apiBase('marktvoorkeur', 'post', {
+        body: JSON.stringify(convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur(marktvoorkeur)),
+    }).then((response) => response.data);
 
 const indelingVoorkeurPrio = (voorkeur: IMarktondernemerVoorkeur): number =>
     (voorkeur.marktId ? 1 : 0) | (voorkeur.marktDate ? 2 : 0);
@@ -420,7 +413,7 @@ export const getIndelingVoorkeur = (
     marktId: string = null,
     marktDate: string = null,
 ): Promise<IMarktondernemerVoorkeur> =>
-    apiBase(`marktvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`).then(response =>
+    apiBase(`marktvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`).then((response) =>
         convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur(response.data)
             .sort(indelingVoorkeurSort)
             .reduce(indelingVoorkeurMerge, null),
@@ -445,29 +438,29 @@ export const getVoorkeurByMarktEnOndernemer = (
     marktId: string,
     erkenningsNummer: string,
 ): Promise<IMarktondernemerVoorkeurRow> =>
-    apiBase(`marktvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`).then(response => {
+    apiBase(`marktvoorkeur/markt/${marktId}/koopman/${erkenningsNummer}`).then((response) => {
         return convertVoorkeurToVoorkeurRow(
             convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur(response.data)[0],
         );
     });
 
 export const getVoorkeurenByMarkt = (marktId: string): Promise<IMarktondernemerVoorkeur[]> =>
-    apiBase(`marktvoorkeur/markt/${marktId}`).then(response =>
+    apiBase(`marktvoorkeur/markt/${marktId}`).then((response) =>
         convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur(response.data),
     );
 
 export const getVoorkeurenByOndernemer = (erkenningsNummer: string): Promise<IMarktondernemerVoorkeur[]> =>
-    apiBase(`marktvoorkeur/koopman/${erkenningsNummer}`).then(response =>
+    apiBase(`marktvoorkeur/koopman/${erkenningsNummer}`).then((response) =>
         convertMMarktondernemerVoorkeurToIMarktondernemerVoorkeur(response.data),
     );
 
 export const getMarkt = (marktId: string): Promise<MMMarkt> =>
-    apiBase(`markt/${marktId}`).then(response => response.data);
+    apiBase(`markt/${marktId}`).then((response) => response.data);
 
 export const getMarkten = (includeInactive = false): Promise<MMMarkt[]> =>
     apiBase('markt/').then(({ data: markten = [] }) =>
         markten.filter(
-            markt =>
+            (markt) =>
                 markt.kiesJeKraamActief &&
                 (includeInactive ||
                     markt.kiesJeKraamFase === 'wenperiode' ||
@@ -489,7 +482,7 @@ export const getMarktenForOndernemer = (
 };
 
 export const getOndernemer = (erkenningsNummer: string): Promise<MMOndernemerStandalone> => {
-    return apiBase(`koopman/erkenningsnummer/${erkenningsNummer}`).then(response => {
+    return apiBase(`koopman/erkenningsnummer/${erkenningsNummer}`).then((response) => {
         if (!response || !response.data) {
             throw Error('Ondernemer niet gevonden');
         }
@@ -497,7 +490,7 @@ export const getOndernemer = (erkenningsNummer: string): Promise<MMOndernemerSta
         // Filter inactieve sollicitaties, aangezien we die nooit gebruiken binnen
         // dit systeem.
         const ondernemer = response.data;
-        ondernemer.sollicitaties = ondernemer.sollicitaties.filter(sollicitatie => {
+        ondernemer.sollicitaties = ondernemer.sollicitaties.filter((sollicitatie) => {
             return !sollicitatie.doorgehaald;
         });
         return ondernemer;
@@ -505,9 +498,9 @@ export const getOndernemer = (erkenningsNummer: string): Promise<MMOndernemerSta
 };
 
 export const getOndernemersByMarkt = (marktId: string): Promise<IMarktondernemer[]> => {
-    return apiBase(`sollicitaties/markt/${marktId}?listLength=10000&includeDoorgehaald=0`).then(response => {
+    return apiBase(`sollicitaties/markt/${marktId}?listLength=10000&includeDoorgehaald=0`).then((response) => {
         const sollicitaties: MMSollicitatieStandalone[] = response.data;
-        return sollicitaties.map(sollicitatie => {
+        return sollicitaties.map((sollicitatie) => {
             const { koopman, sollicitatieNummer, status, markt, vastePlaatsen } = sollicitatie;
 
             return {
@@ -533,9 +526,9 @@ export const getALijst = (marktId: string, marktDate: string): Promise<MMOnderne
         const monday = addDays(marktDate, MONDAY - day),
             thursday = addDays(marktDate, THURSDAY - day);
 
-        return apiBase(`rapport/aanwezigheid/${marktId}/${monday}/${thursday}`).then(response => response.data);
+        return apiBase(`rapport/aanwezigheid/${marktId}/${monday}/${thursday}`).then((response) => response.data);
     } else {
-        return new Promise(resolve => resolve([]));
+        return new Promise((resolve) => resolve([]));
     }
 };
 
@@ -543,11 +536,11 @@ export const getBLijst = (marktId: string, marktDate: string): Promise<MMOnderne
     const day = moment(marktDate).format('YYYY-MM-DD');
     const twoMonthsEarlier = moment(marktDate).subtract(2, 'months').format('YYYY-MM-DD');
 
-    return apiBase(`rapport/aanwezigheid/${marktId}/${twoMonthsEarlier}/${day}`).then(response => response.data);
+    return apiBase(`rapport/aanwezigheid/${marktId}/${twoMonthsEarlier}/${day}`).then((response) => response.data);
 };
 
 export const checkActivationCode = (username: string, code: string): Promise<any> =>
-    getOndernemer(username).then(ondernemer => {
+    getOndernemer(username).then((ondernemer) => {
         if (!ondernemer.pasUid) {
             throw Error('Incorrect username/password');
         }
@@ -576,50 +569,50 @@ export function createAllocations(marktId: string, date: string, data: Object): 
 
 export function getAllocations(marktId: string, date: string): Promise<any[]> {
     const url = `allocation/markt/${marktId}/date/${date}`;
-    return apiBase(url, 'get').then(response => {
+    return apiBase(url, 'get').then((response) => {
         return response.data;
     });
 }
 
 function getAllocationsByOndernemerAndMarkt(marktId: string, erkenningsNummer: string): Promise<any[]> {
     const url = `allocation/markt/${marktId}/koopman/${erkenningsNummer}`;
-    return apiBase(url, 'get').then(response => {
+    return apiBase(url, 'get').then((response) => {
         return response.data;
     });
 }
 
 function getAllocationsByOndernemer(erkenningsNummer: string): Promise<any[]> {
     const url = `allocation/koopman/${erkenningsNummer}`;
-    return apiBase(url, 'get').then(response => {
+    return apiBase(url, 'get').then((response) => {
         return response.data;
     });
 }
 
 const removeUnallocatedAllocations = (allocations: any[]): IToewijzing[] => {
-    return allocations.filter(allocation => allocation.isAllocated);
+    return allocations.filter((allocation) => allocation.isAllocated);
 };
 
 const removeAllocatedAllocations = (allocations: any[]): IAfwijzing[] => {
-    return allocations.filter(allocation => !allocation.isAllocated);
+    return allocations.filter((allocation) => !allocation.isAllocated);
 };
 
 export const getToewijzingen = (marktId: string, marktDate: string): Promise<IToewijzing[]> => {
-    return getAllocations(marktId, marktDate).then(response => {
+    return getAllocations(marktId, marktDate).then((response) => {
         return removeUnallocatedAllocations(response);
     });
 };
 
 export const getAfwijzingen = (marktId: string, marktDate: string): Promise<IAfwijzing[]> => {
-    return getAllocations(marktId, marktDate).then(response => {
+    return getAllocations(marktId, marktDate).then((response) => {
         return removeAllocatedAllocations(response);
     });
 };
 
 export const getToewijzingenByOndernemerAndMarkt = (
     marktId: string,
-    erkenningsNummer: string
+    erkenningsNummer: string,
 ): Promise<IToewijzing[]> => {
-    return getAllocationsByOndernemerAndMarkt(marktId, erkenningsNummer).then( response => {
+    return getAllocationsByOndernemerAndMarkt(marktId, erkenningsNummer).then((response) => {
         return removeUnallocatedAllocations(response);
     });
 };
@@ -628,44 +621,44 @@ export const getAfwijzingenByOndernemerAndMarkt = (
     marktId: string,
     erkenningsNummer: string,
 ): Promise<IAfwijzing[]> => {
-    return getAllocationsByOndernemerAndMarkt(marktId, erkenningsNummer).then(response => {
+    return getAllocationsByOndernemerAndMarkt(marktId, erkenningsNummer).then((response) => {
         return removeAllocatedAllocations(response);
     });
 };
 
 export const getToewijzingenByOndernemer = (erkenningsNummer: string): Promise<IToewijzing[]> => {
-    return getAllocationsByOndernemer(erkenningsNummer).then(response => {
+    return getAllocationsByOndernemer(erkenningsNummer).then((response) => {
         return removeUnallocatedAllocations(response);
     });
 };
 
 export const getAfwijzingenByOndernemer = (erkenningsNummer: string): Promise<IAfwijzing[]> => {
-    return getAllocationsByOndernemer(erkenningsNummer).then(response => {
+    return getAllocationsByOndernemer(erkenningsNummer).then((response) => {
         return removeAllocatedAllocations(response);
     });
 };
 
 export const CACHE_KEY_GENERIC_BRANCHES = 'genericBranches';
-export const getCacheKeyForMarktConfiguratie = (marktId:string) => `marktconfiguratie/${marktId}`;
+export const getCacheKeyForMarktConfiguratie = (marktId: string) => `marktconfiguratie/${marktId}`;
 const prefixCacheKey = (key: string): string => `${CACHE_PREFIX}${key}`;
 
-export const invalidateCache = async (key:string): Promise<void> => {
+export const invalidateCache = async (key: string): Promise<void> => {
     console.log(`CACHE invalidate ${prefixCacheKey(key)}`);
     await redisClient.del(prefixCacheKey(key));
-}
+};
 
-const getCachedJSONResponse = async (key: string): Promise<JSON|void> => {
+const getCachedJSONResponse = async (key: string): Promise<JSON | void> => {
     const cachedResponse: any = await redisClient.get(prefixCacheKey(key));
     if (cachedResponse) {
         console.log(`CACHE hit ${key}`);
         return JSON.parse(cachedResponse);
     }
-}
+};
 
 const cacheJSONResponse = async (key: string, response: unknown): Promise<void> => {
     console.log(`CACHE set ${key} ttl ${CACHE_TTL}`);
     await redisClient.set(prefixCacheKey(key), JSON.stringify(response), 'EX', CACHE_TTL);
-}
+};
 
 const getGenericBranches = async (): Promise<IGenericBranche[]> => {
     const url = '/branche/all';
@@ -717,8 +710,8 @@ const transformToLegacyMarktConfig = (genericBranches: IGenericBranche[], config
     marktConfig = MarktConfig.homogenizeData(marktConfig);
 
     const marktplaatsen = marktConfig.locaties;
-    const rows = marktConfig.markt.rows.map(row =>
-        row.map(plaatsId => marktplaatsen.find(plaats => plaats.plaatsId === plaatsId)),
+    const rows = marktConfig.markt.rows.map((row) =>
+        row.map((plaatsId) => marktplaatsen.find((plaats) => plaats.plaatsId === plaatsId)),
     );
     return {
         marktplaatsen,
@@ -743,11 +736,10 @@ export async function getMarktBasics(marktId: string) {
         // (behalve in de indeling), worden de plaatsen nu simpelweg verwijderd.
         if (geblokkeerdePlaatsen) {
             const blocked = geblokkeerdePlaatsen.replace(/\s+/g, '').split(',');
-            legacyMarktConfig.marktplaatsen = legacyMarktConfig.marktplaatsen.map(plaats => {
-                    blocked.includes(plaats.plaatsId) ? plaats.inactive = true : null;
-                    return plaats;
-				}
-            );
+            legacyMarktConfig.marktplaatsen = legacyMarktConfig.marktplaatsen.map((plaats) => {
+                blocked.includes(plaats.plaatsId) ? (plaats.inactive = true) : null;
+                return plaats;
+            });
         }
         return {
             markt: mmarkt,
