@@ -383,11 +383,9 @@ const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
 };
 
 export const updateMarktVoorkeur = (marktvoorkeur: IMarktondernemerVoorkeur): Promise<MMarktondernemerVoorkeur> =>
-    apiBase(
-        'marktvoorkeur',
-        'post',
-        JSON.stringify(convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur(marktvoorkeur)),
-    ).then((response) => response.data);
+    apiBase('marktvoorkeur', 'post', {
+        body: JSON.stringify(convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur(marktvoorkeur)),
+    }).then((response) => response.data);
 
 const indelingVoorkeurPrio = (voorkeur: IMarktondernemerVoorkeur): number =>
     (voorkeur.marktId ? 1 : 0) | (voorkeur.marktDate ? 2 : 0);
