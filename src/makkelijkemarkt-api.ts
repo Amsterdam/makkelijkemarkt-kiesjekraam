@@ -382,9 +382,13 @@ const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
     return result;
 };
 
-export const updateMarktVoorkeur = (marktvoorkeur: IMarktondernemerVoorkeur): Promise<MMarktondernemerVoorkeur> =>
+export const updateMarktVoorkeur = (
+    marktvoorkeur: IMarktondernemerVoorkeur,
+    user: object,
+): Promise<MMarktondernemerVoorkeur> =>
     apiBase('marktvoorkeur', 'post', {
         body: JSON.stringify(convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur(marktvoorkeur)),
+        headers: { user },
     }).then((response) => response.data);
 
 const indelingVoorkeurPrio = (voorkeur: IMarktondernemerVoorkeur): number =>
