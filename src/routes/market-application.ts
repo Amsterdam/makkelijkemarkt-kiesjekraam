@@ -279,17 +279,19 @@ export const handleAttendanceUpdate = (
 export const auditLogPage = async (req: GrantedRequest, res: Response, next: NextFunction, role: string) => {
     const logs = await getAllAuditLogs();
 
-    const tsv = logs2tsv(logs);
-    res.attachment('audit_logs.tsv').send(tsv);
+    const csv = logs2csv(logs);
+    res.attachment('audit_logs.csv').send(csv);
 };
 
-const logs2tsv = (data): string => {
+const logs2csv = (data): string => {
+    const DELIM = '\t';
     if (data.length < 1) {
         return '';
     }
-    let tsvString: string = '';
+    let csvString: string = '';
     const header = Object.keys(data[0]);
-    tsvString += header.join('\t') + '\n';
+    csvString += header.join(DELIM) + '\n';
+
     for (const row of data) {
         let stringified = { ...row };
         stringified.result = JSON.stringify(stringified.result);
@@ -297,8 +299,8 @@ const logs2tsv = (data): string => {
 
         let values = Object.values(stringified);
 
-        tsvString += values.join('\t') + '\n';
+        csvString += values.join(DELIM) + '\n';
     }
 
-    return tsvString;
+    return csvString;
 };

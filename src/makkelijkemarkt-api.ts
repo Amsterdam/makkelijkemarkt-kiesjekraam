@@ -382,12 +382,14 @@ const convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur = (
     return result;
 };
 
-export const updateMarktVoorkeur = (marktvoorkeur: IMarktondernemerVoorkeur): Promise<MMarktondernemerVoorkeur> =>
-    apiBase(
-        'marktvoorkeur',
-        'post',
-        JSON.stringify(convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur(marktvoorkeur)),
-    ).then((response) => response.data);
+export const updateMarktVoorkeur = (
+    marktvoorkeur: IMarktondernemerVoorkeur,
+    user: object,
+): Promise<MMarktondernemerVoorkeur> =>
+    apiBase('marktvoorkeur', 'post', {
+        body: JSON.stringify(convertIMarktondernemerVoorkeurToMMarktondernemerVoorkeur(marktvoorkeur)),
+        headers: { user },
+    }).then((response) => response.data);
 
 const indelingVoorkeurPrio = (voorkeur: IMarktondernemerVoorkeur): number =>
     (voorkeur.marktId ? 1 : 0) | (voorkeur.marktDate ? 2 : 0);
