@@ -86,7 +86,7 @@ export const updatePlaatsvoorkeuren = (
     erkenningsNummer: string,
 ) => {
     const { redirectTo } = req.body;
-    const user_email = getKeycloakUser(req).email;
+    const userEmail = getKeycloakUser(req).email;
 
     const ignoreEmptyVoorkeur = (voorkeur: IPlaatsvoorkeurRow) => !!voorkeur.plaatsId;
 
@@ -104,7 +104,7 @@ export const updatePlaatsvoorkeuren = (
                 )
                 .filter(ignoreEmptyVoorkeur);
 
-            return updatePlaatsvoorkeur(voorkeuren, user_email);
+            return updatePlaatsvoorkeur(voorkeuren, userEmail);
         } else {
             return deletePlaatsvoorkeurenByMarktAndKoopman(marktId, erkenningsNummer);
         }
@@ -121,7 +121,7 @@ export const updatePlaatsvoorkeuren = (
             maximum: req.body.maximum,
             anywhere: !!req.body.anywhere,
         };
-        return updateMarktVoorkeur(vk, user_email);
+        return updateMarktVoorkeur(vk, userEmail);
     };
 
     if (parseInt(req.body.maximum) > parseInt(req.body.maxNumKramen)) {
