@@ -15,7 +15,6 @@
     "start": "ts-node --transpile-only src/index.ts",
     "dev": "ENABLE_CORS_FOR_ORIGIN='http://localhost:3000' ts-node-dev --ignore-watch node_modules src/index.ts",
     "allocation": "ts-node src/allocation.ts",
-    "update-keycloak-users": "ts-node src/update-keycloak-users.ts",
     "tdd": "jest --watch --verbose --rootDir ./src/",
     "test": "jest --verbose --silent --rootDir ./src/",
     "lint": "npm run lint:eslint",
