@@ -102,8 +102,15 @@ if (process.env.ENABLE_CORS_FOR_ORIGIN) {
 // Static files that are public (robots.txt, favicon.ico)
 app.use(express.static('./dist/'));
 
-// serve BewerkDeMarkten React build via static
 app.use('/bdm/static', express.static('bdm/build/static', { index: false }));
+app.get('/kjk/static/*/(*.js|*.css)', function(req, res, next) {
+    const contentType = /\.js$/.test(req.url) ? 'application/javascript' : 'text/css';
+    res.set('Content-Type', contentType);
+    res.set('Content-Encoding', 'gzip');
+    req.url = req.url + '.gz';
+    next();
+});
+app.use('/kjk/static', express.static('kjk/build/static', { index: false }));
 
 app.use(sessionMiddleware());
 app.use(keycloak.middleware({ logout: '/logout' }));
@@ -133,6 +140,21 @@ app.get('/bdm/*', keycloak.protect(Roles.MARKTBEWERKER), (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'bdm', 'build', 'index.html'));
 });
 
+app.get('/kjk/ondernemer/:erkenningsNummer/aanwezigheid/markt/:marktId', keycloak.protect(), (req, res) => {
+    console.log('Aanwezigheid page');
+    if (isMarktondernemer(req) && req.params.erkenningsNummer === getErkenningsNummer(req)) {
+        res.sendFile(path.join(__dirname, '..', 'kjk', 'build', 'index.html'));
+    } else if (isMarktmeester(req)) {
+        res.sendFile(path.join(__dirname, '..', 'kjk', 'build', 'index.html'));
+    } else {
+        res.redirect('/');
+    }
+});
+
+app.get('/kjk/*', keycloak.protect(), (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'kjk', 'build', 'index.html'));
+});
+
 app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
     res.render('EmailPage');
 });
@@ -153,7 +175,7 @@ app.get(
     keycloak.protect(Roles.MARKTMEESTER),
     (req: GrantedRequest, res: Response, next: NextFunction) => {
         getMarkt(req.params.marktId)
-            .then((markt) => {
+            .then(markt => {
                 res.render('MarktDetailPage', {
                     role: Roles.MARKTMEESTER,
                     user: getKeycloakUser(req),
