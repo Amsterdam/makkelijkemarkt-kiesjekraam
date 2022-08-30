@@ -4,8 +4,8 @@ const { formatDayOfWeek, formatDate, relativeHumanDay, endOfWeek, today } = requ
 const HeaderTitleButton = require('./HeaderTitleButton');
 const Alert = require('./Alert');
 
-const OndernemerMarktAanwezigheid = ({ rsvpEntries, sollicitatie, disabled, markt }) => {
-    const blockUrl = `../../aanwezigheid/`;
+const OndernemerMarktAanwezigheid = ({ ondernemer, rsvpEntries, sollicitatie, disabled, markt }) => {
+    const blockUrl = `/kjk/ondernemer/${ondernemer.erkenningsnummer}/aanwezigheid/markt/${markt.id}`;
     const weekAanmeldingen = rsvpEntries.reduce(
         (t, { date, rsvp }, i) => {
             const week = new Date(date) > new Date(endOfWeek()) ? 1 : 0;

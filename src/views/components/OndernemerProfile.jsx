@@ -11,6 +11,7 @@ class OndernemerProfile extends React.Component {
     render() {
         const { ondernemer } = this.props;
         const vendorURL = `/ondernemer/${ondernemer.erkenningsnummer}/`;
+        const KJKVendorURL = `/kjk/ondernemer/${ondernemer.erkenningsnummer}/`;
 
         return (
             <div>
@@ -29,7 +30,10 @@ class OndernemerProfile extends React.Component {
                             <SollicitatieSpecs sollicitatie={sollicitatie} />
                         </div>
                         <div className="LinkSummary__links">
-                            <a className="LinkSummary__first-link LinkInline" href={`${vendorURL}aanwezigheid/`}>
+                            <a
+                                className="LinkSummary__first-link LinkInline"
+                                href={`${KJKVendorURL}aanwezigheid/markt/${sollicitatie.markt.id}?marktmeester`}
+                            >
                                 aanwezigheid
                             </a>
                             <a className="LinkInline" href={`${vendorURL}voorkeuren/${sollicitatie.markt.id}/`}>

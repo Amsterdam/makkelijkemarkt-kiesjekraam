@@ -60,9 +60,7 @@ class OndernemerDashboard extends React.Component {
                         <a href="/toewijzingen-afwijzingen/" className="Link">
                             Toewijzingen/ afwijzingen
                         </a>
-                        <a href="/aanwezigheid/" className="Link">
-                            Aanwezigheid
-                        </a>
+                        <p>Uw aanwezigheid kunt u aanpassen via "Mijn markten"</p>
                     </div>
                     <h1 className="Heading Heading--intro">Mijn markten</h1>
                     {marktenMetSollicitatie.length == 0 ? (
