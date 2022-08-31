@@ -24,7 +24,7 @@ export interface IRsvpPattern {
   sunday: boolean
 }
 
-export interface IKjkMededelingen {
+export interface IMarkt {
   kiesJeKraamMededelingTekst: string
   kiesJeKraamMededelingTitel: string
 }

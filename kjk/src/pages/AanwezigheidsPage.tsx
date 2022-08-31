@@ -17,8 +17,8 @@ import {
 } from '../models'
 import { RoleContext } from '../components/providers/RoleProvider'
 import {
+  useMarkt,
   useMarktVoorkeur,
-  useKjkMededelingen,
   useOndernemer,
   useRsvp,
   useSaveRsvp,
@@ -60,7 +60,7 @@ const AanwezigheidsPage: React.VFC = () => {
   const rsvpData = useRsvp(erkenningsNummer)
   const rsvpPatternData = useRsvpPattern(erkenningsNummer)
   const marktVoorkeurData = useMarktVoorkeur(erkenningsNummer)
-  const marktData = useKjkMededelingen(marktId)
+  const marktData = useMarkt(marktId)
 
   // console.log(marktData.data)
 
@@ -313,7 +313,7 @@ const AanwezigheidsPage: React.VFC = () => {
           <div className="flex-center">
             <Space direction="vertical" size="large">
               {<Ondernemer {...ondernemerData.data} />}
-              <Messages showMissingBrancheWarning={!hasValidBranche} />
+              <Messages showMissingBrancheWarning={!hasValidBranche} marktData={marktData.data} />
               {hasValidBranche && marktComponent}
             </Space>
           </div>
@@ -369,10 +369,8 @@ const Markt: React.VFC<MarktPropsType> = (props) => {
   )
 }
 
-const Messages: React.VFC<{ showMissingBrancheWarning: boolean }> = (props) => {
+const Messages: React.VFC<{ showMissingBrancheWarning: boolean; marktData: any }> = (props) => {
   const { erkenningsNummer, marktId } = useParams<IAanwezigheidsPageRouteParams>()
-  const kjkMededelingenData = useKjkMededelingen(marktId)
-
   const mandatoryPresenceWarning = (
     <>
       <p>Een aangevinkte dag betekent dat u (of uw vervanger) aanwezig zal zijn.</p>
@@ -413,10 +411,10 @@ const Messages: React.VFC<{ showMissingBrancheWarning: boolean }> = (props) => {
           closable
         />
       )}
-      {kjkMededelingenData.data?.kiesJeKraamMededelingTekst && (
+      {props.marktData?.kiesJeKraamMededelingTekst && (
         <Alert
-          message={<h3>{kjkMededelingenData.data.kiesJeKraamMededelingTitel}</h3>}
-          description={kjkMededelingenData.data.kiesJeKraamMededelingTekst}
+          message={<h3>{props.marktData.kiesJeKraamMededelingTitel}</h3>}
+          description={props.marktData.kiesJeKraamMededelingTekst}
           type="info"
           showIcon
           closable

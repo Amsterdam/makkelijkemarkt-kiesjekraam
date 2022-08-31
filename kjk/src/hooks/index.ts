@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 import { MM_API_QUERY_CONFIG } from '../constants'
-import { IApiError, IKjkMededelingen, IMarktVoorkeur, IOndernemer, IRsvp, IRsvpPattern } from '../models'
+import { IApiError, IMarkt, IMarktVoorkeur, IOndernemer, IRsvp, IRsvpPattern } from '../models'
 import * as mmApi from '../services/mmApi'
 
 export const useOndernemer = (erkenningsNummer: string) => {
@@ -70,11 +70,11 @@ export const useMarktVoorkeur = (erkenningsNummer: string) => {
   )
 }
 
-export const useKjkMededelingen = (marktId: string) => {
-  return useQuery<IKjkMededelingen, IApiError>(
-    'kjkMededelingen',
+export const useMarkt = (marktId: string) => {
+  return useQuery<IMarkt, IApiError>(
+    'markt',
     () => {
-      return mmApi.get(`/kjk-mededelingen/${marktId}`)
+      return mmApi.get(`/markt/${marktId}`)
     },
     MM_API_QUERY_CONFIG
   )
