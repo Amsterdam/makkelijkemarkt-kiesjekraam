@@ -73,13 +73,6 @@ const AanwezigheidsPage: React.VFC = () => {
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
   const [pattern, setPattern] = useState<Partial<IRsvpPatternExt>>({})
 
-  console.log('ondernemerData.data', ondernemerData.data)
-  console.log('rsvpData.data', rsvpData.data)
-  console.log('rsvpPatternData.data', rsvpPatternData.data)
-  console.log('marktVoorkeurData.data', marktVoorkeurData.data)
-  console.log('rsvps', rsvps)
-  console.log('pattern', pattern)
-
   const updateRsvp: UpdateRsvpFunctionType = (updatedRsvp) => {
     const updatedRsvps = rsvps.map((rsvp) => {
       if (rsvp.marktDate === updatedRsvp.marktDate) {
@@ -112,7 +105,6 @@ const AanwezigheidsPage: React.VFC = () => {
   }
 
   const save = async () => {
-    console.log('SAVE', rsvps, pattern)
     await saveRsvps()
     await savePattern()
   }
@@ -121,7 +113,6 @@ const AanwezigheidsPage: React.VFC = () => {
     rsvps
       .filter((rsvp) => rsvp.markt === marktId)
       .forEach((rsvp) => {
-        console.log('SAVE RSVP', rsvp)
         saveRsvpApi({
           ...rsvp,
           koopmanErkenningsNummer: rsvp.koopman,
@@ -158,8 +149,6 @@ const AanwezigheidsPage: React.VFC = () => {
   }, [savePatternIsError])
 
   useEffect(() => {
-    console.log('SET INITIAL RSVPS & PATTERM')
-
     const setInitialRsvps = () => {
       const today = new Date()
       const mondayDelta = 1 - today.getDay()
@@ -188,7 +177,6 @@ const AanwezigheidsPage: React.VFC = () => {
   }, [])
 
   useEffect(() => {
-    console.log('useEffect rsvpPatternData.data', rsvpPatternData.data)
     if (rsvpPatternData.data?.length) {
       const pattern: Partial<IRsvpPattern> = find(rsvpPatternData.data, (p) => p.markt === marktId) || {}
       const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } = pattern
@@ -197,7 +185,6 @@ const AanwezigheidsPage: React.VFC = () => {
   }, [rsvpPatternData.data])
 
   useEffect(() => {
-    console.log('useEffect rsvpData.data')
     if (rsvpData.data?.length) {
       const updatedRsvps = rsvps.map((rsvp) => {
         const incomingRsvp = find(rsvpData.data, { marktDate: rsvp.marktDate, markt: rsvp.markt }) || {}
@@ -212,11 +199,9 @@ const AanwezigheidsPage: React.VFC = () => {
   }, [rsvpData.data])
 
   useEffect(() => {
-    console.log('useEffect ondernemerData.data')
     if (ondernemerData.data) {
       const sollicitatie: Partial<ISollicitatie> =
         find(ondernemerData.data.sollicitaties, (s) => String(s.markt.id) === marktId) || {}
-      console.log(sollicitatie)
       setSollicitatie(sollicitatie)
     }
   }, [ondernemerData.data])
@@ -226,7 +211,6 @@ const AanwezigheidsPage: React.VFC = () => {
   const hasValidBranche =
     !marktVoorkeurData.data ||
     (!isEmpty(marktVoorkeur) && marktVoorkeur.branche && marktVoorkeur.branche !== EMPTY_BRANCH)
-  console.log({ marktVoorkeur, hasValidBranche })
 
   const marktComponent = (
     <Markt
@@ -311,7 +295,6 @@ const Markt: React.VFC<MarktPropsType> = (props) => {
 const Messages: React.VFC<{ showMissingBrancheWarning: boolean }> = (props) => {
   const { erkenningsNummer, marktId } = useParams<IAanwezigheidsPageRouteParams>()
   const kjkMededelingenData = useKjkMededelingen(marktId)
-  console.log('kjkMededelingenData.data', kjkMededelingenData.data)
 
   const mandatoryPresenceWarning = (
     <>
