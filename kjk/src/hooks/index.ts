@@ -32,7 +32,7 @@ export const useSaveRsvp = () => {
     },
     {
       ...MM_API_QUERY_CONFIG,
-      onSuccess: () => queryClient.invalidateQueries('rsvp'),
+      // onSuccess: () => queryClient.invalidateQueries('rsvp'), // do not invalidate to preserve actual state
     }
   )
 }
@@ -55,7 +55,7 @@ export const useSaveRsvpPattern = () => {
     },
     {
       ...MM_API_QUERY_CONFIG,
-      onSuccess: () => queryClient.invalidateQueries('rsvpPattern'),
+      // onSuccess: () => queryClient.invalidateQueries('rsvpPattern'), // do not invalidate to preserve actual state
     }
   )
 }
