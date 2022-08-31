@@ -82,12 +82,12 @@ subroutes.forEach((subroute: string) => {
     });
 });
 
-router.get('/kjk-mededelingen/:marktId', keycloak.protect(), async (req: GrantedRequest, res: Response) => {
+router.get('/markt/:marktId', keycloak.protect(), async (req: GrantedRequest, res: Response) => {
     const url = `/markt/${req.params.marktId}`;
     try {
         const result: any = await callApiGeneric(url, 'get');
-        const { kiesJeKraamMededelingTekst, kiesJeKraamMededelingTitel } = result;
-        res.send({ kiesJeKraamMededelingTekst, kiesJeKraamMededelingTitel });
+        const { kiesJeKraamMededelingTekst, kiesJeKraamMededelingTitel, marktDagen } = result;
+        res.send({ kiesJeKraamMededelingTekst, kiesJeKraamMededelingTitel, marktDagen });
     } catch (error) {
         res.status(error.response.status);
         res.send({ statusText: error.response.statusText, message: error.response.data });
