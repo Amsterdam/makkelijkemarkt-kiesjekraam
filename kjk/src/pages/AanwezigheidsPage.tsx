@@ -371,7 +371,7 @@ const Markt: React.VFC<MarktPropsType> = (props) => {
           {props.rsvps && <RsvpList title="Deze week" rsvps={props.rsvps.slice(0, 7)} updateRsvp={props.updateRsvp} />}
           {props.rsvps && <RsvpList title="Volgende week" rsvps={props.rsvps.slice(7)} updateRsvp={props.updateRsvp} />}
         </Space>
-        <Pattern markt={props.id} pattern={props.pattern} updatePattern={props.updatePattern} rsvps={props.rsvps} />
+        <Pattern markt={props.id} pattern={props.pattern} updatePattern={props.updatePattern} />
       </Space>
     </Card>
   )
@@ -436,8 +436,8 @@ type PatternPropsType = {
   markt: string
   pattern: IRsvpPatternExt
   updatePattern: PatternFunctionType
-  rsvps: IRsvpExt[]
 }
+
 const Pattern: React.VFC<PatternPropsType> = (props) => {
   const updatePattern = (event: CheckboxChangeEvent) => {
     const attending = event.target.checked
@@ -446,7 +446,7 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
   }
 
   const renderedPattern = Object.keys(props.pattern).map((item) => {
-    const name = get(find(props.rsvps, { day: item }), 'shortName')
+    const name = WEEKDAY_NAME_MAP[item as keyof IRsvpPatternExt]
     return (
       <DayUI
         key={item}
