@@ -336,7 +336,6 @@ const Messages: React.VFC<{ showMissingBrancheWarning: boolean; marktData: any }
           description={missingBrancheWarning}
           type="error"
           showIcon
-          closable
         />
       )}
       {props.showMissingBrancheWarning || (
@@ -346,7 +345,6 @@ const Messages: React.VFC<{ showMissingBrancheWarning: boolean; marktData: any }
           description={mandatoryPresenceWarning}
           type="warning"
           showIcon
-          closable
         />
       )}
       {props.marktData?.kiesJeKraamMededelingTekst && (
