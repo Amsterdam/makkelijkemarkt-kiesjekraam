@@ -231,7 +231,7 @@ const AanwezigheidsPage: React.VFC = () => {
       console.log({ initialRsvps, mergedRsvps })
       setRsvps(mergedRsvps)
     }
-  }, [erkenningsNummer, marktId, ondernemerData.data, rsvpPatternData.data, rsvpData.data])
+  }, [erkenningsNummer, marktId, ondernemerData.data, marktData.data, rsvpPatternData.data, rsvpData.data])
 
   // useEffect(() => {
   //   const setInitialRsvps = () => {
