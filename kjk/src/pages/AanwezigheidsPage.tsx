@@ -1,7 +1,7 @@
 import { Alert, Card, Checkbox, Col, notification, PageHeader, Row, Space, Tag, Tooltip, Typography } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons'
-import { every, find, get, groupBy, isEmpty } from 'lodash'
+import { every, find, get, groupBy, includes, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -38,6 +38,15 @@ const INITIAL_PATTERN = {
   friday: false,
   saturday: false,
   sunday: false,
+}
+const WEEKDAY_NAME_MAP = {
+  monday: 'ma',
+  tuesday: 'di',
+  wednesday: 'wo',
+  thursday: 'do',
+  friday: 'vr',
+  saturday: 'za',
+  sunday: 'zo',
 }
 
 interface IRsvpExt extends Omit<IRsvp, 'koopmanErkenningsNummer' | 'marktId'> {
@@ -155,13 +164,16 @@ const AanwezigheidsPage: React.VFC = () => {
 
   useEffect(() => {
     const allDataLoaded = every(
-      [ondernemerData.data, rsvpPatternData.data, rsvpData.data],
-      (data) => data !== undefined
+      [ondernemerData, marktData, rsvpPatternData, rsvpData],
+      (apiCall) => apiCall.data !== undefined
     )
     console.log('useEffect', { allDataLoaded })
 
     if (allDataLoaded) {
       console.log('allDataLoaded')
+      // MARKT
+      const { marktDagen = [] } = marktData.data || {}
+      console.log(marktDagen)
 
       // ONDERNEMER
       const sollicitatie: Partial<ISollicitatie> =
@@ -171,17 +183,21 @@ const AanwezigheidsPage: React.VFC = () => {
       const isStatusLikeVpl = sollicitatie.status === 'vpl' || sollicitatie.status === 'eb'
 
       // PATTERN
-      let pattern: Partial<IRsvpPattern> | undefined = find(rsvpPatternData.data, (p) => p.markt === marktId)
-      if (!pattern) {
+      let pattern: IRsvpPatternExt = INITIAL_PATTERN
+      const patternFromApi: IRsvpPattern | undefined = find(rsvpPatternData.data, (p) => p.markt === marktId)
+      if (!patternFromApi) {
         console.log('SET INITIAL PATTERN')
-        pattern = INITIAL_PATTERN
         if (isStatusLikeVpl) {
-          pattern.monday = true
-          pattern.tuesday = true
+          Object.keys(WEEKDAY_NAME_MAP).forEach((day) => {
+            pattern[day as keyof IRsvpPatternExt] = includes(marktDagen, WEEKDAY_NAME_MAP[day as keyof IRsvpPatternExt])
+          })
         }
+      } else {
+        const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } = patternFromApi
+        pattern = { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
       }
-      const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } = pattern
-      setPattern({ monday, tuesday, wednesday, thursday, friday, saturday, sunday })
+      console.log(pattern)
+      setPattern(pattern)
 
       // RSVPS
       const setInitialRsvps = () => {
@@ -194,13 +210,14 @@ const AanwezigheidsPage: React.VFC = () => {
           const month = date.getMonth() + 1
           const year = date.getFullYear()
           const marktDate = `${year}-${(month > 9 ? '' : '0') + month}-${(day > 9 ? '' : '0') + day}`
+          const shortName = date.toLocaleDateString('nl-NL', { weekday: 'short' })
           return {
             marktDate,
+            shortName,
             koopman: erkenningsNummer,
             markt: marktId,
-            attending: isStatusLikeVpl,
+            attending: isStatusLikeVpl && includes(marktDagen, shortName),
             day: date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
-            shortName: date.toLocaleDateString('nl-NL', { weekday: 'short' }),
             isInThePast: new Date(`${marktDate}T${CUTOFF_TIME}`) < today,
           }
         })

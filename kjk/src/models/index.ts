@@ -27,6 +27,7 @@ export interface IRsvpPattern {
 export interface IMarkt {
   kiesJeKraamMededelingTekst: string
   kiesJeKraamMededelingTitel: string
+  marktDagen: string[]
 }
 
 export interface IMarktVoorkeur {
