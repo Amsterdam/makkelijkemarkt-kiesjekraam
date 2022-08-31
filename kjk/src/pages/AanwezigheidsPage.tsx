@@ -250,9 +250,9 @@ const AanwezigheidsPage: React.VFC = () => {
         <Col md={20} lg={16}>
           <div className="flex-center">
             <Space direction="vertical" size="large">
-              {<Ondernemer {...ondernemerData.data} />}
+              <Ondernemer {...ondernemerData.data} />
               <Messages showMissingBrancheWarning={!hasValidBranche} marktData={marktData.data} />
-              {hasValidBranche && marktComponent}
+              {ondernemerData.data && hasValidBranche && marktComponent}
             </Space>
           </div>
         </Col>
