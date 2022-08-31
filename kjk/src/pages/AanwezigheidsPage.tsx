@@ -30,15 +30,7 @@ const { Link } = Typography
 
 const CUTOFF_TIME = '15:00:00'
 const EMPTY_BRANCH = '000-EMPTY'
-const INITIAL_PATTERN = {
-  monday: false,
-  tuesday: false,
-  wednesday: false,
-  thursday: false,
-  friday: false,
-  saturday: false,
-  sunday: false,
-}
+
 const WEEKDAY_NAME_MAP = {
   monday: 'ma',
   tuesday: 'di',
@@ -183,15 +175,14 @@ const AanwezigheidsPage: React.VFC = () => {
       const isStatusLikeVpl = sollicitatie.status === 'vpl' || sollicitatie.status === 'eb'
 
       // PATTERN
-      let pattern: IRsvpPatternExt = INITIAL_PATTERN
+      let pattern: Partial<IRsvpPatternExt> = {}
       const patternFromApi: IRsvpPattern | undefined = find(rsvpPatternData.data, (p) => p.markt === marktId)
       if (!patternFromApi) {
         console.log('SET INITIAL PATTERN')
-        if (isStatusLikeVpl) {
-          Object.keys(WEEKDAY_NAME_MAP).forEach((day) => {
-            pattern[day as keyof IRsvpPatternExt] = includes(marktDagen, WEEKDAY_NAME_MAP[day as keyof IRsvpPatternExt])
-          })
-        }
+        Object.keys(WEEKDAY_NAME_MAP).forEach((day) => {
+          pattern[day as keyof IRsvpPatternExt] =
+            isStatusLikeVpl && includes(marktDagen, WEEKDAY_NAME_MAP[day as keyof IRsvpPatternExt])
+        })
       } else {
         const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } = patternFromApi
         pattern = { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
