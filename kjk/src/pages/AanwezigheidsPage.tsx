@@ -63,8 +63,6 @@ const AanwezigheidsPage: React.VFC = () => {
   const marktVoorkeurData = useMarktVoorkeur(erkenningsNummer)
   const marktData = useMarkt(marktId)
 
-  // console.log(marktData.data)
-
   const { mutate: saveRsvpApi, isLoading: saveRsvpApiInProgress, isSuccess: saveRsvpIsSuccess } = useSaveRsvp()
   const {
     mutate: savePatternApi,
@@ -76,8 +74,6 @@ const AanwezigheidsPage: React.VFC = () => {
   const [sollicitatie, setSollicitatie] = useState<Partial<ISollicitatie>>({})
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
   const [pattern, setPattern] = useState<Partial<IRsvpPatternExt>>({})
-
-  // console.log('PATTERN', pattern)
 
   const updateRsvp: UpdateRsvpFunctionType = (updatedRsvp) => {
     const updatedRsvps = rsvps.map((rsvp) => {
@@ -159,26 +155,20 @@ const AanwezigheidsPage: React.VFC = () => {
       [ondernemerData, marktData, rsvpPatternData, rsvpData],
       (apiCall) => apiCall.data !== undefined
     )
-    console.log('useEffect', { allDataLoaded })
-
     if (allDataLoaded) {
-      console.log('allDataLoaded')
       // MARKT
       const { marktDagen = [] } = marktData.data || {}
-      console.log(marktDagen)
 
       // ONDERNEMER
       const sollicitatie: Partial<ISollicitatie> =
         find(ondernemerData.data?.sollicitaties, (s) => String(s.markt.id) === marktId) || {}
       setSollicitatie(sollicitatie)
-      console.log(sollicitatie)
       const isStatusLikeVpl = sollicitatie.status === 'vpl' || sollicitatie.status === 'eb'
 
       // PATTERN
       let pattern: Partial<IRsvpPatternExt> = {}
       const patternFromApi: IRsvpPattern | undefined = find(rsvpPatternData.data, (p) => p.markt === marktId)
       if (!patternFromApi) {
-        console.log('SET INITIAL PATTERN')
         Object.keys(WEEKDAY_NAME_MAP).forEach((day) => {
           pattern[day as keyof IRsvpPatternExt] =
             isStatusLikeVpl && includes(marktDagen, WEEKDAY_NAME_MAP[day as keyof IRsvpPatternExt])
@@ -187,7 +177,6 @@ const AanwezigheidsPage: React.VFC = () => {
         const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } = patternFromApi
         pattern = { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
       }
-      console.log(pattern)
       setPattern(pattern)
 
       // RSVPS
