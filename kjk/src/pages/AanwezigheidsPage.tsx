@@ -1,7 +1,7 @@
 import { Alert, Card, Checkbox, Col, notification, PageHeader, Row, Space, Tag, Tooltip, Typography } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons'
-import { find, get, groupBy, isEmpty } from 'lodash'
+import { every, find, get, groupBy, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -60,6 +60,9 @@ const AanwezigheidsPage: React.VFC = () => {
   const rsvpData = useRsvp(erkenningsNummer)
   const rsvpPatternData = useRsvpPattern(erkenningsNummer)
   const marktVoorkeurData = useMarktVoorkeur(erkenningsNummer)
+  const marktData = useKjkMededelingen(marktId)
+
+  // console.log(marktData.data)
 
   const { mutate: saveRsvpApi, isLoading: saveRsvpApiInProgress, isSuccess: saveRsvpIsSuccess } = useSaveRsvp()
   const {
@@ -72,6 +75,8 @@ const AanwezigheidsPage: React.VFC = () => {
   const [sollicitatie, setSollicitatie] = useState<Partial<ISollicitatie>>({})
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
   const [pattern, setPattern] = useState<Partial<IRsvpPatternExt>>({})
+
+  // console.log('PATTERN', pattern)
 
   const updateRsvp: UpdateRsvpFunctionType = (updatedRsvp) => {
     const updatedRsvps = rsvps.map((rsvp) => {
@@ -149,62 +154,134 @@ const AanwezigheidsPage: React.VFC = () => {
   }, [savePatternIsError])
 
   useEffect(() => {
-    const setInitialRsvps = () => {
-      const today = new Date()
-      const mondayDelta = 1 - today.getDay()
-      const initialRsvps = new Array(14).fill(null).map((_, index) => {
-        const date = new Date()
-        date.setDate(date.getDate() + index + mondayDelta)
-        const day = date.getDate()
-        const month = date.getMonth() + 1
-        const year = date.getFullYear()
-        const marktDate = `${year}-${(month > 9 ? '' : '0') + month}-${(day > 9 ? '' : '0') + day}`
-        return {
-          marktDate,
-          koopman: erkenningsNummer,
-          markt: marktId,
-          attending: false,
-          day: date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
-          shortName: date.toLocaleDateString('nl-NL', { weekday: 'short' }),
-          isInThePast: new Date(`${marktDate}T${CUTOFF_TIME}`) < today,
+    const allDataLoaded = every(
+      [ondernemerData.data, rsvpPatternData.data, rsvpData.data],
+      (data) => data !== undefined
+    )
+    console.log('useEffect', { allDataLoaded })
+
+    if (allDataLoaded) {
+      console.log('allDataLoaded')
+
+      // ONDERNEMER
+      const sollicitatie: Partial<ISollicitatie> =
+        find(ondernemerData.data?.sollicitaties, (s) => String(s.markt.id) === marktId) || {}
+      setSollicitatie(sollicitatie)
+      console.log(sollicitatie)
+      const isStatusLikeVpl = sollicitatie.status === 'vpl' || sollicitatie.status === 'eb'
+
+      // PATTERN
+      let pattern: Partial<IRsvpPattern> | undefined = find(rsvpPatternData.data, (p) => p.markt === marktId)
+      if (!pattern) {
+        console.log('SET INITIAL PATTERN')
+        pattern = INITIAL_PATTERN
+        if (isStatusLikeVpl) {
+          pattern.monday = true
+          pattern.tuesday = true
         }
-      })
-      setRsvps(initialRsvps)
-    }
-
-    setPattern(INITIAL_PATTERN)
-    setInitialRsvps()
-  }, [])
-
-  useEffect(() => {
-    if (rsvpPatternData.data?.length) {
-      const pattern: Partial<IRsvpPattern> = find(rsvpPatternData.data, (p) => p.markt === marktId) || {}
+      }
       const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } = pattern
       setPattern({ monday, tuesday, wednesday, thursday, friday, saturday, sunday })
-    }
-  }, [rsvpPatternData.data])
 
-  useEffect(() => {
-    if (rsvpData.data?.length) {
-      const updatedRsvps = rsvps.map((rsvp) => {
-        const incomingRsvp = find(rsvpData.data, { marktDate: rsvp.marktDate, markt: rsvp.markt }) || {}
-        const mergedRsvp = {
-          ...rsvp,
-          ...incomingRsvp,
-        }
-        return mergedRsvp
-      })
-      setRsvps(updatedRsvps)
-    }
-  }, [rsvpData.data])
+      // RSVPS
+      const setInitialRsvps = () => {
+        const today = new Date()
+        const mondayDelta = 1 - today.getDay()
+        const initialRsvps = new Array(14).fill(null).map((_, index) => {
+          const date = new Date()
+          date.setDate(date.getDate() + index + mondayDelta)
+          const day = date.getDate()
+          const month = date.getMonth() + 1
+          const year = date.getFullYear()
+          const marktDate = `${year}-${(month > 9 ? '' : '0') + month}-${(day > 9 ? '' : '0') + day}`
+          return {
+            marktDate,
+            koopman: erkenningsNummer,
+            markt: marktId,
+            attending: isStatusLikeVpl,
+            day: date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+            shortName: date.toLocaleDateString('nl-NL', { weekday: 'short' }),
+            isInThePast: new Date(`${marktDate}T${CUTOFF_TIME}`) < today,
+          }
+        })
+        return initialRsvps
+      }
 
-  useEffect(() => {
-    if (ondernemerData.data) {
-      const sollicitatie: Partial<ISollicitatie> =
-        find(ondernemerData.data.sollicitaties, (s) => String(s.markt.id) === marktId) || {}
-      setSollicitatie(sollicitatie)
+      const mergeRsvps = (initialRsvps: IRsvpExt[]) => {
+        return initialRsvps.map((initialRsvp: IRsvpExt) => {
+          const incomingRsvp = find(rsvpData.data, { marktDate: initialRsvp.marktDate, markt: initialRsvp.markt }) || {}
+          const mergedRsvp = {
+            ...initialRsvp,
+            ...incomingRsvp,
+          }
+          return mergedRsvp
+        })
+      }
+
+      const initialRsvps = setInitialRsvps()
+      const mergedRsvps = mergeRsvps(initialRsvps)
+      console.log({ initialRsvps, mergedRsvps })
+      setRsvps(mergedRsvps)
     }
-  }, [ondernemerData.data])
+  }, [erkenningsNummer, marktId, ondernemerData.data, rsvpPatternData.data, rsvpData.data])
+
+  // useEffect(() => {
+  //   const setInitialRsvps = () => {
+  //     const today = new Date()
+  //     const mondayDelta = 1 - today.getDay()
+  //     const initialRsvps = new Array(14).fill(null).map((_, index) => {
+  //       const date = new Date()
+  //       date.setDate(date.getDate() + index + mondayDelta)
+  //       const day = date.getDate()
+  //       const month = date.getMonth() + 1
+  //       const year = date.getFullYear()
+  //       const marktDate = `${year}-${(month > 9 ? '' : '0') + month}-${(day > 9 ? '' : '0') + day}`
+  //       return {
+  //         marktDate,
+  //         koopman: erkenningsNummer,
+  //         markt: marktId,
+  //         attending: false,
+  //         day: date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+  //         shortName: date.toLocaleDateString('nl-NL', { weekday: 'short' }),
+  //         isInThePast: new Date(`${marktDate}T${CUTOFF_TIME}`) < today,
+  //       }
+  //     })
+  //     setRsvps(initialRsvps)
+  //   }
+
+  //   setPattern(INITIAL_PATTERN)
+  //   setInitialRsvps()
+  // }, [])
+
+  // useEffect(() => {
+  //   if (rsvpPatternData.data?.length) {
+  //     const pattern: Partial<IRsvpPattern> = find(rsvpPatternData.data, (p) => p.markt === marktId) || {}
+  //     const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } = pattern
+  //     setPattern({ monday, tuesday, wednesday, thursday, friday, saturday, sunday })
+  //   }
+  // }, [rsvpPatternData.data, marktId])
+
+  // useEffect(() => {
+  //   if (rsvpData.data?.length) {
+  //     const updatedRsvps = rsvps.map((rsvp) => {
+  //       const incomingRsvp = find(rsvpData.data, { marktDate: rsvp.marktDate, markt: rsvp.markt }) || {}
+  //       const mergedRsvp = {
+  //         ...rsvp,
+  //         ...incomingRsvp,
+  //       }
+  //       return mergedRsvp
+  //     })
+  //     setRsvps(updatedRsvps)
+  //   }
+  // }, [rsvpData.data])
+
+  // useEffect(() => {
+  //   if (ondernemerData.data) {
+  //     const sollicitatie: Partial<ISollicitatie> =
+  //       find(ondernemerData.data.sollicitaties, (s) => String(s.markt.id) === marktId) || {}
+  //     setSollicitatie(sollicitatie)
+  //   }
+  // }, [ondernemerData.data])
 
   const rsvpPerMarkt = groupBy(rsvps, 'markt')
   const marktVoorkeur: Partial<IMarktVoorkeur> = find(marktVoorkeurData.data || [], { markt: marktId }) || {}
