@@ -3,7 +3,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons'
 import { every, find, get, groupBy, includes, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 import { SaveButton } from '../components/buttons'
 import {
@@ -528,11 +528,12 @@ const DayUI: React.FC<DayUIPropsType> = (props) => {
 }
 
 const BackButton: React.VFC = () => {
+  const history = useHistory()
   const { homeUrl } = React.useContext(RoleContext)
   return (
-    <a href={homeUrl}>
+    <Link onClick={history.goBack}>
       <ArrowLeftOutlined /> Terug
-    </a>
+    </Link>
   )
 }
 
