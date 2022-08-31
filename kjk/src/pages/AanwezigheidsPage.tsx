@@ -1,7 +1,7 @@
 import { Alert, Card, Checkbox, Col, notification, PageHeader, Row, Space, Tag, Tooltip, Typography } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons'
-import { every, find, get, groupBy, includes, isEmpty } from 'lodash'
+import { every, find, groupBy, includes, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
@@ -228,68 +228,9 @@ const AanwezigheidsPage: React.VFC = () => {
 
       const initialRsvps = setInitialRsvps()
       const mergedRsvps = mergeRsvps(initialRsvps)
-      console.log({ initialRsvps, mergedRsvps })
       setRsvps(mergedRsvps)
     }
   }, [erkenningsNummer, marktId, ondernemerData.data, marktData.data, rsvpPatternData.data, rsvpData.data])
-
-  // useEffect(() => {
-  //   const setInitialRsvps = () => {
-  //     const today = new Date()
-  //     const mondayDelta = 1 - today.getDay()
-  //     const initialRsvps = new Array(14).fill(null).map((_, index) => {
-  //       const date = new Date()
-  //       date.setDate(date.getDate() + index + mondayDelta)
-  //       const day = date.getDate()
-  //       const month = date.getMonth() + 1
-  //       const year = date.getFullYear()
-  //       const marktDate = `${year}-${(month > 9 ? '' : '0') + month}-${(day > 9 ? '' : '0') + day}`
-  //       return {
-  //         marktDate,
-  //         koopman: erkenningsNummer,
-  //         markt: marktId,
-  //         attending: false,
-  //         day: date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
-  //         shortName: date.toLocaleDateString('nl-NL', { weekday: 'short' }),
-  //         isInThePast: new Date(`${marktDate}T${CUTOFF_TIME}`) < today,
-  //       }
-  //     })
-  //     setRsvps(initialRsvps)
-  //   }
-
-  //   setPattern(INITIAL_PATTERN)
-  //   setInitialRsvps()
-  // }, [])
-
-  // useEffect(() => {
-  //   if (rsvpPatternData.data?.length) {
-  //     const pattern: Partial<IRsvpPattern> = find(rsvpPatternData.data, (p) => p.markt === marktId) || {}
-  //     const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } = pattern
-  //     setPattern({ monday, tuesday, wednesday, thursday, friday, saturday, sunday })
-  //   }
-  // }, [rsvpPatternData.data, marktId])
-
-  // useEffect(() => {
-  //   if (rsvpData.data?.length) {
-  //     const updatedRsvps = rsvps.map((rsvp) => {
-  //       const incomingRsvp = find(rsvpData.data, { marktDate: rsvp.marktDate, markt: rsvp.markt }) || {}
-  //       const mergedRsvp = {
-  //         ...rsvp,
-  //         ...incomingRsvp,
-  //       }
-  //       return mergedRsvp
-  //     })
-  //     setRsvps(updatedRsvps)
-  //   }
-  // }, [rsvpData.data])
-
-  // useEffect(() => {
-  //   if (ondernemerData.data) {
-  //     const sollicitatie: Partial<ISollicitatie> =
-  //       find(ondernemerData.data.sollicitaties, (s) => String(s.markt.id) === marktId) || {}
-  //     setSollicitatie(sollicitatie)
-  //   }
-  // }, [ondernemerData.data])
 
   const rsvpPerMarkt = groupBy(rsvps, 'markt')
   const marktVoorkeur: Partial<IMarktVoorkeur> = find(marktVoorkeurData.data || [], { markt: marktId }) || {}
