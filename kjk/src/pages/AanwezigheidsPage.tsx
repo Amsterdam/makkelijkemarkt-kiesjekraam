@@ -152,8 +152,8 @@ const AanwezigheidsPage: React.VFC = () => {
 
   useEffect(() => {
     const allDataLoaded = every(
-      [ondernemerData, marktData, rsvpPatternData, rsvpData],
-      (apiCall) => apiCall.data !== undefined
+      [ondernemerData.data, marktData.data, rsvpPatternData.data, rsvpData.data],
+      (apiCall) => apiCall !== undefined
     )
     if (allDataLoaded) {
       // MARKT
