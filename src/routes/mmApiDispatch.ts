@@ -82,7 +82,7 @@ subroutes.forEach((subroute: string) => {
     });
 });
 
-router.get('/markt/:marktId', keycloak.protect(), async (req: GrantedRequest, res: Response) => {
+router.get('/ondernemer/markt/:marktId', keycloak.protect(), async (req: GrantedRequest, res: Response) => {
     const url = `/markt/${req.params.marktId}`;
     try {
         const result: any = await callApiGeneric(url, 'get');
