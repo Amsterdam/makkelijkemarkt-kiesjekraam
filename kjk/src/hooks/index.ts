@@ -74,7 +74,7 @@ export const useMarkt = (marktId: string) => {
   return useQuery<IMarkt, IApiError>(
     'markt',
     () => {
-      return mmApi.get(`/markt/${marktId}`)
+      return mmApi.get(`/ondernemer/markt/${marktId}`)
     },
     MM_API_QUERY_CONFIG
   )
