@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Avenir Next LT Pro';
+  font-size: 16px;
+}
+
+.rsvp-list {
+  display: flex;
+}
+
+.rsvp-list__day {
+  height: 4rem;
+  padding: 10px 10px 0 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-color: aqua;
+  font-weight: 600;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+}
+
+.ant-checkbox-inner,
+.ant-checkbox-input {
+  transform: scale(1.5);
+}

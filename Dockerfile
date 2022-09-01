@@ -13,6 +13,23 @@ RUN npm ci --loglevel verbose
 RUN CI=true npm run test
 RUN npm run build
 
+
+FROM node:16-alpine as kjk_build
+
+COPY kjk/package.json kjk/
+COPY kjk/package-lock.json kjk/
+COPY kjk/public kjk/public
+COPY kjk/src kjk/src
+
+ENV PATH /srv/kjk/node_modules/.bin:$PATH
+
+WORKDIR /kjk
+
+RUN npm ci --loglevel verbose
+RUN CI=true npm run test
+RUN npm run build
+
+
 FROM node:16-alpine
 
 RUN apk add ca-certificates
@@ -55,6 +72,9 @@ ENV \
 
 EXPOSE 8080
 
-COPY --from=bdm_build /bdm/build /srv/bdm/build
+COPY --from=bdm_build --chown=node /bdm/build /srv/bdm/build
+COPY --from=kjk_build --chown=node /kjk/build /srv/kjk/build
+RUN gzip /srv/kjk/build/static/js/*.js
+RUN gzip /srv/kjk/build/static/css/*.css
 
 CMD ["npm", "run", "start"]

@@ -129,6 +129,7 @@ class OndernemerMarktDetailPage extends React.Component {
                     <div className="row row--responsive">
                         <div className="col-1-2">
                             <OndernemerMarktAanwezigheid
+                                ondernemer={ondernemer}
                                 markt={markt}
                                 sollicitatie={sollicitatie}
                                 rsvpEntries={rsvpEntries}
