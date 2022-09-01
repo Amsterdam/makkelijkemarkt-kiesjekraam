@@ -2,7 +2,7 @@ import { Alert, Card, Checkbox, Col, notification, PageHeader, Row, Space, Tag, 
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons'
 import { every, find, groupBy, includes, isEmpty } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
 import { SaveButton } from '../components/buttons'
@@ -15,7 +15,6 @@ import {
   IRsvpPattern,
   ISollicitatie,
 } from '../models'
-import { RoleContext } from '../components/providers/RoleProvider'
 import {
   useMarkt,
   useMarktVoorkeur,
@@ -56,6 +55,8 @@ type PatternFunctionType = (patternDay: string, attending: boolean) => void
 type UpdateRsvpFunctionType = (updatedRsvp: IRsvpExt) => void
 type saveFunctionType = (id: string) => void
 
+const MarktDagenContext = React.createContext<string[]>([]);
+
 const AanwezigheidsPage: React.VFC = () => {
   const { erkenningsNummer, marktId } = useParams<IAanwezigheidsPageRouteParams>()
   const ondernemerData = useOndernemer(erkenningsNummer)
@@ -64,7 +65,7 @@ const AanwezigheidsPage: React.VFC = () => {
   const marktVoorkeurData = useMarktVoorkeur(erkenningsNummer)
   const marktData = useMarkt(marktId)
 
-  const { mutate: saveRsvpApi, isLoading: saveRsvpApiInProgress, isSuccess: saveRsvpIsSuccess } = useSaveRsvp()
+  const { mutate: saveRsvpApi, isLoading: saveRsvpApiInProgress } = useSaveRsvp()
   const {
     mutate: savePatternApi,
     isLoading: savePatternApiInProgress,
@@ -254,9 +255,11 @@ const AanwezigheidsPage: React.VFC = () => {
         <Col md={20} lg={16}>
           <div className="flex-center">
             <Space direction="vertical" size="large">
-              <Ondernemer {...ondernemerData.data} />
-              <Messages showMissingBrancheWarning={!hasValidBranche} marktData={marktData.data} />
-              {ondernemerData.data && hasValidBranche && marktComponent}
+              <MarktDagenContext.Provider value={marktData.data?.marktDagen || []}>
+                <Ondernemer {...ondernemerData.data} />
+                <Messages showMissingBrancheWarning={!hasValidBranche} marktData={marktData.data} />
+                {ondernemerData.data && hasValidBranche && marktComponent}
+              </MarktDagenContext.Provider>
             </Space>
           </div>
         </Col>
@@ -378,6 +381,7 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
     props.updatePattern(patternDay, attending)
   }
 
+  const marktDagen = useContext(MarktDagenContext)
   const renderedPattern = Object.keys(props.pattern).map((item) => {
     const name = WEEKDAY_NAME_MAP[item as keyof IRsvpPatternExt]
     return (
@@ -385,6 +389,7 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
         key={item}
         onChange={updatePattern}
         checked={props.pattern[item as keyof IRsvpPatternExt]}
+        disabled={!includes(marktDagen, name)}
         value={item}
         name={name}
       ></DayUI>
@@ -462,7 +467,6 @@ const DayUI: React.FC<DayUIPropsType> = (props) => {
 
 const BackButton: React.VFC = () => {
   const history = useHistory()
-  const { homeUrl } = React.useContext(RoleContext)
   return (
     <Link onClick={history.goBack}>
       <ArrowLeftOutlined /> Terug
