@@ -47,6 +47,7 @@ interface IRsvpExt extends Omit<IRsvp, 'koopmanErkenningsNummer' | 'marktId'> {
   day: string
   shortName: string
   isInThePast: boolean
+  isActiveMarketDay: boolean
 }
 
 interface IRsvpPatternExt extends Omit<IRsvpPattern, 'erkenningsNummer' | 'markt'> {}
@@ -74,6 +75,7 @@ const AanwezigheidsPage: React.VFC = () => {
   const [sollicitatie, setSollicitatie] = useState<Partial<ISollicitatie>>({})
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
   const [pattern, setPattern] = useState<Partial<IRsvpPatternExt>>({})
+  
 
   const updateRsvp: UpdateRsvpFunctionType = (updatedRsvp) => {
     const updatedRsvps = rsvps.map((rsvp) => {
@@ -199,6 +201,7 @@ const AanwezigheidsPage: React.VFC = () => {
             attending: isStatusLikeVpl && includes(marktDagen, shortName),
             day: date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
             isInThePast: new Date(`${marktDate}T${CUTOFF_TIME}`) < today,
+            isActiveMarketDay: includes(marktDagen, shortName),
           }
         })
         return initialRsvps
@@ -234,6 +237,7 @@ const AanwezigheidsPage: React.VFC = () => {
       name={sollicitatie.markt?.naam}
       sollicitatieNummer={sollicitatie.sollicitatieNummer}
       sollicitatieStatus={sollicitatie.status}
+      marktDagen={marktData.data?.marktDagen}
       rsvps={rsvpPerMarkt[marktId]}
       updateRsvp={updateRsvp}
       pattern={pattern as IRsvpPatternExt}
@@ -275,6 +279,7 @@ type MarktPropsType = {
   name?: string
   sollicitatieStatus?: string
   sollicitatieNummer?: number
+  marktDagen?: string[]
   apiInProgress: boolean
   rsvps: IRsvpExt[]
   pattern: IRsvpPatternExt
@@ -388,7 +393,7 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
   return <WeekUI title="Aanwezigheidspatroon">{renderedPattern}</WeekUI>
 }
 
-const RsvpList: React.VFC<{ rsvps: IRsvpExt[]; updateRsvp: UpdateRsvpFunctionType; title: string }> = (props) => {
+const RsvpList: React.VFC<{ rsvps: IRsvpExt[]; updateRsvp: UpdateRsvpFunctionType; title: string; }> = (props) => {
   const rsvps = props.rsvps.map((rsvp) => {
     return <Rsvp key={rsvp.marktDate} {...rsvp} updateRsvp={props.updateRsvp} />
   })
@@ -408,7 +413,7 @@ const Rsvp: React.VFC<IRsvpProps> = (props) => {
     <DayUI
       checked={props.attending}
       onChange={updateRsvp}
-      disabled={props.isInThePast}
+      disabled={props.isInThePast || !props.isActiveMarketDay}
       name={props.shortName}
       tooltipText={props.marktDate}
     />
