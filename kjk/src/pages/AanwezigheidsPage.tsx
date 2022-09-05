@@ -2,7 +2,7 @@ import { Alert, Card, Checkbox, Col, notification, PageHeader, Row, Space, Tag, 
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons'
 import { every, find, groupBy, includes, isEmpty } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
 import { SaveButton } from '../components/buttons'
@@ -15,7 +15,6 @@ import {
   IRsvpPattern,
   ISollicitatie,
 } from '../models'
-import { RoleContext } from '../components/providers/RoleProvider'
 import {
   useMarkt,
   useMarktVoorkeur,
@@ -47,6 +46,7 @@ interface IRsvpExt extends Omit<IRsvp, 'koopmanErkenningsNummer' | 'marktId'> {
   day: string
   shortName: string
   isInThePast: boolean
+  isActiveMarketDay: boolean
 }
 
 interface IRsvpPatternExt extends Omit<IRsvpPattern, 'erkenningsNummer' | 'markt'> {}
@@ -54,6 +54,8 @@ interface IRsvpPatternExt extends Omit<IRsvpPattern, 'erkenningsNummer' | 'markt
 type PatternFunctionType = (patternDay: string, attending: boolean) => void
 type UpdateRsvpFunctionType = (updatedRsvp: IRsvpExt) => void
 type saveFunctionType = (id: string) => void
+
+const MarktDagenContext = React.createContext<string[]>([]);
 
 const AanwezigheidsPage: React.VFC = () => {
   const { erkenningsNummer, marktId } = useParams<IAanwezigheidsPageRouteParams>()
@@ -63,7 +65,7 @@ const AanwezigheidsPage: React.VFC = () => {
   const marktVoorkeurData = useMarktVoorkeur(erkenningsNummer)
   const marktData = useMarkt(marktId)
 
-  const { mutate: saveRsvpApi, isLoading: saveRsvpApiInProgress, isSuccess: saveRsvpIsSuccess } = useSaveRsvp()
+  const { mutate: saveRsvpApi, isLoading: saveRsvpApiInProgress } = useSaveRsvp()
   const {
     mutate: savePatternApi,
     isLoading: savePatternApiInProgress,
@@ -74,6 +76,7 @@ const AanwezigheidsPage: React.VFC = () => {
   const [sollicitatie, setSollicitatie] = useState<Partial<ISollicitatie>>({})
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
   const [pattern, setPattern] = useState<Partial<IRsvpPatternExt>>({})
+  
 
   const updateRsvp: UpdateRsvpFunctionType = (updatedRsvp) => {
     const updatedRsvps = rsvps.map((rsvp) => {
@@ -199,6 +202,7 @@ const AanwezigheidsPage: React.VFC = () => {
             attending: isStatusLikeVpl && includes(marktDagen, shortName),
             day: date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
             isInThePast: new Date(`${marktDate}T${CUTOFF_TIME}`) < today,
+            isActiveMarketDay: includes(marktDagen, shortName),
           }
         })
         return initialRsvps
@@ -234,6 +238,7 @@ const AanwezigheidsPage: React.VFC = () => {
       name={sollicitatie.markt?.naam}
       sollicitatieNummer={sollicitatie.sollicitatieNummer}
       sollicitatieStatus={sollicitatie.status}
+      marktDagen={marktData.data?.marktDagen}
       rsvps={rsvpPerMarkt[marktId]}
       updateRsvp={updateRsvp}
       pattern={pattern as IRsvpPatternExt}
@@ -250,9 +255,11 @@ const AanwezigheidsPage: React.VFC = () => {
         <Col md={20} lg={16}>
           <div className="flex-center">
             <Space direction="vertical" size="large">
-              <Ondernemer {...ondernemerData.data} />
-              <Messages showMissingBrancheWarning={!hasValidBranche} marktData={marktData.data} />
-              {ondernemerData.data && hasValidBranche && marktComponent}
+              <MarktDagenContext.Provider value={marktData.data?.marktDagen || []}>
+                <Ondernemer {...ondernemerData.data} />
+                <Messages showMissingBrancheWarning={!hasValidBranche} marktData={marktData.data} />
+                {ondernemerData.data && hasValidBranche && marktComponent}
+              </MarktDagenContext.Provider>
             </Space>
           </div>
         </Col>
@@ -275,6 +282,7 @@ type MarktPropsType = {
   name?: string
   sollicitatieStatus?: string
   sollicitatieNummer?: number
+  marktDagen?: string[]
   apiInProgress: boolean
   rsvps: IRsvpExt[]
   pattern: IRsvpPatternExt
@@ -373,6 +381,7 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
     props.updatePattern(patternDay, attending)
   }
 
+  const marktDagen = useContext(MarktDagenContext)
   const renderedPattern = Object.keys(props.pattern).map((item) => {
     const name = WEEKDAY_NAME_MAP[item as keyof IRsvpPatternExt]
     return (
@@ -380,6 +389,7 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
         key={item}
         onChange={updatePattern}
         checked={props.pattern[item as keyof IRsvpPatternExt]}
+        disabled={!includes(marktDagen, name)}
         value={item}
         name={name}
       ></DayUI>
@@ -388,7 +398,7 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
   return <WeekUI title="Aanwezigheidspatroon">{renderedPattern}</WeekUI>
 }
 
-const RsvpList: React.VFC<{ rsvps: IRsvpExt[]; updateRsvp: UpdateRsvpFunctionType; title: string }> = (props) => {
+const RsvpList: React.VFC<{ rsvps: IRsvpExt[]; updateRsvp: UpdateRsvpFunctionType; title: string; }> = (props) => {
   const rsvps = props.rsvps.map((rsvp) => {
     return <Rsvp key={rsvp.marktDate} {...rsvp} updateRsvp={props.updateRsvp} />
   })
@@ -408,7 +418,7 @@ const Rsvp: React.VFC<IRsvpProps> = (props) => {
     <DayUI
       checked={props.attending}
       onChange={updateRsvp}
-      disabled={props.isInThePast}
+      disabled={props.isInThePast || !props.isActiveMarketDay}
       name={props.shortName}
       tooltipText={props.marktDate}
     />
@@ -457,7 +467,6 @@ const DayUI: React.FC<DayUIPropsType> = (props) => {
 
 const BackButton: React.VFC = () => {
   const history = useHistory()
-  const { homeUrl } = React.useContext(RoleContext)
   return (
     <Link onClick={history.goBack}>
       <ArrowLeftOutlined /> Terug

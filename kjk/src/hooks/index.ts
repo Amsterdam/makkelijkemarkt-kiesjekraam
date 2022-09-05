@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 
 import { MM_API_QUERY_CONFIG } from '../constants'
 import { IApiError, IMarkt, IMarktVoorkeur, IOndernemer, IRsvp, IRsvpPattern } from '../models'
@@ -25,7 +25,6 @@ export const useRsvp = (erkenningsNummer: string) => {
 }
 
 export const useSaveRsvp = () => {
-  const queryClient = useQueryClient()
   return useMutation<IRsvp, IApiError, IRsvp>(
     (rsvp) => {
       return mmApi.post(`/rsvp`, rsvp)
@@ -48,7 +47,6 @@ export const useRsvpPattern = (erkenningsNummer: string) => {
 }
 
 export const useSaveRsvpPattern = () => {
-  const queryClient = useQueryClient()
   return useMutation<IRsvpPattern, IApiError, IRsvpPattern>(
     (rsvpPattern) => {
       return mmApi.post(`/rsvp_pattern`, rsvpPattern)
