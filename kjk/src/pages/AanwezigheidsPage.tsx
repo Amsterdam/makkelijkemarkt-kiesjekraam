@@ -44,6 +44,7 @@ interface IRsvpExt extends Omit<IRsvp, 'koopmanErkenningsNummer' | 'marktId'> {
   koopman: ErkenningsNummer
   markt: string
   day: string
+  dateNL: string
   shortName: string
   isInThePast: boolean
   isActiveMarketDay: boolean
@@ -200,6 +201,7 @@ const AanwezigheidsPage: React.VFC = () => {
             markt: marktId,
             attending: isStatusLikeVpl && includes(marktDagen, shortName),
             day: date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+            dateNL: date.toLocaleDateString('nl-NL'),
             isInThePast: new Date(`${marktDate}T${CUTOFF_TIME}`) < today,
             isActiveMarketDay: includes(marktDagen, shortName),
           }
@@ -419,7 +421,7 @@ const Rsvp: React.VFC<IRsvpProps> = (props) => {
       onChange={updateRsvp}
       disabled={props.isInThePast || !props.isActiveMarketDay}
       name={props.shortName}
-      tooltipText={props.marktDate}
+      tooltipText={props.dateNL}
     />
   )
 }
