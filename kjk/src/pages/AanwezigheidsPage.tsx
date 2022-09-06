@@ -55,7 +55,7 @@ type PatternFunctionType = (patternDay: string, attending: boolean) => void
 type UpdateRsvpFunctionType = (updatedRsvp: IRsvpExt) => void
 type saveFunctionType = (id: string) => void
 
-const MarktDagenContext = React.createContext<string[]>([]);
+const MarktDagenContext = React.createContext<string[]>([])
 
 const AanwezigheidsPage: React.VFC = () => {
   const { erkenningsNummer, marktId } = useParams<IAanwezigheidsPageRouteParams>()
@@ -76,7 +76,6 @@ const AanwezigheidsPage: React.VFC = () => {
   const [sollicitatie, setSollicitatie] = useState<Partial<ISollicitatie>>({})
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
   const [pattern, setPattern] = useState<Partial<IRsvpPatternExt>>({})
-  
 
   const updateRsvp: UpdateRsvpFunctionType = (updatedRsvp) => {
     const updatedRsvps = rsvps.map((rsvp) => {
@@ -398,7 +397,7 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
   return <WeekUI title="Aanwezigheidspatroon">{renderedPattern}</WeekUI>
 }
 
-const RsvpList: React.VFC<{ rsvps: IRsvpExt[]; updateRsvp: UpdateRsvpFunctionType; title: string; }> = (props) => {
+const RsvpList: React.VFC<{ rsvps: IRsvpExt[]; updateRsvp: UpdateRsvpFunctionType; title: string }> = (props) => {
   const rsvps = props.rsvps.map((rsvp) => {
     return <Rsvp key={rsvp.marktDate} {...rsvp} updateRsvp={props.updateRsvp} />
   })
