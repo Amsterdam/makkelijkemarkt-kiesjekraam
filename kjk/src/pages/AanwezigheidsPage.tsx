@@ -305,11 +305,11 @@ const Markt: React.VFC<MarktPropsType> = (props) => {
   return (
     <Card title={props.name} extra={extra}>
       <Space direction="vertical" size="large">
+        <Pattern markt={props.id} pattern={props.pattern} updatePattern={props.updatePattern} />
         <Space size={[64, 16]} wrap>
           {props.rsvps && <RsvpList title="Deze week" rsvps={props.rsvps.slice(0, 7)} updateRsvp={props.updateRsvp} />}
           {props.rsvps && <RsvpList title="Volgende week" rsvps={props.rsvps.slice(7)} updateRsvp={props.updateRsvp} />}
         </Space>
-        <Pattern markt={props.id} pattern={props.pattern} updatePattern={props.updatePattern} />
       </Space>
     </Card>
   )
