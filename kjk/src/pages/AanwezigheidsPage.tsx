@@ -1,7 +1,7 @@
 import { Alert, Card, Checkbox, Col, notification, PageHeader, Row, Space, Tag, Tooltip, Typography } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons'
-import { every, find, groupBy, includes, isEmpty } from 'lodash'
+import { every, find, findLast, groupBy, includes, isEmpty, orderBy } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
@@ -163,8 +163,9 @@ const AanwezigheidsPage: React.VFC = () => {
       const { marktDagen = [] } = marktData.data || {}
 
       // ONDERNEMER
+      const orderedSollicitaties = orderBy(ondernemerData.data?.sollicitaties, 'id')
       const sollicitatie: Partial<ISollicitatie> =
-        find(ondernemerData.data?.sollicitaties, (s) => String(s.markt.id) === marktId) || {}
+        findLast(orderedSollicitaties, (s) => String(s.markt.id) === marktId && !s.doorgehaald) || {}
       setSollicitatie(sollicitatie)
       const isStatusLikeVpl = sollicitatie.status === 'vpl' || sollicitatie.status === 'eb'
 
