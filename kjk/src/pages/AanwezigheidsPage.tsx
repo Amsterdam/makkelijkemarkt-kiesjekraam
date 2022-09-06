@@ -55,7 +55,7 @@ type PatternFunctionType = (patternDay: string, attending: boolean) => void
 type UpdateRsvpFunctionType = (updatedRsvp: IRsvpExt) => void
 type saveFunctionType = (id: string) => void
 
-const MarktDagenContext = React.createContext<string[]>([]);
+const MarktDagenContext = React.createContext<string[]>([])
 
 const AanwezigheidsPage: React.VFC = () => {
   const { erkenningsNummer, marktId } = useParams<IAanwezigheidsPageRouteParams>()
@@ -76,7 +76,6 @@ const AanwezigheidsPage: React.VFC = () => {
   const [sollicitatie, setSollicitatie] = useState<Partial<ISollicitatie>>({})
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
   const [pattern, setPattern] = useState<Partial<IRsvpPatternExt>>({})
-  
 
   const updateRsvp: UpdateRsvpFunctionType = (updatedRsvp) => {
     const updatedRsvps = rsvps.map((rsvp) => {
@@ -305,11 +304,11 @@ const Markt: React.VFC<MarktPropsType> = (props) => {
   return (
     <Card title={props.name} extra={extra}>
       <Space direction="vertical" size="large">
+        <Pattern markt={props.id} pattern={props.pattern} updatePattern={props.updatePattern} />
         <Space size={[64, 16]} wrap>
           {props.rsvps && <RsvpList title="Deze week" rsvps={props.rsvps.slice(0, 7)} updateRsvp={props.updateRsvp} />}
           {props.rsvps && <RsvpList title="Volgende week" rsvps={props.rsvps.slice(7)} updateRsvp={props.updateRsvp} />}
         </Space>
-        <Pattern markt={props.id} pattern={props.pattern} updatePattern={props.updatePattern} />
       </Space>
     </Card>
   )
@@ -398,7 +397,7 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
   return <WeekUI title="Aanwezigheidspatroon">{renderedPattern}</WeekUI>
 }
 
-const RsvpList: React.VFC<{ rsvps: IRsvpExt[]; updateRsvp: UpdateRsvpFunctionType; title: string; }> = (props) => {
+const RsvpList: React.VFC<{ rsvps: IRsvpExt[]; updateRsvp: UpdateRsvpFunctionType; title: string }> = (props) => {
   const rsvps = props.rsvps.map((rsvp) => {
     return <Rsvp key={rsvp.marktDate} {...rsvp} updateRsvp={props.updateRsvp} />
   })
