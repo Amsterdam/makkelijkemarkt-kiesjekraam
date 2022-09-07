@@ -260,7 +260,7 @@ const AanwezigheidsPage: React.VFC = () => {
               <MarktDagenContext.Provider value={marktData.data?.marktDagen || []}>
                 <Ondernemer {...ondernemerData.data} />
                 <Messages showMissingBrancheWarning={!hasValidBranche} marktData={marktData.data} />
-                {ondernemerData.data && hasValidBranche && marktComponent}
+                {ondernemerData.data && hasValidBranche && sollicitatie.status && marktComponent}
               </MarktDagenContext.Provider>
             </Space>
           </div>
