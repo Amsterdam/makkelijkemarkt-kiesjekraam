@@ -67,6 +67,7 @@ export interface ISollicitatie {
   markt: Pick<IMarkt, 'id' | 'afkorting' | 'naam'>
   sollicitatieNummer: number
   status: string
+  doorgehaald: boolean
 }
 
 export interface IMarkt {

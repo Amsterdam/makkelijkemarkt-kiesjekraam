@@ -1,7 +1,7 @@
 import { Alert, Card, Checkbox, Col, notification, PageHeader, Row, Space, Tag, Tooltip, Typography } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons'
-import { every, find, groupBy, includes, isEmpty } from 'lodash'
+import { every, find, findLast, groupBy, includes, isEmpty, orderBy } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
@@ -44,6 +44,7 @@ interface IRsvpExt extends Omit<IRsvp, 'koopmanErkenningsNummer' | 'marktId'> {
   koopman: ErkenningsNummer
   markt: string
   day: string
+  dateNL: string
   shortName: string
   isInThePast: boolean
   isActiveMarketDay: boolean
@@ -162,8 +163,9 @@ const AanwezigheidsPage: React.VFC = () => {
       const { marktDagen = [] } = marktData.data || {}
 
       // ONDERNEMER
+      const orderedSollicitaties = orderBy(ondernemerData.data?.sollicitaties, 'id')
       const sollicitatie: Partial<ISollicitatie> =
-        find(ondernemerData.data?.sollicitaties, (s) => String(s.markt.id) === marktId) || {}
+        findLast(orderedSollicitaties, (s) => String(s.markt.id) === marktId && !s.doorgehaald) || {}
       setSollicitatie(sollicitatie)
       const isStatusLikeVpl = sollicitatie.status === 'vpl' || sollicitatie.status === 'eb'
 
@@ -200,6 +202,7 @@ const AanwezigheidsPage: React.VFC = () => {
             markt: marktId,
             attending: isStatusLikeVpl && includes(marktDagen, shortName),
             day: date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+            dateNL: date.toLocaleDateString('nl-NL'),
             isInThePast: new Date(`${marktDate}T${CUTOFF_TIME}`) < today,
             isActiveMarketDay: includes(marktDagen, shortName),
           }
@@ -257,7 +260,7 @@ const AanwezigheidsPage: React.VFC = () => {
               <MarktDagenContext.Provider value={marktData.data?.marktDagen || []}>
                 <Ondernemer {...ondernemerData.data} />
                 <Messages showMissingBrancheWarning={!hasValidBranche} marktData={marktData.data} />
-                {ondernemerData.data && hasValidBranche && marktComponent}
+                {ondernemerData.data && hasValidBranche && sollicitatie.status && marktComponent}
               </MarktDagenContext.Provider>
             </Space>
           </div>
@@ -419,7 +422,7 @@ const Rsvp: React.VFC<IRsvpProps> = (props) => {
       onChange={updateRsvp}
       disabled={props.isInThePast || !props.isActiveMarketDay}
       name={props.shortName}
-      tooltipText={props.marktDate}
+      tooltipText={props.dateNL}
     />
   )
 }
