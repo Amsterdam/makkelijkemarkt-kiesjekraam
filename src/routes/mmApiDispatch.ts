@@ -75,8 +75,8 @@ subroutes.forEach((subroute: string) => {
             _invalidateCache(subroute, req);
             return res.send(result);
         } catch (error) {
-            res.status(error.response.status);
-            return res.send({ statusText: error.response.statusText, message: error.response.data });
+            res.status(error.response?.status || 500);
+            return res.send({ statusText: error.response?.statusText, message: error.response?.data });
         }
     });
 });
