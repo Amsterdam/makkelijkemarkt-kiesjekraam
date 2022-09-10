@@ -75,8 +75,26 @@ class MarketPage extends React.Component<Props> {
       )
     }
   }
+  validateConfig(config: MarketEventDetails) {
+    let isValid = true
+    config.pages.forEach((page) => {
+      if (page.invalid) {
+        isValid = false
+        notification.error({
+          message: 'Opslaan niet mogelijk',
+          description: `Ongeldige configuratie op ${page.title}`,
+        })
+      }
+    })
+    return isValid
+  }
+
   save() {
     if (this.state.marketEventDetails) {
+      const isValid = this.validateConfig(this.state.marketEventDetails)
+      if (!isValid) {
+        return
+      }
       const { pages } = this.state.marketEventDetails
       const locaties = this.transformer.layoutToStands(pages)
       const marktOpstelling = this.transformer.layoutToRows(pages)
