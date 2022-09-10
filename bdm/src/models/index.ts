@@ -156,6 +156,9 @@ export interface IMarktContext {
   marktId: string
   saveMarktConfig(marktConfiguratie: IMarktConfiguratie): void
   saveInProgress: boolean
+  saveIsSuccess: boolean
+  saveIsError: boolean
+  saveError: IApiError | null
   markt?: MMarkt
   marktNotFound: boolean
   marktConfig?: IMarktConfiguratie
