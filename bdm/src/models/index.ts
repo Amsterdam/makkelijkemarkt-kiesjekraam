@@ -170,6 +170,7 @@ export interface IMarktGenericContext {
 
 export interface IApiError extends Error {
   status?: number
+  statusText?: string
 }
 
 export interface IQueryContext {

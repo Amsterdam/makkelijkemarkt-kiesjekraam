@@ -18,8 +18,9 @@ const handleResponse = async (response: Response) => {
   }
 
   if (!response.ok) {
-    const customError: IApiError = new Error(responseData.message ? responseData.message.error : response.statusText)
+    const customError: IApiError = new Error(responseData.message?.error) // customError.message
     customError.status = response.status
+    customError.statusText = response.statusText
     throw customError
   }
   return responseData

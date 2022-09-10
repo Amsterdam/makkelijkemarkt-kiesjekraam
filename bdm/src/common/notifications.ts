@@ -3,8 +3,8 @@ import { IApiError } from '../models'
 
 export const networkErrorNotification = (error: IApiError) => {
   notification.error({
-    message: `Netwerk fout ${error.status} ${error.message}`,
-    description: 'Wijzigingen zijn niet opgeslagen',
+    message: `Wijzigingen niet opgeslagen`,
+    description: `${error.status} ${error.statusText} ${error.message}`,
     duration: 0,
   })
 }
