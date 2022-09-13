@@ -11,8 +11,10 @@ import MarktGenericDataProvider from '../components/providers/MarktGenericDataPr
 import MarktPageWrapper from '../components/MarktPageWrapper'
 import { server } from '../mocks/mmApiServiceWorker/nodeEnvironment'
 
-const REACT_QUERY_RETRY_TIMEOUT = { timeout: 1200 }
 const queryClient = new QueryClient()
+
+const ANTD_NOTIFICATION_TIMEOUT = { timeout: 4500 + 1000 } // Antd default notification duration = 4.5 seconds
+const REACT_QUERY_RETRY_TIMEOUT = { timeout: 1200 }
 const MARKT_ROUTE = '/markt/204'
 
 beforeAll(() => {
@@ -101,6 +103,36 @@ describe('Loading markt configuratie', () => {
   it('Shows the markt title after loading', async () => {
     await waitForLoadingSpinnerToBeRemoved()
     expect(screen.getByText('Albert Cuyp-2022')).toBeInTheDocument()
+  })
+})
+
+describe('Saving markt configuratie', () => {
+  it('Has a save button on screen', async () => {
+    await waitForLoadingSpinnerToBeRemoved()
+    const saveButton = await getSaveButton()
+    expect(saveButton).toBeInTheDocument()
+  })
+
+  it('Shows a temporary spinner in the save button when this button is clicked', async () => {
+    await waitForLoadingSpinnerToBeRemoved()
+    userEvent.click(await getSaveButton())
+    const spinner = await getSavingSpinner()
+    expect(spinner).toBeInTheDocument()
+    await waitForSavingSpinnerToBeRemoved()
+    expect(spinner).not.toBeInTheDocument()
+    const notification = await screen.findByText(new RegExp(`Gereed`))
+    // need to explicitly remove Antd notification from DOM otherwise it's still there in the next test
+    removeNotificationFromDom(notification)
+  })
+
+  it('Shows a confirmation after succesful save that auto disappears', async () => {
+    await waitForLoadingSpinnerToBeRemoved()
+    userEvent.click(await getSaveButton())
+    await waitForSavingSpinnerToBeRemoved()
+    const notification = await screen.findByText(new RegExp(`Gereed`))
+    expect(notification).toBeInTheDocument()
+    await waitForElementToBeRemoved(notification, ANTD_NOTIFICATION_TIMEOUT)
+    expect(notification).not.toBeInTheDocument()
   })
 })
 
