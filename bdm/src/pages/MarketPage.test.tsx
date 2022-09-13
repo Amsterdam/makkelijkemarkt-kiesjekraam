@@ -171,11 +171,8 @@ describe.each(['bak', 'bak-licht'])('Setting bak properties for kraam', (bakType
     userEvent.click(bakLichtRadioButton)
     expect(screen.queryByTestId(bakTypeIcon)).toBeInTheDocument()
 
-    const saveButton = screen.getByText('Marktconfiguratie opslaan')
-    userEvent.click(saveButton)
-
-    const saveSpinner = await screen.findByLabelText('loading')
-    await waitForElementToBeRemoved(saveSpinner, REACT_QUERY_RETRY_TIMEOUT)
+    userEvent.click(await getSaveButton())
+    await waitForSavingSpinnerToBeRemoved()
 
     expect(apiSpyOnPost).lastCalledWith(
       `${MARKT_ROUTE}/marktconfiguratie`,
