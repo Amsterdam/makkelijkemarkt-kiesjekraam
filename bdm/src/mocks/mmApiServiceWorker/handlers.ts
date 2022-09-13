@@ -41,6 +41,10 @@ const marktHandlers = [
   rest.get(`${MM_API_BASE_URL}/markt/:id/marktconfiguratie/latest`, (req, res, ctx) => {
     return res(getDelay(ctx), ctx.json(fixtures.marktConfiguratie))
   }),
+  rest.post(`${MM_API_BASE_URL}/markt/99/marktconfiguratie`, (req, res, ctx) => {
+    // post to markt 99 to receive a 500
+    return res(ctx.delay(2000), ctx.status(500))
+  }),
   rest.post(`${MM_API_BASE_URL}/markt/:id/marktconfiguratie`, (req, res, ctx) => {
     return res(getDelay(ctx), ctx.json(req.body))
   }),
@@ -61,5 +65,8 @@ export const handlers = [
 export const errorHandlers = {
   putBranche500: rest.put(`${MM_API_BASE_URL}/branche/:id`, (req, res, ctx) => {
     return res(ctx.status(500))
+  }),
+  postMarktconfiguratie500: rest.post(`${MM_API_BASE_URL}/markt/:id/marktconfiguratie`, (req, res, ctx) => {
+    return res(getDelay(ctx), ctx.status(500))
   }),
 }
