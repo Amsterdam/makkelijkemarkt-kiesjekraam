@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitForElementToBeRemoved, within } from '@testing-library/react'
+import { render, screen, waitForElementToBeRemoved, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Route, Router } from 'react-router-dom'
@@ -10,6 +10,7 @@ import MarktDataProvider from '../components/providers/MarktDataProvider'
 import MarktGenericDataProvider from '../components/providers/MarktGenericDataProvider'
 import MarktPageWrapper from '../components/MarktPageWrapper'
 import { server } from '../mocks/mmApiServiceWorker/nodeEnvironment'
+import { errorHandlers } from '../mocks/mmApiServiceWorker/handlers'
 
 const queryClient = new QueryClient()
 
@@ -132,6 +133,23 @@ describe('Saving markt configuratie', () => {
     const notification = await screen.findByText(new RegExp(`Gereed`))
     expect(notification).toBeInTheDocument()
     await waitForElementToBeRemoved(notification, ANTD_NOTIFICATION_TIMEOUT)
+    expect(notification).not.toBeInTheDocument()
+  })
+
+  it('Shows an error modal after unsuccesful save that only disappears after manual closing', async () => {
+    server.use(errorHandlers.postMarktconfiguratie500)
+    await waitForLoadingSpinnerToBeRemoved()
+    userEvent.click(await getSaveButton())
+    await waitForSavingSpinnerToBeRemoved()
+    const notification = await screen.findByText(new RegExp(`500`))
+    expect(notification).toBeInTheDocument()
+    await waitFor(() => {}, ANTD_NOTIFICATION_TIMEOUT)
+    expect(notification).toBeInTheDocument()
+    const closeButton = screen.getByRole((role, node) => {
+      return role === 'img' && (node?.className || '').includes('ant-notification-notice-close-icon')
+    })
+    expect(closeButton).toBeInTheDocument()
+    closeButton.click()
     expect(notification).not.toBeInTheDocument()
   })
 })
