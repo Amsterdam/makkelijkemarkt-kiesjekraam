@@ -108,14 +108,15 @@ describe('Loading markt configuratie', () => {
 })
 
 describe('Saving markt configuratie', () => {
-  it('Has a save button on screen', async () => {
+  beforeEach(async () => {
     await waitForLoadingSpinnerToBeRemoved()
+  })
+  it('Has a save button on screen', async () => {
     const saveButton = await getSaveButton()
     expect(saveButton).toBeInTheDocument()
   })
 
   it('Shows a temporary spinner in the save button when this button is clicked', async () => {
-    await waitForLoadingSpinnerToBeRemoved()
     userEvent.click(await getSaveButton())
     const spinner = await getSavingSpinner()
     expect(spinner).toBeInTheDocument()
@@ -127,7 +128,6 @@ describe('Saving markt configuratie', () => {
   })
 
   it('Shows a confirmation after succesful save that auto disappears', async () => {
-    await waitForLoadingSpinnerToBeRemoved()
     userEvent.click(await getSaveButton())
     await waitForSavingSpinnerToBeRemoved()
     const notification = await screen.findByText(new RegExp(`Gereed`))
@@ -138,7 +138,6 @@ describe('Saving markt configuratie', () => {
 
   it('Shows an error modal after unsuccesful save that only disappears after manual closing', async () => {
     server.use(errorHandlers.postMarktconfiguratie500)
-    await waitForLoadingSpinnerToBeRemoved()
     userEvent.click(await getSaveButton())
     await waitForSavingSpinnerToBeRemoved()
     const notification = await screen.findByText(new RegExp(`500`))
