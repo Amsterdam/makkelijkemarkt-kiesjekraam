@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitForElementToBeRemoved } from '@testing-library/react'
+import { render, screen, waitForElementToBeRemoved, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Route, Router } from 'react-router-dom'
@@ -69,6 +69,28 @@ const getLoadingSpinner = async () => {
 
 const waitForLoadingSpinnerToBeRemoved = async () => {
   await waitForElementToBeRemoved(await getLoadingSpinner(), REACT_QUERY_RETRY_TIMEOUT)
+}
+
+const getSaveButton = async () => {
+  const saveButtonText = screen.getByText('Marktconfiguratie opslaan')
+  const saveButton = saveButtonText.closest('button') as HTMLElement
+  // you can debug the element like this: screen.debug(actualButton)
+  return saveButton
+}
+
+const getSavingSpinner = async () => {
+  const saveButton = await getSaveButton()
+  const withinSaveButton = within(saveButton)
+  return await withinSaveButton.findByLabelText('loading')
+}
+
+const waitForSavingSpinnerToBeRemoved = async () => {
+  await waitForElementToBeRemoved(await getSavingSpinner(), REACT_QUERY_RETRY_TIMEOUT)
+}
+
+const removeNotificationFromDom = (notification: HTMLElement) => {
+  const notificationParent = notification.parentElement as HTMLElement
+  notificationParent.removeChild(notification)
 }
 
 describe('Loading markt configuratie', () => {
