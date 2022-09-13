@@ -189,3 +189,22 @@ describe.each(['bak', 'bak-licht'])('Setting bak properties for kraam', (bakType
     apiSpyOnPost.mockRestore()
   })
 })
+
+describe('Validating markt configuratie', () => {
+  beforeEach(async () => {
+    await waitForLoadingSpinnerToBeRemoved()
+  })
+  it('Does not save when duplicate kraam numbers are detected', async () => {
+    const apiSpyOnPost = jest.spyOn(mmApi, 'post')
+    const kraam2 = screen.getByText('2')
+    userEvent.click(kraam2)
+
+    const kraamInput = screen.getByPlaceholderText('Vul naam of nummer van de kraam in')
+    userEvent.type(kraamInput, '{backspace}1')
+
+    userEvent.click(await getSaveButton())
+    const notification = await screen.findByText(new RegExp(`Ongeldige configuratie op Markt 1`))
+    expect(notification).toBeInTheDocument()
+    expect(apiSpyOnPost).not.toBeCalled()
+  })
+})
