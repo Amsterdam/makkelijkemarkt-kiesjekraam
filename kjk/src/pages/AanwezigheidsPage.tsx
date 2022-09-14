@@ -42,7 +42,6 @@ const WEEKDAY_NAME_MAP = {
 
 interface IRsvpExt extends Omit<IRsvp, 'koopmanErkenningsNummer' | 'marktId'> {
   koopman: ErkenningsNummer
-  markt: string
   day: string
   dateNL: string
   shortName: string

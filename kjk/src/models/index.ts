@@ -6,7 +6,8 @@ export interface IAanwezigheidsPageRouteParams {
 }
 
 export interface IRsvp {
-  marktId: string
+  markt: string
+  marktId: string // we get 'markt' with a GET from MM api, but need to provide 'marktId' with POST
   marktDate: string
   koopmanErkenningsNummer: ErkenningsNummer
   attending: boolean
