@@ -9,7 +9,13 @@ export const MarktContext = React.createContext<Partial<IMarktContext & IQueryCo
 
 export const MarktDataProvider: React.FC = (props) => {
   const { marktId } = useParams<{ marktId: string }>()
-  const { mutate: saveMarktConfig, isLoading: saveInProgress } = useSaveMarktConfig(marktId)
+  const {
+    mutate: saveMarktConfig,
+    isLoading: saveInProgress,
+    isError: saveIsError,
+    isSuccess: saveIsSuccess,
+    error: saveError,
+  } = useSaveMarktConfig(marktId)
 
   const markt = useMarkt(marktId)
   const marktConfig = useMarktConfig(marktId)
@@ -19,6 +25,9 @@ export const MarktDataProvider: React.FC = (props) => {
     marktId,
     saveMarktConfig,
     saveInProgress,
+    saveIsSuccess,
+    saveIsError,
+    saveError,
     markt: markt.data,
     marktNotFound: marktConfig.error?.status === 404,
     marktConfig: marktConfig.data,

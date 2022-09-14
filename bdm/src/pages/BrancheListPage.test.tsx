@@ -108,7 +108,7 @@ describe('Afkorting input and save button', () => {
     const spinner = await getSpinnerAfterClickingSaveButton(saveButton)
     await waitForElementToBeRemoved(spinner, REACT_QUERY_RETRY_TIMEOUT)
 
-    const notification = await screen.findByText(new RegExp(`Netwerk fout 500`)) // or findByLabel('alert')
+    const notification = await screen.findByText(new RegExp(`500`)) // or findByLabel('alert')
     expect(notification).toBeInTheDocument()
   })
 })

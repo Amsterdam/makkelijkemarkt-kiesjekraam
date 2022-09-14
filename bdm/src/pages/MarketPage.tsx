@@ -1,5 +1,5 @@
-import React, { createRef, MouseEvent, RefObject, KeyboardEvent } from 'react'
-import { Tabs, Row, Col } from 'antd'
+import React, { createRef, MouseEvent, RefObject, KeyboardEvent, useEffect, useContext } from 'react'
+import { Tabs, Row, Col, notification } from 'antd'
 
 import Day from '../components/Day'
 import { Transformer } from '../services/transformer'
@@ -75,8 +75,26 @@ class MarketPage extends React.Component<Props> {
       )
     }
   }
+  validateConfig(config: MarketEventDetails) {
+    let isValid = true
+    config.pages.forEach((page) => {
+      if (page.invalid) {
+        isValid = false
+        notification.error({
+          message: 'Opslaan niet mogelijk',
+          description: `Ongeldige configuratie op ${page.title}`,
+        })
+      }
+    })
+    return isValid
+  }
+
   save() {
     if (this.state.marketEventDetails) {
+      const isValid = this.validateConfig(this.state.marketEventDetails)
+      if (!isValid) {
+        return
+      }
       const { pages } = this.state.marketEventDetails
       const locaties = this.transformer.layoutToStands(pages)
       const marktOpstelling = this.transformer.layoutToRows(pages)
@@ -111,6 +129,7 @@ class MarketPage extends React.Component<Props> {
     return (
       <>
         <h1>{this.context.markt.naam}</h1>
+        <Notifications />
         <SaveButton clickHandler={this.save.bind(this)} inProgress={this.context.saveInProgress}>
           Marktconfiguratie opslaan
         </SaveButton>
@@ -140,6 +159,31 @@ class MarketPage extends React.Component<Props> {
       </>
     )
   }
+}
+
+const Notifications = () => {
+  const { saveIsSuccess, saveIsError, saveError } = useContext(MarktContext)
+
+  useEffect(() => {
+    if (saveIsSuccess) {
+      notification.success({
+        message: 'Gereed',
+        description: 'De nieuwe marktconfiguratie is opgeslagen',
+      })
+    }
+  }, [saveIsSuccess])
+
+  useEffect(() => {
+    if (saveIsError) {
+      notification.error({
+        message: 'Fout tijdens opslaan',
+        description: saveError ? `${saveError.status} ${saveError.statusText} ${saveError.message}` : '',
+        duration: 0,
+      })
+    }
+  }, [saveIsError, saveError])
+
+  return null
 }
 
 export default MarketPage
