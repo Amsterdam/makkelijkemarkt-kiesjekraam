@@ -142,8 +142,14 @@ const AanwezigheidsPage: React.VFC = () => {
   }
 
   const save = async () => {
-    await saveRsvps()
-    await savePattern()
+    const invalidDates = getInvalidDates(rsvps) // TODO: only in the past
+    console.log(invalidDates)
+    if (invalidDates.length) {
+      console.log('Invalid dates', invalidDates)
+    } else {
+      await saveRsvps()
+      await savePattern()
+    }
   }
 
   const saveRsvps = async () => {
