@@ -111,15 +111,26 @@ const AanwezigheidsPage: React.VFC = () => {
   }
 
   const updatePattern: PatternFunctionType = (patternDay, attending) => {
-    setPattern({
-      ...pattern,
-      [patternDay]: attending,
-    })
-    syncRsvpsWithUpdatedPatternDay(patternDay, attending)
+    const syncedRsvps = syncRsvpsWithUpdatedPatternDay(patternDay, attending)
+    const invalidDays = getInvalidDates(syncedRsvps).map((date: string) =>
+      new Date(date).toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
+    )
+    if (includes(invalidDays, patternDay)) {
+      console.log('Invalid', patternDay)
+    } else {
+      setPattern({
+        ...pattern,
+        [patternDay]: attending,
+      })
+      setRsvps(syncedRsvps)
+    }
   }
 
-  const syncRsvpsWithUpdatedPatternDay: PatternFunctionType = (patternDay, attending) => {
-    const syncedRsvps = rsvps.map((rsvp) => {
+  const syncRsvpsWithUpdatedPatternDay: (patternDay: string, attending: boolean) => IRsvpExt[] = (
+    patternDay,
+    attending
+  ) => {
+    return rsvps.map((rsvp) => {
       if (rsvp.day === patternDay && !rsvp.isInThePast) {
         return {
           ...rsvp,
@@ -128,7 +139,6 @@ const AanwezigheidsPage: React.VFC = () => {
       }
       return rsvp
     })
-    setRsvps(syncedRsvps)
   }
 
   const save = async () => {
