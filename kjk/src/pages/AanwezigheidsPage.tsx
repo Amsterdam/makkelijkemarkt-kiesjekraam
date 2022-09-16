@@ -1,7 +1,7 @@
 import { Alert, Card, Checkbox, Col, notification, PageHeader, Row, Space, Tag, Tooltip, Typography } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons'
-import { find, findLast, groupBy, includes, isEmpty, orderBy } from 'lodash'
+import { find, findLast, groupBy, includes, isEmpty, orderBy, some } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
@@ -76,6 +76,24 @@ const AanwezigheidsPage: React.VFC = () => {
   const [sollicitatie, setSollicitatie] = useState<Partial<ISollicitatie>>({})
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
   const [pattern, setPattern] = useState<Partial<IRsvpPatternExt>>({})
+
+  // const nVervangers = ondernemerData.data?.vervangers.length || 0
+  const nVervangers = 0
+  const rsvpsAtOtherMarkets =
+    rsvpData.data?.filter((rsvp) => rsvp.markt !== marktId).filter((rsvp) => rsvp.attending) || []
+
+  const getInvalidDates = (rsvps: IRsvpExt[]) => {
+    const combinedRsvps = [...rsvps.filter((rsvp) => rsvp.attending), ...rsvpsAtOtherMarkets]
+    const rsvpsPerDate = groupBy(combinedRsvps, 'marktDate')
+    const invalidDates = Object.keys(rsvpsPerDate).reduce((total: any[], current: string) => {
+      if (rsvpsPerDate[current].length > nVervangers + 1) {
+        return [...total, current]
+      }
+      return total
+    }, [])
+    console.log({ rsvps, combinedRsvps, rsvpsPerDate, invalidDates })
+    return invalidDates
+  }
 
   const updateRsvp: UpdateRsvpFunctionType = (updatedRsvp) => {
     const updatedRsvps = rsvps.map((rsvp) => {
