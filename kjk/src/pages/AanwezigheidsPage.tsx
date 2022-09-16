@@ -102,7 +102,12 @@ const AanwezigheidsPage: React.VFC = () => {
       }
       return rsvp
     })
-    setRsvps(updatedRsvps)
+    const invalidDates = getInvalidDates(updatedRsvps)
+    if (includes(invalidDates, updatedRsvp.marktDate)) {
+      console.log('Invalid', invalidDates)
+    } else {
+      setRsvps(updatedRsvps)
+    }
   }
 
   const updatePattern: PatternFunctionType = (patternDay, attending) => {
