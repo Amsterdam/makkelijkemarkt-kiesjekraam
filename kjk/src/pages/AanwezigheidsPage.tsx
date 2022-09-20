@@ -1,7 +1,7 @@
 import { Alert, Card, Checkbox, Col, notification, PageHeader, Row, Space, Tag, Tooltip, Typography } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons'
-import { find, findLast, groupBy, includes, isEmpty, orderBy, some } from 'lodash'
+import { find, findLast, groupBy, includes, isEmpty, orderBy } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
