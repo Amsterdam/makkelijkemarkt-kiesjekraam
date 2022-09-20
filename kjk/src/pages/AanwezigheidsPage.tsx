@@ -40,6 +40,11 @@ const WEEKDAY_NAME_MAP = {
   sunday: 'zo',
 }
 
+const checkIfDateIsInThePast = (date: string) => {
+  const today = new Date()
+  return new Date(`${date}T${CUTOFF_TIME}`) < today
+}
+
 interface IRsvpExt extends Omit<IRsvp, 'koopmanErkenningsNummer' | 'marktId'> {
   koopman: ErkenningsNummer
   day: string
@@ -237,7 +242,7 @@ const AanwezigheidsPage: React.VFC = () => {
             attending: isStatusLikeVpl && includes(marktDagen, shortName),
             day: date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
             dateNL: date.toLocaleDateString('nl-NL'),
-            isInThePast: new Date(`${marktDate}T${CUTOFF_TIME}`) < today,
+            isInThePast: checkIfDateIsInThePast(marktDate),
             isActiveMarketDay: includes(marktDagen, shortName),
           }
         })
