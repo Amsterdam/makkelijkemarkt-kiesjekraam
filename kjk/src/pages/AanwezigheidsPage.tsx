@@ -45,6 +45,23 @@ const checkIfDateIsInThePast = (date: string) => {
   return new Date(`${date}T${CUTOFF_TIME}`) < today
 }
 
+const vervangerWarning = ({ dates, day }: { dates?: string[]; day?: string }) => {
+  let description = 'U wilt aanwezig zijn op te veel markten tegelijkertijd.'
+  if (dates) {
+    description = `${description} Het gaat om de volgende datum(s) of dagen: ${dates
+      .map((date) => new Date(date).toLocaleDateString('nl-NL'))
+      .join(', ')}`
+  }
+  if (day) {
+    description = `${description} Deze wijziging in patroon is niet toegestaan.`
+  }
+  notification.warning({
+    message: 'Niet toegestaan',
+    duration: 0,
+    description,
+  })
+}
+
 interface IRsvpExt extends Omit<IRsvp, 'koopmanErkenningsNummer' | 'marktId'> {
   koopman: ErkenningsNummer
   day: string
@@ -108,7 +125,7 @@ const AanwezigheidsPage: React.VFC = () => {
     })
     const invalidDates = getInvalidDates(updatedRsvps)
     if (includes(invalidDates, updatedRsvp.marktDate)) {
-      console.log('Invalid', invalidDates)
+      vervangerWarning({ dates: invalidDates })
     } else {
       setRsvps(updatedRsvps)
     }
@@ -120,7 +137,7 @@ const AanwezigheidsPage: React.VFC = () => {
       new Date(date).toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
     )
     if (includes(invalidDays, patternDay)) {
-      console.log('Invalid', patternDay)
+      vervangerWarning({ day: patternDay })
     } else {
       setPattern({
         ...pattern,
@@ -146,10 +163,9 @@ const AanwezigheidsPage: React.VFC = () => {
   }
 
   const save = async () => {
-    const invalidDates = getInvalidDates(rsvps) // TODO: only in the past
-    console.log(invalidDates)
+    const invalidDates = getInvalidDates(rsvps)
     if (invalidDates.length) {
-      console.log('Invalid dates', invalidDates)
+      vervangerWarning({ dates: invalidDates })
     } else {
       await saveRsvps()
       await savePattern()
