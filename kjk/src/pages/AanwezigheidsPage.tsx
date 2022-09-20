@@ -1,7 +1,7 @@
 import { Alert, Card, Checkbox, Col, notification, PageHeader, Row, Space, Tag, Tooltip, Typography } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons'
-import { every, find, findLast, groupBy, includes, isEmpty, orderBy } from 'lodash'
+import { find, findLast, groupBy, includes, isEmpty, orderBy } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
@@ -40,9 +40,30 @@ const WEEKDAY_NAME_MAP = {
   sunday: 'zo',
 }
 
+const checkIfDateIsInThePast = (date: string) => {
+  const today = new Date()
+  return new Date(`${date}T${CUTOFF_TIME}`) < today
+}
+
+const vervangerWarning = ({ dates, day }: { dates?: string[]; day?: string }) => {
+  let description = 'U wilt aanwezig zijn op te veel markten tegelijkertijd.'
+  if (dates) {
+    description = `${description} Het gaat om de volgende datum(s) of dagen: ${dates
+      .map((date) => new Date(date).toLocaleDateString('nl-NL'))
+      .join(', ')}`
+  }
+  if (day) {
+    description = `${description} Deze wijziging in patroon is niet toegestaan.`
+  }
+  notification.warning({
+    message: 'Niet toegestaan',
+    duration: 0,
+    description,
+  })
+}
+
 interface IRsvpExt extends Omit<IRsvp, 'koopmanErkenningsNummer' | 'marktId'> {
   koopman: ErkenningsNummer
-  markt: string
   day: string
   dateNL: string
   shortName: string
@@ -78,6 +99,22 @@ const AanwezigheidsPage: React.VFC = () => {
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
   const [pattern, setPattern] = useState<Partial<IRsvpPatternExt>>({})
 
+  const nVervangers = ondernemerData.data?.vervangers.length || 0
+  const rsvpsAtOtherMarkets =
+    rsvpData.data?.filter((rsvp) => rsvp.markt !== marktId).filter((rsvp) => rsvp.attending) || []
+
+  const getInvalidDates = (rsvps: IRsvpExt[]) => {
+    const combinedRsvps = [...rsvps.filter((rsvp) => rsvp.attending), ...rsvpsAtOtherMarkets]
+    const rsvpsPerDate = groupBy(combinedRsvps, 'marktDate')
+    const invalidDates = Object.keys(rsvpsPerDate).reduce((total: any[], current: string) => {
+      if (rsvpsPerDate[current].length > nVervangers + 1) {
+        return [...total, current]
+      }
+      return total
+    }, [])
+    return invalidDates.filter((date) => !checkIfDateIsInThePast(date))
+  }
+
   const updateRsvp: UpdateRsvpFunctionType = (updatedRsvp) => {
     const updatedRsvps = rsvps.map((rsvp) => {
       if (rsvp.marktDate === updatedRsvp.marktDate) {
@@ -85,19 +122,35 @@ const AanwezigheidsPage: React.VFC = () => {
       }
       return rsvp
     })
-    setRsvps(updatedRsvps)
+    const invalidDates = getInvalidDates(updatedRsvps)
+    if (includes(invalidDates, updatedRsvp.marktDate)) {
+      vervangerWarning({ dates: invalidDates })
+    } else {
+      setRsvps(updatedRsvps)
+    }
   }
 
   const updatePattern: PatternFunctionType = (patternDay, attending) => {
-    setPattern({
-      ...pattern,
-      [patternDay]: attending,
-    })
-    syncRsvpsWithUpdatedPatternDay(patternDay, attending)
+    const syncedRsvps = syncRsvpsWithUpdatedPatternDay(patternDay, attending)
+    const invalidDays = getInvalidDates(syncedRsvps).map((date: string) =>
+      new Date(date).toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
+    )
+    if (includes(invalidDays, patternDay)) {
+      vervangerWarning({ day: patternDay })
+    } else {
+      setPattern({
+        ...pattern,
+        [patternDay]: attending,
+      })
+      setRsvps(syncedRsvps)
+    }
   }
 
-  const syncRsvpsWithUpdatedPatternDay: PatternFunctionType = (patternDay, attending) => {
-    const syncedRsvps = rsvps.map((rsvp) => {
+  const syncRsvpsWithUpdatedPatternDay: (patternDay: string, attending: boolean) => IRsvpExt[] = (
+    patternDay,
+    attending
+  ) => {
+    return rsvps.map((rsvp) => {
       if (rsvp.day === patternDay && !rsvp.isInThePast) {
         return {
           ...rsvp,
@@ -106,12 +159,16 @@ const AanwezigheidsPage: React.VFC = () => {
       }
       return rsvp
     })
-    setRsvps(syncedRsvps)
   }
 
   const save = async () => {
-    await saveRsvps()
-    await savePattern()
+    const invalidDates = getInvalidDates(rsvps)
+    if (invalidDates.length) {
+      vervangerWarning({ dates: invalidDates })
+    } else {
+      await saveRsvps()
+      await savePattern()
+    }
   }
 
   const saveRsvps = async () => {
@@ -154,11 +211,7 @@ const AanwezigheidsPage: React.VFC = () => {
   }, [savePatternIsError])
 
   useEffect(() => {
-    const allDataLoaded = every(
-      [ondernemerData.data, marktData.data, rsvpPatternData.data, rsvpData.data],
-      (apiCall) => apiCall !== undefined
-    )
-    if (allDataLoaded) {
+    if (ondernemerData.data && marktData.data && rsvpPatternData.data && rsvpData.data) {
       // MARKT
       const { marktDagen = [] } = marktData.data || {}
 
@@ -203,7 +256,7 @@ const AanwezigheidsPage: React.VFC = () => {
             attending: isStatusLikeVpl && includes(marktDagen, shortName),
             day: date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
             dateNL: date.toLocaleDateString('nl-NL'),
-            isInThePast: new Date(`${marktDate}T${CUTOFF_TIME}`) < today,
+            isInThePast: checkIfDateIsInThePast(marktDate),
             isActiveMarketDay: includes(marktDagen, shortName),
           }
         })
@@ -300,7 +353,7 @@ const Markt: React.VFC<MarktPropsType> = (props) => {
     <Tag key="sollicitatieNummer" color="#000000">
       {props.sollicitatieNummer}
     </Tag>,
-    <SaveButton key="save" clickHandler={() => props.save(props.id)} inProgress={props.apiInProgress}>
+    <SaveButton key="save" clickHandler={() => props.save(props.id)} inProgress={props.apiInProgress} type="primary">
       Opslaan
     </SaveButton>,
   ]
