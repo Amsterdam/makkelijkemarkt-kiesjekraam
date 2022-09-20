@@ -99,8 +99,7 @@ const AanwezigheidsPage: React.VFC = () => {
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
   const [pattern, setPattern] = useState<Partial<IRsvpPatternExt>>({})
 
-  // const nVervangers = ondernemerData.data?.vervangers.length || 0
-  const nVervangers = 0
+  const nVervangers = ondernemerData.data?.vervangers.length || 0
   const rsvpsAtOtherMarkets =
     rsvpData.data?.filter((rsvp) => rsvp.markt !== marktId).filter((rsvp) => rsvp.attending) || []
 
