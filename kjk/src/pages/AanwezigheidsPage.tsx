@@ -96,8 +96,7 @@ const AanwezigheidsPage: React.VFC = () => {
       }
       return total
     }, [])
-    console.log({ rsvps, combinedRsvps, rsvpsPerDate, invalidDates })
-    return invalidDates
+    return invalidDates.filter((date) => !checkIfDateIsInThePast(date))
   }
 
   const updateRsvp: UpdateRsvpFunctionType = (updatedRsvp) => {
