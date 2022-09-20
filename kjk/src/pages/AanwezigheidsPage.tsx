@@ -353,7 +353,7 @@ const Markt: React.VFC<MarktPropsType> = (props) => {
     <Tag key="sollicitatieNummer" color="#000000">
       {props.sollicitatieNummer}
     </Tag>,
-    <SaveButton key="save" clickHandler={() => props.save(props.id)} inProgress={props.apiInProgress}>
+    <SaveButton key="save" clickHandler={() => props.save(props.id)} inProgress={props.apiInProgress} type="primary">
       Opslaan
     </SaveButton>,
   ]
