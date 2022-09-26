@@ -57,7 +57,7 @@ const _invalidateCache = (subroute: string, req: GrantedRequest): void => {
 
 subroutes.forEach((subroute: string) => {
     const protectFunction = keycloak.protect((token: any, req: GrantedRequest) => {
-        if (token.hasRole(Roles.MARKTBEWERKER)) {
+        if (token.hasRole(Roles.MARKTBEWERKER) || token.hasRole(Roles.MARKTMEESTER)) {
             return true;
         }
         if (koopmanRoutes.includes(subroute)) {
