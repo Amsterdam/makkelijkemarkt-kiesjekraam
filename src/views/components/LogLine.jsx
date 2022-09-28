@@ -3,9 +3,9 @@ import React from 'react';
 const LogLine = ({ type, message }) => {
     return (
         <pre>
-            {type} : {message}
+            {type} : {message.toString()}
         </pre>
     );
 };
 
-module.exports = LogLine;
+export default LogLine;
