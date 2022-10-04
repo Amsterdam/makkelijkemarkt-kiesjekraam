@@ -11,20 +11,11 @@ import { getKeycloakUser } from '../keycloak-api';
 import { GrantedRequest } from 'keycloak-connect';
 import moment from 'moment';
 import { voorkeurenFormData } from '../model/voorkeur.functions';
-import { Roles } from '../authentication'
-
-const isMakingChangesToLongTermAbsent = (data: any) => {
-    return !!data.absentFrom || !!data.absentUntil
-}
 
 const algemeneVoorkeurenFormCheckForError = (body: any, role: string) => {
     let error = null;
 
-    if (role === Roles.MARKTONDERNEMER && isMakingChangesToLongTermAbsent(body)) {
-        return `Het is niet toegestaan om de absentie aan te passen.`
-    }
-
-    if (role === Roles.MARKTBEWERKER) {
+    if (role === 'marktmeester') {
         const { absentFrom, absentUntil } = body;
         if (absentUntil) {
             if (!moment(absentUntil, 'DD-MM-YYYY', true).isValid()) {
