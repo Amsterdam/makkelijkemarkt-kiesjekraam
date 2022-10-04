@@ -43,7 +43,9 @@ const WEEKDAY_NAME_MAP = {
 
 const checkIfDateIsInThePast = (date: string) => {
   const today = new Date()
-  return new Date(`${date}T${CUTOFF_TIME}`) < today
+  const tomorrow = new Date()
+  tomorrow.setDate(today.getDate() + 1)
+  return new Date(`${date}T${CUTOFF_TIME}`) <= tomorrow
 }
 
 const vervangerWarning = ({ dates, day }: { dates?: string[]; day?: string }) => {
