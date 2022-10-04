@@ -44,7 +44,7 @@ const HTTP_DEFAULT_PORT = 8080;
 
 const isMarktondernemer = (req: GrantedRequest) => {
     const accessToken = req.kauth.grant.access_token.content;
-    console.log(accessToken.resource_access);
+
     return (
         !!accessToken.resource_access[process.env.IAM_CLIENT_ID] &&
         accessToken.resource_access[process.env.IAM_CLIENT_ID].roles.includes(Roles.MARKTONDERNEMER)
@@ -141,7 +141,6 @@ app.get('/bdm/*', keycloak.protect(Roles.MARKTBEWERKER), (req, res) => {
 });
 
 app.get('/kjk/ondernemer/:erkenningsNummer/aanwezigheid/markt/:marktId', keycloak.protect(), (req, res) => {
-    console.log('Aanwezigheid page');
     if (isMarktondernemer(req) && req.params.erkenningsNummer === getErkenningsNummer(req)) {
         res.sendFile(path.join(__dirname, '..', 'kjk', 'build', 'index.html'));
     } else if (isMarktmeester(req)) {
