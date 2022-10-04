@@ -1,7 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Roles } from '../../authentication'
-
 const { plaatsSort, isVastOfExp, isEb } = require('../../domain-knowledge.ts');
 const { getDefaultVoorkeur } = require('../../model/voorkeur.functions');
 const MarktplaatsSelect = require('./MarktplaatsSelect');
@@ -23,16 +21,21 @@ class PlaatsvoorkeurenForm extends React.Component {
 
     render() {
         const { markt, ondernemer, marktplaatsen, indelingVoorkeur, role, sollicitatie, csrfToken } = this.props;
-
         let { plaatsvoorkeuren } = this.props;
 
         const voorkeur = indelingVoorkeur || getDefaultVoorkeur(sollicitatie);
-        const minimumCount = sollicitatie.vastePlaatsen.length > 0 ? sollicitatie.vastePlaatsen.length : 3;
 
-        const minimumDisabled = isVastOfExp(sollicitatie.status) && role !== Roles.MARKTMEESTER;
+        let minimumCount = null;
+        if (role === 'marktmeester') {
+            minimumCount = sollicitatie.vastePlaatsen.length > 0 ? sollicitatie.vastePlaatsen.length + 2 : 3;
+        } else {
+            minimumCount = sollicitatie.vastePlaatsen.length > 0 ? sollicitatie.vastePlaatsen.length : 3;
+        }
+
+        const minimumDisabled = isVastOfExp(sollicitatie.status) && role !== 'marktmeester';
 
         const minimumChecked = i => {
-            if (isVastOfExp(sollicitatie.status) && role !== Roles.MARKTMEESTER) {
+            if (isVastOfExp(sollicitatie.status) && role !== 'marktmeester') {
                 if (sollicitatie.vastePlaatsen.length === i + 1) {
                     return true;
                 } else {
@@ -61,7 +64,7 @@ class PlaatsvoorkeurenForm extends React.Component {
             return plaatsen.length > 1 ? 'plaatsnummers' : 'plaatsnummer';
         };
 
-        const isMarktmeesterEnVph = role === Roles.MARKTMEESTER && isVastOfExp(sollicitatie.status);
+        const isMarktmeesterEnVph = role === 'marktmeester' && isVastOfExp(sollicitatie.status);
         const maxNumKramen = markt.maxAantalKramenPerOndernemer;
 
         plaatsvoorkeuren = plaatsvoorkeuren
@@ -134,7 +137,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                         value={`${i + 1}`}
                                         data-val={`${i + 1}`}
                                         name="minimum"
-                                        disabled={minimumDisabled || role !== Roles.MARKTONDERNEMER}
+                                        disabled={minimumDisabled}
                                         {...{ defaultChecked: minimumChecked(i) }}
                                     />
                                     <label htmlFor={`default-count-${i + 1}`}>{i + 1}</label>
@@ -156,7 +159,6 @@ class PlaatsvoorkeurenForm extends React.Component {
                                         id={`extra-count-${i}`}
                                         value={`${i}`}
                                         name="extra-count"
-                                        disabled={role !== Roles.MARKTONDERNEMER}
                                         {...{ defaultChecked: defaultCheckedMax(i) }}
                                     />
                                     <label htmlFor={`extra-count-${i}`}>
@@ -201,7 +203,6 @@ class PlaatsvoorkeurenForm extends React.Component {
                                             id={`voorkeur-${plaatsvoorkeuren.length + 1}`}
                                             data={marktplaatsen}
                                             optional={true}
-                                            readonly={role !== Roles.MARKTONDERNEMER}
                                         />
                                         <div className="PlaatsvoorkeurenForm__list-item__extra PlaatsvoorkeurenForm__list-item__min-extra" />
                                         <div className="PlaatsvoorkeurenForm__list-item__extra PlaatsvoorkeurenForm__list-item__optional" />
@@ -237,26 +238,21 @@ class PlaatsvoorkeurenForm extends React.Component {
                                         name={`plaatsvoorkeuren[${index}][plaatsId]`}
                                         value={entry.plaatsId}
                                     />
-                                    {role === Roles.MARKTONDERNEMER ? (
-                                        <a href="#" data-handler="remove-voorkeur" className="Draggable-list-item__right">
-                                            <span className="Draggable-list-item__delete" />
-                                        </a>
-                                    ) : null}
+                                    <a href="#" data-handler="remove-voorkeur" className="Draggable-list-item__right">
+                                        <span className="Draggable-list-item__delete" />
+                                    </a>
                                 </div>
                             ))}
                         </div>
-
-                        {role === Roles.MARKTONDERNEMER ? (
-                            <div className="Icon-line">
-                                <img className="Icon-line__icon" src="/images/draggable.svg" alt="Unchecked" />
-                                <p className="Icon-line__text">
-                                    Verander de volgorde van de plaatsnummers door ze op de juiste plaats te slepen.
-                                </p>
-                            </div>
-                        ) : null}
+                        <div className="Icon-line">
+                            <img className="Icon-line__icon" src="/images/draggable.svg" alt="Unchecked" />
+                            <p className="Icon-line__text">
+                                Verander de volgorde van de plaatsnummers door ze op de juiste plaats te slepen.
+                            </p>
+                        </div>
 
                         {/* Dit veld willen we alleen laten zien aan marktmeesters en sollicitanten */}
-                        {role == Roles.MARKTMEESTER || !isVastOfExp(sollicitatie.status) ? (
+                        {role == 'marktmeester' || !isVastOfExp(sollicitatie.status) ? (
                             <div className={`Fieldset ${isMarktmeesterEnVph ? 'Fieldset--highlighted' : null}`}>
                                 <h2 className="Fieldset__header">Automatisch indelen?</h2>
                                 <p>
@@ -271,8 +267,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                         type="checkbox"
                                         name="anywhere"
                                         defaultChecked={voorkeur.anywhere}
-                                        disabled={role !== Roles.MARKTONDERNEMER}
-                                        />
+                                    />
                                     <label htmlFor="anywhere">
                                         <span>Ja, ook als mijn voorkeuren niet vrij zijn wil ik ingedeeld worden.</span>
                                     </label>
@@ -285,23 +280,24 @@ class PlaatsvoorkeurenForm extends React.Component {
                         <Button
                             label="Terug"
                             href={
-                                role === Roles.MARKTMEESTER
+                                role === 'marktmeester'
                                     ? `/profile/${ondernemer.erkenningsnummer}`
                                     : `/markt-detail/${markt.id}#plaatsvoorkeuren`
                             }
                             type="tertiary"
                         />
-                        {role === Roles.MARKTONDERNEMER ? (
-                            <button
-                                className="Button Button--secondary"
-                                type="submit"
-                                name="redirectTo"
-                                value={`/markt-detail/${markt.id}?error=plaatsvoorkeuren-saved#plaatsvoorkeuren`}
-                            >
-                                Opslaan
-                            </button>
-                        ) : null}
-                    
+                        <button
+                            className="Button Button--secondary"
+                            type="submit"
+                            name="redirectTo"
+                            value={`${
+                                role === 'marktmeester'
+                                    ? `/profile/${ondernemer.erkenningsnummer}?error=plaatsvoorkeuren-saved`
+                                    : `/markt-detail/${markt.id}?error=plaatsvoorkeuren-saved#plaatsvoorkeuren`
+                            }`}
+                        >
+                            Opslaan
+                        </button>
                     </p>
                 </div>
             </Form>

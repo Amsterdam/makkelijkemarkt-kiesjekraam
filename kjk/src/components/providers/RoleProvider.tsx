@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 
 import { MARKTMEESTER_HOME_LINK, ONDERNEMER_HOME_LINK } from '../../constants'
 
-export const RoleContext = React.createContext({ homeUrl: '', isMarktMeester: false })
+export const RoleContext = React.createContext({ homeUrl: '' })
 
 export const RoleProvider: React.FC = (props) => {
   const { search } = useLocation()

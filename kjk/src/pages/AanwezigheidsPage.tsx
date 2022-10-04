@@ -4,7 +4,6 @@ import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/ic
 import { find, findLast, groupBy, includes, isEmpty, orderBy } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { RoleContext } from '../components/providers/RoleProvider'
 
 import { SaveButton } from '../components/buttons'
 import {
@@ -349,8 +348,6 @@ type MarktPropsType = {
   updatePattern: PatternFunctionType
 }
 const Markt: React.VFC<MarktPropsType> = (props) => {
-  const role = useContext(RoleContext)
-
   const extra = [
     <Tag key="sollicitatieStatus" color="#00A03C">
       {props.sollicitatieStatus}
@@ -358,16 +355,10 @@ const Markt: React.VFC<MarktPropsType> = (props) => {
     <Tag key="sollicitatieNummer" color="#000000">
       {props.sollicitatieNummer}
     </Tag>,
+    <SaveButton key="save" clickHandler={() => props.save(props.id)} inProgress={props.apiInProgress} type="primary">
+      Opslaan
+    </SaveButton>,
   ]
-
-  if (role.isMarktMeester === false) {
-    extra.push(
-      <SaveButton key="save" clickHandler={() => props.save(props.id)} inProgress={props.apiInProgress}>
-        Opslaan
-      </SaveButton>,
-    )
-  }
-
   return (
     <Card title={props.name} extra={extra}>
       <Space direction="vertical" size="large">
@@ -447,7 +438,6 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
     props.updatePattern(patternDay, attending)
   }
 
-  const role = useContext(RoleContext)
   const marktDagen = useContext(MarktDagenContext)
   const renderedPattern = Object.keys(props.pattern).map((item) => {
     const name = WEEKDAY_NAME_MAP[item as keyof IRsvpPatternExt]
@@ -456,7 +446,7 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
         key={item}
         onChange={updatePattern}
         checked={props.pattern[item as keyof IRsvpPatternExt]}
-        disabled={!includes(marktDagen, name) || role.isMarktMeester}
+        disabled={!includes(marktDagen, name)}
         value={item}
         name={name}
       ></DayUI>
@@ -481,14 +471,11 @@ const Rsvp: React.VFC<IRsvpProps> = (props) => {
     const attending = event.target.checked
     props.updateRsvp({ ...props, attending })
   }
-
-  const role = useContext(RoleContext)
-
   return (
     <DayUI
       checked={props.attending}
       onChange={updateRsvp}
-      disabled={props.isInThePast || !props.isActiveMarketDay || role.isMarktMeester}
+      disabled={props.isInThePast || !props.isActiveMarketDay}
       name={props.shortName}
       tooltipText={props.dateNL}
     />
