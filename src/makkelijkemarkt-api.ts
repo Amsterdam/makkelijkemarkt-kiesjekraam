@@ -575,9 +575,8 @@ export const checkLogin = (): Promise<any> => {
     return login(api).then(() => console.log('Login OK'));
 };
 
-export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?: JSON): Promise<AxiosResponse> => {
-    const result = await apiBase(endpoint, method, { body }, true);
-
+export const callApiGeneric = async (endpoint: string, method: HttpMethod, body?: JSON, headers?: {}): Promise<AxiosResponse> => {
+    const result = await apiBase(endpoint, method, { body, headers }, true);
     return result.data;
 };
 

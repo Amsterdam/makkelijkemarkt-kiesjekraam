@@ -8,6 +8,7 @@ import {
 import express, { NextFunction, Request, Response } from 'express';
 import { keycloak, Roles } from '../authentication';
 import { GrantedRequest } from 'keycloak-connect';
+import { getKeycloakUser } from '../keycloak-api';
 
 const router = express.Router();
 const koopmanRoutes = [
@@ -71,7 +72,8 @@ subroutes.forEach((subroute: string) => {
     });
     router.all(subroute, applyProtectionIfNeeded(protectFunction), async (req: GrantedRequest, res: Response) => {
         try {
-            const result = await callApiGeneric(req.url, req.method.toLowerCase() as HttpMethod, req.body);
+            const headers = { user: getKeycloakUser(req)?.email }
+            const result = await callApiGeneric(req.url, req.method.toLowerCase() as HttpMethod, req.body, headers);
             _invalidateCache(subroute, req);
             return res.send(result);
         } catch (error) {
