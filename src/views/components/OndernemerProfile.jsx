@@ -9,7 +9,7 @@ class OndernemerProfile extends React.Component {
     };
 
     render() {
-        const { ondernemer } = this.props;
+        const { ondernemer, role } = this.props;
         const vendorURL = `/ondernemer/${ondernemer.erkenningsnummer}/`;
         const KJKVendorURL = `/kjk/ondernemer/${ondernemer.erkenningsnummer}/`;
 
@@ -32,7 +32,7 @@ class OndernemerProfile extends React.Component {
                         <div className="LinkSummary__links">
                             <a
                                 className="LinkSummary__first-link LinkInline"
-                                href={`${KJKVendorURL}aanwezigheid/markt/${sollicitatie.markt.id}?marktmeester`}
+                                href={`${KJKVendorURL}aanwezigheid/markt/${sollicitatie.markt.id}?${role}`}
                             >
                                 aanwezigheid
                             </a>

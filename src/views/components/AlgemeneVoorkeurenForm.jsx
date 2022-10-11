@@ -55,9 +55,9 @@ class AlgemeneVoorkeurenForm extends React.Component {
 
                                     {/* We need to send the brancheId to the API, but disabling
                                     removes the brancheId from the POST params. Therefore show just the
-                                    chosen one for non marktondernemers. 
+                                    chosen one for non marktondernemers or marktbewerkers. 
                                      */}
-                                    {role === Roles.MARKTONDERNEMER ? (
+                                    {(role === Roles.MARKTONDERNEMER || role === Roles.MARKTBEWERKER) ? (
                                         branches.map(branche => (
                                             <option
                                                 key={branche.brancheId}
@@ -87,7 +87,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
                         </h2>
                         <div className="InputField">
                             <div className="Select__wrapper">
-                            <select id="bakType" name="bakType" className='Select' disabled={role !== Roles.MARKTONDERNEMER}>
+                            <select id="bakType" name="bakType" className='Select' disabled={role === Roles.MARKTMEESTER}>
                                 <option selected={voorkeur.bakType === 'geen'} value="geen">Nee</option>
                                 <option selected={voorkeur.bakType === 'bak-licht'} value="bak-licht">Ja, Bakplaats licht (zonder open vuur en/of frituur)</option>
                                 <option selected={voorkeur.bakType === 'bak'} value="bak">Ja, Bakplaats (inclusief frituren)</option>
@@ -104,12 +104,12 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                 name="inrichting"
                                 defaultValue="eigen-materieel"
                                 defaultChecked={voorkeur.inrichting === 'eigen-materieel'}
-                                disabled={role !== Roles.MARKTONDERNEMER}
+                                disabled={role === Roles.MARKTMEESTER}
                             />
                             <label htmlFor="inrichting">Ja, ik kom met een eigen verkoopwagen/eigen materiaal.</label>
                         </p>
                     </div>
-                    {role === Roles.MARKTBEWERKER ? (
+                    {(role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER) ? (
                         <div className={`Fieldset Fieldset--highlighted`}>
                             <h2 className="Fieldset__header">Langdurige afwezigheid</h2>
                             <p className="InputField  InputField--text">
@@ -123,7 +123,6 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                     placeholder="dd-mm-yyyy"
                                     className="Input Input--medium"
                                     value={voorkeur.absentFrom}
-                                    disabled={role !== Roles.MARKTBEWERKER}
                                 />
                             </p>
                             <p className="InputField InputField--text">
@@ -137,7 +136,6 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                     placeholder="dd-mm-yyyy"
                                     className="Input Input--medium"
                                     value={voorkeur.absentUntil}
-                                    disabled={role !== Roles.MARKTBEWERKER}
                                 />
                             </p>
                         </div>
@@ -167,23 +165,18 @@ class AlgemeneVoorkeurenForm extends React.Component {
                         >
                             Terug
                         </a>
-                        {
-                            (role === Roles.MARKTONDERNEMER || role === Roles.MARKTBEWERKER) ? 
-                            (
-                                <button
-                                    className="Button Button--secondary"
-                                    type="submit"
-                                    name="next"
-                                    value={
-                                        (role === Roles.MARKTBEWERKER) 
-                                        ?  `/profile/${ondernemer.erkenningsnummer}?error=algemene-voorkeuren-saved#marktprofiel`
-                                        : `/markt-detail/${markt.id}?error=algemene-voorkeuren-saved#marktprofiel`
-                                    }
-                                >
-                                    Opslaan
-                                </button>
-                            ) : null
-                        }
+                        <button
+                            className="Button Button--secondary"
+                            type="submit"
+                            name="next"
+                            value={
+                                (role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER) 
+                                ?  `/profile/${ondernemer.erkenningsnummer}?error=algemene-voorkeuren-saved#marktprofiel`
+                                : `/markt-detail/${markt.id}?error=algemene-voorkeuren-saved#marktprofiel`
+                            }
+                        >
+                            Opslaan
+                        </button>
                  
                     </p>
                 </div>

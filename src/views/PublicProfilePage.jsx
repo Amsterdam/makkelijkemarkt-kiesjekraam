@@ -21,7 +21,7 @@ class PublicProfilePage extends React.Component {
                 <Header user={user} role={role}>
                 </Header>
                 <Content>
-                    <OndernemerProfile ondernemer={ondernemer} />
+                    <OndernemerProfile ondernemer={ondernemer} role={role} />
                 </Content>
             </Page>
         );
