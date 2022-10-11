@@ -272,7 +272,24 @@ app.get(
     csrfProtection,
     (req: GrantedRequest, res: Response, next: NextFunction) => {
         const messages = getQueryErrors(req.query);
-        attendancePage(req, res, next, Roles.MARKTMEESTER, req.params.erkenningsNummer, req.csrfToken(), messages);
+        attendancePage(
+            req, 
+            res, 
+            next, 
+            isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+            req.params.erkenningsNummer, 
+            req.csrfToken(),
+            messages
+        );
+    },
+);
+
+app.post(
+    '/ondernemer/:erkenningsNummer/aanwezigheid/',
+    keycloak.protect(Roles.MARKTBEWERKER),
+    csrfProtection,
+    (req: GrantedRequest, res: Response, next: NextFunction) => {
+        handleAttendanceUpdate(req, res, next, Roles.MARKTBEWERKER, req.params.erkenningsNummer);
     },
 );
 
@@ -335,10 +352,18 @@ app.get(
             req.params.erkenningsNummer,
             req.query,
             req.params.marktId,
-            Roles.MARKTMEESTER,
+            isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
             req.csrfToken(),
         );
     },
+);
+
+app.post(
+    '/ondernemer/:erkenningsNummer/voorkeuren/:marktId/',
+    keycloak.protect(Roles.MARKTBEWERKER),
+    csrfProtection,
+    (req: Request, res: Response, next: NextFunction) =>
+        updatePlaatsvoorkeuren(req, res, next, req.params.marktId, req.params.erkenningsNummer),
 );
 
 app.get(
@@ -397,7 +422,7 @@ app.get(
 
 app.post(
     '/ondernemer/:erkenningsNummer/algemene-voorkeuren/:marktId/',
-    keycloak.protect(Roles.MARKTBEWERKER),
+    keycloak.protect(Roles.MARKTMEESTER, Roles.MARKTBEWERKER),
     csrfProtection,
     (req: Request, res: Response, next: NextFunction) =>
         updateMarketPreferences(
@@ -405,12 +430,17 @@ app.post(
             res, 
             next, 
             req.params.erkenningsNummer, 
-            Roles.MARKTBEWERKER
+            isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
         ),
 );
 
 app.get('/profile/:erkenningsNummer', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) =>
-    publicProfilePage(req, res, req.params.erkenningsNummer, Roles.MARKTMEESTER),
+    publicProfilePage(
+        req, 
+        res, 
+        req.params.erkenningsNummer, 
+        isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+    ),
 );
 
 app.get(
