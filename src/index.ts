@@ -281,6 +281,8 @@ app.get(
             req.csrfToken(),
             messages
         );
+    },
+);
 
 app.post(
     '/ondernemer/:erkenningsNummer/aanwezigheid/',
@@ -354,6 +356,14 @@ app.get(
             req.csrfToken(),
         );
     },
+);
+
+app.post(
+    '/ondernemer/:erkenningsNummer/voorkeuren/:marktId/',
+    keycloak.protect(Roles.MARKTBEWERKER),
+    csrfProtection,
+    (req: Request, res: Response, next: NextFunction) =>
+        updatePlaatsvoorkeuren(req, res, next, req.params.marktId, req.params.erkenningsNummer),
 );
 
 app.post(
