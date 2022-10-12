@@ -186,7 +186,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                     {isEb(sollicitatie.status) ? "Uitbreidingsvoorkeur" : "Plaatsvoorkeur"} toevoegen
                                 </h4>
                                 <div className="well well--small">
-                                    <span className="PlaatsvoorkeurenForm__list-item__label">Kies een marktplaats</span>
+                                    <span className="PlaatsvoorkeurenForm__list-item__label">Kies een marktplaats (max. 6)</span>
                                     <div className={`PlaatsvoorkeurenForm__list-item__wrapper`}>
                                         <input
                                             type="hidden"
@@ -203,6 +203,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                             id={`voorkeur-${plaatsvoorkeuren.length + 1}`}
                                             data={marktplaatsen}
                                             optional={true}
+                                            readonly={plaatsvoorkeuren.length >= 6}
                                         />
                                         <div className="PlaatsvoorkeurenForm__list-item__extra PlaatsvoorkeurenForm__list-item__min-extra" />
                                         <div className="PlaatsvoorkeurenForm__list-item__extra PlaatsvoorkeurenForm__list-item__optional" />
