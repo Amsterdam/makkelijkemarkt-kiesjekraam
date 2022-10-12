@@ -23,13 +23,16 @@ class PlaatsvoorkeurenForm extends React.Component {
 
     render() {
         const { markt, ondernemer, marktplaatsen, indelingVoorkeur, role, sollicitatie, csrfToken } = this.props;
-
         let { plaatsvoorkeuren } = this.props;
 
         const voorkeur = indelingVoorkeur || getDefaultVoorkeur(sollicitatie);
-        const minimumCount = sollicitatie.vastePlaatsen.length > 0 ? sollicitatie.vastePlaatsen.length : 3;
-
-        const minimumDisabled = isVastOfExp(sollicitatie.status) && role !== Roles.MARKTMEESTER;
+        
+        let minimumCount = null;
+        if (role === Roles.MARKTBEWERKER) {
+            minimumCount = sollicitatie.vastePlaatsen.length > 0 ? sollicitatie.vastePlaatsen.length + 2 : 3;
+        } else {
+            minimumCount = sollicitatie.vastePlaatsen.length > 0 ? sollicitatie.vastePlaatsen.length : 3;
+        }
 
         const minimumChecked = i => {
             if (isVastOfExp(sollicitatie.status) && role !== Roles.MARKTMEESTER) {
@@ -61,7 +64,7 @@ class PlaatsvoorkeurenForm extends React.Component {
             return plaatsen.length > 1 ? 'plaatsnummers' : 'plaatsnummer';
         };
 
-        const isMarktmeesterEnVph = role === Roles.MARKTMEESTER && isVastOfExp(sollicitatie.status);
+        const isMarktBewerkerEnVph = role === Roles.MARKTBEWERKER && isVastOfExp(sollicitatie.status);
         const maxNumKramen = markt.maxAantalKramenPerOndernemer;
 
         plaatsvoorkeuren = plaatsvoorkeuren
@@ -100,7 +103,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                     <div
                         className={
                             'Fieldset PlaatsvoorkeurenForm__plaats-count ' +
-                            (isMarktmeesterEnVph ? 'Fieldset--highlighted' : null)
+                            (isMarktBewerkerEnVph ? 'Fieldset--highlighted' : null)
                         }
                     >
                         {maxNumKramen ? (
@@ -134,7 +137,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                         value={`${i + 1}`}
                                         data-val={`${i + 1}`}
                                         name="minimum"
-                                        disabled={minimumDisabled || role === Roles.MARKTMEESTER}
+                                        disabled={isVastOfExp(sollicitatie.status) && role !== Roles.MARKTBEWERKER}
                                         {...{ defaultChecked: minimumChecked(i) }}
                                     />
                                     <label htmlFor={`default-count-${i + 1}`}>{i + 1}</label>
@@ -257,7 +260,7 @@ class PlaatsvoorkeurenForm extends React.Component {
 
                         {/* Dit veld willen we alleen laten zien aan marktmeesters en sollicitanten */}
                         {role == Roles.MARKTMEESTER || Roles.MARKTBEWERKER || !isVastOfExp(sollicitatie.status) ? (
-                            <div className={`Fieldset ${isMarktmeesterEnVph ? 'Fieldset--highlighted' : null}`}>
+                            <div className={`Fieldset ${isMarktBewerkerEnVph ? 'Fieldset--highlighted' : null}`}>
                                 <h2 className="Fieldset__header">Automatisch indelen?</h2>
                                 <p>
                                     <i>
