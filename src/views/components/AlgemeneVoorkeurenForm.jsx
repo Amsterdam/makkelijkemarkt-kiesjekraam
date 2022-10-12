@@ -50,8 +50,10 @@ class AlgemeneVoorkeurenForm extends React.Component {
                         <h2 className="Fieldset__header">Wat voor koopwaar verkoopt u?</h2>
                         <div className="InputField">
                             <div className="Select__wrapper">
-                                <select id="brancheId" name="brancheId" className="Select">
-                                    <option />
+                                <select id="brancheId" name="brancheId" className="Select" required>
+                                    {/* We show an empty option if the ondernemer hasn't chosen a branche yet */
+                                        voorkeur.brancheId ? null : <option />
+                                    }
 
                                     {/* We need to send the brancheId to the API, but disabling
                                     removes the brancheId from the POST params. Therefore show just the
