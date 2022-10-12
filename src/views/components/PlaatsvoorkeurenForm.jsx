@@ -23,6 +23,7 @@ class PlaatsvoorkeurenForm extends React.Component {
 
     render() {
         const { markt, ondernemer, marktplaatsen, indelingVoorkeur, role, sollicitatie, csrfToken } = this.props;
+
         let { plaatsvoorkeuren } = this.props;
 
         const voorkeur = indelingVoorkeur || getDefaultVoorkeur(sollicitatie);
@@ -204,7 +205,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                             id={`voorkeur-${plaatsvoorkeuren.length + 1}`}
                                             data={marktplaatsen}
                                             optional={true}
-                                            readonly={role === Roles.MARKTMEESTER}
+                                            readonly={plaatsvoorkeuren.length >= 6 || role === Roles.MARKTMEESTER}
                                         />
                                         <div className="PlaatsvoorkeurenForm__list-item__extra PlaatsvoorkeurenForm__list-item__min-extra" />
                                         <div className="PlaatsvoorkeurenForm__list-item__extra PlaatsvoorkeurenForm__list-item__optional" />
