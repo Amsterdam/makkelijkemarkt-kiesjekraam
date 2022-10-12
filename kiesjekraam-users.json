@@ -1,15 +1,15 @@
 [
   {
     "name": "kjk_marktmeester",
-    "clientRoles": ["marktmeester", "marktbewerker"]
-  },
-  {
-    "name": "kjk_marktbureau",
-    "clientRoles": ["marktbureau"]
+    "clientRoles": ["marktmeester"]
   },
   {
     "name": "12345678",
     "clientRoles": ["marktondernemer"]
+  },
+  {
+    "name": "kjk_marktbewerker",
+    "clientRoles": ["marktmeester", "marktbewerker"]
   },
   {
     "name": "realm_admin",
