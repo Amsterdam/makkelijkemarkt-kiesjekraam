@@ -281,6 +281,8 @@ app.get(
             req.csrfToken(),
             messages
         );
+    }
+)
 
 app.post(
     '/ondernemer/:erkenningsNummer/aanwezigheid/',
