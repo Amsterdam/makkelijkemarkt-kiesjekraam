@@ -25,18 +25,21 @@ class PlaatsvoorkeurenForm extends React.Component {
         const { markt, ondernemer, marktplaatsen, indelingVoorkeur, role, sollicitatie, csrfToken } = this.props;
 
         let { plaatsvoorkeuren } = this.props;
-
         const voorkeur = indelingVoorkeur || getDefaultVoorkeur(sollicitatie);
-        
-        let minimumCount = null;
-        if (role === Roles.MARKTBEWERKER) {
-            minimumCount = sollicitatie.vastePlaatsen.length > 0 ? sollicitatie.vastePlaatsen.length + 2 : 3;
-        } else {
-            minimumCount = sollicitatie.vastePlaatsen.length > 0 ? sollicitatie.vastePlaatsen.length : 3;
-        }
+
+        // Only Marktondernemers and Marktbewerkers may edit, but only if the ondernemer
+        // and doesn`t have a fixed place (and is not coming out of Mercato).
+        // In that case the minimum amount of neccesary spots may be chosen here.
+        // This applies to SOLL and TVPLZ.
+        const minimumPlaatsenDisabled = role === Roles.MARKTMEESTER || isVastOfExp(sollicitatie.status)
+
+        // If minimum plaatsen can be edited, we also need to extend the amount of minimum plaatsen.
+        // We expect that 3 is the maximum a SOLL or TVPLZ might need, because it's already hard
+        // to get a spot when your minimum is 1.
+        let minimumCount = isVastOfExp(sollicitatie.status) ? sollicitatie.vastePlaatsen.length : 3;
 
         const minimumChecked = i => {
-            if (isVastOfExp(sollicitatie.status) && role !== Roles.MARKTMEESTER) {
+            if (isVastOfExp(sollicitatie.status)) {
                 if (sollicitatie.vastePlaatsen.length === i + 1) {
                     return true;
                 } else {
@@ -138,7 +141,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                         value={`${i + 1}`}
                                         data-val={`${i + 1}`}
                                         name="minimum"
-                                        disabled={isVastOfExp(sollicitatie.status) && role !== Roles.MARKTBEWERKER}
+                                        disabled={minimumPlaatsenDisabled}
                                         {...{ defaultChecked: minimumChecked(i) }}
                                     />
                                     <label htmlFor={`default-count-${i + 1}`}>{i + 1}</label>
@@ -301,7 +304,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                 type="submit"
                                 name="redirectTo"
                                 value={
-                                    role === Roles.MARKTONDERNEMER  
+                                    role === Roles.MARKTONDERNEMER
                                         ? `/markt-detail/${markt.id}?error=plaatsvoorkeuren-saved#plaatsvoorkeuren`
                                         : `/profile/${ondernemer.erkenningsnummer}?error=plaatsvoorkeuren-saved#plaatsvoorkeuren`
                                 }
@@ -309,7 +312,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                 Opslaan
                             </button>
                         ) : null}
-                    
+
                     </p>
                 </div>
             </Form>

@@ -125,7 +125,6 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                     placeholder="dd-mm-yyyy"
                                     className="Input Input--medium"
                                     value={voorkeur.absentFrom}
-                                    disabled={role !== Roles.MARKTBEWERKER}
                                 />
                             </p>
                             <p className="InputField InputField--text">
@@ -139,7 +138,6 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                     placeholder="dd-mm-yyyy"
                                     className="Input Input--medium"
                                     value={voorkeur.absentUntil}
-                                    disabled={role !== Roles.MARKTBEWERKER}
                                 />
                             </p>
                         </div>
