@@ -251,29 +251,8 @@ export interface ISollicitatie {
   krachtstroom: boolean
   doorgehaald: boolean
   doorgehaaldReden: string
-  // "koppelveld": null,
-  // "markt": {
-  //     "id": 39,
-  //     "afkorting": "AC-2022",
-  //     "naam": "Albert Cuyp-2022",
-  //     "isABlijstIndeling": false
-  // },
   markt: IMarkt
   koopman: IOndernemer
-  // "koopman": {
-  //     "id": 162,
-  //     "erkenningsnummer": "2068723555",
-  //     "voorletters": "M",
-  //     "tussenvoegsels": "",
-  //     "achternaam": "Lesch",
-  //     "email": "dschuppe@gmail.com",
-  //     "telefoon": null,
-  //     "status": "Actief",
-  //     "fotoUrl": null,
-  //     "fotoMediumUrl": null,
-  //     "pasUid": null,
-  //     "vervangers": []
-  // }
 }
 
 export interface IAllocationApiData {
