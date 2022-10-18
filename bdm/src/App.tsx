@@ -6,6 +6,7 @@ import { Layout } from 'antd'
 
 import ErrorPage from './pages/ErrorPage'
 import BrancheListPage from './pages/BrancheListPage'
+import FixAllocationPage from './pages/FixAllocationPage'
 import MarktDataProvider from './components/providers/MarktDataProvider'
 import MarktGenericDataProvider from './components/providers/MarktGenericDataProvider'
 import MarktPageWrapper from './components/MarktPageWrapper'
@@ -53,6 +54,9 @@ export default class App extends Component {
                   </Route>
                   <Route exact path="/upload-config">
                     <UploadPage />
+                  </Route>
+                  <Route exact path="/fix-allocation/:marktId/:marktDate">
+                    <FixAllocationPage />
                   </Route>
                   <Route component={ErrorPage} />
                 </Switch>
