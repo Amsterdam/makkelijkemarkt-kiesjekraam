@@ -262,8 +262,8 @@ class PlaatsvoorkeurenForm extends React.Component {
                             </div>
                         ) : null}
 
-                        {/* Dit veld willen we alleen laten zien aan marktmeesters en sollicitanten */}
-                        {role == Roles.MARKTMEESTER || Roles.MARKTBEWERKER || !isVastOfExp(sollicitatie.status) ? (
+                        {/* Dit veld wordt alleen getoond aan dagplaatshouders (SOLL en TVPLZ) */}
+                        {!isVastOfExp(sollicitatie.status) ? (
                             <div className={`Fieldset ${isMarktBewerkerEnVph ? 'Fieldset--highlighted' : null}`}>
                                 <h2 className="Fieldset__header">Automatisch indelen?</h2>
                                 <p>
