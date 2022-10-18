@@ -90,7 +90,12 @@ const AanwezigheidsPage: React.VFC = () => {
   const marktVoorkeurData = useMarktVoorkeur(erkenningsNummer)
   const marktData = useMarkt(marktId)
 
-  const { mutate: saveRsvpApi, isLoading: saveRsvpApiInProgress } = useSaveRsvp()
+  const {
+    mutate: saveRsvpApi,
+    isLoading: saveRsvpApiInProgress,
+    isSuccess: saveRsvpIsSuccess,
+    isError: saveRsvpIsError,
+  } = useSaveRsvp()
   const {
     mutate: savePatternApi,
     isLoading: savePatternApiInProgress,
@@ -178,15 +183,33 @@ const AanwezigheidsPage: React.VFC = () => {
     saveRsvpApi(
       rsvps
         .filter((rsvp) => rsvp.markt === marktId)
-        .map(rsvp => {
+        .map((rsvp) => {
           return {
             ...rsvp,
             koopmanErkenningsNummer: rsvp.koopman,
-            marktId
+            marktId,
           }
         })
-    );
+    )
   }
+
+  useEffect(() => {
+    if (saveRsvpIsSuccess) {
+      notification.success({
+        message: 'Opgeslagen',
+        description: 'Uw aanwezigheidsvoorkeuren zijn opgeslagen',
+      })
+    }
+  }, [saveRsvpIsSuccess])
+
+  useEffect(() => {
+    if (saveRsvpIsError) {
+      notification.error({
+        message: 'Fout tijdens opslaan',
+        description: 'Uw aanwezigheidsvoorkeuren zijn niet opgeslagen',
+      })
+    }
+  }, [saveRsvpIsError])
 
   const savePattern = async () => {
     const patternData = {
@@ -201,7 +224,7 @@ const AanwezigheidsPage: React.VFC = () => {
     if (savePatternIsSuccess) {
       notification.success({
         message: 'Opgeslagen',
-        description: 'Uw aanwezigheidsvoorkeuren zijn opgeslagen',
+        description: 'Uw aanwezigheids patroon is opgeslagen',
       })
     }
   }, [savePatternIsSuccess])
@@ -210,7 +233,7 @@ const AanwezigheidsPage: React.VFC = () => {
     if (savePatternIsError) {
       notification.error({
         message: 'Fout tijdens opslaan',
-        description: 'Uw aanwezigheidsvoorkeuren zijn niet opgeslagen',
+        description: 'Uw aanwezigheids patroon is niet opgeslagen',
       })
     }
   }, [savePatternIsError])
