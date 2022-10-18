@@ -1,8 +1,16 @@
 .PlaatsvoorkeurenForm {
     margin: 0 0 90px;
     &__list {
+        position: relative;
         display: flex;
         flex-direction: column;
+
+        &--disabled {
+            position: absolute;
+            z-index: 1;
+            height: 100%;
+            width: 100%;
+        }
     }
     &__list-item {
         flex-wrap: wrap;
