@@ -218,6 +218,9 @@ class PlaatsvoorkeurenForm extends React.Component {
                         </div>
                         <h4 className="Fieldset__header">Prioriteit voorkeur wijzigen</h4>
                         <div className="PlaatsvoorkeurenForm__list">
+                            {role === Roles.MARKTMEESTER ? (
+                                <div className="PlaatsvoorkeurenForm__list--disabled" />
+                            ) : null }
                             {plaatsvoorkeuren.map((entry, index) => (
                                 <div className="Draggable-list-item" id="plaatsvoorkeuren-list-item" key={entry.id}>
                                     <div className="Draggable-list-item__handle">
@@ -252,15 +255,12 @@ class PlaatsvoorkeurenForm extends React.Component {
                                 </div>
                             ))}
                         </div>
-
-                        {(role === Roles.MARKTONDERNEMER || role === Roles.MARKTBEWERKER) ? (
-                            <div className="Icon-line">
-                                <img className="Icon-line__icon" src="/images/draggable.svg" alt="Unchecked" />
-                                <p className="Icon-line__text">
-                                    Verander de volgorde van de plaatsnummers door ze op de juiste plaats te slepen.
-                                </p>
-                            </div>
-                        ) : null}
+                        <div className="Icon-line">
+                            <img className="Icon-line__icon" src="/images/draggable.svg" alt="Unchecked" />
+                            <p className="Icon-line__text">
+                                Verander de volgorde van de plaatsnummers door ze op de juiste plaats te slepen.
+                            </p>
+                        </div>
 
                         {/* Dit veld wordt alleen getoond aan dagplaatshouders (SOLL en TVPLZ) */}
                         {!isVastOfExp(sollicitatie.status) ? (
