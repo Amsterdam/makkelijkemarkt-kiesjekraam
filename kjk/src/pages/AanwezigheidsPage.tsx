@@ -175,15 +175,17 @@ const AanwezigheidsPage: React.VFC = () => {
   }
 
   const saveRsvps = async () => {
-    rsvps
-      .filter((rsvp) => rsvp.markt === marktId)
-      .forEach((rsvp) => {
-        saveRsvpApi({
-          ...rsvp,
-          koopmanErkenningsNummer: rsvp.koopman,
-          marktId,
+    saveRsvpApi(
+      rsvps
+        .filter((rsvp) => rsvp.markt === marktId)
+        .map(rsvp => {
+          return {
+            ...rsvp,
+            koopmanErkenningsNummer: rsvp.koopman,
+            marktId
+          }
         })
-      })
+    );
   }
 
   const savePattern = async () => {
