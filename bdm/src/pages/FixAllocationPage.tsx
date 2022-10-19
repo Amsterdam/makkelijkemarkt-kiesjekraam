@@ -1,6 +1,6 @@
 import { Button, Col, Divider, notification, PageHeader, Row, Select, Space, Spin, Tag } from 'antd'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { every, get, groupBy, head, isEmpty, sortBy } from 'lodash'
+import { every, get, groupBy, head, sortBy } from 'lodash'
 
 import { IAllocation } from '../models'
 import {
