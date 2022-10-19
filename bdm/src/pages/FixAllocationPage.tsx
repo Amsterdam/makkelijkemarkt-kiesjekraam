@@ -1,6 +1,6 @@
-import { Button, Col, notification, PageHeader, Row, Select, Tag } from 'antd'
+import { Button, Col, notification, PageHeader, Row, Select, Spin, Tag } from 'antd'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { get, groupBy, head, isEmpty, sortBy } from 'lodash'
+import { every, get, groupBy, head, isEmpty, sortBy } from 'lodash'
 
 import { IAllocation } from '../models'
 import {
@@ -14,6 +14,7 @@ import {
 import { SaveButton } from '../components/buttons'
 import { networkErrorNotification } from '../common/notifications'
 import { useParams } from 'react-router-dom'
+import CenterStageStyled from '../components/CenterStage.styled'
 
 const { Option } = Select
 
@@ -216,6 +217,11 @@ const FixAllocationPage: React.VFC = () => {
 
   return (
     <AllocationContext.Provider value={context}>
+      {!every([allocationCall.data, sollicitatiesCall.data, plaatsvoorkeurCall.data, marktConfigCall.data]) && (
+        <CenterStageStyled>
+          <Spin size="large" />
+        </CenterStageStyled>
+      )}
       <Row>
         <Col md={2} lg={4}></Col>
         <Col md={20} lg={16}>
