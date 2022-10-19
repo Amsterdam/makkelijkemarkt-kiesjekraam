@@ -17,7 +17,7 @@ const Header = ({ user, children, hideLogout, breadcrumbs, role }) => {
 
     let logoUrl = '/';
     if (role) {
-        logoUrl = role === 'marktmeester' ? '/markt/' : '/dashboard/';
+        logoUrl = (role === Roles.MARKTMEESTER || role === Roles.MARKTBEWERKER) ? '/markt/' : '/dashboard/';
     }
 
     return (
@@ -36,8 +36,8 @@ const Header = ({ user, children, hideLogout, breadcrumbs, role }) => {
                             <h1 className="Header__heading">Kies je kraam</h1>
                             <div className="Header__user">
                                 {!hideLogout ? <LoginButton user={user} /> : null}
-                                {role === 'marktmeester' ? <p className="Header__user__name">{user.name}</p> : null}
-                                {role === 'marktmeester' ? <p className="Header__user__role">Marktmeester</p> : null}
+                                {role === Roles.MARKTMEESTER ? <p className="Header__user__name">{user.name}</p> : null}
+                                {role === Roles.MARKTMEESTER ? <p className="Header__user__role">Marktmeester</p> : null}
                             </div>
                         </div>
                     </div>

@@ -12,6 +12,7 @@ import SollicitatieSpecs from './SollicitatieSpecs';
 import {
     yyyyMmDdtoDDMMYYYY,
 } from '../../util.ts';
+import { Roles } from '../../authentication'
 
 class AlgemeneVoorkeurenForm extends React.Component {
     propTypes = {
@@ -30,7 +31,6 @@ class AlgemeneVoorkeurenForm extends React.Component {
     render() {
         const { branches, ondernemer, markt, marktId, marktDate, role, csrfToken } = this.props;
         const sollicitatie = ondernemer.sollicitaties.find(soll => soll.markt.id === markt.id);
-
         const voorkeur = this.props.voorkeur || getDefaultVoorkeur(sollicitatie);
 
         if (voorkeur.absentFrom) {
@@ -43,24 +43,41 @@ class AlgemeneVoorkeurenForm extends React.Component {
 
         return (
             <Form csrfToken={csrfToken} className="Form--AlgemenevoorkeurenForm">
-                {role === 'marktondernemer' ? <SollicitatieSpecs sollicitatie={sollicitatie} markt={markt} /> : null}
+                {role === Roles.MARKTONDERNEMER ? <SollicitatieSpecs sollicitatie={sollicitatie} markt={markt} /> : null}
                 <h1 className="Heading Heading--intro">Marktprofiel {markt.naam}</h1>
                 <div className="well well--max-width">
                     <div className="Fieldset">
                         <h2 className="Fieldset__header">Wat voor koopwaar verkoopt u?</h2>
                         <div className="InputField">
                             <div className="Select__wrapper">
-                                <select id="brancheId" name="brancheId" className="Select">
-                                    <option />
-                                    {branches.map(branche => (
+                                <select id="brancheId" name="brancheId" className="Select" required>
+                                    {/* We show an empty option if the ondernemer hasn't chosen a branche yet */
+                                        voorkeur.brancheId ? null : <option />
+                                    }
+
+                                    {/* We need to send the brancheId to the API, but disabling
+                                    removes the brancheId from the POST params. Therefore show just the
+                                    chosen one for non marktondernemers or marktbewerkers. 
+                                     */}
+                                    {(role === Roles.MARKTONDERNEMER || role === Roles.MARKTBEWERKER) ? (
+                                        branches.map(branche => (
+                                            <option
+                                                key={branche.brancheId}
+                                                value={branche.brancheId}
+                                                selected={branche.brancheId === voorkeur.brancheId}
+                                            >
+                                                {branche.description}
+                                            </option>
+                                        ))       
+                                    ) : 
                                         <option
-                                            key={branche.brancheId}
-                                            value={branche.brancheId}
-                                            selected={branche.brancheId === voorkeur.brancheId}
+                                            value={voorkeur.brancheId}
+                                            selected={voorkeur.brancheId}
                                         >
-                                            {branche.description}
+                                            {voorkeur.brancheId}
                                         </option>
-                                    ))}
+                                    }
+                                
                                 </select>{' '}
                             </div>
                         </div>
@@ -72,7 +89,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
                         </h2>
                         <div className="InputField">
                             <div className="Select__wrapper">
-                            <select id="bakType" name="bakType" className='Select'>
+                            <select id="bakType" name="bakType" className='Select' disabled={role === Roles.MARKTMEESTER}>
                                 <option selected={voorkeur.bakType === 'geen'} value="geen">Nee</option>
                                 <option selected={voorkeur.bakType === 'bak-licht'} value="bak-licht">Ja, Bakplaats licht (zonder open vuur en/of frituur)</option>
                                 <option selected={voorkeur.bakType === 'bak'} value="bak">Ja, Bakplaats (inclusief frituren)</option>
@@ -89,11 +106,12 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                 name="inrichting"
                                 defaultValue="eigen-materieel"
                                 defaultChecked={voorkeur.inrichting === 'eigen-materieel'}
+                                disabled={role === Roles.MARKTMEESTER}
                             />
                             <label htmlFor="inrichting">Ja, ik kom met een eigen verkoopwagen/eigen materiaal.</label>
                         </p>
                     </div>
-                    {role == 'marktmeester' ? (
+                    {(role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER) ? (
                         <div className={`Fieldset Fieldset--highlighted`}>
                             <h2 className="Fieldset__header">Langdurige afwezigheid</h2>
                             <p className="InputField  InputField--text">
@@ -142,7 +160,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
                         <a
                             className="Button Button--tertiary"
                             href={`${
-                                role === 'marktmeester'
+                                (role === Roles.MARKTMEESTER || role === Roles.MARKTBEWERKER)
                                     ? `/profile/${ondernemer.erkenningsnummer}`
                                     : `/markt-detail/${markt.id}#marktprofiel`
                             }`}
@@ -153,14 +171,15 @@ class AlgemeneVoorkeurenForm extends React.Component {
                             className="Button Button--secondary"
                             type="submit"
                             name="next"
-                            value={`${
-                                role === 'marktmeester'
-                                    ? `/profile/${ondernemer.erkenningsnummer}?error=algemene-voorkeuren-saved`
-                                    : `/markt-detail/${markt.id}?error=algemene-voorkeuren-saved#marktprofiel`
-                            }`}
+                            value={
+                                (role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER) 
+                                ?  `/profile/${ondernemer.erkenningsnummer}?error=algemene-voorkeuren-saved#marktprofiel`
+                                : `/markt-detail/${markt.id}?error=algemene-voorkeuren-saved#marktprofiel`
+                            }
                         >
                             Opslaan
                         </button>
+                 
                     </p>
                 </div>
             </Form>

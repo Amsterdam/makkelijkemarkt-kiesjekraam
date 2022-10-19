@@ -10,7 +10,6 @@ const redisClient = new RedisClient().getClient();
 const sessionStore = new RedisStore({ client: redisClient });
 
 export const Roles = {
-    MARKTBUREAU: 'marktbureau',
     MARKTMEESTER: 'marktmeester',
     MARKTONDERNEMER: 'marktondernemer',
     MARKTBEWERKER: 'marktbewerker',

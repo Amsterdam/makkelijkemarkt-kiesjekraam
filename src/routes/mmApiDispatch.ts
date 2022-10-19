@@ -58,9 +58,14 @@ const _invalidateCache = (subroute: string, req: GrantedRequest): void => {
 
 subroutes.forEach((subroute: string) => {
     const protectFunction = keycloak.protect((token: any, req: GrantedRequest) => {
-        if (token.hasRole(Roles.MARKTBEWERKER) || token.hasRole(Roles.MARKTMEESTER)) {
-            return true;
+
+        // Marktbewerkers are allowed to edit preferences of koopmannen,
+        // marktmeesters have read access in almost all cases
+        if (token.hasRole(Roles.MARKTBEWERKER) ||
+            (token.hasRole(Roles.MARKTMEESTER) && !['POST','PUT'].includes(req.method))) {
+            return true
         }
+
         if (koopmanRoutes.includes(subroute)) {
             const isOwnErkenningsNummer = req.params.erkenningsNummer === token.content.preferred_username;
             if (req.params.erkenningsNummer && !isOwnErkenningsNummer) {

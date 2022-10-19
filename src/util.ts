@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import moment = require('moment-timezone');
+import { Roles } from './authentication'
 
 export const capitalize = (s: string) => {
     return typeof s === 'string' ? s.charAt(0).toUpperCase() + s.slice(1) : '';
@@ -225,7 +226,7 @@ export const paginate = <T>(arr: T[], count: number): T[][] => {
 };
 
 export const getBreadcrumbsOndernemer = (ondernemer: any, role: string) => {
-    if (role === 'marktmeester') {
+    if (role === Roles.MARKTMEESTER || role === Roles.MARKTBEWERKER) {
         return [
             {
                 title: 'Markten',
@@ -247,7 +248,7 @@ export const getBreadcrumbsOndernemer = (ondernemer: any, role: string) => {
 };
 
 export const getBreadcrumbsMarkt = (markt: any, role: string) => {
-    if (role === 'marktmeester') {
+    if (role === Roles.MARKTMEESTER || role === Roles.MARKTBEWERKER) {
         return [
             {
                 title: 'Markten',
