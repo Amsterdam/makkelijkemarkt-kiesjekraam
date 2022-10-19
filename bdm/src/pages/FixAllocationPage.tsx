@@ -1,5 +1,5 @@
 import { Button, Col, notification, PageHeader, Row, Select, Tag } from 'antd'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { get, groupBy, head, isEmpty, sortBy } from 'lodash'
 
 import { IAllocation } from '../models'
@@ -28,6 +28,7 @@ const REJECT_REASON_CODES: { [key: string]: number } = {
   VPL_POSITION_NOT_AVAILABLE: 5,
   PREF_NOT_AVAILABLE: 6,
 }
+const DEFAULT_REASON_CODE = 1
 
 type LocatieType = { plaatsId: string }
 type updateAllocationType = (kraam: string, ondernemer: string, previous: string) => void
@@ -39,6 +40,7 @@ type AllocationContextType = {
 const AllocationContext = React.createContext<Partial<AllocationContextType>>({})
 
 const FixAllocationPage: React.VFC = () => {
+  const ondernemersOptionListRef = useRef<JSX.Element[]>([])
   const { marktId, marktDate } = useParams<{ marktId: string; marktDate: string }>()
   const weekday = new Date(marktDate).toLocaleDateString('nl-NL', { weekday: 'long' })
 
@@ -59,9 +61,6 @@ const FixAllocationPage: React.VFC = () => {
   const locaties = sortBy((marktConfigCall.data?.locaties as LocatieType[]) || [], [
     (locatie) => Number(locatie.plaatsId),
   ])
-  const ondernemers = (sollicitatiesCall.data || []).map((sollicitatie) => {
-    return sollicitatie.sollicitatieNummer
-  })
 
   const kraamToOndernemer = allocation.reduce((total: { [key: string]: string }, current) => {
     if (current.isAllocated) {
@@ -89,18 +88,14 @@ const FixAllocationPage: React.VFC = () => {
     return total
   }, {})
 
-  const ondernemersOptionList = ondernemers.map((ondernemer) => (
-    <Option key={ondernemer} value={ondernemer}>
-      {ondernemer}
-    </Option>
-  ))
-
   const updateAllocation: updateAllocationType = (kraam, ondernemer, previous) => {
     const updatedAllocation = allocation.map((alloc) => {
       if (alloc.ondernemer.sollicitatieNummer === ondernemer) {
         return {
           ...alloc,
           plaatsen: [...alloc.plaatsen, kraam],
+          isAllocated: true,
+          reason: null,
         }
       }
       if (alloc.ondernemer.sollicitatieNummer === previous) {
@@ -115,13 +110,18 @@ const FixAllocationPage: React.VFC = () => {
   }
 
   const save = () => {
-    const allocationsWithPlaatsen = allocation.filter((alloc) => {
-      if (alloc.isAllocated && !alloc.plaatsen.length) {
-        return false
+    const updatedAllocation = allocation.map((alloc) => {
+      if (!alloc.plaatsen.length) {
+        const { plaatsen, ...allocWithoutPlaatsen } = alloc
+        return {
+          ...allocWithoutPlaatsen,
+          isAllocated: false,
+          reason: { code: DEFAULT_REASON_CODE },
+        }
       }
-      return true
+      return alloc
     })
-    const { true: toewijzingen, false: afwijzingen } = groupBy(allocationsWithPlaatsen, 'isAllocated')
+    const { true: toewijzingen = [], false: afwijzingen = [] } = groupBy(updatedAllocation, 'isAllocated')
     saveAllocationCall({ toewijzingen, afwijzingen })
   }
 
@@ -173,13 +173,20 @@ const FixAllocationPage: React.VFC = () => {
           marktId,
           isAllocated,
           ondernemer,
-          plaatsen,
           marktDate,
           erkenningsNummer,
+          plaatsen: plaatsen || [],
           reason: rejectReason ? { code } : null,
         }
       })
-
+      ondernemersOptionListRef.current = allocationData.map((alloc) => {
+        const { sollicitatieNummer } = alloc.ondernemer
+        return (
+          <Option key={sollicitatieNummer} value={sollicitatieNummer}>
+            {sollicitatieNummer}
+          </Option>
+        )
+      })
       setAllocation(allocationData as unknown as IAllocation[])
     }
   }, [allocationCall.data, sollicitatiesCall.data, plaatsvoorkeurCall.data])
@@ -199,7 +206,11 @@ const FixAllocationPage: React.VFC = () => {
     }
   }, [saveIsError, saveError])
 
-  const context: AllocationContextType = { updateAllocation, locaties, ondernemersOptionList }
+  const context: AllocationContextType = {
+    updateAllocation,
+    locaties,
+    ondernemersOptionList: ondernemersOptionListRef.current,
+  }
   const subTitle = `${weekday} ${marktDate}`
   const title = marktCall.data?.naam || `Markt ${marktId}`
 
