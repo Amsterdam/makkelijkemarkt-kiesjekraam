@@ -197,7 +197,7 @@ const FixAllocationPage: React.VFC = () => {
     if (saveIsError) {
       networkErrorNotification(saveError)
     }
-  }, [saveIsError])
+  }, [saveIsError, saveError])
 
   const context: AllocationContextType = { updateAllocation, locaties, ondernemersOptionList }
   const subTitle = `${weekday} ${marktDate}`
