@@ -1,4 +1,4 @@
-import { Button, Col, notification, PageHeader, Row, Select, Spin, Tag } from 'antd'
+import { Button, Col, Divider, notification, PageHeader, Row, Select, Space, Spin, Tag } from 'antd'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { every, get, groupBy, head, isEmpty, sortBy } from 'lodash'
 
@@ -100,9 +100,11 @@ const FixAllocationPage: React.VFC = () => {
         }
       }
       if (alloc.ondernemer.sollicitatieNummer === previous) {
+        const plaatsen = alloc.plaatsen.filter((plaats) => plaats !== kraam)
         return {
           ...alloc,
-          plaatsen: alloc.plaatsen.filter((plaats) => plaats !== kraam),
+          isAllocated: !!plaatsen.length,
+          plaatsen,
         }
       }
       return alloc
@@ -112,11 +114,10 @@ const FixAllocationPage: React.VFC = () => {
 
   const save = () => {
     const updatedAllocation = allocation.map((alloc) => {
-      if (!alloc.plaatsen.length) {
+      if (!alloc.isAllocated) {
         const { plaatsen, ...allocWithoutPlaatsen } = alloc
         return {
           ...allocWithoutPlaatsen,
-          isAllocated: false,
           reason: { code: DEFAULT_REASON_CODE },
         }
       }
@@ -207,6 +208,17 @@ const FixAllocationPage: React.VFC = () => {
     }
   }, [saveIsError, saveError])
 
+  const afwijzingen = allocation
+    .filter((alloc) => !alloc.isAllocated)
+    .map(({ ondernemer }) => <Tag key={ondernemer.sollicitatieNummer}>{ondernemer.sollicitatieNummer}</Tag>)
+
+  const deltas = Object.entries(deltaPlaatsenPerOndernemer).map(([ondernemer, delta]) => (
+    <Tag key={ondernemer} color={delta > 0 ? '#87d068' : '#f50'}>
+      {ondernemer}: {delta > 0 ? '+' : ''}
+      {delta}
+    </Tag>
+  ))
+
   const context: AllocationContextType = {
     updateAllocation,
     locaties,
@@ -235,15 +247,18 @@ const FixAllocationPage: React.VFC = () => {
                 </SaveButton>,
               ]}
             ></PageHeader>
-            <div>
-              {!isEmpty(deltaPlaatsenPerOndernemer) &&
-                Object.entries(deltaPlaatsenPerOndernemer).map(([ondernemer, delta]) => (
-                  <Tag key={ondernemer} color={delta > 0 ? '#87d068' : '#f50'}>
-                    {ondernemer}: {delta > 0 ? '+' : ''}
-                    {delta}
-                  </Tag>
-                ))}
-            </div>
+            <Divider />
+            <Space direction="vertical">
+              <Space size={[8, 16]} wrap>
+                <span>Delta</span>
+                {deltas}
+              </Space>
+              <Space size={[8, 16]} wrap>
+                <span>Afwijzingen</span>
+                {afwijzingen}
+              </Space>
+            </Space>
+            <Divider />
             <table>
               <thead>
                 <tr>
