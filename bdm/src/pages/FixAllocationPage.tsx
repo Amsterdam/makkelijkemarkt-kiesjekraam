@@ -121,7 +121,7 @@ const FixAllocationPage: React.VFC = () => {
       }
       return true
     })
-    const { true: toewijzingen, false: afwijzingen } = groupBy(allocation, 'isAllocated')
+    const { true: toewijzingen, false: afwijzingen } = groupBy(allocationsWithPlaatsen, 'isAllocated')
     saveAllocationCall({ toewijzingen, afwijzingen })
   }
 
