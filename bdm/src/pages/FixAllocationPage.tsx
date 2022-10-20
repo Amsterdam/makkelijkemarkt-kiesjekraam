@@ -22,6 +22,7 @@ const EVI = 'eigen-materieel'
 
 // This must be the exact reverse mapping as the rejectReasons in MakkelijkeMarkt API AllocationController
 const REJECT_REASON_CODES: { [key: string]: number } = {
+  UNKNOWN: 0,
   BRANCHE_FULL: 1,
   ADJACENT_UNAVAILABLE: 2,
   MINIMUM_UNAVAILABLE: 3,
@@ -29,7 +30,7 @@ const REJECT_REASON_CODES: { [key: string]: number } = {
   VPL_POSITION_NOT_AVAILABLE: 5,
   PREF_NOT_AVAILABLE: 6,
 }
-const DEFAULT_REASON_CODE = 1
+const DEFAULT_REASON_CODE = 0
 
 type LocatieType = { plaatsId: string }
 type updateAllocationType = (kraam: string, ondernemer: string, previous: string) => void
@@ -116,9 +117,10 @@ const FixAllocationPage: React.VFC = () => {
     const updatedAllocation = allocation.map((alloc) => {
       if (!alloc.isAllocated) {
         const { plaatsen, ...allocWithoutPlaatsen } = alloc
+        const code = alloc.reason?.code || DEFAULT_REASON_CODE
         return {
           ...allocWithoutPlaatsen,
-          reason: { code: DEFAULT_REASON_CODE },
+          reason: { code },
         }
       }
       return alloc
@@ -251,11 +253,11 @@ const FixAllocationPage: React.VFC = () => {
             <Space direction="vertical">
               <Space size={[8, 16]} wrap>
                 <span>Delta</span>
-                {deltas}
+                {deltas.length ? deltas : '(geen)'}
               </Space>
               <Space size={[8, 16]} wrap>
                 <span>Afwijzingen</span>
-                {afwijzingen}
+                {afwijzingen.length ? afwijzingen : '(geen)'}
               </Space>
             </Space>
             <Divider />

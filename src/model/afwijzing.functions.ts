@@ -2,6 +2,11 @@ import {
     IAfwijzingReason,
 } from 'model/markt.model';
 
+const UNKNOWN: IAfwijzingReason = {
+    code: 0,
+    db_id: 'UNKNOWN',
+    message: 'Onbekende reden',
+};
 const BRANCHE_FULL: IAfwijzingReason = {
     code: 1,
     db_id: 'BRANCHE_FULL',
@@ -34,7 +39,7 @@ const PREF_NOT_AVAILABLE: IAfwijzingReason = {
 };
 
 export const getAfwijzingReason = (reasonCode: string) => {
-    const reasons = [BRANCHE_FULL, ADJACENT_UNAVAILABLE, MINIMUM_UNAVAILABLE, MARKET_FULL, VPL_POSITION_NOT_AVAILABLE, PREF_NOT_AVAILABLE];
+    const reasons = [UNKNOWN, BRANCHE_FULL, ADJACENT_UNAVAILABLE, MINIMUM_UNAVAILABLE, MARKET_FULL, VPL_POSITION_NOT_AVAILABLE, PREF_NOT_AVAILABLE];
     return reasons.find(reason => reason.db_id === reasonCode);
 };
 
