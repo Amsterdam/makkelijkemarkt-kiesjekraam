@@ -251,11 +251,11 @@ const FixAllocationPage: React.VFC = () => {
             <Space direction="vertical">
               <Space size={[8, 16]} wrap>
                 <span>Delta</span>
-                {deltas}
+                {deltas.length ? deltas : '(geen)'}
               </Space>
               <Space size={[8, 16]} wrap>
                 <span>Afwijzingen</span>
-                {afwijzingen}
+                {afwijzingen.length ? afwijzingen : '(geen)'}
               </Space>
             </Space>
             <Divider />
