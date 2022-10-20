@@ -1,6 +1,9 @@
 import { MMarkt } from './mmarkt'
 export * from './mmarkt'
 
+export type Nullable<T> = T | null
+export type ErkenningsNummer = string
+
 export interface INaam {
   naam: string
   id: number
@@ -171,6 +174,12 @@ export interface IMarktGenericContext {
   plaatseigenschap: INaam[]
 }
 
+export interface IMarkt {
+  id: number
+  afkorting: string
+  naam: string
+}
+
 export interface IApiError extends Error {
   status?: number
   statusText?: string
@@ -203,6 +212,105 @@ export interface IItemReducerItem {
 
 export interface IBrancheAction extends IAction<IBranchePayload> {}
 export interface IBranchePayload extends IItemReducerActionPayload<Branche[]> {}
+
+export interface IOndernemer {
+  achternaam: string
+  email: string
+  erkenningsnummer: ErkenningsNummer
+  fotoMediumUrl?: string
+  fotoUrl?: string
+  handhavingsVerzoek?: string
+  id: number
+  pasUid?: string
+  perfectViewNummer: number
+  sollicitaties: ISollicitatie[]
+  status: string
+  telefoon?: string
+  tussenvoegsels: string
+  vervangers: IOndernemer[]
+  voorletters: string
+  weging: number
+}
+
+export interface ISollicitatie {
+  id: string
+  sollicitatieNummer: number
+  status: string
+  vastePlaatsen: number[]
+  aantal3MeterKramen: Nullable<number>
+  aantal4MeterKramen: Nullable<number>
+  aantalExtraMeters: Nullable<number>
+  aantalElektra: Nullable<number>
+  aantalAfvaleiland: Nullable<number>
+  grootPerMeter: Nullable<number>
+  kleinPerMeter: Nullable<number>
+  grootReiniging: Nullable<number>
+  kleinReiniging: Nullable<number>
+  afvalEilandAgf: Nullable<number>
+  krachtstroomPerStuk: Nullable<number>
+  krachtstroom: boolean
+  doorgehaald: boolean
+  doorgehaaldReden: string
+  markt: IMarkt
+  koopman: IOndernemer
+}
+
+export interface IAllocationApiData {
+  id: number
+  isAllocated: boolean
+  rejectReason: string
+  plaatsen: Nullable<string[]>
+  date: string
+  anywhere: boolean
+  minimum: number
+  maximum: number
+  bakType: string
+  hasInrichting: boolean
+  koopman: ErkenningsNummer
+  branche: string
+  markt: string
+  plaatsvoorkeuren: string[]
+}
+
+export interface IAllocation {
+  marktId: string
+  isAllocated: boolean
+  ondernemer: {
+    sollicitatieNummer: string
+    status: string
+    plaatsen: string[]
+    erkenningsNummer: ErkenningsNummer
+    plaatsvoorkeuren: string[]
+    voorkeur: {
+      minimum: number
+      maximum: number
+      anywhere: boolean
+      bakType: string
+      branches: string[]
+      verkoopinrichting: string[]
+    }
+  }
+  plaatsen: string[]
+  marktDate: string
+  erkenningsNummer: ErkenningsNummer
+  reason: Nullable<{ code: number }>
+}
+
+export interface IAllocationToApi extends Omit<IAllocation, 'plaatsen'> {
+  plaatsen?: string[]
+}
+
+export interface ICreateAllocationBody {
+  afwijzingen: IAllocationToApi[]
+  toewijzingen: IAllocationToApi[]
+}
+
+export interface IPlaatsvoorkeur {
+  id: number
+  plaatsen: string[]
+  markt: string
+  koopman: ErkenningsNummer
+}
 
 export const WeekDays: DayOfWeek[] = [
   { id: 0, name: 'Maandag', abbreviation: 'MA' },

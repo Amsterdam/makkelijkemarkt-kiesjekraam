@@ -28,6 +28,9 @@ const subroutes = [
     '/markt/:marktId',
     '/markt/:marktId/marktconfiguratie/latest',
     '/markt/:marktId/marktconfiguratie',
+    '/allocation/markt/:marktId/date/:date',
+    '/sollicitaties/markt/:marktId',
+    '/plaatsvoorkeur/markt/:marktId',
     ...koopmanRoutes,
 ];
 
@@ -77,7 +80,7 @@ subroutes.forEach((subroute: string) => {
     });
     router.all(subroute, applyProtectionIfNeeded(protectFunction), async (req: GrantedRequest, res: Response) => {
         try {
-            const headers = { user: getKeycloakUser(req)?.email }
+            const headers = { user: isProtectionDisabled ? 'security_disabled' : getKeycloakUser(req)?.email }
             const result = await callApiGeneric(req.url, req.method.toLowerCase() as HttpMethod, req.body, headers);
             _invalidateCache(subroute, req);
             return res.send(result);

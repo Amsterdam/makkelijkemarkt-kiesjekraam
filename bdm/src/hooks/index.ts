@@ -2,7 +2,17 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { sortBy } from 'lodash'
 
 import { MM_API_QUERY_CONFIG } from '../constants'
-import { Branche, IApiError, IMarktConfiguratie, INaam, MMarkt } from '../models'
+import {
+  Branche,
+  IAllocationApiData,
+  IApiError,
+  ICreateAllocationBody,
+  IMarktConfiguratie,
+  INaam,
+  IPlaatsvoorkeur,
+  ISollicitatie,
+  MMarkt,
+} from '../models'
 import * as mmApi from '../services/mmApi'
 
 export const useGenericBranches = () => {
@@ -83,6 +93,49 @@ export const useMarkt = (marktId: string) => {
     'markt',
     () => {
       return mmApi.get(`/markt/${marktId}`)
+    },
+    MM_API_QUERY_CONFIG
+  )
+}
+
+export const useAllocation = (marktId: string, date: string) => {
+  return useQuery<IAllocationApiData[], IApiError>(
+    'allocation',
+    () => {
+      return mmApi.get(`/allocation/markt/${marktId}/date/${date}`)
+    },
+    MM_API_QUERY_CONFIG
+  )
+}
+
+export const useSaveAllocation = (marktId: string, date: string) => {
+  const queryClient = useQueryClient()
+  return useMutation<ICreateAllocationBody, IApiError, ICreateAllocationBody>(
+    (allocation) => {
+      return mmApi.post(`/allocation/markt/${marktId}/date/${date}`, allocation)
+    },
+    {
+      ...MM_API_QUERY_CONFIG,
+      onSuccess: () => queryClient.invalidateQueries('allocation'),
+    }
+  )
+}
+
+export const useSollicitaties = (marktId: string) => {
+  return useQuery<ISollicitatie[], IApiError>(
+    'sollicitaties',
+    () => {
+      return mmApi.get(`/sollicitaties/markt/${marktId}?listLength=10000&includeDoorgehaald=0`)
+    },
+    MM_API_QUERY_CONFIG
+  )
+}
+
+export const usePlaatsvoorkeur = (marktId: string) => {
+  return useQuery<IPlaatsvoorkeur[], IApiError>(
+    'plaatsvoorkeur',
+    () => {
+      return mmApi.get(`/plaatsvoorkeur/markt/${marktId}`)
     },
     MM_API_QUERY_CONFIG
   )
