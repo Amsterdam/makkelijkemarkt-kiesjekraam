@@ -1,6 +1,6 @@
-import { Button, Col, notification, PageHeader, Row, Select, Tag } from 'antd'
-import React, { useContext, useEffect, useState } from 'react'
-import { get, groupBy, head, isEmpty, sortBy } from 'lodash'
+import { Button, Col, Divider, notification, PageHeader, Row, Select, Space, Spin, Tag } from 'antd'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { every, get, groupBy, head, sortBy } from 'lodash'
 
 import { IAllocation } from '../models'
 import {
@@ -14,6 +14,7 @@ import {
 import { SaveButton } from '../components/buttons'
 import { networkErrorNotification } from '../common/notifications'
 import { useParams } from 'react-router-dom'
+import CenterStageStyled from '../components/CenterStage.styled'
 
 const { Option } = Select
 
@@ -28,6 +29,7 @@ const REJECT_REASON_CODES: { [key: string]: number } = {
   VPL_POSITION_NOT_AVAILABLE: 5,
   PREF_NOT_AVAILABLE: 6,
 }
+const DEFAULT_REASON_CODE = 1
 
 type LocatieType = { plaatsId: string }
 type updateAllocationType = (kraam: string, ondernemer: string, previous: string) => void
@@ -39,6 +41,7 @@ type AllocationContextType = {
 const AllocationContext = React.createContext<Partial<AllocationContextType>>({})
 
 const FixAllocationPage: React.VFC = () => {
+  const ondernemersOptionListRef = useRef<JSX.Element[]>([])
   const { marktId, marktDate } = useParams<{ marktId: string; marktDate: string }>()
   const weekday = new Date(marktDate).toLocaleDateString('nl-NL', { weekday: 'long' })
 
@@ -59,9 +62,6 @@ const FixAllocationPage: React.VFC = () => {
   const locaties = sortBy((marktConfigCall.data?.locaties as LocatieType[]) || [], [
     (locatie) => Number(locatie.plaatsId),
   ])
-  const ondernemers = (sollicitatiesCall.data || []).map((sollicitatie) => {
-    return sollicitatie.sollicitatieNummer
-  })
 
   const kraamToOndernemer = allocation.reduce((total: { [key: string]: string }, current) => {
     if (current.isAllocated) {
@@ -89,24 +89,22 @@ const FixAllocationPage: React.VFC = () => {
     return total
   }, {})
 
-  const ondernemersOptionList = ondernemers.map((ondernemer) => (
-    <Option key={ondernemer} value={ondernemer}>
-      {ondernemer}
-    </Option>
-  ))
-
   const updateAllocation: updateAllocationType = (kraam, ondernemer, previous) => {
     const updatedAllocation = allocation.map((alloc) => {
       if (alloc.ondernemer.sollicitatieNummer === ondernemer) {
         return {
           ...alloc,
           plaatsen: [...alloc.plaatsen, kraam],
+          isAllocated: true,
+          reason: null,
         }
       }
       if (alloc.ondernemer.sollicitatieNummer === previous) {
+        const plaatsen = alloc.plaatsen.filter((plaats) => plaats !== kraam)
         return {
           ...alloc,
-          plaatsen: alloc.plaatsen.filter((plaats) => plaats !== kraam),
+          isAllocated: !!plaatsen.length,
+          plaatsen,
         }
       }
       return alloc
@@ -115,13 +113,17 @@ const FixAllocationPage: React.VFC = () => {
   }
 
   const save = () => {
-    const allocationsWithPlaatsen = allocation.filter((alloc) => {
-      if (alloc.isAllocated && !alloc.plaatsen.length) {
-        return false
+    const updatedAllocation = allocation.map((alloc) => {
+      if (!alloc.isAllocated) {
+        const { plaatsen, ...allocWithoutPlaatsen } = alloc
+        return {
+          ...allocWithoutPlaatsen,
+          reason: { code: DEFAULT_REASON_CODE },
+        }
       }
-      return true
+      return alloc
     })
-    const { true: toewijzingen, false: afwijzingen } = groupBy(allocation, 'isAllocated')
+    const { true: toewijzingen = [], false: afwijzingen = [] } = groupBy(updatedAllocation, 'isAllocated')
     saveAllocationCall({ toewijzingen, afwijzingen })
   }
 
@@ -173,13 +175,20 @@ const FixAllocationPage: React.VFC = () => {
           marktId,
           isAllocated,
           ondernemer,
-          plaatsen,
           marktDate,
           erkenningsNummer,
+          plaatsen: plaatsen || [],
           reason: rejectReason ? { code } : null,
         }
       })
-
+      ondernemersOptionListRef.current = allocationData.map((alloc) => {
+        const { sollicitatieNummer } = alloc.ondernemer
+        return (
+          <Option key={sollicitatieNummer} value={sollicitatieNummer}>
+            {sollicitatieNummer}
+          </Option>
+        )
+      })
       setAllocation(allocationData as unknown as IAllocation[])
     }
   }, [allocationCall.data, sollicitatiesCall.data, plaatsvoorkeurCall.data])
@@ -197,14 +206,34 @@ const FixAllocationPage: React.VFC = () => {
     if (saveIsError) {
       networkErrorNotification(saveError)
     }
-  }, [saveIsError])
+  }, [saveIsError, saveError])
 
-  const context: AllocationContextType = { updateAllocation, locaties, ondernemersOptionList }
+  const afwijzingen = allocation
+    .filter((alloc) => !alloc.isAllocated)
+    .map(({ ondernemer }) => <Tag key={ondernemer.sollicitatieNummer}>{ondernemer.sollicitatieNummer}</Tag>)
+
+  const deltas = Object.entries(deltaPlaatsenPerOndernemer).map(([ondernemer, delta]) => (
+    <Tag key={ondernemer} color={delta > 0 ? '#87d068' : '#f50'}>
+      {ondernemer}: {delta > 0 ? '+' : ''}
+      {delta}
+    </Tag>
+  ))
+
+  const context: AllocationContextType = {
+    updateAllocation,
+    locaties,
+    ondernemersOptionList: ondernemersOptionListRef.current,
+  }
   const subTitle = `${weekday} ${marktDate}`
   const title = marktCall.data?.naam || `Markt ${marktId}`
 
   return (
     <AllocationContext.Provider value={context}>
+      {!every([allocationCall.data, sollicitatiesCall.data, plaatsvoorkeurCall.data, marktConfigCall.data]) && (
+        <CenterStageStyled>
+          <Spin size="large" />
+        </CenterStageStyled>
+      )}
       <Row>
         <Col md={2} lg={4}></Col>
         <Col md={20} lg={16}>
@@ -218,15 +247,18 @@ const FixAllocationPage: React.VFC = () => {
                 </SaveButton>,
               ]}
             ></PageHeader>
-            <div>
-              {!isEmpty(deltaPlaatsenPerOndernemer) &&
-                Object.entries(deltaPlaatsenPerOndernemer).map(([ondernemer, delta]) => (
-                  <Tag key={ondernemer} color={delta > 0 ? '#87d068' : '#f50'}>
-                    {ondernemer}: {delta > 0 ? '+' : ''}
-                    {delta}
-                  </Tag>
-                ))}
-            </div>
+            <Divider />
+            <Space direction="vertical">
+              <Space size={[8, 16]} wrap>
+                <span>Delta</span>
+                {deltas}
+              </Space>
+              <Space size={[8, 16]} wrap>
+                <span>Afwijzingen</span>
+                {afwijzingen}
+              </Space>
+            </Space>
+            <Divider />
             <table>
               <thead>
                 <tr>

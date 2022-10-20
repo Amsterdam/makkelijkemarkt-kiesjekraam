@@ -259,7 +259,7 @@ export interface IAllocationApiData {
   id: number
   isAllocated: boolean
   rejectReason: string
-  plaatsen: string[]
+  plaatsen: Nullable<string[]>
   date: string
   anywhere: boolean
   minimum: number
@@ -293,7 +293,16 @@ export interface IAllocation {
   plaatsen: string[]
   marktDate: string
   erkenningsNummer: ErkenningsNummer
-  reason: string
+  reason: Nullable<{ code: number }>
+}
+
+export interface IAllocationToApi extends Omit<IAllocation, 'plaatsen'> {
+  plaatsen?: string[]
+}
+
+export interface ICreateAllocationBody {
+  afwijzingen: IAllocationToApi[]
+  toewijzingen: IAllocationToApi[]
 }
 
 export interface IPlaatsvoorkeur {
@@ -301,11 +310,6 @@ export interface IPlaatsvoorkeur {
   plaatsen: string[]
   markt: string
   koopman: ErkenningsNummer
-}
-
-export interface ICreateAllocationBody {
-  afwijzingen: IAllocation[]
-  toewijzingen: IAllocation[]
 }
 
 export const WeekDays: DayOfWeek[] = [
