@@ -194,22 +194,22 @@ const AanwezigheidsPage: React.VFC = () => {
   }
 
   useEffect(() => {
-    if (saveRsvpIsSuccess) {
+    if (saveRsvpIsSuccess && savePatternIsSuccess) {
       notification.success({
         message: 'Opgeslagen',
         description: 'Uw aanwezigheidsvoorkeuren zijn opgeslagen',
       })
     }
-  }, [saveRsvpIsSuccess])
+  }, [saveRsvpIsSuccess, savePatternIsSuccess])
 
   useEffect(() => {
-    if (saveRsvpIsError) {
+    if (saveRsvpIsError || savePatternIsError) {
       notification.error({
         message: 'Fout tijdens opslaan',
         description: 'Uw aanwezigheidsvoorkeuren zijn niet opgeslagen',
       })
     }
-  }, [saveRsvpIsError])
+  }, [saveRsvpIsError, savePatternIsError])
 
   const savePattern = async () => {
     const patternData = {
@@ -219,24 +219,6 @@ const AanwezigheidsPage: React.VFC = () => {
     }
     savePatternApi(patternData as IRsvpPattern)
   }
-
-  useEffect(() => {
-    if (savePatternIsSuccess) {
-      notification.success({
-        message: 'Opgeslagen',
-        description: 'Uw aanwezigheids patroon is opgeslagen',
-      })
-    }
-  }, [savePatternIsSuccess])
-
-  useEffect(() => {
-    if (savePatternIsError) {
-      notification.error({
-        message: 'Fout tijdens opslaan',
-        description: 'Uw aanwezigheids patroon is niet opgeslagen',
-      })
-    }
-  }, [savePatternIsError])
 
   useEffect(() => {
     if (ondernemerData.data && marktData.data && rsvpPatternData.data && rsvpData.data) {
@@ -389,7 +371,7 @@ const Markt: React.VFC<MarktPropsType> = (props) => {
     extra.push(
       <SaveButton key="save" clickHandler={() => props.save(props.id)} inProgress={props.apiInProgress}>
         Opslaan
-      </SaveButton>,
+      </SaveButton>
     )
   }
 
