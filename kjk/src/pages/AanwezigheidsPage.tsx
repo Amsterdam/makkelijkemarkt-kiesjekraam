@@ -103,6 +103,8 @@ const AanwezigheidsPage: React.VFC = () => {
     isError: savePatternIsError,
   } = useSaveRsvpPattern()
 
+  const combinedError = saveRsvpIsError || savePatternIsError
+
   const [sollicitatie, setSollicitatie] = useState<Partial<ISollicitatie>>({})
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
   const [pattern, setPattern] = useState<Partial<IRsvpPatternExt>>({})
@@ -203,13 +205,14 @@ const AanwezigheidsPage: React.VFC = () => {
   }, [saveRsvpIsSuccess, savePatternIsSuccess])
 
   useEffect(() => {
-    if (saveRsvpIsError || savePatternIsError) {
+    if (combinedError) {
       notification.error({
         message: 'Fout tijdens opslaan',
         description: 'Uw aanwezigheidsvoorkeuren zijn niet opgeslagen',
+        duration: 0,
       })
     }
-  }, [saveRsvpIsError, savePatternIsError])
+  }, [combinedError])
 
   const savePattern = async () => {
     const patternData = {
