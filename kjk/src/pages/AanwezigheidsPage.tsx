@@ -103,7 +103,7 @@ const AanwezigheidsPage: React.VFC = () => {
     isError: savePatternIsError,
   } = useSaveRsvpPattern()
 
-  let combinedError = saveRsvpIsError || savePatternIsError
+  const combinedError = saveRsvpIsError || savePatternIsError
 
   const [sollicitatie, setSollicitatie] = useState<Partial<ISollicitatie>>({})
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
