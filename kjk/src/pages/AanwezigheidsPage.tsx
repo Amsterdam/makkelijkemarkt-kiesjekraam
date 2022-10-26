@@ -90,13 +90,20 @@ const AanwezigheidsPage: React.VFC = () => {
   const marktVoorkeurData = useMarktVoorkeur(erkenningsNummer)
   const marktData = useMarkt(marktId)
 
-  const { mutate: saveRsvpApi, isLoading: saveRsvpApiInProgress } = useSaveRsvp()
+  const {
+    mutate: saveRsvpApi,
+    isLoading: saveRsvpApiInProgress,
+    isSuccess: saveRsvpIsSuccess,
+    isError: saveRsvpIsError,
+  } = useSaveRsvp()
   const {
     mutate: savePatternApi,
     isLoading: savePatternApiInProgress,
     isSuccess: savePatternIsSuccess,
     isError: savePatternIsError,
   } = useSaveRsvpPattern()
+
+  const combinedError = saveRsvpIsError || savePatternIsError
 
   const [sollicitatie, setSollicitatie] = useState<Partial<ISollicitatie>>({})
   const [rsvps, setRsvps] = useState<IRsvpExt[]>([])
@@ -175,16 +182,37 @@ const AanwezigheidsPage: React.VFC = () => {
   }
 
   const saveRsvps = async () => {
-    rsvps
-      .filter((rsvp) => rsvp.markt === marktId)
-      .forEach((rsvp) => {
-        saveRsvpApi({
-          ...rsvp,
-          koopmanErkenningsNummer: rsvp.koopman,
-          marktId,
+    saveRsvpApi(
+      rsvps
+        .filter((rsvp) => rsvp.markt === marktId)
+        .map((rsvp) => {
+          return {
+            ...rsvp,
+            koopmanErkenningsNummer: rsvp.koopman,
+            marktId,
+          }
         })
-      })
+    )
   }
+
+  useEffect(() => {
+    if (saveRsvpIsSuccess && savePatternIsSuccess) {
+      notification.success({
+        message: 'Opgeslagen',
+        description: 'Uw aanwezigheidsvoorkeuren zijn opgeslagen',
+      })
+    }
+  }, [saveRsvpIsSuccess, savePatternIsSuccess])
+
+  useEffect(() => {
+    if (combinedError) {
+      notification.error({
+        message: 'Fout tijdens opslaan',
+        description: 'Uw aanwezigheidsvoorkeuren zijn niet opgeslagen',
+        duration: 0,
+      })
+    }
+  }, [combinedError])
 
   const savePattern = async () => {
     const patternData = {
@@ -194,24 +222,6 @@ const AanwezigheidsPage: React.VFC = () => {
     }
     savePatternApi(patternData as IRsvpPattern)
   }
-
-  useEffect(() => {
-    if (savePatternIsSuccess) {
-      notification.success({
-        message: 'Opgeslagen',
-        description: 'Uw aanwezigheidsvoorkeuren zijn opgeslagen',
-      })
-    }
-  }, [savePatternIsSuccess])
-
-  useEffect(() => {
-    if (savePatternIsError) {
-      notification.error({
-        message: 'Fout tijdens opslaan',
-        description: 'Uw aanwezigheidsvoorkeuren zijn niet opgeslagen',
-      })
-    }
-  }, [savePatternIsError])
 
   useEffect(() => {
     if (ondernemerData.data && marktData.data && rsvpPatternData.data && rsvpData.data) {
@@ -364,7 +374,7 @@ const Markt: React.VFC<MarktPropsType> = (props) => {
     extra.push(
       <SaveButton key="save" clickHandler={() => props.save(props.id)} inProgress={props.apiInProgress}>
         Opslaan
-      </SaveButton>,
+      </SaveButton>
     )
   }
 

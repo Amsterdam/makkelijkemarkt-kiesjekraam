@@ -25,9 +25,9 @@ export const useRsvp = (erkenningsNummer: string) => {
 }
 
 export const useSaveRsvp = () => {
-  return useMutation<IRsvp, IApiError, IRsvp>(
+  return useMutation<IRsvp[], IApiError, IRsvp[]>(
     (rsvp) => {
-      return mmApi.post(`/rsvp`, rsvp)
+      return mmApi.post(`/rsvp`, { rsvps: rsvp })
     },
     {
       ...MM_API_QUERY_CONFIG,
