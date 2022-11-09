@@ -14,17 +14,22 @@ import {
     getOndernemersByMarkt,
     getPlaatsvoorkeuren,
     getToewijzingen,
+    getAfwijzingen,
     getVoorkeurenByMarkt,
+    getOndernemer,
 } from './makkelijkemarkt-api';
 import {
     IMarktondernemer,
     IMarktondernemerVoorkeur,
     IMarktondernemerVoorkeurRow,
+    IAfwijzing,
 } from './model/markt.model';
 import {
     isVast,
 } from './domain-knowledge';
 import { RedisClient } from './redis-client';
+import { getAfwijzingReason } from './model/afwijzing.functions';
+import { getMarktondernemerFromMMOndernemerStandaloneByMarkt } from './model/ondernemer.functions';
 
 const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
@@ -122,22 +127,34 @@ export const getCalculationInput = (marktId: string, marktDate: string) => {
 };
 
 export const getIndelingslijst = (marktId: string, marktDate: string) => {
-    return Promise.all([getMarktDetails(marktId, marktDate), getToewijzingen(marktId, marktDate)]).then(
-        ([marktDetails, tws]) => {
-            const toewijzingen = tws;
+    return Promise.all([
+        getMarktDetails(marktId, marktDate),
+        getToewijzingen(marktId, marktDate),
+        getAfwijzingen(marktId, marktDate),
+    ]).then(async ([marktDetails, tws, afw]) => {
+        const toewijzingen = tws;
+        const afwijzingenPromises = afw.map(async (allocation): Promise<IAfwijzing> => {
+            const { markt, date, koopman: erkenningsNummer, koopman, rejectReason: reasonCode } = allocation;
+            const reason = getAfwijzingReason(reasonCode);
+            const ondernemer = await getOndernemer(erkenningsNummer)
+            const marktondernemer = getMarktondernemerFromMMOndernemerStandaloneByMarkt(ondernemer, markt)
+            return { markt, date, erkenningsNummer, reason, koopman, ondernemer:marktondernemer };
+        })
+        return Promise.all(afwijzingenPromises).then((afwijzingen) => {
             return {
                 ...marktDetails,
                 toewijzingen,
+                afwijzingen,
             };
-        },
-    );
+        })
+    });
 };
 
 export const calculateIndelingslijst = async (marktId: string, date: string) => {
     try {
         let data = await getCalculationInput(marktId, date);
         data = JSON.parse(JSON.stringify(data));
-        data["mode"] = ALLOCATION_MODE_SCHEDULED;
+        data['mode'] = ALLOCATION_MODE_SCHEDULED;
         const job = allocationQueue.createJob(data);
         const result = await job.save();
         return result.id;

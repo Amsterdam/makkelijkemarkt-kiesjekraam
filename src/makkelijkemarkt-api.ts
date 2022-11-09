@@ -623,7 +623,7 @@ export const getToewijzingen = (marktId: string, marktDate: string): Promise<ITo
     });
 };
 
-export const getAfwijzingen = (marktId: string, marktDate: string): Promise<IAfwijzing[]> => {
+export const getAfwijzingen = (marktId: string, marktDate: string): Promise<any[]> => {
     return getAllocations(marktId, marktDate).then((response) => {
         return removeAllocatedAllocations(response);
     });

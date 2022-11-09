@@ -17,6 +17,7 @@ export default styled.div<Props>(({ center = 'both' }) => {
       position: absolute;
       top: ${y};
       left: ${x};
+      z-index: 99;
       transform: translate(-${x}, -${y});
     `
 })

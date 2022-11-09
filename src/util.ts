@@ -6,6 +6,7 @@ export const capitalize = (s: string) => {
     return typeof s === 'string' ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 };
 
+export const TIMEZONE = 'Europe/Amsterdam';
 export const DAYS_IN_WEEK = 7;
 export const MILLISECONDS_IN_SECOND = 1000;
 export const SECONDS_IN_MINUTE = 60;
@@ -109,15 +110,19 @@ export const addMinutes = (offsetDate: string | number, minutes: number): string
 export const addMinutesTime = (offsetDate: string | number, minutes: number): Date => {
     const date = new Date(offsetDate);
     const dateNewTime = new Date(date.getTime() + minutes * 60000);
-    return moment(dateNewTime).tz('Europe/Amsterdam').format();
+    return moment(dateNewTime).tz(TIMEZONE).format();
 };
 
 export const getTimezoneTime = (): any => {
-    return moment().tz('Europe/Amsterdam');
+    return moment().tz(TIMEZONE);
 };
 
 export const getTimezoneHours = (): number => {
     return parseInt(moment(getTimezoneTime()).format('H'), 10);
+};
+
+export const getDateWithTimezone = (date: string): any => {
+    return moment(date).tz(TIMEZONE);
 };
 
 export const today = (): string => toISODate(new Date());
@@ -287,4 +292,23 @@ export const requireEnv = (key: string) => {
     if (!process.env[key]) {
         throw new Error(`Required environment variable "${key}" is not configured.`);
     }
+};
+
+export const logs2csv = (data, DELIM: string = '\t'): string => {
+    if (data.length < 1) {
+        return '';
+    }
+    let csvString: string = '';
+    const header = Object.keys(data[0]);
+    csvString += header.join(DELIM) + '\n';
+
+    for (const row of data) {
+        let stringified = { ...row };
+
+        let values = Object.values(stringified);
+
+        csvString += values.join(DELIM) + '\n';
+    }
+
+    return csvString;
 };

@@ -1,3 +1,5 @@
+import UserRepresentation from 'keycloak-admin/lib/defs/userRepresentation';
+
 export type PlaatsId = string;
 
 export type ErkenningsNummer = string;
@@ -118,8 +120,8 @@ export interface IMarktondernemer {
     description: string;
     erkenningsNummer: ErkenningsNummer;
     sollicitatieNummer: number;
-    plaatsen?: PlaatsId[];
     status: DeelnemerStatus;
+    plaatsen?: PlaatsId[];
     voorkeur?: IMarktondernemerVoorkeur;
 }
 
@@ -302,4 +304,13 @@ export interface IAuditLog {
     entityType: string;
     result: string;
     datetime: string;
+}
+
+export interface IKeycloakUserData {
+    id: string,
+    username: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    createdAt: string
 }

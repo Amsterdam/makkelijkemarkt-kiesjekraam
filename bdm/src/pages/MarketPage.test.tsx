@@ -14,8 +14,8 @@ import { errorHandlers } from '../mocks/mmApiServiceWorker/handlers'
 
 const queryClient = new QueryClient()
 
-const ANTD_NOTIFICATION_TIMEOUT = { timeout: 4500 + 1000 } // Antd default notification duration = 4.5 seconds
 const REACT_QUERY_RETRY_TIMEOUT = { timeout: 1200 }
+const ANTD_NOTIFICATION_TIMEOUT = { timeout: 4500 + (2 * REACT_QUERY_RETRY_TIMEOUT.timeout) } // Antd default notification duration = 4.5 seconds
 const MARKT_ROUTE = '/markt/204'
 
 beforeAll(() => {

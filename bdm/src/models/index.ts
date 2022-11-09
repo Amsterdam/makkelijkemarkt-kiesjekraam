@@ -303,6 +303,7 @@ export interface IAllocationToApi extends Omit<IAllocation, 'plaatsen'> {
 export interface ICreateAllocationBody {
   afwijzingen: IAllocationToApi[]
   toewijzingen: IAllocationToApi[]
+  delta: {}[]
 }
 
 export interface IPlaatsvoorkeur {

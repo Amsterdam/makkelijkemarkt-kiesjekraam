@@ -19,6 +19,7 @@ import { groupAanmeldingenPerMarktPerWeek, rsvpPatternPerMarkt } from '../model/
 import { IRSVP, IRsvpPattern } from '../model/markt.model';
 import moment from 'moment-timezone';
 import { Roles } from '../authentication';
+import { logs2csv } from '../util'
 import marktConfigModel from 'model/markt-config.model';
 
 moment.locale('nl');
@@ -277,30 +278,14 @@ export const handleAttendanceUpdate = (
 };
 
 export const auditLogPage = async (req: GrantedRequest, res: Response, next: NextFunction, role: string) => {
-    const logs = await getAllAuditLogs();
+    let logs = await getAllAuditLogs();
 
-    const csv = logs2csv(logs);
+    logs = logs.map((row) => {
+        row.result = JSON.stringify(row.result);
+        row.datetime = JSON.stringify(row.datetime);
+
+        return row
+    })
+    const csv = logs2csv(logs, '\t');
     res.attachment('audit_logs.csv').send(csv);
-};
-
-const logs2csv = (data): string => {
-    const DELIM = '\t';
-    if (data.length < 1) {
-        return '';
-    }
-    let csvString: string = '';
-    const header = Object.keys(data[0]);
-    csvString += header.join(DELIM) + '\n';
-
-    for (const row of data) {
-        let stringified = { ...row };
-        stringified.result = JSON.stringify(stringified.result);
-        stringified.datetime = JSON.stringify(stringified.datetime);
-
-        let values = Object.values(stringified);
-
-        csvString += values.join(DELIM) + '\n';
-    }
-
-    return csvString;
 };

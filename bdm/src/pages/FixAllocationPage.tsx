@@ -47,6 +47,7 @@ const FixAllocationPage: React.VFC = () => {
   const weekday = new Date(marktDate).toLocaleDateString('nl-NL', { weekday: 'long' })
 
   const [allocation, setAllocation] = useState<IAllocation[]>([])
+  const [actions, setActions] = useState<{}[]>([])
   const allocationCall = useAllocation(marktId, marktDate)
   const {
     mutate: saveAllocationCall,
@@ -110,6 +111,8 @@ const FixAllocationPage: React.VFC = () => {
       }
       return alloc
     })
+    const action = { [`kraam ${kraam}`]: `${previous || 'leeg'} naar ${ondernemer || 'leeg'}` }
+    setActions([...actions, action])
     setAllocation(updatedAllocation)
   }
 
@@ -126,7 +129,7 @@ const FixAllocationPage: React.VFC = () => {
       return alloc
     })
     const { true: toewijzingen = [], false: afwijzingen = [] } = groupBy(updatedAllocation, 'isAllocated')
-    saveAllocationCall({ toewijzingen, afwijzingen })
+    saveAllocationCall({ toewijzingen, afwijzingen, delta: actions })
   }
 
   useEffect(() => {
@@ -201,6 +204,7 @@ const FixAllocationPage: React.VFC = () => {
         message: 'Opgeslagen',
         description: 'De allocatie is aangepast',
       })
+      setActions([])
     }
   }, [saveIsSuccess])
 
@@ -240,27 +244,33 @@ const FixAllocationPage: React.VFC = () => {
         <Col md={2} lg={4}></Col>
         <Col md={20} lg={16}>
           <div>
-            <PageHeader
-              title={title}
-              subTitle={subTitle}
-              extra={[
-                <SaveButton key="save" type="primary" clickHandler={save} inProgress={saveInProgress}>
-                  Opslaan
-                </SaveButton>,
-              ]}
-            ></PageHeader>
-            <Divider />
-            <Space direction="vertical">
-              <Space size={[8, 16]} wrap>
-                <span>Delta</span>
-                {deltas.length ? deltas : '(geen)'}
+            <div style={{ backgroundColor: 'white', position: 'sticky', top: 40, zIndex: 1 }}>
+              <PageHeader
+                title={title}
+                subTitle={subTitle}
+                extra={[
+                  <SaveButton key="save" type="primary" clickHandler={save} inProgress={saveInProgress}>
+                    Opslaan
+                  </SaveButton>,
+                ]}
+              ></PageHeader>
+              <Divider />
+              <Space direction="vertical">
+                <Space size={[8, 16]} wrap>
+                  <span>Delta</span>
+                  {deltas.length ? deltas : '(geen)'}
+                </Space>
+                <Space size={[8, 16]} wrap>
+                  <span>Afwijzingen</span>
+                  {afwijzingen.length ? afwijzingen : '(geen)'}
+                </Space>
+                <Space size={[8, 16]} wrap>
+                  <span>Acties</span>
+                  {actions.length ? JSON.stringify(actions) : '(geen)'}
+                </Space>
               </Space>
-              <Space size={[8, 16]} wrap>
-                <span>Afwijzingen</span>
-                {afwijzingen.length ? afwijzingen : '(geen)'}
-              </Space>
-            </Space>
-            <Divider />
+              <Divider />
+            </div>
             <table>
               <thead>
                 <tr>

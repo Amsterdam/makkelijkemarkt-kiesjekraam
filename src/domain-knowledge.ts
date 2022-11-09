@@ -19,6 +19,7 @@ const {
     stringSort,
     getMaDiWoDo,
     getTimezoneTime,
+    getDateWithTimezone,
 } = require('./util.ts');
 const {
     DeelnemerStatus,
@@ -58,27 +59,45 @@ export const DAYS_CLOSED = (function() {
 
 export const A_LIJST_DAYS = [FRIDAY, SATURDAY, SUNDAY];
 
-const INDELINGSTIJDSTIP = '15:00';
+const INDELINGSTIJDSTIP = { hours: 15, minutes: 0 };
 const INDELINGSTIJDSTIP_TEXT = "3 uur 's middags";
+const MAILINGSTIJDSTIP_DELTA = { hours: 0, minutes: 30 };
 export const INDELING_DAG_OFFSET = 1;
 
 const indelingstijdstipInMinutes = () => {
-    const hours = parseInt(INDELINGSTIJDSTIP.split(':', 1)[0], 10);
-    const minutes = parseInt(INDELINGSTIJDSTIP.split(':', 2)[1], 10);
+    const hours = INDELINGSTIJDSTIP.hours;
+    const minutes = INDELINGSTIJDSTIP.minutes;
     return 60 * hours + minutes;
 };
 
 const allocationHours = () => {
-    return parseInt(INDELINGSTIJDSTIP.split(':', 1)[0], 10);
+    return INDELINGSTIJDSTIP.hours;
 };
 
 const allocationMinutes = () => {
-    return parseInt(INDELINGSTIJDSTIP.split(':', 2)[1], 10);
+    return INDELINGSTIJDSTIP.minutes;
 };
 
-const parseISOMarktDag = dag => (isoMarktDagen.hasOwnProperty(dag) ? isoMarktDagen[dag] : -1);
+const mailingtijdstipInMinutes = () => {
+    const hours = INDELINGSTIJDSTIP.hours + MAILINGSTIJDSTIP_DELTA.hours;
+    const minutes = INDELINGSTIJDSTIP.minutes + MAILINGSTIJDSTIP_DELTA.minutes;
+    return 60 * hours + minutes;
+};
 
-export const isVast = status =>
+const mailingHours = () => {
+    return INDELINGSTIJDSTIP.hours + MAILINGSTIJDSTIP_DELTA.hours;
+};
+
+const mailingMinutes = () => {
+    return INDELINGSTIJDSTIP.minutes + MAILINGSTIJDSTIP_DELTA.minutes;
+};
+
+const getMailingTime = () => {
+    return getTimezoneTime().set('hour', mailingHours()).set('minute', mailingMinutes());
+}
+
+const parseISOMarktDag = (dag) => (isoMarktDagen.hasOwnProperty(dag) ? isoMarktDagen[dag] : -1);
+export const isVast = (status) =>
     status === DeelnemerStatus.VASTE_PLAATS ||
     status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS ||
     status === DeelnemerStatus.TIJDELIJKE_VASTE_PLAATS_Z ||
@@ -91,13 +110,27 @@ export const isExp = status =>
 export const isVastOfExp = status => isVast(status) || isExp(status);
 export const isEb = status => status === DeelnemerStatus.ECONOMISCHE_BINDING;
 
-const isAfterAllocationTime = () => {
+export const isAfterAllocationTime = () => {
     const timeNow = getTimezoneTime();
     const allocationTime = getTimezoneTime()
         .set('hour', allocationHours())
         .set('minute', allocationMinutes());
     return timeNow.isAfter(allocationTime) || timeNow.isSame(allocationTime);
 };
+
+export const isAfterMailingTime = () => {
+    return getTimezoneTime().isAfter(getMailingTime());
+};
+
+export const marktDateIsAfterMailing = (dateStr: string): boolean => {
+    return getDateWithTimezone(dateStr).isAfter(getMailingTime());
+};
+
+export const marktIsDefinite = (dateStr: string): boolean => {
+    const mailTime = getMailingTime();
+    const marktDate = getDateWithTimezone(dateStr).hour(mailTime.hour()).minute(mailTime.minute())
+    return getTimezoneTime().add(1, 'day').isAfter(marktDate);
+}
 
 // Geeft de datum terug vanaf wanneer ondernemers hun aanwezigheid
 // mogen aanpassen.
@@ -245,4 +278,7 @@ module.exports = {
     plaatsSort,
     isErkenningsnummer,
     isAfterAllocationTime,
+    isAfterMailingTime,
+    marktDateIsAfterMailing,
+    marktIsDefinite,
 };
