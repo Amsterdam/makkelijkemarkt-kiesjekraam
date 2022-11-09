@@ -13,3 +13,12 @@ export const COLOR = {
 
 export const MARKTMEESTER_HOME_LINK = '/markt/'
 export const ONDERNEMER_HOME_LINK = '/dashboard/'
+
+export const VASTE_PLAATS_HOUDER_STATUS = [
+  'vpl',
+  'eb',
+  'exp',
+  'expf',
+  'tvpl',
+  'tvplz', // all ondernemers from Mercato
+]

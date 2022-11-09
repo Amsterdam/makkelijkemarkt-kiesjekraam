@@ -7,6 +7,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import { RoleContext } from '../components/providers/RoleProvider'
 
 import { SaveButton } from '../components/buttons'
+import { VASTE_PLAATS_HOUDER_STATUS } from '../constants'
 import {
   ErkenningsNummer,
   IAanwezigheidsPageRouteParams,
@@ -233,7 +234,7 @@ const AanwezigheidsPage: React.VFC = () => {
       const sollicitatie: Partial<ISollicitatie> =
         findLast(orderedSollicitaties, (s) => String(s.markt.id) === marktId && !s.doorgehaald) || {}
       setSollicitatie(sollicitatie)
-      const isStatusLikeVpl = sollicitatie.status === 'vpl' || sollicitatie.status === 'eb'
+      const isStatusLikeVpl = includes(VASTE_PLAATS_HOUDER_STATUS, sollicitatie.status)
 
       // PATTERN
       let pattern: Partial<IRsvpPatternExt> = {}

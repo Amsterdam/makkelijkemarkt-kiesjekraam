@@ -1,6 +1,8 @@
 import {
     requireEnv,
     requireOne,
+    logs2csv,
+    toISODate
 } from './util';
 import {
     Credentials,
@@ -9,6 +11,8 @@ import {
     GrantedRequest,
 } from 'keycloak-connect';
 import KeycloakAdminClient from 'keycloak-admin';
+import { IKeycloakUserData } from 'model/markt.model';
+import UserRepresentation from 'keycloak-admin/lib/defs/userRepresentation';
 
 requireEnv('IAM_URL');
 requireEnv('IAM_REALM');
@@ -51,11 +55,28 @@ export const userExists = (username: string): Promise<boolean> =>
             () => false,
         );
 
-export const getAllUsers = () => getKeycloakAdmin().then(kcAdminClient => kcAdminClient.users.find({ max: -1 }));
+export const getAllUsers = ():Promise<UserRepresentation[]> => getKeycloakAdmin().then(kcAdminClient => kcAdminClient.users.find({ max: -1 }));
+
+export const getAllUsersForExport = () => getAllUsers().then((keycloakUsers:UserRepresentation[]) => {
+    const usersParsed = keycloakUsers.map((userData: UserRepresentation) => {
+        return {
+            id: userData.id,
+            username: userData.username,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+            createdAt: toISODate(new Date(userData.createdTimestamp)),
+        } as IKeycloakUserData
+    })
+
+    const csv = logs2csv(usersParsed, ';');
+    return csv
+})
 
 module.exports = {
     getAllUsers,
     getKeycloakAdmin,
     getKeycloakUser,
     userExists,
+    getAllUsersForExport
 };

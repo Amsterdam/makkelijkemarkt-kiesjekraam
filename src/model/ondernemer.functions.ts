@@ -3,6 +3,7 @@ import {
     getVoorkeurenByMarkt,
 } from '../makkelijkemarkt-api';
 import {
+    DeelnemerStatus,
     IMarktondernemer,
     IMarktondernemerVoorkeur,
     IRSVP,
@@ -11,6 +12,9 @@ import {
 import {
     today,
 } from '../util';
+import {
+    MMOndernemerStandalone,
+} from './makkelijkemarkt.model';
 
 export const ondernemerIsAfgemeld = (
     ondernemer: IMarktondernemer,
@@ -163,3 +167,17 @@ export const getOndernemersLangdurigAfgemeldByMarkt = (marktId: string) => {
         },
     );
 };
+
+
+export const getMarktondernemerFromMMOndernemerStandaloneByMarkt = (ondernemer: MMOndernemerStandalone, marktId: string): IMarktondernemer => {
+    const { erkenningsnummer: erkenningsNummer } = ondernemer
+    const description = `${ondernemer.voorletters} ${ondernemer.tussenvoegsels} ${ondernemer.achternaam}`;
+    const sollicitatie = ondernemer.sollicitaties.find((soll) => soll.markt.id.toString() === marktId)
+    return {
+        description,
+        erkenningsNummer,
+        status: sollicitatie.status as DeelnemerStatus,
+        sollicitatieNummer: sollicitatie.sollicitatieNummer
+
+    }
+}

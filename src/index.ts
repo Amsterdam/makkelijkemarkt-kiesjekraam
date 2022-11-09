@@ -30,7 +30,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
 import { dashboardPage } from './routes/dashboard';
-import { getKeycloakUser } from './keycloak-api';
+import { getAllUsersForExport, getKeycloakUser } from './keycloak-api';
 import mmApiDispatch from './routes/mmApiDispatch';
 import morgan from 'morgan';
 import path from 'path';
@@ -273,11 +273,11 @@ app.get(
     (req: GrantedRequest, res: Response, next: NextFunction) => {
         const messages = getQueryErrors(req.query);
         attendancePage(
-            req, 
-            res, 
-            next, 
+            req,
+            res,
+            next,
             isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
-            req.params.erkenningsNummer, 
+            req.params.erkenningsNummer,
             req.csrfToken(),
             messages
         );
@@ -434,19 +434,19 @@ app.post(
     csrfProtection,
     (req: Request, res: Response, next: NextFunction) =>
         updateMarketPreferences(
-            req, 
-            res, 
-            next, 
-            req.params.erkenningsNummer, 
+            req,
+            res,
+            next,
+            req.params.erkenningsNummer,
             isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
         ),
 );
 
 app.get('/profile/:erkenningsNummer', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) =>
     publicProfilePage(
-        req, 
-        res, 
-        req.params.erkenningsNummer, 
+        req,
+        res,
+        req.params.erkenningsNummer,
         isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
     ),
 );
@@ -469,6 +469,16 @@ app.get(
         auditLogPage(req, res, next, Roles.MARKTMEESTER);
     },
 );
+
+app.get(
+    '/export-users/',
+    keycloak.protect(Roles.MARKTBEWERKER),
+    (req: GrantedRequest, res: Response) => {
+        getAllUsersForExport().then((csv) => {
+            res.attachment('users_export.csv').send(csv);
+        })
+    },
+)
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err);

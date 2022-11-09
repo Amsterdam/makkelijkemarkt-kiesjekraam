@@ -1,8 +1,6 @@
 import * as React from 'react';
-import {
-    arrayToObject,
-    getBreadcrumbsMarkt
-} from '../util';
+import moment = require('moment-timezone');
+import { arrayToObject, getBreadcrumbsMarkt } from '../util';
 import {
     IAfwijzing,
     IBranche,
@@ -16,6 +14,7 @@ import {
 import {
     obstakelsToLocatieKeyValue,
     ondernemersToLocatieKeyValue,
+    marktIsDefinite,
 } from '../domain-knowledge';
 import {
     IAllocationPrintout
@@ -37,7 +36,7 @@ type IndelingslijstPageState = {
     markt: IMarkt;
     marktId: string;
     datum: string;
-    type: string;
+    indelingstype: string;
     branches: IBranche[];
     role: string;
     user: object;
@@ -45,9 +44,10 @@ type IndelingslijstPageState = {
 };
 
 const titleMap: { [index: string]: string } = {
-    wenperiode               : 'Indelingslijst',
-    indeling                 : 'Indeling',
-    'concept-indelingslijst' : 'Concept indelingslijst',
+    wenperiode: 'Indelingslijst',
+    indeling: 'Definitieve Indeling',
+    voorlopige_indeling: 'Voorlopige Indeling',
+    concept_indelingslijst: 'Concept indelingslijst',
 };
 
 export default class IndelingslijstPage extends React.Component {
@@ -61,21 +61,25 @@ export default class IndelingslijstPage extends React.Component {
             paginas,
             markt,
             datum,
-            type = 'indeling',
+            indelingstype = 'indeling',
             branches,
             role,
             user,
             job
         } = props;
 
-        const title        = titleMap[type];
-        const breadcrumbs  = getBreadcrumbsMarkt(markt, role);
+        const isVoorlopig =
+            indelingstype === 'indeling' && !marktIsDefinite(datum);
+        const title = isVoorlopig ? titleMap['voorlopige_indeling'] : titleMap[indelingstype];
 
-        const plaatsList   = arrayToObject(marktplaatsen, 'plaatsId');
-        const vphl         = ondernemersToLocatieKeyValue(ondernemers);
+
+        const breadcrumbs = getBreadcrumbsMarkt(markt, role);
+
+        const plaatsList = arrayToObject(marktplaatsen, 'plaatsId');
+        const vphl = ondernemersToLocatieKeyValue(ondernemers);
         const obstakelList = obstakelsToLocatieKeyValue(obstakels);
 
-        const toewijzingen = type !== 'wenperiode' ? props.toewijzingen : [];
+        const toewijzingen = indelingstype !== 'wenperiode' ? props.toewijzingen : [];
         const afwijzingen = props.afwijzingen;
         let afwijzingPages = [];
         if(afwijzingen !== undefined){
@@ -94,7 +98,7 @@ export default class IndelingslijstPage extends React.Component {
                 bodyClass="page-markt-indelingslijst page-print"
                 title={title}
                 markt={markt}
-                type={type}
+                type={indelingstype}
                 datum={datum}
                 showDate={true}
                 breadcrumbs={breadcrumbs}
@@ -167,8 +171,8 @@ export default class IndelingslijstPage extends React.Component {
                                 {page.map((afw: IAfwijzing) => (
                                 <tr>
                                     <td>{afw.ondernemer.erkenningsNummer}</td>
-                                    <td>{afw.ondernemer.description}</td>
                                     <td>{afw.ondernemer.status}</td>
+                                    <td>{afw.ondernemer.description}</td>
                                     <td>{afw.reason.message}</td>
                                 </tr>
                                 ))}

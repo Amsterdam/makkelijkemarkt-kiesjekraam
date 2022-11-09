@@ -53,13 +53,13 @@ export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     });
 };
 
-export const indelingPage = (req: GrantedRequest, res: Response, type = 'indeling') => {
+export const indelingPage = (req: GrantedRequest, res: Response, indelingstype = 'indeling') => {
     const { marktDate, marktId } = req.params;
 
     getIndelingslijst(marktId, marktDate).then(indeling => {
         res.render('IndelingslijstPage.tsx', {
             ...indeling,
-            type,
+            indelingstype,
             datum: marktDate,
             role: Roles.MARKTMEESTER,
             user: getKeycloakUser(req),
@@ -129,9 +129,8 @@ export const indelingWaitingPage = async (req: GrantedRequest, res: Response) =>
             return res.render('WaitingPage.jsx');
         }
 
-        const type = 'concept-indelingslijst';
+        const indelingstype = 'concept_indelingslijst';
         const data = JSON.parse(reply);
-
         if (allocationHasFailed(data)) {
             return res.render('IndelingsErrorPage.tsx', {
                 ...data,
@@ -142,7 +141,7 @@ export const indelingWaitingPage = async (req: GrantedRequest, res: Response) =>
 
         return res.render('IndelingslijstPage.tsx', {
             ...data,
-            type,
+            indelingstype,
             datum: data.marktDate,
             role: Roles.MARKTMEESTER,
             user: getKeycloakUser(req),
