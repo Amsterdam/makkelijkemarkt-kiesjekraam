@@ -162,7 +162,7 @@ export default class IndelingslijstPage extends React.Component {
                             <table>
                                 <thead>
                                 <tr>
-                                    <th>Erkenningsnummer</th>
+                                    <th>Sollicitatienummer</th>
                                     <th>Status</th>
                                     <th>Naam</th>
                                     <th>Reden</th>
@@ -170,7 +170,11 @@ export default class IndelingslijstPage extends React.Component {
                                 </thead>
                                 {page.map((afw: IAfwijzing) => (
                                 <tr>
-                                    <td>{afw.ondernemer.erkenningsNummer}</td>
+                                    <td>
+                                        <a href={`/profile/${afw.ondernemer.erkenningsNummer}`}>
+                                            {afw.ondernemer.sollicitatieNummer}
+                                        </a>
+                                    </td>
                                     <td>{afw.ondernemer.status}</td>
                                     <td>{afw.ondernemer.description}</td>
                                     <td>{afw.reason.message}</td>
