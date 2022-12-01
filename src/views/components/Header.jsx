@@ -3,6 +3,8 @@ import React from 'react';
 import {
     Roles,
 } from '../../authentication';
+import { getRolebasedHomeURL, getTitleForRole } from '../../roles';
+
 const LoginButton = require('./LoginButton');
 
 const Header = ({ user, children, hideLogout, breadcrumbs, role }) => {
@@ -15,18 +17,13 @@ const Header = ({ user, children, hideLogout, breadcrumbs, role }) => {
         ];
     }
 
-    let logoUrl = '/';
-    if (role) {
-        logoUrl = (role === Roles.MARKTMEESTER || role === Roles.MARKTBEWERKER) ? '/markt/' : '/dashboard/';
-    }
-
     return (
         <header className="Header">
             <div className="Header__top">
                 <div className="container">
                     <div className="container__content">
                         <div className="Header__top-container">
-                            <a className="Header__logo-link" href={logoUrl}>
+                            <a className="Header__logo-link" href={getRolebasedHomeURL(role)}>
                                 <picture className="Header__logo">
                                     <source srcSet="/images/logo-desktop.svg" media="(min-width: 540px)" />
                                     <source srcSet="/images/logo-mobile.svg" media="(min-width: 0)" />
@@ -35,9 +32,12 @@ const Header = ({ user, children, hideLogout, breadcrumbs, role }) => {
                             </a>
                             <h1 className="Header__heading">Kies je kraam</h1>
                             <div className="Header__user">
-                                {!hideLogout ? <LoginButton user={user} /> : null}
-                                {role === Roles.MARKTMEESTER ? <p className="Header__user__name">{user.name}</p> : null}
-                                {role === Roles.MARKTMEESTER ? <p className="Header__user__role">Marktmeester</p> : null}
+                                {!hideLogout && <LoginButton user={user} />}
+                                {user && role !== Roles.MARKTONDERNEMER &&
+                                <div>
+                                    <p className="Header__user__name">{user.name}</p>
+                                    <p className="Header__user__role">{getTitleForRole(role)}</p>
+                                </div>}
                             </div>
                         </div>
                     </div>
@@ -73,7 +73,6 @@ const Header = ({ user, children, hideLogout, breadcrumbs, role }) => {
 Header.propTypes = {
     breadcrumbs: PropTypes.arrayOf(PropTypes.object),
     user: PropTypes.object,
-    logoUrl: PropTypes.string,
     role: PropTypes.string,
     children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
     hideLogout: PropTypes.bool,

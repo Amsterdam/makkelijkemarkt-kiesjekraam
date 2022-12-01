@@ -27,7 +27,7 @@ class MarktenPage extends React.Component {
                 </Header>
                 <Content>
                     <h1 className="Heading Heading--intro">Markten</h1>
-                    <MarktList markten={markten} />
+                    <MarktList markten={markten} role={role} />
                 </Content>
             </Page>
         );

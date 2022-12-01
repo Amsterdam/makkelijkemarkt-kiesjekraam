@@ -21,11 +21,13 @@ import { getMarkt, getMarkten } from './makkelijkemarkt-api';
 import { GrantedRequest, TokenContent } from 'keycloak-connect';
 import { getQueryErrors, internalServerErrorPage, isAbsoluteUrl } from './express-util';
 import { keycloak, Roles, sessionMiddleware } from './authentication';
+import { isMarktmeester, isMarktondernemer, isMarktBewerker, isKramenzetter } from './roles'
 import { keycloakHealth, makkelijkeMarktHealth, serverHealth, serverTime } from './routes/status';
 import { langdurigAfgemeld, marktDetail } from './routes/markt';
 import { marketPreferencesPage, updateMarketPreferences } from './routes/market-preferences';
 import { plaatsvoorkeurenPage, updatePlaatsvoorkeuren } from './routes/market-location';
 import { publicProfilePage, toewijzingenAfwijzingenPage } from './routes/ondernemer';
+import { getKramenzetterOverzichtPage, getKramenzetterIndelingsPage } from './routes/kramenzetter';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
@@ -41,33 +43,6 @@ const csrfProtection = csrf({ cookie: true });
 requireEnv('APP_SECRET');
 
 const HTTP_DEFAULT_PORT = 8080;
-
-const isMarktondernemer = (req: GrantedRequest) => {
-    const accessToken = req.kauth.grant.access_token.content;
-
-    return (
-        !!accessToken.resource_access[process.env.IAM_CLIENT_ID] &&
-        accessToken.resource_access[process.env.IAM_CLIENT_ID].roles.includes(Roles.MARKTONDERNEMER)
-    );
-};
-
-const isMarktmeester = (req: GrantedRequest) => {
-    const accessToken = req.kauth.grant.access_token.content;
-
-    return (
-        !!accessToken.resource_access[process.env.IAM_CLIENT_ID] &&
-        accessToken.resource_access[process.env.IAM_CLIENT_ID].roles.includes(Roles.MARKTMEESTER)
-    );
-};
-
-const isMarktBewerker = (req: GrantedRequest) => {
-    const accessToken = req.kauth.grant.access_token.content;
-
-    return (
-        !!accessToken.resource_access[process.env.IAM_CLIENT_ID] &&
-        accessToken.resource_access[process.env.IAM_CLIENT_ID].roles.includes(Roles.MARKTBEWERKER)
-    );
-}
 
 const getErkenningsNummer = (req: GrantedRequest) => {
     const tokenContent: TokenContent = req.kauth.grant.access_token.content;
@@ -134,6 +109,8 @@ app.get('/login', keycloak.protect(), (req: GrantedRequest, res: Response) => {
         res.redirect('/dashboard/');
     } else if (isMarktmeester(req)) {
         res.redirect('/markt/');
+    } else if (isKramenzetter(req)) {
+        res.redirect('/kramenzetter')
     } else {
         res.redirect('/');
     }
@@ -174,7 +151,14 @@ app.get('/error/:jobId/', keycloak.protect(Roles.MARKTMEESTER), indelingErrorSta
 
 app.get('/markt/', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
     getMarkten(true).then((markten: any) => {
-        res.render('MarktenPage', { markten, role: Roles.MARKTMEESTER, user: getKeycloakUser(req) });
+        res.render(
+            'MarktenPage',
+            {
+                markten,
+                role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+                user: getKeycloakUser(req)
+            }
+        );
     }, internalServerErrorPage(res));
 });
 
@@ -185,7 +169,7 @@ app.get(
         getMarkt(req.params.marktId)
             .then(markt => {
                 res.render('MarktDetailPage', {
-                    role: Roles.MARKTMEESTER,
+                    role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
                     user: getKeycloakUser(req),
                     markt: markt,
                 });
@@ -198,7 +182,12 @@ app.get(
     '/markt/:marktId/langdurig-afgemeld',
     keycloak.protect(Roles.MARKTMEESTER),
     (req: GrantedRequest, res: Response, next: NextFunction) =>
-        langdurigAfgemeld(req, res, req.params.marktId, Roles.MARKTMEESTER),
+        langdurigAfgemeld(
+            req,
+            res,
+            req.params.marktId,
+            isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+        ),
 );
 
 app.get(
@@ -260,6 +249,22 @@ app.get(
         dashboardPage(req, res, next, getErkenningsNummer(req));
     },
 );
+
+app.get(
+    '/kramenzetter/',
+    keycloak.protect(Roles.KRAMENZETTER),
+    (req: GrantedRequest, res: Response, next: NextFunction) => {
+        getKramenzetterOverzichtPage(req, res, next)
+    }
+)
+
+app.get(
+    '/kramenzetter/:marktId/:datum/indeling/',
+    keycloak.protect(Roles.KRAMENZETTER),
+    (req: GrantedRequest, res: Response, next) => {
+        getKramenzetterIndelingsPage(req, res, next)
+    }
+)
 
 // Registratie & Activatie
 // -----------------------
@@ -356,14 +361,6 @@ app.get(
             req.csrfToken(),
         );
     },
-);
-
-app.post(
-    '/ondernemer/:erkenningsNummer/voorkeuren/:marktId/',
-    keycloak.protect(Roles.MARKTBEWERKER),
-    csrfProtection,
-    (req: Request, res: Response, next: NextFunction) =>
-        updatePlaatsvoorkeuren(req, res, next, req.params.marktId, req.params.erkenningsNummer),
 );
 
 app.post(
