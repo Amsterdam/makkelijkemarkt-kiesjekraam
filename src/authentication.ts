@@ -13,6 +13,7 @@ export const Roles = {
     MARKTMEESTER: 'marktmeester',
     MARKTONDERNEMER: 'marktondernemer',
     MARKTBEWERKER: 'marktbewerker',
+    KRAMENZETTER: 'kramenzetter'
 };
 
 export const keycloak = new Keycloak(

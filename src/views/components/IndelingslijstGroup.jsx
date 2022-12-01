@@ -21,6 +21,7 @@ const IndelingslijstGroup = ({
     toewijzingen = [],
     datum,
     branches,
+    role
 }) => {
     let first = true;
 
@@ -118,6 +119,7 @@ const IndelingslijstGroup = ({
                             markt,
                             datum,
                             toewijzing,
+                            role
                         };
 
                         if (!plaatsList[plaatsNr].inactive) {
@@ -163,6 +165,7 @@ IndelingslijstGroup.propTypes = {
     markt: PropTypes.object.isRequired,
     datum: PropTypes.string,
     branches: PropTypes.array.isRequired,
+    role: PropTypes.string
 };
 
 export default IndelingslijstGroup;

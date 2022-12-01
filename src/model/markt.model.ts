@@ -1,5 +1,3 @@
-import UserRepresentation from 'keycloak-admin/lib/defs/userRepresentation';
-
 export type PlaatsId = string;
 
 export type ErkenningsNummer = string;

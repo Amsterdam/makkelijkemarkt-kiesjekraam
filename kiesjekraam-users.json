@@ -12,6 +12,10 @@
     "clientRoles": ["marktmeester", "marktbewerker"]
   },
   {
+    "name": "kjk_kramenzetter",
+    "clientRoles": ["kramenzetter"]
+  },
+  {
     "name": "realm_admin",
     "realmAdminRights": ["manage-users", "query-clients", "query-realms", "view-clients", "view-realm", "view-users"]
   }

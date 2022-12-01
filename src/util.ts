@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import moment = require('moment-timezone');
+import { getRolebasedHomeURL } from './roles';
 import { Roles } from './authentication'
 
 export const capitalize = (s: string) => {
@@ -253,28 +254,40 @@ export const getBreadcrumbsOndernemer = (ondernemer: any, role: string) => {
 };
 
 export const getBreadcrumbsMarkt = (markt: any, role: string) => {
-    if (role === Roles.MARKTMEESTER || role === Roles.MARKTBEWERKER) {
-        return [
-            {
-                title: 'Markten',
-                url: '/markt/',
-            },
-            {
-                title: markt.naam,
-                url: `/markt/${markt.id}/`,
-            },
-        ];
-    } else {
-        return [
-            {
-                title: 'Mijn markten',
-                url: '/dashboard/',
-            },
-            {
-                title: markt.naam,
-                url: `/markt-detail/${markt.id}/`,
-            },
-        ];
+    const homeUrl = getRolebasedHomeURL(role)
+
+    switch (role) {
+        case Roles.MARKTMEESTER:
+        case Roles.MARKTBEWERKER:
+            return [
+                {
+                    title: 'Markten',
+                    url: homeUrl,
+                },
+                {
+                    title: markt.naam,
+                    url: `/markt/${markt.id}/`,
+                },
+            ]
+        case Roles.KRAMENZETTER:
+            return [
+                {
+                    title: "Marktindelingen",
+                    url: homeUrl,
+                }
+            ]
+        // For Marktondernemer
+        default:
+            return [
+                {
+                    title: 'Mijn markten',
+                    url: homeUrl,
+                },
+                {
+                    title: markt.naam,
+                    url: `/markt-detail/${markt.id}/`,
+                },
+            ];
     }
 };
 

@@ -5,6 +5,7 @@ import {
     IMarktplaats,
     IToewijzing,
  } from '../../model/markt.model';
+import { Roles } from '../../authentication'
 
 const Plaats = ({
     plaats,
@@ -20,6 +21,7 @@ const Plaats = ({
     opAfgemeldPeriode,
     ondernemerUitgebreid,
     ondernemerGewisseld,
+    role
 }: {
     plaats: IMarktplaats;
     branches?: IBranche[];
@@ -34,6 +36,7 @@ const Plaats = ({
     opAfgemeldPeriode?: boolean;
     ondernemerUitgebreid?: boolean;
     ondernemerGewisseld?: boolean;
+    role: string
 }) => {
     const plaatsProps = plaats.properties;
     // `realBranche` om duidelijk te maken dat 'bak' niet als een echte branche gezien
@@ -76,9 +79,15 @@ const Plaats = ({
                 ) : null}
                 <span id={`soll-${vph && vph.sollicitatieNummer}`} />
                 {vph ? (
-                    <a href={`/profile/${vph.erkenningsNummer}`}>
-                        <strong>{vph.sollicitatieNummer}</strong>
-                    </a>
+                    (role === Roles.KRAMENZETTER) ?
+                        (
+                            <strong>{vph.sollicitatieNummer}</strong>
+                        ) :
+                        (
+                            <a href={`/profile/${vph.erkenningsNummer}`}>
+                                <strong>{vph.sollicitatieNummer}</strong>
+                            </a>
+                        )
                 ) : null}
             </td>
             <td className="Plaats__prop Plaats__prop-naam">
@@ -96,9 +105,15 @@ const Plaats = ({
                     ''
                 )}
                 {ondernemer ? (
-                    <a href={`/profile/${toewijzing.erkenningsNummer}`}>
-                        <strong>{ondernemer.sollicitatieNummer}</strong>
-                    </a>
+                    (role === Roles.KRAMENZETTER) ?
+                        (
+                            <strong>{ondernemer.sollicitatieNummer}</strong>
+                        ) :
+                        (
+                            <a href={`/profile/${toewijzing.erkenningsNummer}`}>
+                                <strong>{ondernemer.sollicitatieNummer}</strong>
+                            </a>
+                        )
                 ) : null}
             </td>
             <td className={`Plaats__prop Plaats__prop-naam ${ ondernemer && !ondernemer?.voorkeur?.branches ? 'missing-voorkeur' : '' }`}>

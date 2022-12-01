@@ -24,6 +24,9 @@ import {
 import {
     Roles,
 } from '../authentication';
+import {
+    isMarktBewerker
+} from '../roles';
 
 const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
@@ -61,7 +64,7 @@ export const indelingPage = (req: GrantedRequest, res: Response, indelingstype =
             ...indeling,
             indelingstype,
             datum: marktDate,
-            role: Roles.MARKTMEESTER,
+            role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
             user: getKeycloakUser(req),
         });
     }, internalServerErrorPage(res));

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import moment = require('moment-timezone');
 import { arrayToObject, getBreadcrumbsMarkt } from '../util';
 import {
     IAfwijzing,
@@ -19,6 +18,7 @@ import {
 import {
     IAllocationPrintout
 } from '../model/printout.model';
+import { Roles } from '../authentication'
 import IndelingsLegenda from './components/IndelingsLegenda';
 import IndelingslijstGroup from './components/IndelingslijstGroup';
 import MarktDetailBase from './components/MarktDetailBase';
@@ -38,7 +38,7 @@ type IndelingslijstPageState = {
     datum: string;
     indelingstype: string;
     branches: IBranche[];
-    role: string;
+    role?: string;
     user: object;
     job: string;
 };
@@ -71,7 +71,7 @@ export default class IndelingslijstPage extends React.Component {
         const isVoorlopig =
             indelingstype === 'indeling' && !marktIsDefinite(datum);
         const title = isVoorlopig ? titleMap['voorlopige_indeling'] : titleMap[indelingstype];
-
+        const isKramenzetter = role === Roles.KRAMENZETTER
 
         const breadcrumbs = getBreadcrumbsMarkt(markt, role);
 
@@ -100,7 +100,7 @@ export default class IndelingslijstPage extends React.Component {
                 markt={markt}
                 type={indelingstype}
                 datum={datum}
-                showDate={true}
+                showDate={!isKramenzetter ? true : false}
                 breadcrumbs={breadcrumbs}
                 role={role}
                 user={user}
@@ -129,11 +129,11 @@ export default class IndelingslijstPage extends React.Component {
                          markt={markt}
                          datum={datum}
                          branches={branches}
+                         role={role}
                      />
                 )}
                 </PrintPage>
             ))}
-
 
                 <PrintPage
                     key="legenda"
@@ -147,7 +147,7 @@ export default class IndelingslijstPage extends React.Component {
                         aanmeldingen={aanmeldingen}
                         toewijzingen={toewijzingen}
                     ></IndelingsLegenda>
-                    { job ? <div className="IndelingsLegenda">
+                    {!isKramenzetter && job ? <div className="IndelingsLegenda">
                         <b><a href={`/logs/${job}`}>Bekijk Indelingslog</a></b>
                     </div>: null}
                 </PrintPage>

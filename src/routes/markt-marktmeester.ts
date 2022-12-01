@@ -36,6 +36,7 @@ import {
 import {
     Roles,
 } from '../authentication';
+import { isMarktBewerker } from '../roles'
 
 export const vasteplaatshoudersPage = (req: GrantedRequest, res: Response) => {
     const datum = req.params.datum;
@@ -54,7 +55,7 @@ export const vasteplaatshoudersPage = (req: GrantedRequest, res: Response) => {
 export const sollicitantenPage = (req: Request, res: Response) => {
     const datum = req.params.datum;
     const type = 'sollicitanten';
-    const role = Roles.MARKTMEESTER;
+    const role = isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER
     getSollicitantenlijstInput(req.params.marktId, req.params.datum).then(
         ({ ondernemers, aanmeldingen, voorkeuren, markt }) => {
             res.render('SollicitantenPage', { ondernemers, aanmeldingen, voorkeuren, markt, datum, type, role });
@@ -91,7 +92,7 @@ export const afmeldingenVasteplaatshoudersPage = (req: GrantedRequest, res: Resp
                 return !isAanwezig(ondernemer, aanmeldingen, new Date(datum));
             });
 
-            const role = Roles.MARKTMEESTER;
+            const role = isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER
 
             res.render('AfmeldingenVasteplaatshoudersPage', {
                 data,
@@ -119,7 +120,7 @@ export const voorrangslijstPage = (req: GrantedRequest, res: Response, next: Nex
                 return ondernemer;
             });
 
-            const role = Roles.MARKTMEESTER;
+            const role = isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER
             const type = markt.kiesJeKraamFase;
 
             res.render('VoorrangslijstPage', {
@@ -152,7 +153,7 @@ export const ondernemersNietIngedeeldPage = (req: GrantedRequest, res: Response,
         getIndelingVoorkeuren(marktId),
     ])
         .then(([ondernemers, aanmeldingen, markt, toewijzingen, algemenevoorkeuren]) => {
-            const role = Roles.MARKTMEESTER;
+            const role = isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER
 
             res.render('OndernemersNietIngedeeldPage', {
                 ondernemers,
@@ -181,7 +182,7 @@ export const alleSollicitantenPage = (req: GrantedRequest, res: Response, next: 
         getIndelingVoorkeuren(marktId),
     ])
         .then(([ondernemers, aanmeldingen, plaatsvoorkeuren, markt, toewijzingen, algemenevoorkeuren]) => {
-            const role = Roles.MARKTMEESTER;
+            const role = isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER
             res.render('AanwezigheidLijst', {
                 ondernemers: ondernemers.filter(ondernemer => !isVast(ondernemer.status)),
                 aanmeldingen,
@@ -210,7 +211,8 @@ export const sollicitantentAanwezigheidLijst = (req: GrantedRequest, res: Respon
         getIndelingVoorkeuren(marktId),
     ])
         .then(([ondernemers, aanmeldingen, plaatsvoorkeuren, markt, toewijzingen, algemenevoorkeuren]) => {
-            const role = Roles.MARKTMEESTER;
+            const role = isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER
+
             res.render('AanwezigheidLijstPage', {
                 ondernemers: ondernemers.filter(ondernemer => !isVast(ondernemer.status)),
                 aanmeldingen,
@@ -240,7 +242,7 @@ export const alleOndernemersAanwezigheidLijst = (req: GrantedRequest, res: Respo
         getIndelingVoorkeuren(marktId),
     ])
         .then(([ondernemers, aanmeldingen, plaatsvoorkeuren, markt, toewijzingen, algemenevoorkeuren]) => {
-            const role = Roles.MARKTMEESTER;
+            const role = isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER
             res.render('AanwezigheidLijst', {
                 ondernemers,
                 aanmeldingen,

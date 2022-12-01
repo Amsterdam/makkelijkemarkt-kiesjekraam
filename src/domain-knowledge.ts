@@ -35,7 +35,7 @@ const dagen = {
     za: 6,
 };
 
-const parseMarktDag = dag => (dagen.hasOwnProperty(dag) ? dagen[dag] : -1);
+export const parseMarktDag = dag => (dagen.hasOwnProperty(dag) ? dagen[dag] : -1);
 
 const isoMarktDagen = {
     ma: ISO_MONDAY,
@@ -166,7 +166,7 @@ const getMarktDaysOndernemer = (startDate, endDate, marktdagen) => {
     return dates;
 };
 
-const getMarktDays = (startDate, endDate, daysOfWeek) => {
+export const getMarktDays = (startDate, endDate, daysOfWeek) => {
     const start = Date.parse(startDate);
     const end = Date.parse(endDate);
     const days = Math.max(0, (end - start) / MILLISECONDS_IN_DAY);
@@ -182,7 +182,7 @@ const getMarktDays = (startDate, endDate, daysOfWeek) => {
     return dates.map(toISODate);
 };
 
-const getUpcomingMarktDays = (startDate, endDate, daysOfWeek) =>
+export const getUpcomingMarktDays = (startDate, endDate, daysOfWeek) =>
     getMarktDays(addDays(startDate, 1), endDate, daysOfWeek);
 
 export const formatOndernemerName = ondernemer =>
