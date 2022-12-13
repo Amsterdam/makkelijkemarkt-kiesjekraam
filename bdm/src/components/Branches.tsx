@@ -163,7 +163,7 @@ export default class Branches extends Component<{
                           min={0}
                           max={999}
                           value={branche.maximumPlaatsen || 0}
-                          onChange={(value: string | number | undefined) => {
+                          onChange={(value: string | number | undefined| null) => {
                             if ((value && this.state.branches) || (value === 0 && this.state.branches)) {
                               const _branches = this.state.branches
                               _branches[i].maximumPlaatsen = parseInt(value.toString())

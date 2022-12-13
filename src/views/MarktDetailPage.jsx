@@ -1,6 +1,7 @@
 import MarktDetailBase from './components/MarktDetailBase';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { Roles } from '../authentication'
 
 const AlertLine = require('./components/AlertLine');
 
@@ -18,7 +19,7 @@ const {
     tomorrow,
 } = require('../util.ts');
 
-const { getUpcomingMarktDays, parseMarktDag, A_LIJST_DAYS, isAfterAllocationTime } = require('../domain-knowledge.ts');
+const { getUpcomingMarktDays, parseMarktDag, A_LIJST_DAYS, isAfterAllocationTime, isAfterMailingTime } = require('../domain-knowledge.ts');
 
 const today = () => toISODate(new Date());
 
@@ -33,7 +34,6 @@ class MarktDetailPage extends React.Component {
 
     render() {
         const { markt, datum, type, role, user } = this.props;
-
         const marktDaysPerWeek = this._getMarktDaysUntilNextWeek(markt);
         const fase = markt.kiesJeKraamFase !== 'live' ? ` ${markt.kiesJeKraamFase}` : null;
 
@@ -75,7 +75,7 @@ class MarktDetailPage extends React.Component {
                         Bewerk deze markt
                     </a>
                     <a href={`/audit-logs`} className="Link" target="_blank">
-                        Download marktvoorkeur logs
+                        Download marktvoorkeur logs (laatste 30 dagen)
                     </a>
                 </div>
                 {markt.kiesJeKraamGeblokkeerdePlaatsen ? (
@@ -103,7 +103,7 @@ class MarktDetailPage extends React.Component {
                     <div className="col-1-2 margin-bottom">
                         <h4>Deze week</h4>
                         {marktDaysPerWeek[0].length ? (
-                            this.renderWeek(markt, marktDaysPerWeek[0])
+                            this.renderWeek(markt, marktDaysPerWeek[0], role)
                         ) : (
                             <i>Geen resterende marktdagen</i>
                         )}
@@ -112,7 +112,7 @@ class MarktDetailPage extends React.Component {
                     <div className="col-1-2">
                         <h4>Volgende week</h4>
                         {marktDaysPerWeek[1].length ? (
-                            this.renderWeek(markt, marktDaysPerWeek[1])
+                            this.renderWeek(markt, marktDaysPerWeek[1], role)
                         ) : (
                             <i>Geen marktdagen</i>
                         )}
@@ -122,16 +122,17 @@ class MarktDetailPage extends React.Component {
         );
     }
 
-    renderWeek(markt, marktWeek) {
+    renderWeek(markt, marktWeek, role) {
         return marktWeek.map((marktDay) => {
-            const options = this._determineDayViewOptions(markt, marktDay);
-            return this.renderDay(marktDay, options);
+            const options = this._determineDayViewOptions(markt, marktDay, role);
+            return this.renderDay(markt.id, marktDay, options);
         });
     }
 
     renderDay(
+        marktId,
         { date, day, month, weekDay, relativeDay },
-        { indeling, nietIngedeeld, conceptIndeling, voorrangsLijst, alleSollicitanten, afmeldingenVPHs, abLijst },
+        { indeling, nietIngedeeld, conceptIndeling, voorrangsLijst, alleSollicitanten, afmeldingenVPHs, abLijst, bewerkVoorlopigeIndeling }
     ) {
         return (
             <div key={date} className="well">
@@ -147,7 +148,13 @@ class MarktDetailPage extends React.Component {
                             </a>
                         </li>
                     )}
-
+                    {bewerkVoorlopigeIndeling && (
+                        <li className="LinkList__item">
+                            <a href={`/bdm/fix-allocation/${marktId}/${date}/`} className="Link">
+                                Bewerk voorlopige indeling
+                            </a>
+                        </li>
+                    )}
                     {conceptIndeling && (
                         <li className="LinkList__item">
                             <a href={`./${date}/concept-indelingslijst/`} className="Link">
@@ -200,7 +207,7 @@ class MarktDetailPage extends React.Component {
         );
     }
 
-    _determineDayViewOptions(markt, marktDay) {
+    _determineDayViewOptions(markt, marktDay, role) {
         const fase = markt.kiesJeKraamFase;
         const week = marktDay.week;
         const isToday = marktDay.date === today();
@@ -209,6 +216,7 @@ class MarktDetailPage extends React.Component {
         const indeling =
             (fase === 'wenperiode' && week === 0 && (isToday || (isAfterAllocationTime() && marktIsTomorrow))) ||
             (fase === 'live' && week === 0 && (isToday || (isAfterAllocationTime() && marktIsTomorrow)));
+        const bewerkVoorlopigeIndeling = role === Roles.MARKTBEWERKER && marktIsTomorrow && isAfterAllocationTime() && !isAfterMailingTime()
         const nietIngedeeld = fase === 'activatie' || indeling;
         const conceptIndeling =
             fase === 'voorbereiding' ||
@@ -236,6 +244,7 @@ class MarktDetailPage extends React.Component {
             alleSollicitanten,
             afmeldingenVPHs,
             abLijst,
+            bewerkVoorlopigeIndeling
         };
     }
 
