@@ -1,5 +1,5 @@
 import { A_LIJST_DAYS, formatOndernemerName } from './domain-knowledge';
-import { addDays, MONDAY, numberSort, requireEnv, THURSDAY } from './util';
+import { addDays, MONDAY, numberSort, requireEnv, THURSDAY, toISODate } from './util';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import {
     BrancheId,
@@ -773,3 +773,11 @@ export async function getMarktBasics(marktId: string) {
 }
 
 export const getAllAuditLogs = (): Promise<IAuditLog[]> => apiBase('/kjklogs/ALL').then((response) => response.data);
+
+export const getAuditLogsSince30Days = (): Promise<IAuditLog[]> => {
+    const d = new Date()
+    d.setDate(d.getDate() - 30)
+    const date = toISODate(d);
+
+    return apiBase(`/kjklogs/from/${date}`).then((response) => response.data)
+}

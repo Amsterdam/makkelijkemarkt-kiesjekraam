@@ -7,7 +7,7 @@ import {
     updateRsvp,
     clearFutureRsvps,
     updateRsvpPattern,
-    getAllAuditLogs,
+    getAuditLogsSince30Days,
 } from '../makkelijkemarkt-api';
 import { HTTP_CREATED_SUCCESS, internalServerErrorPage } from '../express-util';
 import { NextFunction, Response } from 'express';
@@ -20,7 +20,6 @@ import { IRSVP, IRsvpPattern } from '../model/markt.model';
 import moment from 'moment-timezone';
 import { Roles } from '../authentication';
 import { logs2csv } from '../util'
-import marktConfigModel from 'model/markt-config.model';
 
 moment.locale('nl');
 
@@ -278,7 +277,7 @@ export const handleAttendanceUpdate = (
 };
 
 export const auditLogPage = async (req: GrantedRequest, res: Response, next: NextFunction, role: string) => {
-    let logs = await getAllAuditLogs();
+    let logs = await getAuditLogsSince30Days()
 
     logs = logs.map((row) => {
         row.result = JSON.stringify(row.result);
