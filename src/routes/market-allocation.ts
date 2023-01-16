@@ -34,9 +34,11 @@ const client = new RedisClient().getAsyncClient();
 
 export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
+    const { version = '1' } = req.query;
     getCalculationInput(marktId, marktDate).then(data => {
         data = JSON.parse(JSON.stringify(data));
         data['mode'] = ALLOCATION_MODE_CONCEPT;
+        data['version'] = version;
         const job = allocationQueue.createJob(data);
         console.log('GET CALC INPUT');
         job.save()

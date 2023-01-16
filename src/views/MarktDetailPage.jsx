@@ -163,6 +163,14 @@ class MarktDetailPage extends React.Component {
                         </li>
                     )}
 
+                    {conceptIndeling && (
+                        <li className="LinkList__item">
+                            <a href={`./${date}/concept-indelingslijst/?version=2`} className="Link">
+                                Conceptindeling V2
+                            </a>
+                        </li>
+                    )}
+
                     {nietIngedeeld && (
                         <li className="LinkList__item">
                             <a href={`./${date}/ondernemers-niet-ingedeeld/`} className="Link">
