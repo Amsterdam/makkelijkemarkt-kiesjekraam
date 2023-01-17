@@ -5,7 +5,13 @@
   },
   {
     "name": "12345678",
-    "clientRoles": ["marktondernemer"]
+    "clientRoles": ["marktondernemer"],
+    "status": "soll"
+  },
+  {
+    "name": "87654321",
+    "clientRoles": ["marktondernemer"],
+    "status": "vpl"
   },
   {
     "name": "kjk_marktbewerker",
