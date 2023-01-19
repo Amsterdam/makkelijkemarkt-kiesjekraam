@@ -76,20 +76,18 @@ export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
 
     getIndelingslijst(marktId, marktDate).then(indeling => {
-        console.log(Object.keys(indeling));
         const { toewijzingen, afwijzingen, ondernemers, markt } = indeling;
         const ondernemersMap = ondernemers.reduce((total, ondernemer) => {
             total[ondernemer.erkenningsNummer] = Number(ondernemer.sollicitatieNummer);
             return total;
         }, {});
-        console.log(markt)
         const allocations: any[] = toewijzingen.map(toewijzing => {
-            let arePrefsMet = false
+            let arePrefsMet = false;
             toewijzing.plaatsen.forEach(plaats => {
                 if (toewijzing.plaatsvoorkeuren.includes(plaats)) {
                     arePrefsMet = true;
                 }
-            })
+            });
             return {
                 ...toewijzing,
                 arePrefsMet,
