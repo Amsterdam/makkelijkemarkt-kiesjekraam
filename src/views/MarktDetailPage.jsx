@@ -148,6 +148,13 @@ class MarktDetailPage extends React.Component {
                             </a>
                         </li>
                     )}
+                    {indeling && (
+                        <li className="LinkList__item">
+                            <a href={`./${date}/indeling-stats/`} className="Link">
+                                Indeling stats
+                            </a>
+                        </li>
+                    )}
                     {bewerkVoorlopigeIndeling && (
                         <li className="LinkList__item">
                             <a href={`/bdm/fix-allocation/${marktId}/${date}/`} className="Link">
