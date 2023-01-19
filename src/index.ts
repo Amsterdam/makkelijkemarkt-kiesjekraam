@@ -14,6 +14,7 @@ import {
     indelingInputJobPage,
     indelingLogsPage,
     indelingPage,
+    indelingStatsPage,
     indelingWaitingPage,
 } from './routes/market-allocation';
 import express, { NextFunction, Request, RequestHandler, Response } from 'express';
@@ -206,6 +207,12 @@ app.get(
     '/markt/:marktId/:marktDate/concept-indelingslijst/',
     keycloak.protect(Roles.MARKTMEESTER),
     conceptIndelingPage,
+);
+
+app.get(
+    '/markt/:marktId/:marktDate/indeling-stats/',
+    keycloak.protect(Roles.MARKTMEESTER),
+    (req: GrantedRequest, res: Response, next: NextFunction) => indelingStatsPage(req, res),
 );
 
 app.get('/markt/:marktId/:datum/vasteplaatshouders/', keycloak.protect(Roles.MARKTMEESTER), vasteplaatshoudersPage);
