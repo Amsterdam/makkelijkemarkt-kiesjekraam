@@ -72,6 +72,40 @@ export const indelingPage = (req: GrantedRequest, res: Response, indelingstype =
     }, internalServerErrorPage(res));
 };
 
+export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
+    const { marktDate, marktId } = req.params;
+
+    getIndelingslijst(marktId, marktDate).then(indeling => {
+        console.log(Object.keys(indeling));
+        const { toewijzingen, afwijzingen, ondernemers, markt } = indeling;
+        const ondernemersMap = ondernemers.reduce((total, ondernemer) => {
+            total[ondernemer.erkenningsNummer] = Number(ondernemer.sollicitatieNummer);
+            return total;
+        }, {});
+        console.log(markt)
+        const allocations: any[] = toewijzingen.map(toewijzing => {
+            let arePrefsMet = false
+            toewijzing.plaatsen.forEach(plaats => {
+                if (toewijzing.plaatsvoorkeuren.includes(plaats)) {
+                    arePrefsMet = true;
+                }
+            })
+            return {
+                ...toewijzing,
+                arePrefsMet,
+                sollicitatieNummer: ondernemersMap[toewijzing.koopman],
+            }
+        })
+        allocations.sort((a, b) => (a.sollicitatieNummer > b.sollicitatieNummer) ? 1 : -1);
+        res.render('IndelingsStatsPage.jsx', {
+            user: getKeycloakUser(req),
+            markt,
+            marktDate,
+            allocations,
+        });
+    }, internalServerErrorPage(res));
+};
+
 export const indelingLogsPage = async (req: GrantedRequest, res: Response) => {
     const { jobId } = req.params;
     try {
