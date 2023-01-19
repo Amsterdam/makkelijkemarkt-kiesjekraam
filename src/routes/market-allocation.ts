@@ -95,7 +95,7 @@ export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
             }
         })
         allocations.sort((a, b) => (a.sollicitatieNummer > b.sollicitatieNummer) ? 1 : -1);
-        res.render('IndelingsStatsPage.jsx', {
+        res.render('IndelingStatsPage.jsx', {
             user: getKeycloakUser(req),
             markt,
             marktDate,
