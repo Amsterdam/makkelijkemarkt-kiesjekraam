@@ -78,7 +78,7 @@ export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
     getIndelingslijst(marktId, marktDate).then(indeling => {
         const { toewijzingen, afwijzingen, ondernemers, markt } = indeling;
         const ondernemersMap = ondernemers.reduce((total, ondernemer) => {
-            total[ondernemer.erkenningsNummer] = Number(ondernemer.sollicitatieNummer);
+            total[ondernemer.erkenningsNummer] = ondernemer;
             return total;
         }, {});
         const allocations: any[] = toewijzingen.map(toewijzing => {
@@ -88,13 +88,16 @@ export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
                     arePrefsMet = true;
                 }
             });
+            const ondernemer = ondernemersMap[toewijzing.koopman];
             return {
                 ...toewijzing,
                 arePrefsMet,
-                sollicitatieNummer: ondernemersMap[toewijzing.koopman],
-            }
-        })
-        allocations.sort((a, b) => (a.sollicitatieNummer > b.sollicitatieNummer) ? 1 : -1);
+                sollicitatieNummer: Number(ondernemer.sollicitatieNummer),
+                description: ondernemer.description,
+                status: ondernemer.status,
+            };
+        });
+        allocations.sort((a, b) => (a.sollicitatieNummer > b.sollicitatieNummer ? 1 : -1));
         res.render('IndelingStatsPage.jsx', {
             user: getKeycloakUser(req),
             markt,
