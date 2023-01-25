@@ -165,6 +165,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                         name="extra-count"
                                         disabled={role === Roles.MARKTMEESTER}
                                         {...{ defaultChecked: defaultCheckedMax(i) }}
+                                        data-test={`extra-count-${i}`}
                                     />
                                     <label htmlFor={`extra-count-${i}`}>
                                         {i !== 0 ? '+' : ''}
@@ -228,7 +229,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                         <div className="Draggable-list-item__handle__bar" />
                                     </div>
                                     <div className="Draggable-list-item__left">
-                                        <span className="Draggable-list-item__label">
+                                        <span className="Draggable-list-item__label" data-test="Draggable-list-item__label">
                                             <strong>{entry.plaatsId}</strong>
                                         </span>
                                     </div>
@@ -249,7 +250,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                     />
                                     {(role === Roles.MARKTONDERNEMER || role === Roles.MARKTBEWERKER) ? (
                                         <a href="#" data-handler="remove-voorkeur" className="Draggable-list-item__right">
-                                            <span className="Draggable-list-item__delete" />
+                                            <span className="Draggable-list-item__delete" data-test="Draggable-list-item__delete" />
                                         </a>
                                     ) : null}
                                 </div>
@@ -279,6 +280,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                         name="anywhere"
                                         defaultChecked={voorkeur.anywhere}
                                         disabled={role === Roles.MARKTMEESTER}
+                                        data-test="anywhere"
                                         />
                                     <label htmlFor="anywhere">
                                         <span>Ja, ook als mijn voorkeuren niet vrij zijn wil ik ingedeeld worden.</span>
