@@ -299,18 +299,15 @@ class PlaatsvoorkeurenForm extends React.Component {
                             type="tertiary"
                         />
                         {(role === Roles.MARKTONDERNEMER || role === Roles.MARKTBEWERKER) ? (
-                            <button
-                                className="Button Button--secondary"
-                                type="submit"
-                                name="redirectTo"
-                                value={
+                            <Button
+                                label="Opslaan"
+                                href={
                                     role === Roles.MARKTONDERNEMER
                                         ? `/markt-detail/${markt.id}?error=plaatsvoorkeuren-saved#plaatsvoorkeuren`
                                         : `/profile/${ondernemer.erkenningsnummer}?error=plaatsvoorkeuren-saved#plaatsvoorkeuren`
                                 }
-                            >
-                                Opslaan
-                            </button>
+                                type="secondary"
+                            />
                         ) : null}
 
                     </p>
