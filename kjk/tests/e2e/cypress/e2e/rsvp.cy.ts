@@ -6,9 +6,9 @@ import {
   checkAttendancePattern,
   interceptAttendance,
   waitAttendance,
-} from '../support/aanwezigheid'
+} from '../support/rsvp'
 import { keycloakLogin } from '../support/login'
-import { addDays, getMonday, setDate } from '../support/utils'
+import { addDays, assertAllLinksOnPage, getMonday, setDate } from '../support/utils'
 import { ONDERNEMER01, ONDERNEMER02 } from '../fixtures/ondernemer'
 import { RSVP01, RSVP02 } from '../fixtures/rsvp'
 import { RSVP_PATTERN01, RSVP_PATTERN02, RSVP_PATTERN03 } from '../fixtures/rsvpPattern'
@@ -20,22 +20,26 @@ describe('Sollicitant', () => {
     interceptAttendance()
     keycloakLogin(Cypress.env('marktondernemer_soll'), Cypress.env('password'))
   })
+
   it('Should show ondernemer info and no pattern, all checkboxes are unchecked by default', () => {
     //reset testdata
     addRsvpPattern(RSVP_PATTERN01)
     addRsvp(RSVP01)
     // Visit markt details and open availability link
     cy.visit(Cypress.env('markt_detail_url'))
+    assertAllLinksOnPage()
     cy.get(AANWEZIGHEID.link_aanwezigheid).click()
     waitAttendance()
 
     assertOndernemerInfo(ONDERNEMER01)
-    cy.get(AANWEZIGHEID.checkboxChecked).should('not.exist')
+    assertDayState([], 'Aanwezigheidspatroon', 'checked')
+    assertDayState([], 'Volgende week', 'checked')
   })
+
   it('Should show possible days on a tuesday BEFORE 15:00', () => {
     // Set date on tuesday 00:00
     setDate(addDays(getMonday(new Date(), 0), 1))
-    cy.visit(Cypress.env('url_rsvp_marktondernemer_soll'))
+    cy.visit(Cypress.env('rsvp_marktondernemer_soll_url'))
     waitAttendance()
 
     // Availability pattern, sunday is disabled other days are enabled
@@ -47,10 +51,11 @@ describe('Sollicitant', () => {
     // Next week, sunday is disabled other days are enabled
     assertDayState([7], 'Volgende week', 'disabled')
   })
+
   it('Should show possible days on a tuesday AFTER 15:00', () => {
     // Set date on tuesday 16:00
     setDate(addDays(getMonday(new Date(), 0), 16))
-    cy.visit(Cypress.env('url_rsvp_marktondernemer_soll'))
+    cy.visit(Cypress.env('rsvp_marktondernemer_soll_url'))
     waitAttendance()
 
     // Availability pattern, sunday is disabled other days are enabled
@@ -62,6 +67,7 @@ describe('Sollicitant', () => {
     // Next week, sunday is disabled other days are enabled
     assertDayState([7], 'Volgende week', 'disabled')
   })
+
   it('Should apply part of the pattern this week and the whole pattern next week, save data', () => {
     cy.intercept('POST', ROUTES.rsvp).as('postRsvp')
     cy.intercept('POST', ROUTES.rsvpPattern).as('postRsvpPattern')
@@ -72,7 +78,7 @@ describe('Sollicitant', () => {
 
     // Set date on monday 00:00
     setDate(getMonday(new Date(), 0))
-    cy.visit(Cypress.env('url_rsvp_marktondernemer_soll'))
+    cy.visit(Cypress.env('rsvp_marktondernemer_soll_url'))
     waitAttendance()
 
     // Check monday, tuesday and friday
@@ -87,7 +93,7 @@ describe('Sollicitant', () => {
     cy.contains('Opslaan').click()
     cy.wait('@postRsvp')
     cy.wait('@postRsvpPattern')
-    cy.visit(Cypress.env('url_rsvp_marktondernemer_soll'))
+    cy.visit(Cypress.env('rsvp_marktondernemer_soll_url'))
     waitAttendance()
 
     // Can't manipulate clock server side, so it is not possible to save a pattern for days in te past of the current week.
@@ -97,6 +103,7 @@ describe('Sollicitant', () => {
     // Full pattern is applied for next week
     assertDayState([1, 2, 5], 'Volgende week', 'checked')
   })
+
   it('Should update and save availability pattern', () => {
     cy.intercept('POST', ROUTES.rsvp).as('postRsvp')
     cy.intercept('POST', ROUTES.rsvpPattern).as('postRsvpPattern')
@@ -108,7 +115,7 @@ describe('Sollicitant', () => {
     addRsvpPattern(RSVP_PATTERN02)
     addRsvp(RSVP01)
 
-    cy.visit(Cypress.env('url_rsvp_marktondernemer_soll'))
+    cy.visit(Cypress.env('rsvp_marktondernemer_soll_url'))
     waitAttendance()
 
     // Pattern should be tuesday, thursday and saturday
@@ -120,22 +127,23 @@ describe('Sollicitant', () => {
     cy.contains('Opslaan').click()
     cy.wait('@postRsvp')
     cy.wait('@postRsvpPattern')
-    cy.visit(Cypress.env('url_rsvp_marktondernemer_soll'))
+    cy.visit(Cypress.env('rsvp_marktondernemer_soll_url'))
     waitAttendance()
 
     // Pattern should be monday, wednesday, thursday and friday
     assertDayState([1, 3, 4, 5], 'Aanwezigheidspatroon', 'checked')
   })
 })
+
 describe('Vaste plaatshouder', () => {
   beforeEach(() => {
     interceptAttendance()
     cy.intercept('POST', ROUTES.rsvp).as('postRsvp')
     cy.intercept('POST', ROUTES.rsvpPattern).as('postRsvpPattern')
-
     keycloakLogin(Cypress.env('marktondernemer_vpl'), Cypress.env('password'))
     addRsvpPattern(RSVP_PATTERN03)
   })
+
   it('Should show ondernemer info and a pattern and can edit data', () => {
     cy.visit(Cypress.env('markt_detail_url'))
     cy.get(AANWEZIGHEID.link_aanwezigheid).click()
@@ -152,24 +160,25 @@ describe('Vaste plaatshouder', () => {
     cy.contains('Opslaan').click()
     cy.wait('@postRsvp')
     cy.wait('@postRsvpPattern')
-    cy.visit(Cypress.env('url_rsvp_marktondernemer_vpl'))
+    cy.visit(Cypress.env('rsvp_marktondernemer_vpl_url'))
     waitAttendance()
 
     assertDayState([3, 4, 6], 'Volgende week', 'checked')
     assertDayState([3, 4, 6], 'Aanwezigheidspatroon', 'checked')
   })
 })
+
 describe('Marktmeester', () => {
   beforeEach(() => {
     interceptAttendance()
-
     keycloakLogin(Cypress.env('marktmeester'), Cypress.env('password'))
     addRsvpPattern(RSVP_PATTERN02)
     addRsvp(RSVP02)
     setDate(getMonday(new Date(), 0))
   })
+
   it('Should show ondernemer info and a pattern, marktmeester cannot edit data', () => {
-    cy.visit(Cypress.env('profile_12345678_url'))
+    cy.visit(Cypress.env('profile_soll_url'))
     cy.contains('aanwezigheid').click()
     waitAttendance()
 
@@ -185,19 +194,20 @@ describe('Marktmeester', () => {
     assertDayState([2, 4, 6], 'Volgende week', 'checked')
   })
 })
+
 describe('Marktbewerker', () => {
   beforeEach(() => {
     interceptAttendance()
     cy.intercept('POST', ROUTES.rsvp).as('postRsvp')
     cy.intercept('POST', ROUTES.rsvpPattern).as('postRsvpPattern')
-
     keycloakLogin(Cypress.env('marktbewerker'), Cypress.env('password'))
     addRsvpPattern(RSVP_PATTERN02)
     addRsvp(RSVP02)
     setDate(getMonday(new Date(), 0))
   })
+
   it('Should show ondernemer info and a pattern, marktbewerker can edit data', () => {
-    cy.visit(Cypress.env('profile_12345678_url'))
+    cy.visit(Cypress.env('profile_soll_url'))
     cy.contains('aanwezigheid').click()
     waitAttendance()
 
@@ -213,7 +223,7 @@ describe('Marktbewerker', () => {
     cy.contains('Opslaan').click()
     cy.wait('@postRsvp')
     cy.wait('@postRsvpPattern')
-    cy.visit(Cypress.env('url_rsvp_marktbewerker'))
+    cy.visit(Cypress.env('rsvp_marktbewerker_url'))
 
     // Pattern and next week are visible
     assertDayState([1, 3, 4, 5], 'Aanwezigheidspatroon', 'checked')

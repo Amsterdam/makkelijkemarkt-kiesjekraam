@@ -1,5 +1,8 @@
 export const ROUTES = {
+  algemeneVoorkeuren: '/algemene-voorkeuren/39/',
+  algemeneVoorkeurenOndernemer: 'ondernemer/*/algemene-voorkeuren/39/',
   koopmanErkenningsnummer: '/api/koopman/erkenningsnummer/*',
+  langdurigAfgemeld: '**/langdurig-afgemeld/',
   marktVoorkeurKoopman: '/api/marktvoorkeur/koopman/*',
   ondernemerMarkt: '/api/ondernemer/markt/*',
   rsvp: '/api/rsvp',

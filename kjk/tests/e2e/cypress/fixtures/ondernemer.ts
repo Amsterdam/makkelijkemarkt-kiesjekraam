@@ -51,3 +51,55 @@ export const ONDERNEMER02: IOndernemer = {
   ],
   vervangers: [],
 }
+
+export const ONDERNEMER03: IOndernemer = {
+  id: 3,
+  erkenningsnummer: '2099983483',
+  voorletters: 'J',
+  tussenvoegsels: '',
+  achternaam: 'Nicolas',
+  email: 'mmccullough@hamill.com',
+  telefoon: null,
+  status: 'Actief',
+  fotoUrl: null,
+  fotoMediumUrl: null,
+  pasUid: null,
+  perfectViewNummer: 14,
+  handhavingsVerzoek: null,
+  weging: 0,
+  sollicitaties: [
+    {
+      sollicitatieNummer: 5057,
+      status: 'vpl',
+      doorgehaald: false,
+      markt: { id: 39, afkorting: 'AC-2022', naam: 'Albert Cuyp-2022' },
+    },
+  ],
+  vervangers: [],
+}
+
+export const ONDERNEMER04: IOndernemer = {
+  id: 4,
+  erkenningsnummer: '2096805017',
+  voorletters: 'G',
+  tussenvoegsels: '',
+  achternaam: 'Hermiston',
+  email: 'eloisa34@casper.com',
+  telefoon: null,
+  status: 'Actief',
+  fotoUrl: null,
+  fotoMediumUrl: null,
+  pasUid: null,
+  perfectViewNummer: 496,
+  handhavingsVerzoek: null,
+  weging: 0,
+  sollicitaties: [
+    {
+      sollicitatieNummer: 10208,
+      status: 'soll',
+      doorgehaald: false,
+      markt: { id: 39, afkorting: 'AC-2022', naam: 'Albert Cuyp-2022' },
+    },
+  ],
+  vervangers: [],
+}
