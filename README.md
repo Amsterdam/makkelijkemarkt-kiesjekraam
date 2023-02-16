@@ -10,3 +10,4 @@ Om de SCSS naar CSS te compilen draai je `npm run watch`. Als je de wijzigingen 
 
 ### Compiling JS
 You can simply run the command 'webpack'
+
