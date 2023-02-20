@@ -69,7 +69,7 @@ export const attendancePage = (
 ) => {
     const thresholdDate = getMarktThresholdDate(role);
     const ondernemerPromise = getOndernemer(erkenningsNummer);
-    const includeInactive = role === Roles.MARKTMEESTER;
+    const includeInactive = role === Roles.MARKTMEESTER || role === Roles.MARKTBEWERKER;
     const marktenPromise = getMarktenForOndernemer(ondernemerPromise, includeInactive);
     const aanmeldingenPromise = getAanmeldingenByOndernemer(erkenningsNummer);
     const rsvpPatternPromise = getRsvpPatternByOndernemer(erkenningsNummer);
