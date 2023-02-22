@@ -3,7 +3,7 @@ import React from 'react';
 const { addDays, DAYS_IN_WEEK, formatDayOfWeek } = require('../../util.ts');
 const { getMarktDays, parseMarktDag } = require('../../domain-knowledge.ts');
 
-const MarktDayLink = ({ type, markt, offsetDate, direction = 1 }) => {
+const MarktDayLink = ({ type, markt, offsetDate, version, direction = 1 }) => {
     let targetDate, startDate, endDate;
 
     if (direction === 1) {
@@ -34,7 +34,7 @@ const MarktDayLink = ({ type, markt, offsetDate, direction = 1 }) => {
     return (
         <a
             className={`MarktDayLink MarktDayLink--${direction > 0 ? `right` : `left`}`}
-            href={`/markt/${markt.id}/${targetDate}/${typeLink}`}
+            href={`/markt/${markt.id}/${targetDate}/${typeLink}/?version=${version}`}
         >
             {formatDayOfWeek(targetDate)}
         </a>
@@ -46,6 +46,7 @@ MarktDayLink.propTypes = {
     markt: PropTypes.object.isRequired,
     offsetDate: PropTypes.string.isRequired,
     direction: PropTypes.number,
+    version: PropTypes.number.isRequired,
 };
 
 module.exports = MarktDayLink;

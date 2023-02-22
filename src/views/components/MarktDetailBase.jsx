@@ -24,29 +24,31 @@ const MarktDetailBase = ({
     breadcrumbs,
     role,
     user,
+    version,
 }) => {
     const relativeDatum = d => {
         return formatDayOfWeek(d) + ', ' + new Date(d).getDate() + ' ' + formatMonth(d);
     };
+    const allocationVersion = version ? ` - allocatie v${version}` : '';
 
     return (
         <Page bodyClass={bodyClass}>
             <Header breadcrumbs={breadcrumbs} role={role} user={user} />
             <MarktDetailHeader>
                 {showDate && (
-                    <MarktDayLink markt={markt} offsetDate={new Date(datum).toISOString()} direction={-1} type={type} />
+                    <MarktDayLink markt={markt} offsetDate={new Date(datum).toISOString()} direction={-1} type={type} version={version} />
                 )}
                 <div className="MarktDetailHeader__title-wrapper">
                     <h1 className="MarktDetailHeader__title">
                         {markt.naam}
                         {title ? ': ' + title : ''}
                         {fase ? ' fase: ' + fase : ''}
-                        {showDate && <span className="MarktDetailHeader__title-sub">{relativeDatum(datum)}</span>}
+                        {showDate && <span className="MarktDetailHeader__title-sub">{relativeDatum(datum)}{allocationVersion}</span>}
                     </h1>
                     {printButton ? <PrintButton title={'Print'} /> : null}
                 </div>
                 {showDate && (
-                    <MarktDayLink markt={markt} offsetDate={new Date(datum).toISOString()} direction={1} type={type} />
+                    <MarktDayLink markt={markt} offsetDate={new Date(datum).toISOString()} direction={1} type={type} version={version} />
                 )}
             </MarktDetailHeader>
             <Content>{children}</Content>
@@ -67,6 +69,7 @@ MarktDetailBase.propTypes = {
     showDate: PropTypes.bool,
     breadcrumbs: PropTypes.arrayOf(PropTypes.object),
     user: PropTypes.object.isRequired,
+    version: PropTypes.number,
 };
 
 export default MarktDetailBase;
