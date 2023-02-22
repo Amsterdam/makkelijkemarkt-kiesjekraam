@@ -36,7 +36,7 @@ const MarktDetailBase = ({
             <Header breadcrumbs={breadcrumbs} role={role} user={user} />
             <MarktDetailHeader>
                 {showDate && (
-                    <MarktDayLink markt={markt} offsetDate={new Date(datum).toISOString()} direction={-1} type={type} />
+                    <MarktDayLink markt={markt} offsetDate={new Date(datum).toISOString()} direction={-1} type={type} version={version} />
                 )}
                 <div className="MarktDetailHeader__title-wrapper">
                     <h1 className="MarktDetailHeader__title">
@@ -48,7 +48,7 @@ const MarktDetailBase = ({
                     {printButton ? <PrintButton title={'Print'} /> : null}
                 </div>
                 {showDate && (
-                    <MarktDayLink markt={markt} offsetDate={new Date(datum).toISOString()} direction={1} type={type} />
+                    <MarktDayLink markt={markt} offsetDate={new Date(datum).toISOString()} direction={1} type={type} version={version} />
                 )}
             </MarktDetailHeader>
             <Content>{children}</Content>
