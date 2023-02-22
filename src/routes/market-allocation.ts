@@ -169,7 +169,7 @@ export const indelingWaitingPage = async (req: GrantedRequest, res: Response) =>
             return res.render('WaitingPage.jsx');
         }
 
-        const indelingstype = 'concept_indelingslijst';
+        const indelingstype = 'concept-indelingslijst';
         const data = JSON.parse(reply);
         if (allocationHasFailed(data)) {
             return res.render('IndelingsErrorPage.tsx', {

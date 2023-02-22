@@ -48,7 +48,7 @@ const titleMap: { [index: string]: string } = {
     wenperiode: 'Indelingslijst',
     indeling: 'Definitieve Indeling',
     voorlopige_indeling: 'Voorlopige Indeling',
-    concept_indelingslijst: 'Concept indelingslijst',
+    'concept-indelingslijst': 'Concept indelingslijst',
 };
 
 export default class IndelingslijstPage extends React.Component {
