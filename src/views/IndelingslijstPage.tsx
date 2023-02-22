@@ -41,6 +41,7 @@ type IndelingslijstPageState = {
     role?: string;
     user: object;
     job: string;
+    version: number;
 };
 
 const titleMap: { [index: string]: string } = {
@@ -65,6 +66,7 @@ export default class IndelingslijstPage extends React.Component {
             branches,
             role,
             user,
+            version=1,
             job
         } = props;
 
@@ -105,6 +107,7 @@ export default class IndelingslijstPage extends React.Component {
                 role={role}
                 user={user}
                 printButton={true}
+                version={version}
             >
             {paginas.map((page, j) => (
                 <PrintPage

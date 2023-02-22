@@ -24,10 +24,12 @@ const MarktDetailBase = ({
     breadcrumbs,
     role,
     user,
+    version,
 }) => {
     const relativeDatum = d => {
         return formatDayOfWeek(d) + ', ' + new Date(d).getDate() + ' ' + formatMonth(d);
     };
+    const allocationVersion = version ? ` - allocatie v${version}` : '';
 
     return (
         <Page bodyClass={bodyClass}>
@@ -41,7 +43,7 @@ const MarktDetailBase = ({
                         {markt.naam}
                         {title ? ': ' + title : ''}
                         {fase ? ' fase: ' + fase : ''}
-                        {showDate && <span className="MarktDetailHeader__title-sub">{relativeDatum(datum)}</span>}
+                        {showDate && <span className="MarktDetailHeader__title-sub">{relativeDatum(datum)}{allocationVersion}</span>}
                     </h1>
                     {printButton ? <PrintButton title={'Print'} /> : null}
                 </div>
@@ -67,6 +69,7 @@ MarktDetailBase.propTypes = {
     showDate: PropTypes.bool,
     breadcrumbs: PropTypes.arrayOf(PropTypes.object),
     user: PropTypes.object.isRequired,
+    version: PropTypes.number,
 };
 
 export default MarktDetailBase;
