@@ -13,6 +13,7 @@ export const MARKTVOORKEUR01: IMarktVoorkeur = {
   maximum: null,
   minimum: null,
 }
+
 export const MARKTVOORKEUR02: IMarktVoorkeur = {
   absentFrom: null,
   absentUntil: null,

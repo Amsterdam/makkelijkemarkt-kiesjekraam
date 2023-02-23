@@ -1,9 +1,14 @@
 const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
+  defaultCommandTimeout: 10000,
+  requestTimeout: 10000,
   videoUploadOnPasses: false,
+  video: false,
   e2e: {
     setupNodeEvents(on, config) {
+      const { removeDirectory } = require('cypress-delete-downloads-folder')
+      on('task', { removeDirectory })
       require('@cypress/grep/src/plugin')(config)
       return config
     },
@@ -21,6 +26,7 @@ module.exports = defineConfig({
       langdurigAfgemeld_url: 'markt/39/langdurig-afgemeld/',
       markt_url: '/markt/39/',
       markt_detail_url: '/markt-detail/39',
+      markten_url: '/markt/',
       marktvoorkeur_url: '/algemene-voorkeuren/39/',
       marktvoorkeur_url_soll: '/ondernemer/2096805017/algemene-voorkeuren/39/',
       marktvoorkeur_url_vpl: '/ondernemer/2099983483/algemene-voorkeuren/39/',

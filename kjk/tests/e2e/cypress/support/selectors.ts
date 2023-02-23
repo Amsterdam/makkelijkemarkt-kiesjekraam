@@ -11,6 +11,16 @@ export const MARKTDETAILS = {
   linkAuditLog: '[href="/audit-logs"]',
 }
 
+export const MARKTENOVERZICHT = {
+  buttonAddBranch: 'button:contains("Branche toevoegen")',
+  buttonDelete: '.anticon-delete',
+  buttonMenu: '.pull-down-menu__content',
+  buttonSave: 'button:contains("Opslaan")',
+  editBranches: '.pull-down-menu',
+  header: '#header',
+  tableRow: 'table > tbody > tr',
+}
+
 export const MARKTVOORKEUR = {
   checkboxInrichting: '#inrichting',
   dropdownBakType: '#bakType',

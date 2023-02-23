@@ -76,8 +76,8 @@ describe('Sollicitant', () => {
     addRsvpPattern(RSVP_PATTERN01)
     addRsvp(RSVP01)
 
-    // Set date on monday 00:00
-    setDate(getMonday(new Date(), 0))
+    // Set date on monday 01:00
+    setDate(getMonday(new Date(), 1))
     cy.visit(Cypress.env('rsvp_marktondernemer_soll_url'))
     waitAttendance()
 
@@ -152,7 +152,6 @@ describe('Vaste plaatshouder', () => {
     assertOndernemerInfo(ONDERNEMER02)
     // Pattern should be monday till saturday
     assertDayState([1, 2, 3, 4, 5, 6], 'Aanwezigheidspatroon', 'checked')
-    // TODO edit and save data
 
     // Check wednesday, thursday and saturday
     checkAttendancePattern([3, 4, 6])

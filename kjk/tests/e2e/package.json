@@ -4,14 +4,16 @@
     "headless": "cypress run",
     "open": "cypress open",
     "skipSlow": "cypress run --env grepTags='--@slow',grepOmitFiltered=true",
+    "smokeTest": "cypress run --env grepTags='@smoke',grepOmitFiltered=true",
     "withBrowser": "cypress run --browser $BROWSER"
   },
   "devDependencies": {
     "@cypress/grep": "^3.1.4",
+    "cypress-delete-downloads-folder": "^0.0.2",
     "cypress-keycloak": "^2.0.0",
     "typescript": "^4.9.4"
   },
   "dependencies": {
-    "cypress": "^12.5.1"
+    "cypress": "^12.6.0"
   }
 }

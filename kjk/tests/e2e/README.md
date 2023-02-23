@@ -7,7 +7,7 @@
 - Run tests headless and skip tests with tag @slow: `npm run skipSlow`
 
 - Run tests headless with browser type: `BROWSER=<browser> npm run withBrowser`
-  Example: `BROWSER=firefox npm run browserChoice`
+  Example: `BROWSER=firefox npm run withBrowser`
   Browser should be installed on local system, except electron.
   Browser types:
   - chrome

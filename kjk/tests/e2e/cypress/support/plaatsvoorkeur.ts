@@ -138,11 +138,11 @@ export const resetPlaatsvoorkeur = (type: 'soll' | 'vpl'): void => {
   cy.get('body').then($body => {
     if ($body.find(buttonDelete).length > 0) {
       cy.get(buttonDelete).then($elems => {
-        cy.get(spinner, { timeout: 10000 }).should('not.exist')
         Cypress._.times($elems.length, () => {
           cy.get('.Draggable-list-item__delete:first', { timeout: 10000 })
             .click()
             .should('not.exist')
+          cy.get(spinner, { timeout: 10000 }).should('not.exist')
         })
       })
     } else {
