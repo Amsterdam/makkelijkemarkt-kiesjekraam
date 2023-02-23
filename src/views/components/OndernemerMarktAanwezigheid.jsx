@@ -74,7 +74,7 @@ const OndernemerMarktAanwezigheid = ({ ondernemer, rsvpEntries, sollicitatie, di
     };
 
     return (
-        <div className="OndernemerMarktAanwezigheid background-link-parent" id="aanwezigheid">
+        <div className="OndernemerMarktAanwezigheid background-link-parent" id="aanwezigheid" data-test="aanwezigheid">
             {disabled ? (
                 <div className="box">
                     <HeaderTitleButton title="Aanwezigheid" buttonDisabled={true} />

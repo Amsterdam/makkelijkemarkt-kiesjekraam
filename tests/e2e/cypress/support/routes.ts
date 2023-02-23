@@ -1,0 +1,18 @@
+export const ROUTES = {
+  algemeneVoorkeuren: '/algemene-voorkeuren/39/',
+  algemeneVoorkeurenOndernemer: 'ondernemer/*/algemene-voorkeuren/39/',
+  branche: '/api/branche',
+  branchesAll: '/api/branche/all',
+  brancheSpecific: '/api/branche/*',
+  koopmanErkenningsnummer: '/api/koopman/erkenningsnummer/*',
+  langdurigAfgemeld: '**/langdurig-afgemeld/',
+  marktVoorkeurKoopman: '/api/marktvoorkeur/koopman/*',
+  obstakel: '/api/obstakel/all',
+  ondernemerMarkt: '/api/ondernemer/markt/*',
+  plaatseigenschap: '/api/plaatseigenschap/all',
+  rsvp: '/api/rsvp',
+  rsvpKoopman: '/api/rsvp/koopman/*',
+  rsvpPattern: '/api/rsvp_pattern',
+  rsvpPatternKoopman: '/api/rsvp_pattern/koopman/*',
+  voorkeuren: '/voorkeuren/**',
+}
