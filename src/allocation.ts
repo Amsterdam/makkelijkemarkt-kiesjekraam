@@ -26,6 +26,8 @@ import {
     RedisClient,
 } from './redis-client';
 
+const ALLOCATION_VERSION = '2';
+
 const timezoneTime = getTimezoneTime();
 if(process.env.INDELING_DAG_OFFSET && process.env.INDELING_DAG_OFFSET != 'false'){
     console.log("Get the day offset from parameter!", process.env.INDELING_DAG_OFFSET);
@@ -84,7 +86,7 @@ async function allocate() {
 
         const indelingen_ids = await Promise.all(
             markten.map((markt: MMMarkt) => {
-                const indeling = calculateIndelingslijst(String(markt.id), marktDate);
+                const indeling = calculateIndelingslijst(String(markt.id), marktDate, ALLOCATION_VERSION);
                 return indeling;
             }),
         );
