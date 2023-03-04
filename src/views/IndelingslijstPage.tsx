@@ -66,7 +66,7 @@ export default class IndelingslijstPage extends React.Component {
             branches,
             role,
             user,
-            version=1,
+            version,
             job
         } = props;
 
