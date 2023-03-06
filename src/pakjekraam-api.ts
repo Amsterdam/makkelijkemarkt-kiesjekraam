@@ -150,11 +150,12 @@ export const getIndelingslijst = (marktId: string, marktDate: string) => {
     });
 };
 
-export const calculateIndelingslijst = async (marktId: string, date: string) => {
+export const calculateIndelingslijst = async (marktId: string, date: string, version: string) => {
     try {
         let data = await getCalculationInput(marktId, date);
         data = JSON.parse(JSON.stringify(data));
         data['mode'] = ALLOCATION_MODE_SCHEDULED;
+        data['version'] = version;
         const job = allocationQueue.createJob(data);
         const result = await job.save();
         return result.id;

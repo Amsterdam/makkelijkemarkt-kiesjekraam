@@ -4,6 +4,7 @@ import {
 } from './pakjekraam-api';
 import {
     createAllocations,
+    createAllocationsV2,
     getAllocations,
 } from './makkelijkemarkt-api';
 import {
@@ -25,6 +26,9 @@ import {
 import {
     RedisClient,
 } from './redis-client';
+
+const DEFAULT_ALLOCATION_VERSION = '2';
+const AGENT_EMAIL = 'system';
 
 const timezoneTime = getTimezoneTime();
 if(process.env.INDELING_DAG_OFFSET && process.env.INDELING_DAG_OFFSET != 'false'){
@@ -63,58 +67,84 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function allocate() {
-    try {
-        const daysClosed = await getDaysClosed();
+export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onlyMarkt?: string) {
+    console.log(`Allocation version: ${version}`)
+    if (onlyMarkt) {
+        console.log(`Only allocate markt ${onlyMarkt}`)
+    }
 
-        if (daysClosed.includes(marktDate)) {
-            console.log(`Indeling wordt niet gedraaid, ${marktDate} gevonden in daysClosed.json`);
-            process.exit(0);
-        }
+    const daysClosed = await getDaysClosed();
 
-        let markten = await getMarktenByDate(marktDate);
+    if (daysClosed.includes(marktDate)) {
+        console.log(`Indeling wordt niet gedraaid, ${marktDate} gevonden in daysClosed.json`);
+        process.exit(0);
+    }
+
+    let markten = await getMarktenByDate(marktDate);
+    markten = markten.filter(
+        (markt: MMMarkt) => markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode',
+    );
+
+    if (onlyMarkt) {
         markten = markten.filter(
-            (markt: MMMarkt) => markt.kiesJeKraamFase === 'live' || markt.kiesJeKraamFase === 'wenperiode',
+            (markt: MMMarkt) => String(markt.id) === onlyMarkt,
         );
+    }
 
-        if (!markten.length) {
-            console.log('Geen indelingen gedraaid.');
-            process.exit(0);
-        }
+    if (!markten.length) {
+        console.log('Geen indelingen gedraaid.');
+    }
 
-        const indelingen_ids = await Promise.all(
-            markten.map((markt: MMMarkt) => {
-                const indeling = calculateIndelingslijst(String(markt.id), marktDate);
-                return indeling;
-            }),
-        );
+    const indelingen_ids = await Promise.all(
+        markten.map((markt: MMMarkt) => {
+            const indeling = calculateIndelingslijst(String(markt.id), marktDate, version);
+            return indeling;
+        }),
+    );
 
-        for (var ind in indelingen_ids) {
-            let res = null;
-            while (res === null) {
-                const jobId = indelingen_ids[ind];
-                if (jobId === undefined){
-                    console.error('ERROR:');
-                    console.error('ERROR: Undefined job id!');
-                    console.error('ERROR:');
-                    break;
-                }
-                console.log('waiting for job id:', jobId);
-                await timeout(1000);
-                res = await redisClient.get('RESULT_' + jobId);
+    for (var ind in indelingen_ids) {
+        let res = null;
+        // let logs = null;
+        while (res === null) {
+            const jobId = indelingen_ids[ind];
+            if (jobId === undefined){
+                console.error('ERROR:');
+                console.error('ERROR: Undefined job id!');
+                console.error('ERROR:');
+                break;
             }
-            if (res !== null){
-                const data = JSON.parse(res);
-                if (data['error_id'] === undefined) {
-                    const marktId: string = data['markt']['id'];
-                    await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
-                    const allocs = await getAllocations(marktId, marktDate);
-                    console.log(allocs);
-                } else {
-                    console.log(data);
-                }
-            }
+            console.log('waiting for job id:', jobId);
+            await timeout(1000);
+            res = await redisClient.get('RESULT_' + jobId);
+            // logs = await redisClient.get('LOGS_' + jobId);
         }
+        if (res !== null){
+            const data = JSON.parse(res);
+            const marktId: string = data['markt']['id'];
+            let allocationStatus = 1;
+
+            if (data['error_id'] === undefined) {
+                await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
+                const allocs = await getAllocations(marktId, marktDate);
+            } else {
+                console.log(data);
+                allocationStatus = data['error_id']
+            }
+            const payload = {
+                allocationStatus,
+                allocationType: 1,
+                email: AGENT_EMAIL,
+                allocation: data,
+                // log: JSON.parse(logs),
+            }
+            // await createAllocationsV2(marktId, marktDate, payload)
+        }
+    }
+}
+
+async function allocateCli(version?: string) {
+    try {
+        await allocate(version);
         console.log('done');
         process.exit(0);
     } catch (e) {
@@ -123,4 +153,8 @@ async function allocate() {
     }
 }
 
-allocate();
+if (require.main === module) {
+    console.log('CLI');
+    const version = process.env.ALLOCATION_VERSION;
+    allocateCli(version);
+}

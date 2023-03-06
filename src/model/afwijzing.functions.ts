@@ -37,9 +37,20 @@ const PREF_NOT_AVAILABLE: IAfwijzingReason = {
     db_id: 'PREF_NOT_AVAILABLE',
     message: 'Geen geschikte locatie gevonden met huidige voorkeuren.',
 };
+const PREF_NOT_AVAILABLE_ANYWHERE: IAfwijzingReason = {
+    code: 7,
+    db_id: 'PREF_NOT_AVAILABLE_ANYWHERE',
+    message: 'Geen geschikte locatie gevonden met huidige voorkeuren (en flexibel indelen aan).',
+};
+const KRAAM_DOES_NOT_EXIST: IAfwijzingReason = {
+    code: 8,
+    db_id: 'KRAAM_DOES_NOT_EXIST',
+    message: 'Kraam bestaat niet.',
+};
 
 export const getAfwijzingReason = (reasonCode: string) => {
-    const reasons = [UNKNOWN, BRANCHE_FULL, ADJACENT_UNAVAILABLE, MINIMUM_UNAVAILABLE, MARKET_FULL, VPL_POSITION_NOT_AVAILABLE, PREF_NOT_AVAILABLE];
+    const reasons = [UNKNOWN, BRANCHE_FULL, ADJACENT_UNAVAILABLE, MINIMUM_UNAVAILABLE, MARKET_FULL, VPL_POSITION_NOT_AVAILABLE,
+        PREF_NOT_AVAILABLE, PREF_NOT_AVAILABLE_ANYWHERE, KRAAM_DOES_NOT_EXIST];
     return reasons.find(reason => reason.db_id === reasonCode);
 };
 

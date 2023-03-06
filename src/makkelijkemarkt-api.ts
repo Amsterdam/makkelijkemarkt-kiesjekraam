@@ -595,6 +595,21 @@ export function getAllocations(marktId: string, date: string): Promise<any[]> {
     });
 }
 
+export function createAllocationsV2(marktId: string, date: string, data: Object): Promise<any> {
+    const url = `allocation_v2/markt/${marktId}/date/${date}`;
+    const body: string = JSON.stringify(data);
+    return apiBase(url, 'post', { body }).then((response) => {
+        return response;
+    });
+}
+
+export function getAllocationsV2(marktId: string, date: string): Promise<any[]> {
+    const url = `allocation_v2/markt/${marktId}/date/${date}`;
+    return apiBase(url, 'get').then((response) => {
+        return response.data;
+    });
+}
+
 function getAllocationsByOndernemerAndMarkt(marktId: string, erkenningsNummer: string): Promise<any[]> {
     const url = `allocation/markt/${marktId}/koopman/${erkenningsNummer}`;
     return apiBase(url, 'get').then((response) => {

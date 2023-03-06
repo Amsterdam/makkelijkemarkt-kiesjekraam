@@ -6,6 +6,7 @@ import {
     getCalculationInput,
     getIndelingslijst,
 } from '../pakjekraam-api';
+import { createAllocationsV2 } from '../makkelijkemarkt-api'
 import {
     getKeycloakUser,
 } from '../keycloak-api';
@@ -165,7 +166,8 @@ export const indelingWaitingPage = async (req: GrantedRequest, res: Response) =>
     try {
         const { jobId } = req.params;
         const reply: any = await client.get('RESULT_' + jobId);
-        if (!reply) {
+        const logsFromJob: any = await client.get('LOGS_' + jobId);
+        if (!reply || !logsFromJob) {
             return res.render('WaitingPage.jsx');
         }
 
@@ -178,6 +180,18 @@ export const indelingWaitingPage = async (req: GrantedRequest, res: Response) =>
                 user: getKeycloakUser(req),
             });
         }
+
+        const log = JSON.parse(logsFromJob);
+        const { marktId, marktDate } = data;
+        const email = getKeycloakUser(req).email
+        const payload = {
+            allocationStatus: 1,
+            allocationType: 2,
+            email,
+            allocation: data,
+            log,
+        }
+        // const request = await createAllocationsV2(marktId, marktDate, payload)
 
         return res.render('IndelingslijstPage.tsx', {
             ...data,
