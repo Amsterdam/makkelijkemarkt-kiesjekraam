@@ -74,7 +74,7 @@ export const getQueryErrors = (queryParams: any): ErrorMessage[] => {
     return errorCodes.map(
         (msg: any): ErrorMessage => ({
             code: msg,
-            message: humanReadableMessage[msg],
+            message: humanReadableMessage[msg] || "Something went wrong",
             severity: 'error',
         }),
     );
