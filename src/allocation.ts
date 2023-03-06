@@ -4,6 +4,7 @@ import {
 } from './pakjekraam-api';
 import {
     createAllocations,
+    createAllocationsV2,
     getAllocations,
 } from './makkelijkemarkt-api';
 import {
@@ -27,6 +28,7 @@ import {
 } from './redis-client';
 
 const DEFAULT_ALLOCATION_VERSION = '2';
+const AGENT_EMAIL = 'system';
 
 const timezoneTime = getTimezoneTime();
 if(process.env.INDELING_DAG_OFFSET && process.env.INDELING_DAG_OFFSET != 'false'){
@@ -102,6 +104,7 @@ export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onl
 
     for (var ind in indelingen_ids) {
         let res = null;
+        // let logs = null;
         while (res === null) {
             const jobId = indelingen_ids[ind];
             if (jobId === undefined){
@@ -113,16 +116,28 @@ export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onl
             console.log('waiting for job id:', jobId);
             await timeout(1000);
             res = await redisClient.get('RESULT_' + jobId);
+            // logs = await redisClient.get('LOGS_' + jobId);
         }
         if (res !== null){
             const data = JSON.parse(res);
+            const marktId: string = data['markt']['id'];
+            let allocationStatus = 1;
+
             if (data['error_id'] === undefined) {
-                const marktId: string = data['markt']['id'];
                 await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
                 const allocs = await getAllocations(marktId, marktDate);
             } else {
                 console.log(data);
+                allocationStatus = data['error_id']
             }
+            const payload = {
+                allocationStatus,
+                allocationType: 1,
+                email: AGENT_EMAIL,
+                allocation: data,
+                // log: JSON.parse(logs),
+            }
+            // await createAllocationsV2(marktId, marktDate, payload)
         }
     }
 }
