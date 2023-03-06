@@ -40,7 +40,7 @@ const PREF_NOT_AVAILABLE: IAfwijzingReason = {
 const PREF_NOT_AVAILABLE_ANYWHERE: IAfwijzingReason = {
     code: 7,
     db_id: 'PREF_NOT_AVAILABLE_ANYWHERE',
-    message: 'Geen geschikte locatie gevonden met huidige voorkeuren (en anywhere aan).',
+    message: 'Geen geschikte locatie gevonden met huidige voorkeuren (en flexibel indelen aan).',
 };
 const KRAAM_DOES_NOT_EXIST: IAfwijzingReason = {
     code: 8,
