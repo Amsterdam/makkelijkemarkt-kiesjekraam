@@ -118,6 +118,11 @@ export const isAfterAllocationTime = () => {
     return timeNow.isAfter(allocationTime) || timeNow.isSame(allocationTime);
 };
 
+export const ALLOCATION_TYPE = {
+    FINAL: 1,
+    CONCEPT: 2,
+};
+
 export const isAfterMailingTime = () => {
     return getTimezoneTime().isAfter(getMailingTime());
 };
@@ -259,6 +264,7 @@ module.exports = {
     INDELINGSTIJDSTIP,
     INDELINGSTIJDSTIP_TEXT,
     INDELING_DAG_OFFSET,
+    ALLOCATION_TYPE,
     formatOndernemerName,
     parseMarktDag,
     parseISOMarktDag,
