@@ -104,46 +104,50 @@ export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onl
     );
 
     for (var ind in indelingen_ids) {
-        let res = null;
-        let logs = null;
-        let inputData = null;
-        while (res === null || logs === null || inputData === null) {
-            const jobId = indelingen_ids[ind];
-            if (jobId === undefined){
-                console.error('ERROR:');
-                console.error('ERROR: Undefined job id!');
-                console.error('ERROR:');
-                break;
+        try {
+            let res = null;
+            let logs = null;
+            let inputData = null;
+            while (res === null || logs === null || inputData === null) {
+                const jobId = indelingen_ids[ind];
+                if (jobId === undefined){
+                    console.error('ERROR:');
+                    console.error('ERROR: Undefined job id!');
+                    console.error('ERROR:');
+                    break;
+                }
+                console.log('waiting for job id:', jobId);
+                await timeout(1000);
+                res = await redisClient.get('RESULT_' + jobId);
+                logs = await redisClient.get('LOGS_' + jobId);
+                inputData = await redisClient.get('JOB_' + jobId);
             }
-            console.log('waiting for job id:', jobId);
-            await timeout(1000);
-            res = await redisClient.get('RESULT_' + jobId);
-            logs = await redisClient.get('LOGS_' + jobId);
-            inputData = await redisClient.get('JOB_' + jobId);
-        }
 
-        const data = JSON.parse(res);
-        const { marktId, marktDate, toewijzingen, afwijzingen, version='' } = data;
+            const data = JSON.parse(res);
+            const { marktId, marktDate, toewijzingen, afwijzingen, version='' } = data;
 
-        let allocationStatus = 0;
-        if (data['error_id'] === undefined) {
-            await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
-            const allocs = await getAllocations(marktId, marktDate);
-        } else {
-            console.log(data);
-            allocationStatus = 1;
-        }
+            let allocationStatus = 0;
+            if (data['error_id'] === undefined) {
+                await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
+                const allocs = await getAllocations(marktId, marktDate);
+            } else {
+                console.log(data);
+                allocationStatus = 1;
+            }
 
-        const payload = {
-            allocationStatus,
-            allocationType: ALLOCATION_TYPE.FINAL,
-            allocationVersion: version,
-            email: 'scheduled',
-            allocation: {toewijzingen, afwijzingen},
-            log: JSON.parse(logs),
-            input:  JSON.parse(inputData),
+            const payload = {
+                allocationStatus,
+                allocationType: ALLOCATION_TYPE.FINAL,
+                allocationVersion: version,
+                email: 'scheduled',
+                allocation: {toewijzingen, afwijzingen},
+                log: JSON.parse(logs),
+                input:  JSON.parse(inputData),
+            }
+            const request = await createAllocationsV2(marktId, marktDate, payload)
+        } catch {
+            console.log('catch')
         }
-        const request = await createAllocationsV2(marktId, marktDate, payload)
     }
 }
 
