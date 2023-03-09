@@ -18,6 +18,7 @@ import {
     getTimezoneTime,
 } from './util';
 import {
+    ALLOCATION_TYPE,
     INDELING_DAG_OFFSET,
 } from './domain-knowledge';
 import {
@@ -104,8 +105,9 @@ export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onl
 
     for (var ind in indelingen_ids) {
         let res = null;
-        // let logs = null;
-        while (res === null) {
+        let logs = null;
+        let inputData = null;
+        while (res === null || logs === null || inputData === null) {
             const jobId = indelingen_ids[ind];
             if (jobId === undefined){
                 console.error('ERROR:');
@@ -116,28 +118,32 @@ export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onl
             console.log('waiting for job id:', jobId);
             await timeout(1000);
             res = await redisClient.get('RESULT_' + jobId);
-            // logs = await redisClient.get('LOGS_' + jobId);
+            logs = await redisClient.get('LOGS_' + jobId);
+            inputData = await redisClient.get('JOB_' + jobId);
         }
-        if (res !== null){
+        if (res !== null && logs !== null && inputData !== null){
             const data = JSON.parse(res);
-            const marktId: string = data['markt']['id'];
-            let allocationStatus = 1;
+            const { marktId, marktDate, toewijzingen, afwijzingen, version='' } = data;
 
+            let allocationStatus = 0;
             if (data['error_id'] === undefined) {
                 await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
                 const allocs = await getAllocations(marktId, marktDate);
             } else {
                 console.log(data);
-                allocationStatus = data['error_id']
+                allocationStatus = 1;
             }
+
             const payload = {
                 allocationStatus,
-                allocationType: 1,
-                email: AGENT_EMAIL,
-                allocation: data,
-                // log: JSON.parse(logs),
+                allocationType: ALLOCATION_TYPE.FINAL,
+                allocationVersion: version,
+                email: 'scheduled',
+                allocation: {toewijzingen, afwijzingen},
+                log: JSON.parse(logs),
+                input:  JSON.parse(inputData),
             }
-            // await createAllocationsV2(marktId, marktDate, payload)
+            const request = await createAllocationsV2(marktId, marktDate, payload)
         }
     }
 }
