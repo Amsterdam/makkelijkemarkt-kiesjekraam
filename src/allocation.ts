@@ -68,7 +68,7 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onlyMarkt?: string) {
+export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onlyMarkt?: string): Promise<number> {
     console.log(`Allocation version: ${version}`)
     if (onlyMarkt) {
         console.log(`Only allocate markt ${onlyMarkt}`)
@@ -103,19 +103,14 @@ export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onl
         }),
     );
 
-    for (var ind in indelingen_ids) {
+    let totalStatus = 0;
+    console.log('indelingen_ids', indelingen_ids);
+    for (const jobId of indelingen_ids) {
         try {
             let res = null;
             let logs = null;
             let inputData = null;
             while (res === null || logs === null || inputData === null) {
-                const jobId = indelingen_ids[ind];
-                if (jobId === undefined){
-                    console.error('ERROR:');
-                    console.error('ERROR: Undefined job id!');
-                    console.error('ERROR:');
-                    break;
-                }
                 console.log('waiting for job id:', jobId);
                 await timeout(1000);
                 res = await redisClient.get('RESULT_' + jobId);
@@ -142,19 +137,26 @@ export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onl
                 email: 'scheduled',
                 allocation: {toewijzingen, afwijzingen},
                 log: JSON.parse(logs),
-                input:  JSON.parse(inputData),
+                input: JSON.parse(inputData),
             }
             const request = await createAllocationsV2(marktId, marktDate, payload)
-        } catch {
-            console.log('catch')
+            totalStatus += allocationStatus;
+        } catch (err) {
+            console.error(err);
+            totalStatus += 1;
         }
     }
+    return totalStatus;
 }
 
 async function allocateCli(version?: string) {
     try {
-        await allocate(version);
-        console.log('done');
+        const status = await allocate(version);
+        if (status) {
+            console.log('Finished with errors');
+            process.exit(1);
+        }
+        console.log('Done');
         process.exit(0);
     } catch (e) {
         console.log(e);
@@ -163,7 +165,7 @@ async function allocateCli(version?: string) {
 }
 
 if (require.main === module) {
-    console.log('CLI');
+    console.log('Called directly as script');
     const version = process.env.ALLOCATION_VERSION;
     allocateCli(version);
 }
