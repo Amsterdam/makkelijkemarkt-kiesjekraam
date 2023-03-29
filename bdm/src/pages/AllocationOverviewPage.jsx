@@ -10,13 +10,23 @@ import {
   UserOutlined,
 } from '@ant-design/icons'
 
-import { useAllocationOverview, useAllocationV2 } from '../hooks'
+import { useAllocationOverview, useAllocationV2, useMarkt } from '../hooks'
 
 const { Panel } = Collapse
 
 const AllocationOverviewPage = (props) => {
   const { marktId, marktDate } = useParams()
   const allocationOverviewCall = useAllocationOverview(marktId, marktDate)
+  const marktCall = useMarkt(marktId)
+
+  const date = new Date(marktDate).toLocaleDateString('nl-NL', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+  const title = marktCall.data?.naam || `Markt ${marktId}`
+
   console.log(allocationOverviewCall)
   const allocations =
     allocationOverviewCall.data &&
@@ -24,7 +34,9 @@ const AllocationOverviewPage = (props) => {
 
   return (
     <div>
-      <h2>AllocationOverviewPage</h2>
+      <h2>
+        Overzicht indelingen {date} op {title}
+      </h2>
       {allocations}
     </div>
   )
