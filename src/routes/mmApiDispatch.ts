@@ -31,6 +31,8 @@ const subroutes = [
     '/allocation/markt/:marktId/date/:date',
     '/sollicitaties/markt/:marktId',
     '/plaatsvoorkeur/markt/:marktId',
+    '/allocation_v2/markt/:marktId/date/:date',
+    '/allocation_v2/:id',
     ...koopmanRoutes,
 ];
 
