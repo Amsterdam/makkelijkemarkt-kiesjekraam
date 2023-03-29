@@ -7,12 +7,14 @@ import { Layout } from 'antd'
 import ErrorPage from './pages/ErrorPage'
 import BrancheListPage from './pages/BrancheListPage'
 import FixAllocationPage from './pages/FixAllocationPage'
+import AllocationOverviewPage from './pages/AllocationOverviewPage'
 import MarktDataProvider from './components/providers/MarktDataProvider'
 import MarktGenericDataProvider from './components/providers/MarktGenericDataProvider'
 import MarktPageWrapper from './components/MarktPageWrapper'
 import { HOME_LINK } from './constants'
 
 import { DownloadPage, UploadPage } from './pages/DownloadUploadPage'
+import AllocationTraceLogPage from './pages/AllocationTraceLogPage'
 
 if (process.env.REACT_APP_MOCK_SERVICE_WORKER) {
   const { worker } = require('./mocks/mmApiServiceWorker/browser')
@@ -57,6 +59,12 @@ export default class App extends Component {
                   </Route>
                   <Route exact path="/fix-allocation/:marktId/:marktDate">
                     <FixAllocationPage />
+                  </Route>
+                  <Route exact path="/markt/:marktId/:marktDate/allocation">
+                    <AllocationOverviewPage />
+                  </Route>
+                  <Route exact path="/allocation/:allocationDetailId/trace-log">
+                    <AllocationTraceLogPage />
                   </Route>
                   <Route component={ErrorPage} />
                 </Switch>
