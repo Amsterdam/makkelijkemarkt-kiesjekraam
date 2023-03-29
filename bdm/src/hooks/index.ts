@@ -140,3 +140,27 @@ export const usePlaatsvoorkeur = (marktId: string) => {
     MM_API_QUERY_CONFIG
   )
 }
+
+export const useAllocationOverview = (marktId: string, date: string) => {
+  return useQuery<any[], IApiError>(
+    `allocationOverview/${marktId}/${date}`,
+    () => {
+      return mmApi.get(`/allocation_v2/markt/${marktId}/date/${date}`)
+    },
+    MM_API_QUERY_CONFIG
+  )
+}
+
+export const useAllocationV2 = (id: number) => {
+  return useQuery<any[], IApiError>(
+    `allocationDetail/${id}`,
+    () => {
+      return mmApi.get(`/allocation_v2/${id}`)
+    },
+    {
+      ...MM_API_QUERY_CONFIG,
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000,
+    }
+  )
+}
