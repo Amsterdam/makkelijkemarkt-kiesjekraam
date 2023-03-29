@@ -1,6 +1,14 @@
 import React, { Reducer, useContext, useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Collapse } from 'antd'
+import { Button, Collapse, Space, Tag } from 'antd'
+import {
+  CheckCircleTwoTone,
+  ClockCircleOutlined,
+  CloseSquareTwoTone,
+  CopyOutlined,
+  QuestionOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
 
 import { useAllocationOverview, useAllocationV2 } from '../hooks'
 
@@ -23,20 +31,33 @@ const AllocationOverviewPage = (props) => {
 }
 
 const Allocation = (props) => {
-  const status = props.allocationStatus === 0 ? 'SUCCESS' : 'ERROR'
-  let allocationType
-  switch (props.allocationType) {
-    case 1:
-      allocationType = 'Scheduled'
-      break
-    case 2:
-      allocationType = 'User'
-      break
-    default:
-      allocationType = 'Unknown'
+  const status =
+    props.allocationStatus === 0 ? (
+      <CheckCircleTwoTone twoToneColor="#52c41a" />
+    ) : (
+      <CloseSquareTwoTone twoToneColor="#eb2f96" />
+    )
+
+  const getAgentIcon = () => {
+    switch (props.allocationType) {
+      case 1:
+        return <ClockCircleOutlined />
+      case 2:
+        return <UserOutlined />
+      default:
+        return <QuestionOutlined />
+    }
   }
 
-  const header = `${props.id} ${status} ${allocationType} V${props.allocationVersion}`
+  const header = (
+    <Space size="large">
+      {status}
+      {props.creationDate}
+      <Tag color="#108ee9">V{props.allocationVersion}</Tag>
+      {getAgentIcon()}
+      {props.email}
+    </Space>
+  )
   return (
     <Collapse>
       <Panel header={header} key={props.id}>
@@ -53,15 +74,18 @@ const AllocationDetail = (props) => {
   console.log(detailCall.data)
   return (
     <>
-      <Link to={logPath}>Bekijk trace log</Link>
-      <textarea value={inputData} readOnly></textarea>
-      <button
-        onClick={() => {
-          navigator.clipboard.writeText(inputData)
-        }}
-      >
-        COPY to clipboard
-      </button>
+      <textarea style={{ backgroundColor: '#FAF9F6' }} value={inputData} readOnly></textarea>
+      <Space size="large">
+        <Button
+          icon={<CopyOutlined />}
+          onClick={() => {
+            navigator.clipboard.writeText(inputData)
+          }}
+        >
+          Copy to clipboard
+        </Button>
+        <Link to={logPath}>Bekijk trace log pagina</Link>
+      </Space>
     </>
   )
 }
