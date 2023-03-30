@@ -11,7 +11,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons'
 
-import { useAllocationOverview, useAllocationV2, useMarkt } from '../hooks'
+import { useAllocationOverview, useAllocationDetail, useMarkt } from '../hooks'
 
 const { Panel } = Collapse
 
@@ -82,7 +82,7 @@ const Allocation = (props) => {
 }
 
 const AllocationDetail = (props) => {
-  const detailCall = useAllocationV2(props.id)
+  const detailCall = useAllocationDetail(props.id)
   const inputData = detailCall.data ? JSON.stringify(detailCall.data.input) : ''
   const logPath = `/allocation/${props.id}/trace-log`
   console.log(detailCall.data)
