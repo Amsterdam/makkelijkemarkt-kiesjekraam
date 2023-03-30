@@ -4,7 +4,9 @@ import { sortBy } from 'lodash'
 import { MM_API_QUERY_CONFIG } from '../constants'
 import {
   Branche,
+  IAllocationOverview,
   IAllocationApiData,
+  IAllocationDetail,
   IApiError,
   ICreateAllocationBody,
   IMarktConfiguratie,
@@ -142,7 +144,7 @@ export const usePlaatsvoorkeur = (marktId: string) => {
 }
 
 export const useAllocationOverview = (marktId: string, date: string) => {
-  return useQuery<any[], IApiError>(
+  return useQuery<IAllocationOverview[], IApiError>(
     `allocationOverview/${marktId}/${date}`,
     () => {
       return mmApi.get(`/allocation_v2/markt/${marktId}/date/${date}`)
@@ -151,8 +153,8 @@ export const useAllocationOverview = (marktId: string, date: string) => {
   )
 }
 
-export const useAllocationV2 = (id: number) => {
-  return useQuery<any[], IApiError>(
+export const useAllocationDetail = (id: number) => {
+  return useQuery<IAllocationDetail[], IApiError>(
     `allocationDetail/${id}`,
     () => {
       return mmApi.get(`/allocation_v2/${id}`)
