@@ -1,7 +1,8 @@
 import React, { Reducer, useContext, useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Button, Collapse, Space, Tag } from 'antd'
+import { message, Button, Collapse, Space, Tag } from 'antd'
 import {
+  BulbFilled,
   CheckCircleTwoTone,
   ClockCircleOutlined,
   CloseSquareTwoTone,
@@ -47,7 +48,7 @@ const Allocation = (props) => {
     props.allocationStatus === 0 ? (
       <CheckCircleTwoTone twoToneColor="#52c41a" />
     ) : (
-      <CloseSquareTwoTone twoToneColor="#eb2f96" />
+      <CloseSquareTwoTone twoToneColor="red" />
     )
 
   const getAgentIcon = () => {
@@ -68,6 +69,7 @@ const Allocation = (props) => {
       <Tag color="#108ee9">V{props.allocationVersion}</Tag>
       {getAgentIcon()}
       {props.email}
+      {props.allocationType === 2 && <Tag icon={<BulbFilled />}>concept</Tag>}
     </Space>
   )
   return (
@@ -86,15 +88,17 @@ const AllocationDetail = (props) => {
   console.log(detailCall.data)
   return (
     <>
+      <h3>Input data van deze indeling</h3>
       <textarea style={{ backgroundColor: '#FAF9F6' }} value={inputData} readOnly></textarea>
       <Space size="large">
         <Button
           icon={<CopyOutlined />}
           onClick={() => {
             navigator.clipboard.writeText(inputData)
+            message.info('Gekopieerd')
           }}
         >
-          Copy to clipboard
+          Kopieer
         </Button>
         <Link to={logPath}>Bekijk trace log pagina</Link>
       </Space>
