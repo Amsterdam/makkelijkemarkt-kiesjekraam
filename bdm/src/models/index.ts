@@ -296,6 +296,43 @@ export interface IAllocation {
   reason: Nullable<{ code: number }>
 }
 
+export interface IAllocationOverview {
+  id: number
+  marktDate: string
+  markt: IAllocationOverviewMarkt
+  email: string
+  creationDate: string
+  allocationStatus: number
+  allocationType: number
+  allocationVersion: string
+}
+
+export interface IAllocationDetail extends IAllocationOverview {
+  allocation: {
+    afwijzingen: IAllocation[]
+    toewijzingen: IAllocation[]
+  }
+  input: {
+    data: {
+      version: string
+    }
+  }
+  log: IAllocationLog[]
+}
+
+export interface IAllocationLog {
+  id: number
+  message: string
+}
+
+interface IAllocationOverviewMarkt {
+  id: number
+  afkorting: string
+  email: string
+  naam: string
+  isABlijstIndeling: boolean
+}
+
 export interface IAllocationToApi extends Omit<IAllocation, 'plaatsen'> {
   plaatsen?: string[]
 }
