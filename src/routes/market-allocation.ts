@@ -29,7 +29,8 @@ import {
     isMarktBewerker
 } from '../roles';
 import {
-    ALLOCATION_TYPE
+    ALLOCATION_TYPE,
+    ALLOCATION_STATUS,
 } from '../domain-knowledge';
 
 const conceptQueue = new ConceptQueue();
@@ -182,7 +183,7 @@ export const indelingWaitingPage = async (req: GrantedRequest, res: Response) =>
         const { marktId, marktDate, toewijzingen, afwijzingen, version='' } = data;
         const email = getKeycloakUser(req).email
         const payload = {
-            allocationStatus: allocationHasFailed(data) ? 1 : 0,
+            allocationStatus: allocationHasFailed(data) ? ALLOCATION_STATUS.ERROR : ALLOCATION_STATUS.SUCCESS,
             allocationType: ALLOCATION_TYPE.CONCEPT,
             allocationVersion: version,
             email,

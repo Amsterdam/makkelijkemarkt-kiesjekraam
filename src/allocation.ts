@@ -19,6 +19,7 @@ import {
 } from './util';
 import {
     ALLOCATION_TYPE,
+    ALLOCATION_STATUS,
     INDELING_DAG_OFFSET,
 } from './domain-knowledge';
 import {
@@ -121,13 +122,13 @@ export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onl
             const data = JSON.parse(res);
             const { marktId, marktDate, toewijzingen, afwijzingen, version='' } = data;
 
-            let allocationStatus = 0;
+            let allocationStatus = ALLOCATION_STATUS.SUCCESS;
             if (data['error_id'] === undefined) {
                 await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
                 const allocs = await getAllocations(marktId, marktDate);
             } else {
                 console.log(data);
-                allocationStatus = 1;
+                allocationStatus = ALLOCATION_STATUS.ERROR;
             }
 
             const payload = {
