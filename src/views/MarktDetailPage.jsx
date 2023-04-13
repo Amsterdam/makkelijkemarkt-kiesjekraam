@@ -178,6 +178,12 @@ class MarktDetailPage extends React.Component {
                         </li>
                     )}
 
+                    <li className="LinkList__item">
+                        <a href={`/bdm/markt/${marktId}/${date}/allocation`} className="Link">
+                            Indeling overzicht V2
+                        </a>
+                    </li>
+
                     {nietIngedeeld && (
                         <li className="LinkList__item">
                             <a href={`./${date}/ondernemers-niet-ingedeeld/`} className="Link">
