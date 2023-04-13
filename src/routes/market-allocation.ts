@@ -28,6 +28,10 @@ import {
 import {
     isMarktBewerker
 } from '../roles';
+import {
+    ALLOCATION_TYPE,
+    ALLOCATION_STATUS,
+} from '../domain-knowledge';
 
 const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
@@ -166,13 +170,29 @@ export const indelingWaitingPage = async (req: GrantedRequest, res: Response) =>
     try {
         const { jobId } = req.params;
         const reply: any = await client.get('RESULT_' + jobId);
-        const logsFromJob: any = await client.get('LOGS_' + jobId);
-        if (!reply || !logsFromJob) {
+        const logs: any = await client.get('LOGS_' + jobId);
+        const inputData: any = await client.get('JOB_' + jobId);
+        if (!reply || !logs || !inputData) {
             return res.render('WaitingPage.jsx');
         }
 
         const indelingstype = 'concept-indelingslijst';
         const data = JSON.parse(reply);
+        const log = JSON.parse(logs);
+        const input = JSON.parse(inputData);
+        const { marktId, marktDate, toewijzingen, afwijzingen, version='' } = data;
+        const email = getKeycloakUser(req).email
+        const payload = {
+            allocationStatus: allocationHasFailed(data) ? ALLOCATION_STATUS.ERROR : ALLOCATION_STATUS.SUCCESS,
+            allocationType: ALLOCATION_TYPE.CONCEPT,
+            allocationVersion: version,
+            email,
+            allocation: {toewijzingen, afwijzingen},
+            log,
+            input,
+        }
+        const request = await createAllocationsV2(marktId, marktDate, payload)
+
         if (allocationHasFailed(data)) {
             return res.render('IndelingsErrorPage.tsx', {
                 ...data,
@@ -180,18 +200,6 @@ export const indelingWaitingPage = async (req: GrantedRequest, res: Response) =>
                 user: getKeycloakUser(req),
             });
         }
-
-        const log = JSON.parse(logsFromJob);
-        const { marktId, marktDate } = data;
-        const email = getKeycloakUser(req).email
-        const payload = {
-            allocationStatus: 1,
-            allocationType: 2,
-            email,
-            allocation: data,
-            log,
-        }
-        // const request = await createAllocationsV2(marktId, marktDate, payload)
 
         return res.render('IndelingslijstPage.tsx', {
             ...data,

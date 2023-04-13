@@ -18,6 +18,8 @@ import {
     getTimezoneTime,
 } from './util';
 import {
+    ALLOCATION_TYPE,
+    ALLOCATION_STATUS,
     INDELING_DAG_OFFSET,
 } from './domain-knowledge';
 import {
@@ -67,7 +69,7 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onlyMarkt?: string) {
+export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onlyMarkt?: string): Promise<number> {
     console.log(`Allocation version: ${version}`)
     if (onlyMarkt) {
         console.log(`Only allocate markt ${onlyMarkt}`)
@@ -102,50 +104,60 @@ export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onl
         }),
     );
 
-    for (var ind in indelingen_ids) {
-        let res = null;
-        // let logs = null;
-        while (res === null) {
-            const jobId = indelingen_ids[ind];
-            if (jobId === undefined){
-                console.error('ERROR:');
-                console.error('ERROR: Undefined job id!');
-                console.error('ERROR:');
-                break;
+    let totalStatus = 0;
+    console.log('indelingen_ids', indelingen_ids);
+    for (const jobId of indelingen_ids) {
+        try {
+            let res = null;
+            let logs = null;
+            let inputData = null;
+            while (res === null || logs === null || inputData === null) {
+                console.log('waiting for job id:', jobId);
+                await timeout(1000);
+                res = await redisClient.get('RESULT_' + jobId);
+                logs = await redisClient.get('LOGS_' + jobId);
+                inputData = await redisClient.get('JOB_' + jobId);
             }
-            console.log('waiting for job id:', jobId);
-            await timeout(1000);
-            res = await redisClient.get('RESULT_' + jobId);
-            // logs = await redisClient.get('LOGS_' + jobId);
-        }
-        if (res !== null){
-            const data = JSON.parse(res);
-            const marktId: string = data['markt']['id'];
-            let allocationStatus = 1;
 
+            const data = JSON.parse(res);
+            const { marktId, marktDate, toewijzingen, afwijzingen, version='' } = data;
+
+            let allocationStatus = ALLOCATION_STATUS.SUCCESS;
             if (data['error_id'] === undefined) {
                 await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
                 const allocs = await getAllocations(marktId, marktDate);
             } else {
                 console.log(data);
-                allocationStatus = data['error_id']
+                allocationStatus = ALLOCATION_STATUS.ERROR;
             }
+
             const payload = {
                 allocationStatus,
-                allocationType: 1,
-                email: AGENT_EMAIL,
-                allocation: data,
-                // log: JSON.parse(logs),
+                allocationType: ALLOCATION_TYPE.FINAL,
+                allocationVersion: version,
+                email: 'scheduled',
+                allocation: {toewijzingen, afwijzingen},
+                log: JSON.parse(logs),
+                input: JSON.parse(inputData),
             }
-            // await createAllocationsV2(marktId, marktDate, payload)
+            const request = await createAllocationsV2(marktId, marktDate, payload)
+            totalStatus += allocationStatus;
+        } catch (err) {
+            console.error(err);
+            totalStatus += 1;
         }
     }
+    return totalStatus;
 }
 
 async function allocateCli(version?: string) {
     try {
-        await allocate(version);
-        console.log('done');
+        const status = await allocate(version);
+        if (status) {
+            console.log('Finished with errors');
+            process.exit(1);
+        }
+        console.log('Done');
         process.exit(0);
     } catch (e) {
         console.log(e);
@@ -154,7 +166,7 @@ async function allocateCli(version?: string) {
 }
 
 if (require.main === module) {
-    console.log('CLI');
+    console.log('Called directly as script');
     const version = process.env.ALLOCATION_VERSION;
     allocateCli(version);
 }
