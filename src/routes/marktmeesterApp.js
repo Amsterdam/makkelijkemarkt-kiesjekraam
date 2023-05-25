@@ -4,12 +4,6 @@ import { mmConfig } from '../makkelijkemarkt-api';
 
 const router = express.Router();
 
-router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    const { status, data } = await basicUsernameLogin(username, password);
-    res.status(status).json(data);
-});
-
 router.post('/dispatch', async (req, res) => {
     try {
         const { status, data = {} } = await dispatch(req.body, req.headers.usertoken);
