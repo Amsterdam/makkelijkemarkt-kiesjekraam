@@ -47,7 +47,7 @@ requireEnv('API_URL');
 requireEnv('API_MMAPPKEY');
 requireEnv('API_KEY');
 
-const mmConfig = {
+export const mmConfig = {
     baseUrl: process.env.API_URL,
     appKey: process.env.API_MMAPPKEY,
     loginUrl: 'login/apiKey/',
