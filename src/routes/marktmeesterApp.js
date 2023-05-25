@@ -15,7 +15,7 @@ router.post('/dispatch', async (req, res) => {
 
 const dispatch = async (body, userToken) => {
     const { action, data = {}, secure = {} } = body;
-    console.log('marktmeesterApp dispatch', action, data, `token: ${userToken}`);
+    console.log('marktmeesterApp dispatch', { action, data });
 
     let response = {};
     const headers = userToken ? { authorization: `Bearer ${userToken}` } : {};
@@ -24,9 +24,10 @@ const dispatch = async (body, userToken) => {
     switch (body.action) {
         case 'login':
             response = await api.post('login/basicUsername/', {
-                username: data.username,
+                username: secure.username,
                 password: secure.password,
             });
+            console.log(`marktmeesterApp login user ${response.data.account.id}`);
             return {
                 ...response,
                 data: {
