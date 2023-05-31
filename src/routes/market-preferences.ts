@@ -42,7 +42,7 @@ const algemeneVoorkeurenFormCheckForError = (body: any, role: string) => {
 };
 
 export const updateMarketPreferences = (
-    req: Request,
+    req: GrantedRequest,
     res: Response,
     next: NextFunction,
     erkenningsNummer: string,

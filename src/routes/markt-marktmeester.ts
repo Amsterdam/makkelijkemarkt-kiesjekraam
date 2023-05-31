@@ -52,7 +52,7 @@ export const vasteplaatshoudersPage = (req: GrantedRequest, res: Response) => {
     }, internalServerErrorPage(res));
 };
 
-export const sollicitantenPage = (req: Request, res: Response) => {
+export const sollicitantenPage = (req: GrantedRequest, res: Response) => {
     const datum = req.params.datum;
     const type = 'sollicitanten';
     const role = isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER

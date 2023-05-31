@@ -129,7 +129,7 @@ app.get('/bdm/*', keycloak.protect(Roles.MARKTBEWERKER), (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'bdm', 'build', 'index.html'));
 });
 
-app.get('/kjk/ondernemer/:erkenningsNummer/aanwezigheid/markt/:marktId', keycloak.protect(), (req, res) => {
+app.get('/kjk/ondernemer/:erkenningsNummer/aanwezigheid/markt/:marktId', keycloak.protect(), (req: GrantedRequest, res) => {
     if (isMarktondernemer(req) && req.params.erkenningsNummer === getErkenningsNummer(req)) {
         res.sendFile(path.join(__dirname, '..', 'kjk', 'build', 'index.html'));
     } else if (isMarktmeester(req)) {
@@ -376,7 +376,7 @@ app.post(
     '/ondernemer/:erkenningsNummer/voorkeuren/:marktId/',
     keycloak.protect(Roles.MARKTBEWERKER),
     csrfProtection,
-    (req: Request, res: Response, next: NextFunction) =>
+    (req: GrantedRequest, res: Response, next: NextFunction) =>
         updatePlaatsvoorkeuren(req, res, next, req.params.marktId, req.params.erkenningsNummer),
 );
 
@@ -438,7 +438,7 @@ app.post(
     '/ondernemer/:erkenningsNummer/algemene-voorkeuren/:marktId/',
     keycloak.protect(Roles.MARKTMEESTER, Roles.MARKTBEWERKER),
     csrfProtection,
-    (req: Request, res: Response, next: NextFunction) =>
+    (req: GrantedRequest, res: Response, next: NextFunction) =>
         updateMarketPreferences(
             req,
             res,
