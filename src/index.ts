@@ -420,7 +420,7 @@ app.post(
 
 app.get(
     '/ondernemer/:erkenningsNummer/algemene-voorkeuren/:marktId/',
-    keycloak.protect([Roles.MARKTMEESTER, Roles.MARKTBEWERKER]),
+    keycloak.protect(Roles.MARKTBEWERKER),
     csrfProtection,
     (req: GrantedRequest, res: Response) => {
         marketPreferencesPage(
@@ -436,7 +436,7 @@ app.get(
 
 app.post(
     '/ondernemer/:erkenningsNummer/algemene-voorkeuren/:marktId/',
-    keycloak.protect(Roles.MARKTMEESTER, Roles.MARKTBEWERKER),
+    keycloak.protect(Roles.MARKTBEWERKER),
     csrfProtection,
     (req: GrantedRequest, res: Response, next: NextFunction) =>
         updateMarketPreferences(
