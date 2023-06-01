@@ -79,7 +79,7 @@ const voorkeurenFormDataToObject = (formData: any): IPlaatsvoorkeurRow => ({
 });
 
 export const updatePlaatsvoorkeuren = (
-    req: Request,
+    req: GrantedRequest,
     res: Response,
     next: NextFunction,
     marktId: string,

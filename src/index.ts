@@ -21,7 +21,7 @@ import express, { NextFunction, Request, RequestHandler, Response } from 'expres
 import { getMarkt, getMarkten } from './makkelijkemarkt-api';
 import { GrantedRequest, TokenContent } from 'keycloak-connect';
 import { getQueryErrors, internalServerErrorPage, isAbsoluteUrl } from './express-util';
-import { keycloak, Roles, sessionMiddleware } from './authentication';
+import { keycloak, Roles, sessionMiddleware, hasEitherRole } from './authentication';
 import { isMarktmeester, isMarktondernemer, isMarktBewerker, isKramenzetter } from './roles'
 import { keycloakHealth, makkelijkeMarktHealth, serverHealth, serverTime } from './routes/status';
 import { langdurigAfgemeld, marktDetail } from './routes/markt';
@@ -129,7 +129,7 @@ app.get('/bdm/*', keycloak.protect(Roles.MARKTBEWERKER), (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'bdm', 'build', 'index.html'));
 });
 
-app.get('/kjk/ondernemer/:erkenningsNummer/aanwezigheid/markt/:marktId', keycloak.protect(), (req, res) => {
+app.get('/kjk/ondernemer/:erkenningsNummer/aanwezigheid/markt/:marktId', keycloak.protect(), (req: GrantedRequest, res) => {
     if (isMarktondernemer(req) && req.params.erkenningsNummer === getErkenningsNummer(req)) {
         res.sendFile(path.join(__dirname, '..', 'kjk', 'build', 'index.html'));
     } else if (isMarktmeester(req)) {
@@ -376,7 +376,7 @@ app.post(
     '/ondernemer/:erkenningsNummer/voorkeuren/:marktId/',
     keycloak.protect(Roles.MARKTBEWERKER),
     csrfProtection,
-    (req: Request, res: Response, next: NextFunction) =>
+    (req: GrantedRequest, res: Response, next: NextFunction) =>
         updatePlaatsvoorkeuren(req, res, next, req.params.marktId, req.params.erkenningsNummer),
 );
 
@@ -420,7 +420,7 @@ app.post(
 
 app.get(
     '/ondernemer/:erkenningsNummer/algemene-voorkeuren/:marktId/',
-    keycloak.protect([Roles.MARKTMEESTER, Roles.MARKTBEWERKER]),
+    keycloak.protect(token => hasEitherRole([Roles.MARKTBEWERKER, Roles.MARKTMEESTER], token)),
     csrfProtection,
     (req: GrantedRequest, res: Response) => {
         marketPreferencesPage(
@@ -436,9 +436,9 @@ app.get(
 
 app.post(
     '/ondernemer/:erkenningsNummer/algemene-voorkeuren/:marktId/',
-    keycloak.protect(Roles.MARKTMEESTER, Roles.MARKTBEWERKER),
+    keycloak.protect(token => hasEitherRole([Roles.MARKTBEWERKER, Roles.MARKTMEESTER], token)),
     csrfProtection,
-    (req: Request, res: Response, next: NextFunction) =>
+    (req: GrantedRequest, res: Response, next: NextFunction) =>
         updateMarketPreferences(
             req,
             res,
