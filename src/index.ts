@@ -21,7 +21,7 @@ import express, { NextFunction, Request, RequestHandler, Response } from 'expres
 import { getMarkt, getMarkten } from './makkelijkemarkt-api';
 import { GrantedRequest, TokenContent } from 'keycloak-connect';
 import { getQueryErrors, internalServerErrorPage, isAbsoluteUrl } from './express-util';
-import { keycloak, Roles, sessionMiddleware } from './authentication';
+import { keycloak, Roles, sessionMiddleware, hasEitherRole } from './authentication';
 import { isMarktmeester, isMarktondernemer, isMarktBewerker, isKramenzetter } from './roles'
 import { keycloakHealth, makkelijkeMarktHealth, serverHealth, serverTime } from './routes/status';
 import { langdurigAfgemeld, marktDetail } from './routes/markt';
@@ -420,7 +420,7 @@ app.post(
 
 app.get(
     '/ondernemer/:erkenningsNummer/algemene-voorkeuren/:marktId/',
-    keycloak.protect(Roles.MARKTBEWERKER),
+    keycloak.protect(token => hasEitherRole([Roles.MARKTBEWERKER, Roles.MARKTMEESTER], token)),
     csrfProtection,
     (req: GrantedRequest, res: Response) => {
         marketPreferencesPage(
@@ -436,7 +436,7 @@ app.get(
 
 app.post(
     '/ondernemer/:erkenningsNummer/algemene-voorkeuren/:marktId/',
-    keycloak.protect(Roles.MARKTBEWERKER),
+    keycloak.protect(token => hasEitherRole([Roles.MARKTBEWERKER, Roles.MARKTMEESTER], token)),
     csrfProtection,
     (req: GrantedRequest, res: Response, next: NextFunction) =>
         updateMarketPreferences(
