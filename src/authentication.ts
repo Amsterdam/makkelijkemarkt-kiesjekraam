@@ -16,6 +16,11 @@ export const Roles = {
     KRAMENZETTER: 'kramenzetter'
 };
 
+export const hasEitherRole = (roles: string[], token: Keycloak.Token) =>
+    roles.reduce((total, role) => {
+        return total || token.hasRole(role);
+    }, false);
+
 export const keycloak = new Keycloak(
     {
         store: sessionStore,
