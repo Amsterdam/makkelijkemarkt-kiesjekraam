@@ -3,20 +3,15 @@ import ReactDOMServer from 'react-dom/server';
 import {
     requireEnv,
 } from './util.ts';
-import {
-    URL,
-} from 'url';
 
 requireEnv('MAILER_URL');
 
-const { username, password, hostname, port, searchParams } = new URL(process.env.MAILER_URL);
-
 const transport = nodemailer.createTransport({
-    host: hostname,
-    port,
+    host: process.env.MAILER_HOST,
+    port: process.env.MAILER_PORT || '587',
     auth: {
-        user: username || searchParams.get('username'),
-        pass: password || searchParams.get('password'),
+        user: process.env.MAILER_USER,
+        pass: process.env.MAILER_PASSWORD
     },
 });
 
