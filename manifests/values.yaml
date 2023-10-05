@@ -1,0 +1,77 @@
+name: mm-kiesjekraam
+
+labels:
+  app: mm-kiesjekraam
+
+image:
+  registry: saks01weuacrpgpgo5qvmwo.azurecr.io
+  tag: latest
+
+network:
+  allow-ingress:
+    selector: app == 'mm-kiesjekraam'
+    ingress:
+      - action: Allow
+    egress:
+      - action: Allow
+
+serviceAccount: app
+serviceAccounts:
+  app: {}
+
+secrets:
+  certificate:
+    type: keyvault
+    tls: mm-kiesjekraam
+
+deployments:
+  mm-kiesjekraam:
+    env:
+      APP_ENV: dev
+      APP_DEBUG: 1
+      APP_SECRET: insecure
+    image:
+      repository: salmagundi/mm-kiesjekraam
+    selectorLabels:
+      component: kiesjekraam
+    containers:
+      - name: main
+        ports:
+          - port: 8080
+            name: http
+        volumes:
+          - name: cache
+            mountPath: /var/www/var/cache
+          - name: logs
+            mountPath: /var/www/var/log
+          - name: tmp
+            mountPath: /tmp
+    volumes:
+      - name: cache
+        spec:
+          emptyDir: {}
+      - name: logs
+        spec:
+          emptyDir: {}
+      - name: tmp
+        spec:
+          emptyDir: {}
+
+services:
+  mm-kiesjekraam:
+    selector:
+      component: kiesjekraam
+    ports:
+      - port: 8080
+        targetPort: 8080
+
+ingress:
+  mm-kiesjekraam-internal:
+    className: nginx-internal
+    paths:
+      - path: /
+        pathType: Prefix
+        service: mm-kiesjekraam
+        port: 8080
+    # tls: certificate
+

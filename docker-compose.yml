@@ -1,0 +1,48 @@
+version: "3"
+services:
+  kiesjekraam:
+    build:
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    container_name: salmagundi_markten_kiesjekraam
+    image: ${REGISTRY:-127.0.0.1:5001}/${REPOSITORY:-salmagundi/mm-kiesjekraam}:${VERSION:-latest}
+    # depends_on:
+    #   - mm-api_nginx
+    command: "npm run dev"
+    ports:
+      - "127.0.0.1:8093:8080"
+    volumes:
+      - /src:/srv/src
+    environment:
+      - APP_ENV=dev
+      - APP_DEBUG=true
+      - ENABLE_CONCEPT_INDELING=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=insecure
+      - MAILER_URL=smtp://null:null@salmagundi_mailhog:1025
+      - MAILER_FROM=noreply@amsterdam.nl
+      - DEBUG_MODE=false  # for mailing
+      - INDELING_DAG_OFFSET=0
+      - IAM_CLIENT_ID=kiesjekraam
+      - IAM_CLIENT_SECRET=insecure
+      - IAM_REALM=kiesjekraam
+      - IAM_ADMIN_USER=realm_admin
+      - IAM_ADMIN_PASS=insecure
+      - IAM_URL=http://keycloak:8080/auth
+      - API_KEY=insecure
+      - API_MMAPPKEY=insecure
+      - API_URL=http://mm-api_nginx:80/api/1.1.0/
+      - API_READONLY_USER=kjk-non-personal
+      - API_READONLY_PASS=insecure
+      - APP_SECRET=insecure
+      - NODE_ENV=development
+      - DISABLE_MM_API_DISPATCH_PROTECTION=1
+    networks:
+      - salmagundi-dev-env
+
+networks:
+  salmagundi-dev-env:
+    external:
+      name: salmagundi-dev-env
