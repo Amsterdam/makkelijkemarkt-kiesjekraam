@@ -26,10 +26,6 @@ secrets:
 
 deployments:
   mm-kiesjekraam:
-    env:
-      APP_ENV: dev
-      APP_DEBUG: 1
-      APP_SECRET: insecure
     image:
       repository: salmagundi/mm-kiesjekraam
     selectorLabels:
@@ -73,5 +69,4 @@ ingress:
         pathType: Prefix
         service: mm-kiesjekraam
         port: 8080
-    # tls: certificate
 

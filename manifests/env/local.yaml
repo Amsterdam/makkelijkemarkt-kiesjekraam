@@ -30,7 +30,7 @@ deployments:
       IAM_REALM: kiesjekraam
       IAM_ADMIN_USER: realm_admin
       IAM_ADMIN_PASS: insecure
-      IAM_URL: http://keycloak:8080/auth
+      IAM_URL: http://keycloak/auth
       API_KEY: insecure
       API_MMAPPKEY: insecure
       API_URL: http://mm-api-nginx-mm-api:80/api/1.1.0/
