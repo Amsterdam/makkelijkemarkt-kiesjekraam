@@ -4,10 +4,6 @@ image:
 
 host: kiesjekraam.localhost
 
-securityContext:
-  container:
-    readOnlyRootFilesystem: false
-
 secrets:
   certificate:
     enabled: false
