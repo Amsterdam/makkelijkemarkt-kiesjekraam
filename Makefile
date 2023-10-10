@@ -18,10 +18,6 @@ build:
 test:
 	echo "No tests available"
 
-migrate:
-	# kubectl exec -it deploy/mm-api-mm-api -- sh -c "php bin/console --no-interaction doctrine:migrations:migrate"
-	# kubectl exec -it deploy/mm-api-mm-api -- sh -c "php bin/console doc:fix:load  --no-interaction --purge-with-truncate"
-
 push:
 	$(dc) push
 
