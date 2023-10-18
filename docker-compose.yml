@@ -1,0 +1,12 @@
+version: "3"
+services:
+  kiesjekraam:
+    build:
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    container_name: salmagundi_markten_kiesjekraam
+    image: ${REGISTRY:-127.0.0.1:5001}/${REPOSITORY:-salmagundi/mm-kiesjekraam}:${VERSION:-latest}
+    command: "npm run dev"
+    ports:
+      - "127.0.0.1:8093:8080"

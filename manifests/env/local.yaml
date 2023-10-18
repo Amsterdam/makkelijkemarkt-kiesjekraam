@@ -1,0 +1,48 @@
+image:
+  registry: 127.0.0.1:5001
+  imagePullPolicy: Always
+
+host: kiesjekraam.localhost
+
+secrets:
+  certificate:
+    enabled: false
+
+deployments:
+  mm-kiesjekraam:
+    env:
+      APP_ENV: dev
+      APP_DEBUG: true
+      ENABLE_CONCEPT_INDELING: true
+      REDIS_HOST: redis-master
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: insecure
+      MAILER_URL: smtp://null:null@salmagundi_mailhog:1025
+      MAILER_FROM: noreply@amsterdam.nl
+      DEBUG_MODE: false  # for mailing
+      INDELING_DAG_OFFSET: 0
+      IAM_CLIENT_ID: kiesjekraam
+      IAM_CLIENT_SECRET: insecure
+      IAM_REALM: kiesjekraam
+      IAM_ADMIN_USER: realm_admin
+      IAM_ADMIN_PASS: insecure
+      IAM_URL: http://keycloak/auth
+      API_KEY: insecure
+      API_MMAPPKEY: insecure
+      API_URL: http://mm-api-nginx-mm-api:80/api/1.1.0/
+      API_READONLY_USER: kjk-non-personal
+      API_READONLY_PASS: insecure
+      APP_SECRET: insecure
+      NODE_ENV: development
+      DISABLE_MM_API_DISPATCH_PROTECTION: 1
+services:
+  mm-kiesjekraam:
+    selector:
+      component: kiesjekraam
+    ports:
+      - port: 8080
+        targetPort: 8080
+
+ingress:
+  mm-kiesjekraam-internal:
+    className: nginx
