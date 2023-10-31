@@ -1,12 +1,11 @@
-image:
-  registry: 127.0.0.1:5001
-  imagePullPolicy: Always
+workloadIdentity: 82370263-90e0-4b27-9d8d-3f8d1689065a
+nodepool: cccmrktont01
 
-host: kiesjekraam.localhost
+host: kiesjekraam.makkelijkemarkt.mrkt-o.azure.amsterdam.nl
 
 secrets:
   certificate:
-    enabled: false
+    keyVaultName: shared-o-jpc4hlk5yveei
 
 deployments:
   mm-kiesjekraam:
@@ -35,18 +34,9 @@ deployments:
       APP_SECRET: insecure
       NODE_ENV: development
       DISABLE_MM_API_DISPATCH_PROTECTION: 1
-services:
-  mm-kiesjekraam:
-    selector:
-      component: kiesjekraam
-    ports:
-      - port: 8080
-        targetPort: 8080
+    # autoscale:
+    #   cpu: 70
+    #   memory: 90
+    #   min: 1
+    #   max: 2
 
-ingress:
-  mm-kiesjekraam-internal:
-    className: nginx
-
-jobs:
-  certificate-init:
-    enabled: false

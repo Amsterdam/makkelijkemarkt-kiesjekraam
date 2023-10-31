@@ -53,3 +53,19 @@ ingress:
         service: mm-kiesjekraam
         port: 8080
 
+jobs:
+  certificate-init:
+    image:
+      repository: salmagundi/mm-kiesjekraam
+    annotations:
+      helm.sh/hook: post-install,post-upgrade
+    labels:
+      component: certificate
+    secrets:
+      - certificate
+    containers:
+      - name: main
+        command:
+          - sleep
+        args:
+          - "1"
