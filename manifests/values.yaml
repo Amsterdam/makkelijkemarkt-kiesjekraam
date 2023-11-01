@@ -23,7 +23,7 @@ serviceAccounts:
 secrets:
   certificate:
     type: keyvault
-    tls: mm-kiesjekraam
+    tls: markten
 
 deployments:
   mm-kiesjekraam:
