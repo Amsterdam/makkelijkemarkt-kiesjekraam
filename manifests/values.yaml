@@ -1,4 +1,5 @@
 name: mm-kiesjekraam
+tenantId: 72fca1b1-2c2e-4376-a445-294d80196804
 
 labels:
   app: mm-kiesjekraam
