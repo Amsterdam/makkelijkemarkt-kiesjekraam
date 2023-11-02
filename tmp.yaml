@@ -1,0 +1,322 @@
+---
+# Source: application/templates/network.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: "allow-ingress-mm-api"
+  labels: 
+    helm.sh/chart: application-1.5.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mm-kiesjekraam
+    app.kubernetes.io/instance: mm-api
+    app: mm-kiesjekraam
+spec:
+  selector: app == 'mm-kiesjekraam'
+  ingress: 
+    - action: Allow
+  egress: 
+    - action: Allow
+---
+# Source: application/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: app-mm-api
+  labels:
+    helm.sh/chart: application-1.5.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mm-kiesjekraam
+    app.kubernetes.io/instance: mm-api
+    app: mm-kiesjekraam
+    azure.workload.identity/use: "true"
+  annotations:
+    
+    azure.workload.identity/client-id: 82370263-90e0-4b27-9d8d-3f8d1689065a
+---
+# Source: application/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: "mm-kiesjekraam-mm-api"
+  labels: 
+    helm.sh/chart: application-1.5.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mm-kiesjekraam
+    app.kubernetes.io/instance: mm-api
+    app: mm-kiesjekraam
+spec:
+  type: ClusterIP
+  ports: 
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: mm-kiesjekraam
+    app.kubernetes.io/instance: mm-api
+    component: kiesjekraam
+---
+# Source: application/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mm-kiesjekraam-mm-api
+  labels: 
+    helm.sh/chart: application-1.5.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mm-kiesjekraam
+    app.kubernetes.io/instance: mm-api
+    component: kiesjekraam
+    app: mm-kiesjekraam
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mm-kiesjekraam
+      app.kubernetes.io/instance: mm-api
+      component: kiesjekraam
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: application-1.5.2
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: mm-kiesjekraam
+        app.kubernetes.io/instance: mm-api
+        component: kiesjekraam
+        app: mm-kiesjekraam
+        azure.workload.identity/use: "true"
+    spec:
+      restartPolicy: Always
+      serviceAccountName: app-mm-api
+      tolerations:
+        - key: "cccmrktont01"
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:      
+      - name: main  
+        image: "saks01weuacrpgpgo5qvmwo.azurecr.io/salmagundi/mm-kiesjekraam:latest"
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8080
+            name: http
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+          readOnlyRootFilesystem: true
+        env:
+          - name: API_KEY
+            value: "insecure"
+          - name: API_MMAPPKEY
+            value: "insecure"
+          - name: API_READONLY_PASS
+            value: "insecure"
+          - name: API_READONLY_USER
+            value: "kjk-non-personal"
+          - name: API_URL
+            value: "http://mm-api-nginx-mm-api:80/api/1.1.0/"
+          - name: APP_DEBUG
+            value: "true"
+          - name: APP_ENV
+            value: "dev"
+          - name: APP_SECRET
+            value: "insecure"
+          - name: DEBUG_MODE
+            value: "false"
+          - name: DISABLE_MM_API_DISPATCH_PROTECTION
+            value: "1"
+          - name: ENABLE_CONCEPT_INDELING
+            value: "true"
+          - name: IAM_ADMIN_PASS
+            value: "insecure"
+          - name: IAM_ADMIN_USER
+            value: "realm_admin"
+          - name: IAM_CLIENT_ID
+            value: "kiesjekraam"
+          - name: IAM_CLIENT_SECRET
+            value: "insecure"
+          - name: IAM_REALM
+            value: "kiesjekraam"
+          - name: IAM_URL
+            value: "http://keycloak/auth"
+          - name: INDELING_DAG_OFFSET
+            value: "0"
+          - name: MAILER_FROM
+            value: "noreply@amsterdam.nl"
+          - name: MAILER_URL
+            value: "smtp://null:null@salmagundi_mailhog:1025"
+          - name: NODE_ENV
+            value: "development"
+          - name: REDIS_HOST
+            value: "markten.privatelink.redis.cache.windows.net"
+          - name: REDIS_PORT
+            value: "6380"
+          - name: "REDIS_PRIMARY_KEY"
+            valueFrom:
+              secretKeyRef:
+                name: "vault-mm-api"
+                key: "redis-primary-key"
+        volumeMounts:
+          
+          - name: vault
+            mountPath: /mnt/secrets/vault
+            readOnly: true
+      volumes:
+        - name: "vault"
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "vault-mm-api"
+---
+# Source: application/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "mm-kiesjekraam-internal-mm-api"
+  labels:
+    helm.sh/chart: application-1.5.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mm-kiesjekraam
+    app.kubernetes.io/instance: mm-api
+    app: mm-kiesjekraam
+spec:
+  ingressClassName: nginx-internal
+  rules:
+    - host: "kiesjekraam.makkelijkemarkt.mrkt-o.azure.amsterdam.nl"
+      
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: mm-kiesjekraam-mm-api
+                port:
+                  number: 8080
+---
+# Source: application/templates/secretproviderclass.yaml
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: certificate-mm-api
+  labels: 
+    helm.sh/chart: application-1.5.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mm-kiesjekraam
+    app.kubernetes.io/instance: mm-api
+    app: mm-kiesjekraam
+spec:
+  provider: "azure"
+  parameters:
+    clientID: "82370263-90e0-4b27-9d8d-3f8d1689065a"
+    usePodIdentity: "false"
+    useVMManagedIdentity: "false"
+    keyvaultName: "shared-o-jpc4hlk5yveei"
+    tenantId: "72fca1b1-2c2e-4376-a445-294d80196804"
+    objects: |
+      array:
+        - |
+          objectName: "markten"
+          objectType: secret
+  secretObjects:
+    - secretName: "certificate-mm-api"
+      type: kubernetes.io/tls
+      data:
+        - objectName: "markten"
+          key: tls.key
+        - objectName: "markten"
+          key: tls.crt
+---
+# Source: application/templates/secretproviderclass.yaml
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: vault-mm-api
+  labels: 
+    helm.sh/chart: application-1.5.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mm-kiesjekraam
+    app.kubernetes.io/instance: mm-api
+    app: mm-kiesjekraam
+spec:
+  provider: "azure"
+  parameters:
+    clientID: "82370263-90e0-4b27-9d8d-3f8d1689065a"
+    usePodIdentity: "false"
+    useVMManagedIdentity: "false"
+    tenantId: "72fca1b1-2c2e-4376-a445-294d80196804"
+    objects: |
+      array:
+        - |
+          objectName: "redis-primary-key"
+          objectType: secret
+  secretObjects:
+    - secretName: "vault-mm-api"
+      type: Opaque
+      data:
+        - objectName: "redis-primary-key"
+          key: "redis-primary-key"
+---
+# Source: application/templates/job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: certificate-init-mm-api
+  labels: 
+    helm.sh/chart: application-1.5.2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mm-kiesjekraam
+    app.kubernetes.io/instance: mm-api
+    app: mm-kiesjekraam
+    component: certificate
+  annotations: 
+    helm.sh/hook: post-install,post-upgrade
+spec:
+  backoffLimit: 5
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: application-1.5.2
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: mm-kiesjekraam
+        app.kubernetes.io/instance: mm-api
+        app: mm-kiesjekraam
+        component: certificate
+        azure.workload.identity/use: "true"
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: app-mm-api
+      tolerations:
+        - key: "cccmrktont01"
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:      
+      - name: main  
+        image: "saks01weuacrpgpgo5qvmwo.azurecr.io/salmagundi/mm-kiesjekraam:latest"
+        imagePullPolicy: IfNotPresent
+        command: 
+          - sleep
+        args: 
+          - "1"
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+          readOnlyRootFilesystem: true
+        volumeMounts:
+          
+          - name: certificate
+            mountPath: /mnt/secrets/certificate
+            readOnly: true
+      volumes:
+        
+        - name: "certificate"
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "certificate-mm-api"

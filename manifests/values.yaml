@@ -24,6 +24,11 @@ secrets:
   certificate:
     type: keyvault
     tls: markten
+  vault:
+    type: keyvault
+    secrets:
+      REDIS_PASSWORD: redis-primary-key
+
 
 deployments:
   mm-kiesjekraam:
@@ -36,6 +41,8 @@ deployments:
         ports:
           - port: 8080
             name: http
+        secrets:
+          - vault
 
 services:
   mm-kiesjekraam:

@@ -13,9 +13,8 @@ deployments:
       APP_ENV: dev
       APP_DEBUG: true
       ENABLE_CONCEPT_INDELING: true
-      REDIS_HOST: redis-master
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: insecure
+      REDIS_HOST: markten.privatelink.redis.cache.windows.net
+      REDIS_PORT: 6380
       MAILER_URL: smtp://null:null@salmagundi_mailhog:1025
       MAILER_FROM: noreply@amsterdam.nl
       DEBUG_MODE: false  # for mailing
