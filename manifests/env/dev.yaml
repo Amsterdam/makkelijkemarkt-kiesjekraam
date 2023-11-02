@@ -1,11 +1,14 @@
 workloadIdentity: 82370263-90e0-4b27-9d8d-3f8d1689065a
 nodepool: cccmrktont01
+keyVaultName: markten-o-l5ct7bz3yelys
+
 
 host: kiesjekraam.makkelijkemarkt.mrkt-o.azure.amsterdam.nl
 
 secrets:
   certificate:
     keyVaultName: shared-o-jpc4hlk5yveei
+
 
 deployments:
   mm-kiesjekraam:
