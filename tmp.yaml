@@ -1,11 +1,11 @@
 ---
 # Source: application/templates/network.yaml
-apiVersion: networking.k8s.io/v1
+apiVersion: projectcalico.org/v3
 kind: NetworkPolicy
 metadata:
   name: "allow-ingress-mm-api"
   labels: 
-    helm.sh/chart: application-1.5.2
+    helm.sh/chart: application-1.9.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: mm-kiesjekraam
     app.kubernetes.io/instance: mm-api
@@ -23,7 +23,23 @@ kind: ServiceAccount
 metadata:
   name: app-mm-api
   labels:
-    helm.sh/chart: application-1.5.2
+    helm.sh/chart: application-1.9.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: mm-kiesjekraam
+    app.kubernetes.io/instance: mm-api
+    app: mm-kiesjekraam
+    azure.workload.identity/use: "true"
+  annotations:
+    
+    azure.workload.identity/client-id: 82370263-90e0-4b27-9d8d-3f8d1689065a
+---
+# Source: application/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: default-mm-api
+  labels:
+    helm.sh/chart: application-1.9.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: mm-kiesjekraam
     app.kubernetes.io/instance: mm-api
@@ -39,7 +55,7 @@ kind: Service
 metadata:
   name: "mm-kiesjekraam-mm-api"
   labels: 
-    helm.sh/chart: application-1.5.2
+    helm.sh/chart: application-1.9.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: mm-kiesjekraam
     app.kubernetes.io/instance: mm-api
@@ -60,7 +76,7 @@ kind: Deployment
 metadata:
   name: mm-kiesjekraam-mm-api
   labels: 
-    helm.sh/chart: application-1.5.2
+    helm.sh/chart: application-1.9.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: mm-kiesjekraam
     app.kubernetes.io/instance: mm-api
@@ -75,7 +91,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: application-1.5.2
+        helm.sh/chart: application-1.9.0
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: mm-kiesjekraam
         app.kubernetes.io/instance: mm-api
@@ -151,15 +167,15 @@ spec:
             value: "markten.privatelink.redis.cache.windows.net"
           - name: REDIS_PORT
             value: "6380"
-          - name: "REDIS_PRIMARY_KEY"
+          - name: "REDIS_PASSWORD"
             valueFrom:
               secretKeyRef:
                 name: "vault-mm-api"
-                key: "redis-primary-key"
+                key: "REDIS_PASSWORD"
         volumeMounts:
           
           - name: vault
-            mountPath: /mnt/secrets/vault
+            mountPath: "/mnt/secrets/vault"
             readOnly: true
       volumes:
         - name: "vault"
@@ -175,7 +191,7 @@ kind: Ingress
 metadata:
   name: "mm-kiesjekraam-internal-mm-api"
   labels:
-    helm.sh/chart: application-1.5.2
+    helm.sh/chart: application-1.9.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: mm-kiesjekraam
     app.kubernetes.io/instance: mm-api
@@ -201,7 +217,7 @@ kind: SecretProviderClass
 metadata:
   name: certificate-mm-api
   labels: 
-    helm.sh/chart: application-1.5.2
+    helm.sh/chart: application-1.9.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: mm-kiesjekraam
     app.kubernetes.io/instance: mm-api
@@ -234,7 +250,7 @@ kind: SecretProviderClass
 metadata:
   name: vault-mm-api
   labels: 
-    helm.sh/chart: application-1.5.2
+    helm.sh/chart: application-1.9.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: mm-kiesjekraam
     app.kubernetes.io/instance: mm-api
@@ -245,18 +261,20 @@ spec:
     clientID: "82370263-90e0-4b27-9d8d-3f8d1689065a"
     usePodIdentity: "false"
     useVMManagedIdentity: "false"
+    keyvaultName: "markten-o-l5ct7bz3yelys"
     tenantId: "72fca1b1-2c2e-4376-a445-294d80196804"
     objects: |
       array:
         - |
           objectName: "redis-primary-key"
+          objectAlias: "REDIS_PASSWORD"
           objectType: secret
   secretObjects:
     - secretName: "vault-mm-api"
       type: Opaque
       data:
-        - objectName: "redis-primary-key"
-          key: "redis-primary-key"
+        - objectName: "REDIS_PASSWORD"
+          key: "REDIS_PASSWORD"
 ---
 # Source: application/templates/job.yaml
 apiVersion: batch/v1
@@ -264,7 +282,7 @@ kind: Job
 metadata:
   name: certificate-init-mm-api
   labels: 
-    helm.sh/chart: application-1.5.2
+    helm.sh/chart: application-1.9.0
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: mm-kiesjekraam
     app.kubernetes.io/instance: mm-api
@@ -277,7 +295,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: application-1.5.2
+        helm.sh/chart: application-1.9.0
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: mm-kiesjekraam
         app.kubernetes.io/instance: mm-api
@@ -310,7 +328,7 @@ spec:
         volumeMounts:
           
           - name: certificate
-            mountPath: /mnt/secrets/certificate
+            mountPath: "/mnt/secrets/certificate"
             readOnly: true
       volumes:
         
