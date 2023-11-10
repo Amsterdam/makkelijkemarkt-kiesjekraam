@@ -16,7 +16,7 @@ deployments:
       APP_ENV: dev
       APP_DEBUG: true
       ENABLE_CONCEPT_INDELING: true
-      REDIS_HOST: markten.privatelink.redis.cache.windows.net
+      REDIS_HOST: markten.redis.cache.windows.net
       REDIS_PORT: 6380
       MAILER_URL: smtp://null:null@salmagundi_mailhog:1025
       MAILER_FROM: noreply@amsterdam.nl
