@@ -14,7 +14,8 @@ export class RedisClient {
 
         this.client = redis.createClient({
             legacyMode: true,
-            url: `rediss://:${redisPassword}@${redisHost}:${redisPort}`,
+            url: `rediss://${redisHost}:${redisPort}`,
+            password: redisPassword,
             retry_strategy: function (options) {
                 if (options.error && (options.error.code === 'ECONNREFUSED' || options.error.code === 'NR_CLOSED')) {
                     // Try reconnecting after 5 seconds
