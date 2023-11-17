@@ -1,5 +1,5 @@
 import Queue from 'bee-queue';
-import { RedisClient } from 'redis-client';
+import { RedisClient } from './redis-client';
 
 export const ALLOCATION_MODE_CONCEPT = 'concept';
 export const ALLOCATION_MODE_SCHEDULED = 'scheduled';
