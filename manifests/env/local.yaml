@@ -13,7 +13,7 @@ secrets:
 deployments:
   mm-kiesjekraam:
     env:
-      APP_ENV: dev
+      APP_ENV: local
       APP_DEBUG: true
       ENABLE_CONCEPT_INDELING: true
       REDIS_HOST: redis-master
