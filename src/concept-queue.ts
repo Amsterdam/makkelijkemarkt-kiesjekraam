@@ -8,21 +8,21 @@ export class ConceptQueue {
     prefix = 'kjk-alloc';
     name = 'allocation';
 
-    constructor() {
-        this.dispatcher_config = {
-            prefix: this.prefix,
-            redis: {
-                host: process.env.REDIS_HOST,
-                port: process.env.REDIS_PORT,
-                password: process.env.REDIS_PASSWORD,
-                db: 0,
-                options: {},
-            },
-            isWorker: false,
-        };
-    }
+    // constructor() {
+    //     this.dispatcher_config = {
+    //         prefix: this.prefix,
+    //         redis: {
+    //             host: process.env.REDIS_HOST,
+    //             port: process.env.REDIS_PORT,
+    //             password: process.env.REDIS_PASSWORD,
+    //             db: 0,
+    //             options: {},
+    //         },
+    //         isWorker: false,
+    //     };
+    // }
 
-    getQueueForDispatcher(): any {
-        return new Queue(this.name, this.dispatcher_config);
-    }
+    // getQueueForDispatcher(): any {
+    //     return new Queue(this.name, this.dispatcher_config);
+    // }
 }
