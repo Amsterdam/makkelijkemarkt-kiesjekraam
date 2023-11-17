@@ -6,6 +6,8 @@ export class RedisClient {
     print: string;
 
     constructor() {
+        console.log('constructed Redis client')
+
         const redisHost: string = process.env.REDIS_HOST;
         const redisPort: string = process.env.REDIS_PORT;
         const redisPassword: string = process.env.REDIS_PASSWORD;
@@ -17,6 +19,8 @@ export class RedisClient {
             url: `rediss://${redisHost}:${redisPort}`,
             password: redisPassword,
             retry_strategy: function (options) {
+                console.log('Redis retry_strategy')
+                console.log(options.error?.code)
                 if (options.error && (options.error.code === 'ECONNREFUSED' || options.error.code === 'NR_CLOSED')) {
                     // Try reconnecting after 5 seconds
                     return 5000;
@@ -35,8 +39,8 @@ export class RedisClient {
         this.client.on('error', function (err) {
             console.log('Redis error: ' + err);
         });
-        this.client.on('reconnecting', function () {
-            console.log('Redis try reconnecting..');
+        this.client.on('reconnecting', function (err) {
+            console.log('Redis try reconnecting.. ' + err);
         });
 
         this.client.on('end', function () {
