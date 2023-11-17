@@ -20,8 +20,6 @@ extends:
     build:
       pool:
         name: ContainerBuilder
-        demands: 
-        - Agent.Name -equals ContainerBuildAgent-p00027Y
     dev:
       pool: salmagundi
       namespace: ns-ccc-mrkt-ont-01-markten
