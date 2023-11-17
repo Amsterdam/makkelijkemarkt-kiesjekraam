@@ -12,7 +12,7 @@ export class RedisClient {
         this.print = redis.print;
         let connected = false;
 
-        this.client = redis.createClient(redisConfig});
+        this.client = redis.createClient(redisConfig);
 
         this.client.connect().catch(console.error);
 
