@@ -12,6 +12,8 @@ REGISTRY ?= 127.0.0.1:5001
 REPOSITORY ?= salmagundi/mm-kiesjekraam
 VERSION ?= latest
 
+all: build push deploy fixtures
+
 build:
 	$(dc) build
 
@@ -36,8 +38,11 @@ update-chart:
 clean:
 	$(dc) down -v --remove-orphans
 
+fixtures:
+	echo "has no fixtures"
+
 reset:
-	kubectl delete deployments --all && helm uninstall mm-api
+	kubectl delete deployment mm-kiesjekraam-mm-kiesjekraam && kubectl delete ingress mm-kiesjekraam-internal-mm-kiesjekraam && helm uninstall mm-kiesjekraam
 
 refresh: reset build push deploy
 
