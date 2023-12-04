@@ -2,7 +2,7 @@ workloadIdentity: 7fb05b70-0c2a-4d8c-823d-18e3cd9de9f7
 keyVaultName: markten-t-43vb6bx3n4rgq
 nodepool: cccmrkttst01
 
-host: dashboard.makkelijkemarkt.mrkt-t.azure.amsterdam.nl
+host: kiesjekraam.makkelijkemarkt.mrkt-t.azure.amsterdam.nl
 
 secrets:
   certificate:
