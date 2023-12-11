@@ -1,4 +1,5 @@
 import util from 'util';
+import redisConfig from '../redis-config';
 const redis = require('redis');
 
 export class RedisClient {
@@ -6,24 +7,12 @@ export class RedisClient {
     print: string;
 
     constructor() {
-        const redisHost: string = process.env.REDIS_HOST;
-        const redisPort: string = process.env.REDIS_PORT;
-        const redisPassword: string = process.env.REDIS_PASSWORD;
+        console.log('constructed Redis client')
+
         this.print = redis.print;
         let connected = false;
 
-        this.client = redis.createClient({
-            legacyMode: true,
-            url: `redis://:${redisPassword}@${redisHost}:${redisPort}`,
-            retry_strategy: function (options) {
-                if (options.error && (options.error.code === 'ECONNREFUSED' || options.error.code === 'NR_CLOSED')) {
-                    // Try reconnecting after 5 seconds
-                    return 5000;
-                }
-                // reconnect after
-                return 3000;
-            },
-        });
+        this.client = redis.createClient(redisConfig);
 
         this.client.connect().catch(console.error);
 
@@ -34,8 +23,8 @@ export class RedisClient {
         this.client.on('error', function (err) {
             console.log('Redis error: ' + err);
         });
-        this.client.on('reconnecting', function () {
-            console.log('Redis try reconnecting..');
+        this.client.on('reconnecting', function (err) {
+            console.log('Redis try reconnecting.. ' + err);
         });
 
         this.client.on('end', function () {

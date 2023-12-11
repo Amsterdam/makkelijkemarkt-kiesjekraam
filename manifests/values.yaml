@@ -60,6 +60,7 @@ ingress:
         pathType: Prefix
         service: mm-kiesjekraam
         port: 8080
+    tls: certificate
 
 jobs:
   certificate-init:

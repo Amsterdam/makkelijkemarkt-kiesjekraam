@@ -1,4 +1,5 @@
 import Queue from 'bee-queue';
+import redisConfig from '../redis-config';
 
 export const ALLOCATION_MODE_CONCEPT = 'concept';
 export const ALLOCATION_MODE_SCHEDULED = 'scheduled';
@@ -9,15 +10,12 @@ export class ConceptQueue {
     name = 'allocation';
 
     constructor() {
+        const redisHost: string = process.env.REDIS_HOST;
+        const redisPort: string = process.env.REDIS_PORT;
+        const redisPassword: string = process.env.REDIS_PASSWORD;
         this.dispatcher_config = {
             prefix: this.prefix,
-            redis: {
-                host: process.env.REDIS_HOST,
-                port: process.env.REDIS_PORT,
-                password: process.env.REDIS_PASSWORD,
-                db: 0,
-                options: {},
-            },
+            redis: redisConfig,
             isWorker: false,
         };
     }
