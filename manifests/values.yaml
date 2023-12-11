@@ -45,7 +45,7 @@ deployments:
           - vault
         volumes:
           - name: cache
-            mountPath: /node_modules/.cache
+            mountPath: /node_modules/.cache/@babel/register
     volumes:
       - name: cache
         spec:
