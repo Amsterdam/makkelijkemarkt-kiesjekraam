@@ -43,6 +43,13 @@ deployments:
             name: http
         secrets:
           - vault
+        volumes:
+          - name: cache
+            mountPath: /node_modules/.cache
+    volumes:
+      - name: cache
+        spec:
+          emptyDir: {}
 
 services:
   mm-kiesjekraam:
