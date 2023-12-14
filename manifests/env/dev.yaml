@@ -8,7 +8,15 @@ host: kiesjekraam.makkelijkemarkt.mrkt-o.azure.amsterdam.nl
 secrets:
   certificate:
     keyVaultName: shared-o-jpc4hlk5yveei
-
+  vault:
+    type: keyvault
+    secrets:
+      - IAM_CLIENT_ID: iam-client-id
+      - IAM_CLIENT_SECRET: iam-client-secret
+      - IAM_REALM: iam-realm
+      - IAM_ADMIN_USER: iam-admin-user
+      - IAM_ADMIN_PASS: iam-admin-pass
+      - IAM_URL: iam-url
 
 deployments:
   mm-kiesjekraam:
@@ -22,11 +30,6 @@ deployments:
       MAILER_FROM: noreply@amsterdam.nl
       DEBUG_MODE: false  # for mailing
       INDELING_DAG_OFFSET: 0
-      IAM_CLIENT_ID: kiesjekraam
-      IAM_CLIENT_SECRET: insecure
-      IAM_REALM: kiesjekraam
-      IAM_ADMIN_USER: realm_admin
-      IAM_ADMIN_PASS: insecure
       IAM_URL: http://keycloak/auth
       API_KEY: insecure
       API_MMAPPKEY: insecure
@@ -36,9 +39,16 @@ deployments:
       APP_SECRET: insecure
       NODE_ENV: development
       DISABLE_MM_API_DISPATCH_PROTECTION: 1
-    # autoscale:
-    #   cpu: 70
-    #   memory: 90
-    #   min: 1
-    #   max: 2
+    secrets:
+      - IAM_CLIENT_ID
+      - IAM_REAM
+      - IAM_CLIENT_SECRET
+      - IAM_URL
+      - IAM_ADMIN_USER
+      - IAM_ADMIN_PASS
+    autoscale:
+      cpu: 70
+      memory: 90
+      min: 1
+      max: 1
 
