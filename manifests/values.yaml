@@ -28,7 +28,12 @@ secrets:
     type: keyvault
     secrets:
       REDIS_PASSWORD: redis-primary-key
-
+      IAM_CLIENT_ID: iam-client-id
+      IAM_CLIENT_SECRET: iam-client-secret
+      IAM_REALM: iam-realm
+      IAM_ADMIN_USER: iam-admin-user
+      IAM_ADMIN_PASS: iam-admin-pass
+      IAM_URL: iam-url
 
 deployments:
   mm-kiesjekraam:
