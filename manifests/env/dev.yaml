@@ -45,12 +45,7 @@ deployments:
           - port: 8080
             name: http
         secrets:
-          - IAM_CLIENT_ID
-          - IAM_CLIENT_SECRET
-          - IAM_REALM
-          - IAM_ADMIN_USER
-          - IAM_ADMIN_PASS
-          - IAM_URL
+          - vault
     autoscale:
       cpu: 70
       memory: 90
