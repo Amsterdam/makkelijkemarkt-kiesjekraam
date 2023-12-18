@@ -28,13 +28,6 @@ deployments:
       APP_SECRET: insecure
       NODE_ENV: development
       DISABLE_MM_API_DISPATCH_PROTECTION: 1
-    containers:
-      - name: main
-        ports:
-          - port: 8080
-            name: http
-        secrets:
-          - vault
     autoscale:
       cpu: 70
       memory: 90
