@@ -20,7 +20,6 @@ deployments:
       MAILER_FROM: noreply@amsterdam.nl
       DEBUG_MODE: false  # for mailing
       INDELING_DAG_OFFSET: 0
-      API_MMAPPKEY: insecure
       API_READONLY_USER: kjk-non-personal
       API_READONLY_PASS: insecure
       APP_SECRET: insecure
