@@ -35,6 +35,7 @@ secrets:
       IAM_ADMIN_PASS: iam-admin-pass
       IAM_URL: iam-url
       API_KEY: api-key
+      API_URL: api-url
 
 deployments:
   mm-kiesjekraam:

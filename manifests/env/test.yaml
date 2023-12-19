@@ -20,15 +20,7 @@ deployments:
       MAILER_FROM: noreply@amsterdam.nl
       DEBUG_MODE: false  # for mailing
       INDELING_DAG_OFFSET: 0
-      IAM_CLIENT_ID: kiesjekraam
-      IAM_CLIENT_SECRET: insecure
-      IAM_REALM: kiesjekraam
-      IAM_ADMIN_USER: realm_admin
-      IAM_ADMIN_PASS: insecure
-      IAM_URL: http://keycloak/auth
-      API_KEY: insecure
       API_MMAPPKEY: insecure
-      API_URL: http://mm-api-nginx-mm-api:80/api/1.1.0/
       API_READONLY_USER: kjk-non-personal
       API_READONLY_PASS: insecure
       APP_SECRET: insecure
