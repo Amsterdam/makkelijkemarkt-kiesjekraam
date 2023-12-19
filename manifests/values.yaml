@@ -36,6 +36,7 @@ secrets:
       IAM_URL: iam-url
       API_KEY: api-key
       API_URL: api-url
+      API_MMAPPKEY: mm-api-login-key
 
 deployments:
   mm-kiesjekraam:
