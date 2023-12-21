@@ -108,7 +108,7 @@ export const addMinutes = (offsetDate: string | number, minutes: number): string
     return toISODate(new Date(date.getTime() + minutes * 60000));
 };
 
-export const addMinutesTime = (offsetDate: string | number, minutes: number): Date => {
+export const addMinutesTime = (offsetDate: string | number, minutes: number): string => {
     const date = new Date(offsetDate);
     const dateNewTime = new Date(date.getTime() + minutes * 60000);
     return moment(dateNewTime).tz(TIMEZONE).format();
