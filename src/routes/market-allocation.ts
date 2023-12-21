@@ -7,6 +7,7 @@ import {
     getIndelingslijst,
 } from '../pakjekraam-api';
 import { createAllocationsV2 } from '../makkelijkemarkt-api'
+import { getAllocation } from '../daalder-api';
 import {
     getKeycloakUser,
 } from '../keycloak-api';
@@ -39,11 +40,18 @@ const client = new RedisClient().getAsyncClient();
 
 export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
-    const { version = '1' } = req.query;
+    const { version = '1', direct = 'false' } = req.query;
+    const bDirect = (direct as string).toLowerCase() === 'true';
+    console.log("Conect Indeling Page", version, bDirect, direct)
     getCalculationInput(marktId, marktDate).then(data => {
         data = JSON.parse(JSON.stringify(data));
         data['mode'] = ALLOCATION_MODE_CONCEPT;
         data['version'] = version;
+        if (bDirect) {
+            getAllocation(data).then(alloc => {
+                console.log("Received Direct allocation:", alloc)
+            })
+        }
         const job = allocationQueue.createJob(data);
         console.log('GET CALC INPUT');
         job.save()
