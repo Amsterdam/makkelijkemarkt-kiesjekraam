@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "adm-zip": "0.5.2",
-    "axios": "0.21.2",
+    "axios": "^1.6.0",
     "axios-cache-adapter": "2.7.3",
     "axios-logger": "1.0.0",
     "bee-queue": "^1.4.0",
@@ -109,7 +109,9 @@
     "webpack": "^5.76.0"
   },
   "overrides": {
-    "json5": "^2.2.2"
+    "json5": "^2.2.2",
+    "axios": "^1.6.0",
+    "glob-parent": "^5.1.2"
   },
   "husky": {
     "hooks": {
