@@ -19,6 +19,7 @@ FROM node:16-alpine as kjk_build
 
 COPY kjk/package.json kjk/
 COPY kjk/package-lock.json kjk/
+COPY kjk/config kjk/config
 COPY kjk/public kjk/public
 COPY kjk/src kjk/src
 
