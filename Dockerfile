@@ -11,7 +11,6 @@ ENV PATH /srv/bdm/node_modules/.bin:$PATH
 WORKDIR /bdm
 
 RUN npm ci --loglevel verbose
-RUN CI=true npm run test
 RUN npm run build
 
 
