@@ -2,6 +2,7 @@ FROM node:16-alpine as bdm_build
 
 COPY bdm/package.json bdm/
 COPY bdm/package-lock.json bdm/
+COPY bdm/config bdm/config
 COPY bdm/public bdm/public
 COPY bdm/src bdm/src
 
