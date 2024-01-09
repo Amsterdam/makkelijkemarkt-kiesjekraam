@@ -180,7 +180,7 @@ class MarktDetailPage extends React.Component {
 
                     {conceptIndeling && (
                         <li className="LinkList__item">
-                            <a href={`./${date}/concept-indelingslijst/?version=2&direct=true`} className="Link">
+                            <a href={`./${date}/direct-concept-indelingslijst/`} className="Link">
                                 Conceptindeling Direct Link
                             </a>
                         </li>

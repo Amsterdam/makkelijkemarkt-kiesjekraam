@@ -10,6 +10,7 @@ import {
 import { attendancePage, handleAttendanceUpdate, auditLogPage } from './routes/market-application';
 import {
     conceptIndelingPage,
+    directConceptIndelingPage,
     indelingErrorStacktracePage,
     indelingInputJobPage,
     indelingLogsPage,
@@ -209,6 +210,12 @@ app.get(
     '/markt/:marktId/:marktDate/concept-indelingslijst/',
     keycloak.protect(Roles.MARKTMEESTER),
     conceptIndelingPage,
+);
+
+app.get(
+    '/markt/:marktId/:marktDate/direct-concept-indelingslijst/',
+    keycloak.protect(Roles.MARKTMEESTER),
+    directConceptIndelingPage,
 );
 
 app.get(
