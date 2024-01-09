@@ -1,5 +1,8 @@
 import { HttpMethod } from './makkelijkemarkt-api';
+import { requireEnv } from './util';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
+
+requireEnv('DAALDER_API_URL');
 
 
 export const daalderConfig = {
@@ -79,12 +82,12 @@ const getApi = (): AxiosInstance => {
 export const getAllocation = async (data: Object): Promise<Object> => {
   const api = getApi();
 
-  console.log("Get Allocation");
+  console.log("Get Allocation from ", daalderConfig.baseUrl);
   // console.log(api)
   try {
     const response = await axios({
       method: "post",
-      url: 'http://localhost:8000/allocate/',
+      url: `${daalderConfig.baseUrl}/allocate/`,
       data
     });
     console.log("Get Allocation response", response);
