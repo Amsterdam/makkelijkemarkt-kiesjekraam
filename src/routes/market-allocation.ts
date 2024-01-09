@@ -93,10 +93,25 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
         data = JSON.parse(JSON.stringify(data));
         data['mode'] = ALLOCATION_MODE_CONCEPT;
         data['version'] = "2";
-        getAllocation(data).then(indeling => {
+        getAllocation(data).then(async (indeling: any) => {
+            const email = getKeycloakUser(req).email
+            const payload = {
+                allocationStatus: allocationHasFailed(data) ? ALLOCATION_STATUS.ERROR : ALLOCATION_STATUS.SUCCESS,
+                allocationType: ALLOCATION_TYPE.CONCEPT,
+                allocationVersion: data['version'],
+                email,
+                allocation: indeling,
+                input: data,
+            }
+            console.log("PAYLOAD:", payload)
+            const alloc_v2_response = await createAllocationsV2(marktId, marktDate, payload)
+            const allocation = alloc_v2_response.data;
+            console.log("Received Direct allocation:", allocation)
             console.log("Received Direct allocation:", indeling)
             res.render('IndelingslijstPage.tsx', {
-                ...indeling,
+                ...allocation,
+                ...allocation.input,
+                ...indeling.allocation,
                 indelingstype,
                 datum: marktDate,
                 role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
