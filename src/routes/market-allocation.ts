@@ -85,6 +85,37 @@ export const indelingPage = (req: GrantedRequest, res: Response, indelingstype =
     }, internalServerErrorPage(res));
 };
 
+export const directConceptIndelingPage = (req: GrantedRequest, res: Response) => {
+    const { marktDate, marktId } = req.params;
+    const indelingstype = 'concept-indelingslijst'
+    console.log("Conect Indeling Page")
+    getCalculationInput(marktId, marktDate).then(data => {
+        data = JSON.parse(JSON.stringify(data));
+        data['mode'] = ALLOCATION_MODE_CONCEPT;
+        data['version'] = "2";
+        getAllocation(data).then(indeling => {
+            console.log("Received Direct allocation:", indeling)
+            res.render('IndelingslijstPage.tsx', {
+                ...indeling,
+                indelingstype,
+                datum: marktDate,
+                role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+                user: getKeycloakUser(req),
+            });
+        })
+    }, internalServerErrorPage(res))
+    
+    getIndelingslijst(marktId, marktDate).then(indeling => {
+        res.render('IndelingslijstPage.tsx', {
+            ...indeling,
+            indelingstype,
+            datum: marktDate,
+            role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+            user: getKeycloakUser(req),
+        });
+    }, internalServerErrorPage(res));
+};
+
 export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
 
