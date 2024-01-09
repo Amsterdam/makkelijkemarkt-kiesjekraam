@@ -96,7 +96,7 @@ export const getAllocation = async (data: Object): Promise<Object> => {
     if (response.status >= 200 && response.status < 300) {
       return response.data
     } else {
-      throw new Error("Api request failed")
+      return new Error("Api request failed")
     }
 
   } catch (error) {
@@ -106,6 +106,6 @@ export const getAllocation = async (data: Object): Promise<Object> => {
     } else {
       console.error("Api request error message", error.message)
     }
-    throw error;
+    return error;
   }
 }
