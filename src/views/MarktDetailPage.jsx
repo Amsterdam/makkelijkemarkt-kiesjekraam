@@ -178,6 +178,14 @@ class MarktDetailPage extends React.Component {
                         </li>
                     )}
 
+                    {conceptIndeling && (
+                        <li className="LinkList__item">
+                            <a href={`./${date}/direct-concept-indelingslijst/`} className="Link">
+                                Conceptindeling Direct Link
+                            </a>
+                        </li>
+                    )}
+
                     <li className="LinkList__item">
                         <a href={`/bdm/markt/${marktId}/${date}/allocation`} className="Link">
                             Indeling overzicht V2

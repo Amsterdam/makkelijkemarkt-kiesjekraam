@@ -7,6 +7,7 @@ import {
     getIndelingslijst,
 } from '../pakjekraam-api';
 import { createAllocationsV2 } from '../makkelijkemarkt-api'
+import { getAllocation } from '../daalder-api';
 import {
     getKeycloakUser,
 } from '../keycloak-api';
@@ -39,11 +40,18 @@ const client = new RedisClient().getAsyncClient();
 
 export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
-    const { version = '1' } = req.query;
+    const { version = '1', direct = 'false' } = req.query;
+    const bDirect = (direct as string).toLowerCase() === 'true';
+    console.log("Conect Indeling Page", version, bDirect, direct)
     getCalculationInput(marktId, marktDate).then(data => {
         data = JSON.parse(JSON.stringify(data));
         data['mode'] = ALLOCATION_MODE_CONCEPT;
         data['version'] = version;
+        if (bDirect) {
+            getAllocation(data).then(alloc => {
+                console.log("Received Direct allocation:", alloc)
+            })
+        }
         const job = allocationQueue.createJob(data);
         console.log('GET CALC INPUT');
         job.save()
@@ -66,6 +74,52 @@ export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
 export const indelingPage = (req: GrantedRequest, res: Response, indelingstype = 'indeling') => {
     const { marktDate, marktId } = req.params;
 
+    getIndelingslijst(marktId, marktDate).then(indeling => {
+        res.render('IndelingslijstPage.tsx', {
+            ...indeling,
+            indelingstype,
+            datum: marktDate,
+            role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+            user: getKeycloakUser(req),
+        });
+    }, internalServerErrorPage(res));
+};
+
+export const directConceptIndelingPage = (req: GrantedRequest, res: Response) => {
+    const { marktDate, marktId } = req.params;
+    const indelingstype = 'concept-indelingslijst'
+    console.log("Conect Indeling Page")
+    getCalculationInput(marktId, marktDate).then(data => {
+        data = JSON.parse(JSON.stringify(data));
+        data['mode'] = ALLOCATION_MODE_CONCEPT;
+        data['version'] = "2";
+        getAllocation(data).then(async (indeling: any) => {
+            const email = getKeycloakUser(req).email
+            const payload = {
+                allocationStatus: allocationHasFailed(data) ? ALLOCATION_STATUS.ERROR : ALLOCATION_STATUS.SUCCESS,
+                allocationType: ALLOCATION_TYPE.CONCEPT,
+                allocationVersion: data['version'],
+                email,
+                allocation: indeling,
+                input: data,
+            }
+            console.log("PAYLOAD:", payload)
+            const alloc_v2_response = await createAllocationsV2(marktId, marktDate, payload)
+            const allocation = alloc_v2_response.data;
+            console.log("Received Direct allocation:", allocation)
+            console.log("Received Direct allocation:", indeling)
+            res.render('IndelingslijstPage.tsx', {
+                ...allocation,
+                ...allocation.input,
+                ...indeling.allocation,
+                indelingstype,
+                datum: marktDate,
+                role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+                user: getKeycloakUser(req),
+            });
+        })
+    }, internalServerErrorPage(res))
+    
     getIndelingslijst(marktId, marktDate).then(indeling => {
         res.render('IndelingslijstPage.tsx', {
             ...indeling,
