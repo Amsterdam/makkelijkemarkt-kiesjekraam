@@ -31,9 +31,7 @@ import moment from 'moment';
 
 const redisClient = new RedisClient().getAsyncClient();
 
-const MILLISECONDS_IN_SECOND = 1000;
-const SECONDS_IN_MINUTE = 60;
-const MINUTES_IN_HOUR = 60;
+const SESSION_LIFETIME = 1000 * 60 * 60 * 6; // 6 hours in ms
 
 const MAX_RETRY_50X = 10;
 const MAX_RETRY_40X = 10;
@@ -55,7 +53,7 @@ export const mmConfig = {
     clientApp: packageJSON.name,
     clientVersion: packageJSON.version,
     sessionKey: 'mmsession',
-    sessionLifetime: MILLISECONDS_IN_SECOND * SECONDS_IN_MINUTE * MINUTES_IN_HOUR * 6,
+    sessionLifetime: SESSION_LIFETIME,
 };
 
 const getApi = (): AxiosInstance =>
