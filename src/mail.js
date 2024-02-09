@@ -1,10 +1,5 @@
 import nodemailer from 'nodemailer';
 import ReactDOMServer from 'react-dom/server';
-import {
-    requireEnv,
-} from './util.ts';
-
-requireEnv('MAILER_URL');
 
 const transport = nodemailer.createTransport({
     host: process.env.MAILER_HOST,
