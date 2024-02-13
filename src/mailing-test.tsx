@@ -15,7 +15,7 @@ const testEmail = {
     from: process.env.MAILER_FROM,
     to: 'salmagundi-markten@amsterdam.nl',
     subject: 'Test email',
-    react: JSON.stringify(<EmailPage />),
+    react: <EmailPage />,
 };
 
 mail(testEmail).then(
