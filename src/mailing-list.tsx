@@ -68,8 +68,7 @@ const sendAllocationMail = (subject: string, mailTemplate: JSX.Element, emailadd
     if (process.env.TEST_EMAIL && process.env.TEST_EMAIL != 'false'){
         console.log("ondernemer emailaddress: ", emailaddress);
         emailaddress = process.env.TEST_EMAIL;
-    } else if (
-        process.env.APP_ENV !== 'production') {
+    } else if (process.env.APP_ENV !== 'production') {
         emailaddress = alternativeEmail;
     }
 
