@@ -1,7 +1,5 @@
 import * as React from 'react';
-import {
-    EmailPage,
-} from './views/EmailPage';
+import  EmailPage from './views/EmailPage';
 import {
     mail,
 } from './mail.js';
