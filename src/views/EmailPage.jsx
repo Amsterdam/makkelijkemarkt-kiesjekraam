@@ -1,6 +1,6 @@
 import * as React from 'react';
-const EmailBase = require('./components/EmailBase.jsx');
-const EmailContent = require('./components/EmailContent.jsx');
+import EmailBase from './components/EmailBase';
+import EmailContent from './components/EmailContent';
 
 export default class EmailPage extends React.Component {
     render() {
