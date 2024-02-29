@@ -41,7 +41,6 @@ const HTTP_HEADER_REQUEST_START_TIME = 'requestStartTime';
 const CACHE_PREFIX = 'CACHE_';
 const CACHE_TTL = 30; // seconds
 
-requireEnv('API_URL');
 requireEnv('API_MMAPPKEY');
 requireEnv('API_KEY');
 requireEnv('MM_API_NGINX_MM_API_SERVICE_HOST');
