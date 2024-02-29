@@ -46,6 +46,8 @@ requireEnv('API_KEY');
 requireEnv('MM_API_NGINX_MM_API_SERVICE_HOST');
 requireEnv('MM_API_NGINX_MM_API_SERVICE_PORT');
 
+console.log(`${process.env.MM_API_NGINX_MM_API_SERVICE_HOST}:${process.env.MM_API_NGINX_MM_API_SERVICE_PORT}/api/1.1.0/`)
+
 export const mmConfig = {
     baseUrl: `${process.env.MM_API_NGINX_MM_API_SERVICE_HOST}:${process.env.MM_API_NGINX_MM_API_SERVICE_PORT}/api/1.1.0/`,
     appKey: process.env.API_MMAPPKEY,
