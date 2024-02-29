@@ -44,9 +44,11 @@ const CACHE_TTL = 30; // seconds
 requireEnv('API_URL');
 requireEnv('API_MMAPPKEY');
 requireEnv('API_KEY');
+requireEnv('MM_API_NGINX_MM_API_SERVICE_HOST');
+requireEnv('MM_API_NGINX_MM_API_SERVICE_PORT');
 
 export const mmConfig = {
-    baseUrl: process.env.API_URL,
+    baseUrl: `${process.env.MM_API_NGINX_MM_API_SERVICE_HOST}:${process.env.MM_API_NGINX_MM_API_SERVICE_PORT}/api/1.1.0/`,
     appKey: process.env.API_MMAPPKEY,
     loginUrl: 'login/apiKey/',
     apiKey: process.env.API_KEY,
