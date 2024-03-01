@@ -106,8 +106,6 @@ const createHttpFunction = (
 const apiBase = (url: string, httpMethod: HttpMethod = 'get', request?, throwError = false): Promise<AxiosResponse> => {
     const api = getApi();
 
-    console.log(`${process.env.MM_API_NGINX_MM_API_SERVICE_HOST}:${process.env.MM_API_NGINX_MM_API_SERVICE_PORT}/api/1.1.0/`)
-
     const httpFunction = createHttpFunction(api, httpMethod);
 
     const requestBody = request ? request.body : null;
