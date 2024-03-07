@@ -3,10 +3,12 @@ import { requireEnv } from './util';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 requireEnv('DAALDER_API_URL');
-
+requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
+requireEnv('MM_RAH_MM_RAH_SERVICE_PORT');
 
 export const daalderConfig = {
-  baseUrl: process.env.DAALDER_API_URL,
+  // MM_RAH_MM_RAH_SERVICE_HOST and PORT defined by helm/kubernetes. When service name changes, this var should be changed.
+  baseUrl: `${process.env.MM_RAH_MM_RAH_SERVICE_HOST}:${process.env.MM_RAH_MM_RAH_SERVICE_PORT}`
 }
 
 const getApi = (): AxiosInstance => {
@@ -74,7 +76,7 @@ const getApi = (): AxiosInstance => {
 //   const requestBody = request ? request.body : null;
 //   const headers = request ? request.headers : null;
 
-  
+
 // }
 
 
@@ -91,7 +93,7 @@ export const getAllocation = async (data: Object): Promise<Object> => {
       data
     });
     console.log("Get Allocation response", response);
-      
+
 
     if (response.status >= 200 && response.status < 300) {
       return response.data
