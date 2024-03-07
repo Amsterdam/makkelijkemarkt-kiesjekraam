@@ -7,6 +7,7 @@ requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
 requireEnv('MM_RAH_MM_RAH_SERVICE_PORT');
 
 export const daalderConfig = {
+  // MM_RAH_MM_RAH_SERVICE_HOST and PORT defined by helm/kubernetes. When service name changes, this var should be changed.
   baseUrl: `${process.env.MM_RAH_MM_RAH_SERVICE_HOST}:${process.env.MM_RAH_MM_RAH_SERVICE_PORT}`
 }
 
