@@ -83,12 +83,13 @@ export const getAllocation = async (data: Object): Promise<Object> => {
   const api = getApi();
 
   console.log("Get Allocation from ", daalderConfig.baseUrl);
-  // console.log(api)
+  console.log("REQ DATA", data)
   try {
     const response = await axios({
       method: "post",
-      url: `${daalderConfig.baseUrl}/allocate/`,
-      data
+      headers: {"Authorization": "Token 17deb9988dcffdf49d12e9c9e5b50c162e56d11a"},
+      url: `${daalderConfig.baseUrl}/allocation/allocate/`,
+      data: {"data": data}
     });
     console.log("Get Allocation response", response);
       

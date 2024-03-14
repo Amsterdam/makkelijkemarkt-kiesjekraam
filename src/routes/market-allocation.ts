@@ -52,22 +52,22 @@ export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
                 console.log("Received Direct allocation:", alloc)
             })
         }
-        const job = allocationQueue.createJob(data);
-        console.log('GET CALC INPUT');
-        job.save()
-            .then((job: any) => {
-                console.log('allocation job: ', job.id);
-                return res.redirect(`/job/` + job.id + `/`);
-            })
-            .catch(error => {
-                console.log('job error: ', error);
-                if (!client.connected) {
-                    res.render('RedisErrorPage.jsx');
-                    return;
-                }
-                allocationQueue = conceptQueue.getQueueForDispatcher();
-                return res.redirect(req.originalUrl);
-            });
+        // const job = allocationQueue.createJob(data);
+        // console.log('GET CALC INPUT');
+        // job.save()
+        //     .then((job: any) => {
+        //         console.log('allocation job: ', job.id);
+        //         return res.redirect(`/job/` + job.id + `/`);
+        //     })
+        //     .catch(error => {
+        //         console.log('job error: ', error);
+        //         if (!client.connected) {
+        //             res.render('RedisErrorPage.jsx');
+        //             return;
+        //         }
+        //         allocationQueue = conceptQueue.getQueueForDispatcher();
+        //         return res.redirect(req.originalUrl);
+        //     });
     });
 };
 
@@ -103,7 +103,7 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
                 allocation: indeling,
                 input: data,
             }
-            console.log("PAYLOAD:", payload)
+            // console.log("PAYLOAD:", payload)
             const alloc_v2_response = await createAllocationsV2(marktId, marktDate, payload)
             const allocation = alloc_v2_response.data;
             console.log("Received Direct allocation:", allocation)
