@@ -215,7 +215,7 @@ app.get(
 app.get(
     '/markt/:marktId/:marktDate/direct-concept-indelingslijst/',
     keycloak.protect(Roles.MARKTMEESTER),
-    directConceptIndelingPage,
+    (req: GrantedRequest, res: Response, next: NextFunction) => directConceptIndelingPage(req, res),
 );
 
 app.get(
