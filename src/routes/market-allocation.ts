@@ -52,22 +52,22 @@ export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
                 console.log("Received Direct allocation:", alloc)
             })
         }
-        // const job = allocationQueue.createJob(data);
-        // console.log('GET CALC INPUT');
-        // job.save()
-        //     .then((job: any) => {
-        //         console.log('allocation job: ', job.id);
-        //         return res.redirect(`/job/` + job.id + `/`);
-        //     })
-        //     .catch(error => {
-        //         console.log('job error: ', error);
-        //         if (!client.connected) {
-        //             res.render('RedisErrorPage.jsx');
-        //             return;
-        //         }
-        //         allocationQueue = conceptQueue.getQueueForDispatcher();
-        //         return res.redirect(req.originalUrl);
-        //     });
+        const job = allocationQueue.createJob(data);
+        console.log('GET CALC INPUT');
+        job.save()
+            .then((job: any) => {
+                console.log('allocation job: ', job.id);
+                return res.redirect(`/job/` + job.id + `/`);
+            })
+            .catch(error => {
+                console.log('job error: ', error);
+                if (!client.connected) {
+                    res.render('RedisErrorPage.jsx');
+                    return;
+                }
+                allocationQueue = conceptQueue.getQueueForDispatcher();
+                return res.redirect(req.originalUrl);
+            });
     });
 };
 
@@ -92,7 +92,7 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
     getCalculationInput(marktId, marktDate).then(data => {
         data = JSON.parse(JSON.stringify(data));
         data['mode'] = ALLOCATION_MODE_CONCEPT;
-        data['version'] = "2";
+        data['version'] = 2;
         getAllocation(data).then(async (indeling: any) => {
             const email = getKeycloakUser(req).email
             const payload = {
@@ -106,11 +106,14 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
             // console.log("PAYLOAD:", payload)
             const alloc_v2_response = await createAllocationsV2(marktId, marktDate, payload)
             const allocation = alloc_v2_response.data;
-            console.log("Received Direct allocation:", allocation)
-            console.log("Received Direct allocation:", indeling)
+            console.log("Allocation keys:", Object.keys(allocation))
+            console.log("Input keys:", Object.keys(allocation.input))
+            console.log("Indeling keys:", Object.keys(indeling))
+            console.log("Indeling->Allocation keys:", Object.keys(indeling.allocation))
             res.render('IndelingslijstPage.tsx', {
-                ...allocation,
+                // ...allocation,
                 ...allocation.input,
+                // ...indeling.allocation,
                 ...indeling.allocation,
                 indelingstype,
                 datum: marktDate,
@@ -120,15 +123,15 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
         })
     }, internalServerErrorPage(res))
     
-    getIndelingslijst(marktId, marktDate).then(indeling => {
-        res.render('IndelingslijstPage.tsx', {
-            ...indeling,
-            indelingstype,
-            datum: marktDate,
-            role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
-            user: getKeycloakUser(req),
-        });
-    }, internalServerErrorPage(res));
+    // getIndelingslijst(marktId, marktDate).then(indeling => {
+    //     res.render('IndelingslijstPage.tsx', {
+    //         ...indeling,
+    //         indelingstype,
+    //         datum: marktDate,
+    //         role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+    //         user: getKeycloakUser(req),
+    //     });
+    // }, internalServerErrorPage(res));
 };
 
 export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
