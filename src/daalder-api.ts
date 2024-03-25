@@ -7,6 +7,7 @@ requireEnv('DAALDER_API_URL');
 
 export const daalderConfig = {
   baseUrl: process.env.DAALDER_API_URL,
+  authToken: `Token: ${process.env.DAALDER_API_USER_TOKEN}`
 }
 
 const getApi = (): AxiosInstance => {
@@ -83,11 +84,11 @@ export const getAllocation = async (data: Object): Promise<Object> => {
   const api = getApi();
 
   console.log("Get Allocation from ", daalderConfig.baseUrl);
-  console.log("REQ DATA", data)
+  console.log("REQ DATA", Object.keys(data))
   try {
     const response = await axios({
       method: "post",
-      headers: {"Authorization": "Token 17deb9988dcffdf49d12e9c9e5b50c162e56d11a"},
+      headers: { "Authorization": daalderConfig.authToken },
       url: `${daalderConfig.baseUrl}/allocation/allocate/`,
       data: {"data": data}
     });
