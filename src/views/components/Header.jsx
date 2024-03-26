@@ -23,7 +23,7 @@ const Header = ({ user, children, hideLogout, breadcrumbs, role }) => {
                 <div className="container">
                     <div className="container__content">
                         <div className="Header__top-container">
-                            <a className="Header__logo-link" href={"https://kiesjekraam.amsterdam.nl"}>
+                            <a className="Header__logo-link" href={"https://kiesjekraam.makkelijkemarkt.amsterdam.nl"}>
                                 <picture className="Header__logo">
                                     <source srcSet="/images/logo-desktop.svg" media="(min-width: 540px)" />
                                     <source srcSet="/images/logo-mobile.svg" media="(min-width: 0)" />
