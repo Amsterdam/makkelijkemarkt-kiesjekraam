@@ -30,7 +30,7 @@ export const getAllocation = async (data: Object): Promise<Object> => {
   try {
     const response = await axios({
       method: "post",
-      headers: { "Authorization": daalderConfig.authToken },
+      headers: { "Authorization": daalderConfig.authToken, "Accept-Encoding": "gzip, deflate", },
       url: `${daalderConfig.baseUrl}/allocation/allocate/`,
       data: {"data": data}
     });
