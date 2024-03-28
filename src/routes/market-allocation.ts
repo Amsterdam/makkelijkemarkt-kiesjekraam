@@ -38,6 +38,7 @@ const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
 const client = new RedisClient().getAsyncClient();
 
+// TODO: Decom concept indeling
 export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
     const { version = '1', direct = 'false' } = req.query;
