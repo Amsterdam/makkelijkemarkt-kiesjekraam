@@ -1,4 +1,3 @@
-import { HttpMethod } from './makkelijkemarkt-api';
 import { requireEnv } from './util';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
@@ -22,9 +21,6 @@ const getApi = (): AxiosInstance => {
 export const getAllocation = async (data: Object): Promise<Object> => {
   const api = getApi();
 
-  console.log("Get Allocation from ", daalderConfig.baseUrl);
-  console.log("with token: ", daalderConfig.authToken);
-  console.log("REQ DATA", Object.keys(data))
   try {
     const response = await axios({
       method: "post",
@@ -32,7 +28,6 @@ export const getAllocation = async (data: Object): Promise<Object> => {
       url: `${daalderConfig.baseUrl}/allocation/allocate/`,
       data: {"data": data}
     });
-    console.log("Get Allocation response", response);
 
 
     if (response.status >= 200 && response.status < 300) {
