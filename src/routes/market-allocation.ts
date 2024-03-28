@@ -49,22 +49,6 @@ export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
                 console.log("Received Direct allocation:", alloc)
             })
         }
-        const job = allocationQueue.createJob(data);
-        console.log('GET CALC INPUT');
-        job.save()
-            .then((job: any) => {
-                console.log('allocation job: ', job.id);
-                return res.redirect(`/job/` + job.id + `/`);
-            })
-            .catch(error => {
-                console.log('job error: ', error);
-                if (!client.connected) {
-                    res.render('RedisErrorPage.jsx');
-                    return;
-                }
-                allocationQueue = conceptQueue.getQueueForDispatcher();
-                return res.redirect(req.originalUrl);
-            });
     });
 };
 

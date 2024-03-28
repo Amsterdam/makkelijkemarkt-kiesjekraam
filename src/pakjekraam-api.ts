@@ -30,8 +30,6 @@ import { RedisClient } from './redis-client';
 import { getAfwijzingReason } from './model/afwijzing.functions';
 import { getMarktondernemerFromMMOndernemerStandaloneByMarkt } from './model/ondernemer.functions';
 
-const conceptQueue = new ConceptQueue();
-let allocationQueue = conceptQueue.getQueueForDispatcher();
 const client = new RedisClient().getAsyncClient();
 
 
@@ -164,7 +162,6 @@ export const calculateIndelingslijst = async (marktId: string, date: string, ver
             console.log('REDIS: connection error: ', error);
             return;
         }
-        allocationQueue = conceptQueue.getQueueForDispatcher();
     }
 };
 
