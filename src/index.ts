@@ -40,6 +40,7 @@ import mmApiDispatch from './routes/mmApiDispatch';
 import morgan from 'morgan';
 import path from 'path';
 import { requireEnv } from './util';
+import { setupAppInsights } from './azure-app-insights';
 
 const csrfProtection = csrf({ cookie: true });
 
@@ -507,3 +508,5 @@ const port = process.env.PORT || HTTP_DEFAULT_PORT;
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
+
+setupAppInsights()
