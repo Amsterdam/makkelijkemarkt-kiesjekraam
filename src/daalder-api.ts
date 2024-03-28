@@ -2,7 +2,9 @@ import { HttpMethod } from './makkelijkemarkt-api';
 import { requireEnv } from './util';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-requireEnv('DAALDER_API_URL');
+requireEnv('DAALDER_API_USER_TOKEN');
+requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
+requireEnv('MM_RAH_MM_RAH_SERVICE_PORT');
 
 
 export const daalderConfig = {

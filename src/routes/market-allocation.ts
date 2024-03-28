@@ -106,10 +106,10 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
             // console.log("PAYLOAD:", payload)
             const alloc_v2_response = await createAllocationsV2(marktId, marktDate, payload)
             const allocation = alloc_v2_response.data;
-            console.log("Allocation keys:", Object.keys(allocation))
-            console.log("Input keys:", Object.keys(allocation.input))
-            console.log("Indeling keys:", Object.keys(indeling))
-            console.log("Indeling->Allocation keys:", Object.keys(indeling.allocation))
+            // console.log("Allocation keys:", Object.keys(allocation))
+            // console.log("Input keys:", Object.keys(allocation.input))
+            // console.log("Indeling keys:", Object.keys(indeling))
+            // console.log("Indeling->Allocation keys:", Object.keys(indeling.allocation))
             res.render('IndelingslijstPage.tsx', {
                 // ...allocation,
                 ...allocation.input,
