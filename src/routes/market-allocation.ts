@@ -1,6 +1,5 @@
 import {
     ALLOCATION_MODE_CONCEPT,
-    ConceptQueue,
 } from '../concept-queue';
 import {
     getCalculationInput,
@@ -34,8 +33,6 @@ import {
     ALLOCATION_STATUS,
 } from '../domain-knowledge';
 
-const conceptQueue = new ConceptQueue();
-let allocationQueue = conceptQueue.getQueueForDispatcher();
 const client = new RedisClient().getAsyncClient();
 
 export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
@@ -119,7 +116,7 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
             });
         })
     }, internalServerErrorPage(res))
-    
+
     getIndelingslijst(marktId, marktDate).then(indeling => {
         res.render('IndelingslijstPage.tsx', {
             ...indeling,
