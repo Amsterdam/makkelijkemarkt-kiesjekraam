@@ -162,26 +162,12 @@ class MarktDetailPage extends React.Component {
                             </a>
                         </li>
                     )}
-                    {conceptIndeling && (
-                        <li className="LinkList__item">
-                            <a href={`./${date}/concept-indelingslijst/`} className="Link">
-                                Conceptindeling
-                            </a>
-                        </li>
-                    )}
 
-                    {conceptIndeling && (
-                        <li className="LinkList__item">
-                            <a href={`./${date}/concept-indelingslijst/?version=2`} className="Link">
-                                Conceptindeling V2
-                            </a>
-                        </li>
-                    )}
-
+                    {/* Direct link Concept INdeling */}
                     {conceptIndeling && (
                         <li className="LinkList__item">
                             <a href={`./${date}/direct-concept-indelingslijst/`} className="Link">
-                                Conceptindeling Direct Link
+                                Conceptindeling
                             </a>
                         </li>
                     )}

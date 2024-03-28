@@ -3,7 +3,7 @@ import React from 'react';
 
 const IndelingsLegenda = ({ branches, marktplaatsen, ondernemers, aanmeldingen, toewijzingen }) => {
     const relevantBranches = getAllBranchesForLegend(branches, marktplaatsen);
-    const showToewijzingen = !!toewijzingen.length;
+    const showToewijzingen = !!(toewijzingen?.length);
     const _indelingenPerBranche = showToewijzingen
         ? countToewijzingenPerBranche(branches, ondernemers, toewijzingen)
         : {};
