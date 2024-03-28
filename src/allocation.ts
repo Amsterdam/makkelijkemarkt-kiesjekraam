@@ -29,7 +29,7 @@ import {
 import {
     RedisClient,
 } from './redis-client';
-import { getAllocation } from 'daalder-api';
+import { getAllocation } from './daalder-api';
 
 const DEFAULT_ALLOCATION_VERSION = '2';
 const AGENT_EMAIL = 'system';
@@ -100,101 +100,44 @@ export async function allocate(version: string = DEFAULT_ALLOCATION_VERSION, onl
         console.log('Geen indelingen gedraaid.');
     }
 
-
+    let totalStatus = 0;
     for (const markt of markten) {
         console.log(`Request allocation for ${markt.id}`);
         try {
-            getCalculationInput(String(markt.id), marktDate).then(data => {
+            await getCalculationInput(String(markt.id), marktDate).then(async data => {
                 data = JSON.parse(JSON.stringify(data));
                 data['mode'] = ALLOCATION_MODE_SCHEDULED;
                 data['version'] = 2;
-                getAllocation(data).then(async (indeling: any) => {
-
-                    console.log(indeling);
-                    const { marktId, marktDate, toewijzingen, afwijzingen, version='' } = indeling;
-
+                await getAllocation(data).then(async (indeling: any) => {
                     
                     
+                    let allocationStatus = ALLOCATION_STATUS.SUCCESS;
+                    if (data['error_id'] === undefined) {
+                        await createToewijzingenAfwijzingen(markt.id, indeling.allocation.toewijzingen, indeling.allocation.afwijzingen);
+                        const allocs = await getAllocations(markt.id, marktDate);
+                    } else {
+                        allocationStatus = ALLOCATION_STATUS.ERROR;
+                    }
+                                        
                     const payload = {
                         allocationStatus: indeling.error !== undefined ? ALLOCATION_STATUS.ERROR : ALLOCATION_STATUS.SUCCESS,
-                        allocationType: ALLOCATION_TYPE.CONCEPT,
+                        allocationType: ALLOCATION_TYPE.FINAL,
                         allocationVersion: data['version'],
                         email: AGENT_EMAIL,
                         allocation: indeling,
                         input: data,
                     }
     
-                    let allocationStatus = ALLOCATION_STATUS.SUCCESS;
-                    if (data['error_id'] === undefined) {
-                        await createToewijzingenAfwijzingen(markt.id, data['toewijzingen'], data['afwijzingen']);
-                        const allocs = await getAllocations(markt.id, marktDate);
-                    } else {
-                        console.log(data);
-                        allocationStatus = ALLOCATION_STATUS.ERROR;
-                    }
-    
-    
-                    const alloc_v2_response = await createAllocationsV2(String(markt.id), marktDate, payload)
-                    const allocation = alloc_v2_response.data;
+                    await createAllocationsV2(String(markt.id), marktDate, payload)
+                    totalStatus += allocationStatus;
                 });
     
             })
         } catch (error) {
-            console.log
+            console.log("error:", error)
         }
     }
-
-    // const indelingen_ids = await Promise.all(
-    //     markten.map((markt: MMMarkt) => {
-    //         const indeling = calculateIndelingslijst(String(markt.id), marktDate, version);
-    //         return indeling;
-    //     }),
-    // );
-
-    // let totalStatus = 0;
-    // console.log('indelingen_ids', indelingen_ids);
-    // for (const jobId of indelingen_ids) {
-    //     try {
-    //         let res = null;
-    //         let logs = null;
-    //         let inputData = null;
-    //         while (res === null || logs === null || inputData === null) {
-    //             console.log('waiting for job id:', jobId);
-    //             await timeout(1000);
-    //             res = await redisClient.get('RESULT_' + jobId);
-    //             logs = await redisClient.get('LOGS_' + jobId);
-    //             inputData = await redisClient.get('JOB_' + jobId);
-    //         }
-
-    //         const data = JSON.parse(res);
-    //         const { marktId, marktDate, toewijzingen, afwijzingen, version='' } = data;
-
-    //         let allocationStatus = ALLOCATION_STATUS.SUCCESS;
-    //         if (data['error_id'] === undefined) {
-    //             await createToewijzingenAfwijzingen(marktId, data['toewijzingen'], data['afwijzingen']);
-    //             const allocs = await getAllocations(marktId, marktDate);
-    //         } else {
-    //             console.log(data);
-    //             allocationStatus = ALLOCATION_STATUS.ERROR;
-    //         }
-
-    //         const payload = {
-    //             allocationStatus,
-    //             allocationType: ALLOCATION_TYPE.FINAL,
-    //             allocationVersion: version,
-    //             email: 'scheduled',
-    //             allocation: {toewijzingen, afwijzingen},
-    //             log: JSON.parse(logs),
-    //             input: JSON.parse(inputData),
-    //         }
-    //         const request = await createAllocationsV2(marktId, marktDate, payload)
-    //         totalStatus += allocationStatus;
-    //     } catch (err) {
-    //         console.error(err);
-    //         totalStatus += 1;
-    //     }
-    // }
-    return 0;
+    return totalStatus;
 }
 
 async function allocateCli(version?: string) {
