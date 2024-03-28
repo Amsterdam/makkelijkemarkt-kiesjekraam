@@ -20,73 +20,11 @@ const getApi = (): AxiosInstance => {
   });
 }
 
-// const createHttpFunction = (
-//   api: AxiosInstance,
-//   httpMethod: HttpMethod,
-// ): ((url: string, token: string, data?: any, additionalHeaders?: any) => Promise<AxiosResponse>) => {
-//   return (url: string, token: string, data?: JSON, additionalHeaders?): Promise<AxiosResponse> => {
-//       console.log('MM-API REQUEST', httpMethod, url);
-
-//       const headers = {
-//           ...additionalHeaders,
-//           // Authorization: `Bearer ${token}`,
-//           // requestStartTime: new Date().getTime(),
-//       };
-
-//       switch (httpMethod) {
-//           case 'get':
-//               return api.get(url, { headers });
-//           case 'post':
-//               return api.post(url, data, { headers });
-//           case 'put':
-//               return api.put(url, data, { headers });
-//           case 'delete':
-//               return api.delete(url, { headers });
-//           default:
-//               return api.get(url, { headers });
-//       }
-//   };
-// };
-
-// const makeRequest = (url: string, httpMethod: HttpMethod = 'get', data = null) => {
-//   const api = getApi();
-//   try {
-//     switch (httpMethod) {
-//       case 'get':
-//           return api.get(url, { headers });
-//       case 'post':
-//           return api.post(url, data, { headers });
-//       case 'put':
-//           return api.put(url, data, { headers });
-//       case 'delete':
-//           return api.delete(url, { headers });
-//       default:
-//           return api.get(url, { headers });
-//     }
-//   } catch (error) {
-//     if (error.response) {
-//       console.error('API error response:', )
-//     }
-//   }
-// }
-
-// const apiBase = (url: string, httpMethod: HttpMethod = 'get', request?): Promise<AxiosResponse> => {
-//   const api = getApi();
-
-//   const httpFunction = createHttpFunction(api, httpMethod);
-
-//   const requestBody = request ? request.body : null;
-//   const headers = request ? request.headers : null;
-
-  
-// }
-
-
-
 export const getAllocation = async (data: Object): Promise<Object> => {
   const api = getApi();
 
   console.log("Get Allocation from ", daalderConfig.baseUrl);
+  console.log("with token: ", daalderConfig.authToken);
   console.log("REQ DATA", Object.keys(data))
   try {
     const response = await axios({
@@ -105,7 +43,7 @@ export const getAllocation = async (data: Object): Promise<Object> => {
     }
 
   } catch (error) {
-    console.log("ERROR: ", error.message)
+    console.log("ERROR: ", error)
     if (error.response) {
       console.error("API error response:", error.response.data);
     } else {
