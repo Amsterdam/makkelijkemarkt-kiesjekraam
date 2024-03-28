@@ -1,4 +1,3 @@
-import Queue from 'bee-queue';
 import redisConfig from '../redis-config';
 
 export const ALLOCATION_MODE_CONCEPT = 'concept';
@@ -18,9 +17,5 @@ export class ConceptQueue {
             redis: redisConfig,
             isWorker: false,
         };
-    }
-
-    getQueueForDispatcher(): any {
-        return new Queue(this.name, this.dispatcher_config);
     }
 }

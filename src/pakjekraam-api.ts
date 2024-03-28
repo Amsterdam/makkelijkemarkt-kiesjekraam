@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import {
     ALLOCATION_MODE_SCHEDULED,
-    ConceptQueue,
 } from './concept-queue';
 import {
     getAanmeldingenByMarktAndDate,
