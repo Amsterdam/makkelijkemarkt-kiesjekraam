@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import ReactDOMServer from 'react-dom/server';
 
-const transport = nodemailer.createTransport({
+const mailConfig = {
     host: process.env.MAILER_HOST,
     port: process.env.MAILER_PORT || '587',
     requireTLS: true,
@@ -12,9 +12,11 @@ const transport = nodemailer.createTransport({
     tls:{
         rejectUnauthorized: false
     }
-});
+};
 
-const logObject = transport;
+const transport = nodemailer.createTransport(mailConfig);
+
+const logObject = mailConfig;
 logObject.auth.pass = '********';
 
 console.log('created mail transport with', logObject);
