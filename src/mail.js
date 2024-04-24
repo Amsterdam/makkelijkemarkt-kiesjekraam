@@ -11,8 +11,13 @@ const transport = nodemailer.createTransport({
     },
     tls:{
         rejectUnauthorized: false
-   }
+    }
 });
+
+const logObject = transport;
+logObject.auth.pass = '********';
+
+console.log('created mail transport with', logObject);
 
 export const mail = options => {
     if (options.react) {

@@ -11,7 +11,7 @@ requireEnv('MAILER_FROM');
 
 const testEmail = {
     from: process.env.MAILER_FROM,
-    to: 'salmagundi-markten@amsterdam.nl',
+    to: 'r.hofmeister@amsterdam.nl',
     subject: 'Test email',
     react: <EmailPage />,
 };
