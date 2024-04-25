@@ -38,6 +38,7 @@ const conceptQueue = new ConceptQueue();
 let allocationQueue = conceptQueue.getQueueForDispatcher();
 const client = new RedisClient().getAsyncClient();
 
+// TODO: Decom concept indeling
 export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
     const { version = '1', direct = 'false' } = req.query;
@@ -92,25 +93,25 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
     getCalculationInput(marktId, marktDate).then(data => {
         data = JSON.parse(JSON.stringify(data));
         data['mode'] = ALLOCATION_MODE_CONCEPT;
-        data['version'] = "2";
+        data['version'] = 2;
         getAllocation(data).then(async (indeling: any) => {
             const email = getKeycloakUser(req).email
             const payload = {
-                allocationStatus: allocationHasFailed(data) ? ALLOCATION_STATUS.ERROR : ALLOCATION_STATUS.SUCCESS,
+                allocationStatus: allocationHasFailed(indeling) ? ALLOCATION_STATUS.ERROR : ALLOCATION_STATUS.SUCCESS,
                 allocationType: ALLOCATION_TYPE.CONCEPT,
                 allocationVersion: data['version'],
                 email,
                 allocation: indeling,
                 input: data,
             }
-            console.log("PAYLOAD:", payload)
+
             const alloc_v2_response = await createAllocationsV2(marktId, marktDate, payload)
             const allocation = alloc_v2_response.data;
-            console.log("Received Direct allocation:", allocation)
-            console.log("Received Direct allocation:", indeling)
+
             res.render('IndelingslijstPage.tsx', {
-                ...allocation,
+                // ...allocation,
                 ...allocation.input,
+                // ...indeling.allocation,
                 ...indeling.allocation,
                 indelingstype,
                 datum: marktDate,
@@ -120,15 +121,15 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
         })
     }, internalServerErrorPage(res))
     
-    getIndelingslijst(marktId, marktDate).then(indeling => {
-        res.render('IndelingslijstPage.tsx', {
-            ...indeling,
-            indelingstype,
-            datum: marktDate,
-            role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
-            user: getKeycloakUser(req),
-        });
-    }, internalServerErrorPage(res));
+    // getIndelingslijst(marktId, marktDate).then(indeling => {
+    //     res.render('IndelingslijstPage.tsx', {
+    //         ...indeling,
+    //         indelingstype,
+    //         datum: marktDate,
+    //         role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+    //         user: getKeycloakUser(req),
+    //     });
+    // }, internalServerErrorPage(res));
 };
 
 export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
