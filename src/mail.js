@@ -8,9 +8,6 @@ const mailConfig = {
     auth: {
         user: process.env.MAILER_USER,
         pass: process.env.MAILER_PASSWORD
-    },
-    tls:{
-        rejectUnauthorized: false
     }
 };
 
