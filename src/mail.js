@@ -16,11 +16,6 @@ const mailConfig = {
 
 const transport = nodemailer.createTransport(mailConfig);
 
-const logObject = mailConfig;
-logObject.auth.pass = '********';
-
-console.log('created mail transport with', logObject);
-
 export const mail = options => {
     if (options.react) {
         options = {
