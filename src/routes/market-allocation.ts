@@ -117,7 +117,7 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
                 user: getKeycloakUser(req),
             });
         })
-    }, internalServerErrorPage(res))
+    }, internalServerErrorPage(res));
 };
 
 export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
