@@ -109,9 +109,7 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
             const allocation = alloc_v2_response.data;
 
             res.render('IndelingslijstPage.tsx', {
-                // ...allocation,
                 ...allocation.input,
-                // ...indeling.allocation,
                 ...indeling.allocation,
                 indelingstype,
                 datum: marktDate,
@@ -120,16 +118,6 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
             });
         })
     }, internalServerErrorPage(res))
-    
-    // getIndelingslijst(marktId, marktDate).then(indeling => {
-    //     res.render('IndelingslijstPage.tsx', {
-    //         ...indeling,
-    //         indelingstype,
-    //         datum: marktDate,
-    //         role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
-    //         user: getKeycloakUser(req),
-    //     });
-    // }, internalServerErrorPage(res));
 };
 
 export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
