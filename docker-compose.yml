@@ -2,6 +2,7 @@ version: "3"
 services:
   kiesjekraam:
     build:
+      context: .
       dockerfile: Dockerfile
       args:
         - NODE_ENV=development
