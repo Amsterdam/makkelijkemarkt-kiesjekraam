@@ -94,7 +94,7 @@
     "morgan": "1.9.1",
     "node-cache": "5.1.2",
     "node-stream-zip": "1.13.0",
-    "nodemailer": "6.7.2",
+    "nodemailer": "^6.7.2",
     "prop-types": "15.7.2",
     "qs": "^6.7.3",
     "react": "16.8.6",
@@ -111,7 +111,9 @@
   "overrides": {
     "json5": "^2.2.2",
     "axios": "^1.6.0",
-    "glob-parent": "^5.1.2"
+    "glob-parent": "^5.1.2",
+    "path-to-regexp": ">=0.1.10",
+    "body-parser": "^2.0.1"
   },
   "husky": {
     "hooks": {
