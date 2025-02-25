@@ -15,6 +15,12 @@ services:
       NODE_ENV: development
       REDIS_HOST: kjk_redis
       REDIS_PORT: 6379
+      IAM_URL: http://localhost:8080/auth
+      IAM_CLIENT_ID: kiesjekraam
+      IAM_CLIENT_SECRET: insecure
+      IAM_REALM: kiesjekraam
+      IAM_ADMIN_USER: admin
+      IAM_ADMIN_PASS: insecure
     ports:
       - "8093:3000"
     command: "npm run dev-server"
