@@ -12,19 +12,23 @@ export class RedisClient {
         this.print = redis.print;
         let connected = false;
 
-        this.client = redis.createClient(redisConfig);
-
-        this.client.connect().catch(console.error);
+        console.log("REDIS CONFIG", redisConfig);
+        this.client = redis.createClient({
+            ...redisConfig,
+            host: process.env.REDIS_HOST,
+            port: process.env.REDIS_PORT,
+            enable_offline_queue: false,
+        });
 
         this.client.on('connect', function () {
             console.log('Connected to Redis');
             connected = true;
         });
         this.client.on('error', function (err) {
-            console.log('Redis error: ' + err);
+            console.error('Redis error:', err);
         });
         this.client.on('reconnecting', function (err) {
-            console.log('Redis try reconnecting.. ' + err);
+            console.log('Redis try reconnecting..', err);
         });
 
         this.client.on('end', function () {
