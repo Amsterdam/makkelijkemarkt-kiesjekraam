@@ -81,7 +81,7 @@ const createHttpFunction = (
     httpMethod: HttpMethod,
 ): ((url: string, token: string, data?, additionalHeaders?) => Promise<AxiosResponse>) => {
     return (url: string, token: string, data?: JSON, additionalHeaders?): Promise<AxiosResponse> => {
-        console.log('MM-API REQUEST', httpMethod, url);
+        console.log('MM-API REQUEST', httpMethod, url, data);
 
         const headers = {
             ...additionalHeaders,
@@ -133,6 +133,7 @@ const apiBase = (url: string, httpMethod: HttpMethod = 'get', request?, throwErr
                 response.config.url,
                 currentTime - startTime,
                 'ms',
+                response.data
             );
             return response;
         },
