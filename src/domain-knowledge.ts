@@ -195,8 +195,10 @@ export const getMarktDays = (startDate, endDate, daysOfWeek) => {
 export const getUpcomingMarktDays = (startDate, endDate, daysOfWeek) =>
     getMarktDays(addDays(startDate, 1), endDate, daysOfWeek);
 
-export const formatOndernemerName = ondernemer =>
-    `${ondernemer.tussenvoegsels} ${ondernemer.achternaam} ${ondernemer.voorletters}`.replace(/\s+/g, ' ');
+export const formatOndernemerName = ondernemer => {
+    const nameList = [ondernemer.tussenvoegsels, ondernemer.achternaam, ondernemer.voorletters]
+    return nameList.filter(v => v).join(' ').trim();
+}
 
 export const ondernemersToLocatieKeyValue = array =>
     array.reduce((obj, item) => {
