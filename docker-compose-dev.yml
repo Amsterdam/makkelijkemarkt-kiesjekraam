@@ -22,16 +22,11 @@ services:
       IAM_ADMIN_USER: admin
       IAM_ADMIN_PASS: insecure
     ports:
-<<<<<<< Updated upstream
-      - "8093:3000"
-    command: "npm run dev-server"
-=======
       - "8093:8080"
     command: "npm run dev-server"
     depends_on:
       kjk_redis:
         condition: service_healthy
->>>>>>> Stashed changes
 
   kjk_redis:
     image: redis:6.2
@@ -43,15 +38,12 @@ services:
       - 6379
     networks:
       - markten
-<<<<<<< Updated upstream
-=======
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
 
->>>>>>> Stashed changes
   kjk_keycloak:
     image: quay.io/keycloak/keycloak:23.0.7
     container_name: kjk_keycloak
