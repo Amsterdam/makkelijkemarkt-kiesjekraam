@@ -22,7 +22,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strictNullChecks": false,
-    "target": "es6"
+    "target": "es6",
+    "types": ["node"]
   },
   "exclude": ["node_modules", "src/public/dist/*"],
   "include": ["src/**/*"]
