@@ -1,0 +1,91 @@
+services:
+  kiesjekraam:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    container_name: kiesjekraam
+    networks:
+      - markten
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      REDIS_HOST: kjk_redis
+      REDIS_PORT: 6379
+      MM_API_NGINX_MM_API_SERVICE_HOST: mm-api-nginx
+      MM_API_NGINX_MM_API_SERVICE_PORT: 8080
+      MM_RAH_MM_RAH_SERVICE_HOST: daalder
+      MM_RAH_MM_RAH_SERVICE_PORT: 8000
+
+      # IAM_URL: http://localhost:8080/auth
+      # IAM_CLIENT_ID: kiesjekraam
+      # IAM_CLIENT_SECRET: insecure
+      # IAM_REALM: kiesjekraam
+      # IAM_ADMIN_USER: admin
+      # IAM_ADMIN_PASS: insecure
+    ports:
+      - "8093:8080"
+    command: "npm run dev-server"
+    depends_on:
+      kjk_redis:
+        condition: service_healthy
+
+  kjk_redis:
+    image: redis:6.2
+    container_name: kjk_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    expose:
+      - 6379
+    networks:
+      - markten
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kjk_keycloak:
+    image: quay.io/keycloak/keycloak:23.0.7
+    container_name: kjk_keycloak
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloakdb:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: insecure
+
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+
+      KC_LOG_LEVEL: info
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: insecure
+    command: start-dev
+    depends_on:
+      - keycloakdb
+    ports:
+      - 8080:8080
+
+  keycloakdb:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: insecure
+
+volumes:
+  postgres_data:
+
+
+networks:
+  markten:
+    external: true
