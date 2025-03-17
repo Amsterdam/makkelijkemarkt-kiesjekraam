@@ -122,8 +122,6 @@
     "src/**/*.{js,json,jsx}": [
       "eslint"
     ],
-    "src/**/*.{ts,tsx}": [
-
-    ]
+    "src/**/*.{ts,tsx}": []
   }
 }
