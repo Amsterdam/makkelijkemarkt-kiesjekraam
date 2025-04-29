@@ -39,6 +39,7 @@ import mmApiDispatch from './routes/mmApiDispatch';
 import morgan from 'morgan';
 import path from 'path';
 import { requireEnv } from './util';
+import { updateOndernemerKjkEmail } from './daalder-api';
 
 const csrfProtection = csrf({ cookie: true });
 
@@ -49,6 +50,16 @@ const HTTP_DEFAULT_PORT = 8080;
 const getErkenningsNummer = (req: GrantedRequest) => {
     const tokenContent: TokenContent = req.kauth.grant.access_token.content;
     return isMarktondernemer(req) && tokenContent.preferred_username.replace(/\./g, '');
+};
+
+const updateOndernemerEmailMiddleware = (req, res, next) => {
+    if (isMarktondernemer(req)) {
+        const erkenningsNummer = getErkenningsNummer(req);
+        const keycloakUser = getKeycloakUser(req);
+        const email = keycloakUser.email;
+        updateOndernemerKjkEmail(email, erkenningsNummer);
+    }
+    next();
 };
 
 const app = express();
@@ -103,7 +114,7 @@ app.use(keycloak.middleware({ logout: '/logout' }));
 
 // Put the login route before the expired redirect to prevent an
 // endless loop.
-app.get('/login', keycloak.protect(), (req: GrantedRequest, res: Response) => {
+app.get('/login', [keycloak.protect(), updateOndernemerEmailMiddleware], (req: GrantedRequest, res: Response) => {
     if (req.query.next) {
         // To prevent open redirects, filter out absolute URLS
         res.redirect(!isAbsoluteUrl(req.query.next) ? req.query.next : '/');
