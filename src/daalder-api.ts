@@ -25,26 +25,19 @@ const api = axios.create({
 api.interceptors.response.use(
     (response: AxiosResponse) => response.data,
     error => {
-                 if (error.response) {
-                     console.error('Daalder API error response:', error.response.data);
-                 } else {
-                     console.error('API request error message', error.message);
-                     console.log('Error:', error);
-                 }
-                 // throw new Error('Daalder API Request failed');
-             },
+        if (error.response) {
+            console.error('Daalder API error response:', error.response.data);
+        } else {
+            console.error('API request error message', error.message);
+            console.log('Error:', error);
+        }
+        // throw new Error('Daalder API Request failed');
+    },
 );
 
 export const getAllocation = async (data: Object): Promise<Object> =>
     await api.post('/allocation/allocate/', { data: { data } });
 
-export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<Object> => {
-    console.log('Check API availability');
-    const healthy = await api.get('/kiesjekraam/update-kjk-email/');
-    console.log('API healthy:', healthy);
-    console.log('Updating email for ondernemer', email, erkenningsNummer);
-    const response = await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
-    console.log('Response from updateOndernemerKjkEmail:', response);
-    return healthy;
-};
+export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<Object> =>
+    await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
 
