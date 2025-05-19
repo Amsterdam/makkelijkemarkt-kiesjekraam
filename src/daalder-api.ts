@@ -17,6 +17,7 @@ const api = axios.create({
     headers: {
         Authorization: daalderConfig.authToken,
         'Content-Type': 'application/json',
+        'kjk-api-key': process.env.DAALDER_API_KEY,
     },
     timeout: 10000, // 10 seconds timeout
 });
@@ -24,21 +25,26 @@ const api = axios.create({
 api.interceptors.response.use(
     (response: AxiosResponse) => response.data,
     error => {
-        if (error.response) {
-            console.error('Daalder API error response:', error.response.data);
-        } else {
-            console.error('API request error message', error.message);
-        }
-        throw new Error('Daalder API Requst failed');
-    },
+                 if (error.response) {
+                     console.error('Daalder API error response:', error.response.data);
+                 } else {
+                     console.error('API request error message', error.message);
+                     console.log('Error:', error);
+                 }
+                 // throw new Error('Daalder API Request failed');
+             },
 );
 
 export const getAllocation = async (data: Object): Promise<Object> =>
     await api.post('/allocation/allocate/', { data: { data } });
 
 export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<Object> => {
+    console.log('Check API availability');
+    const healthy = await api.get('/kiesjekraam/update-kjk-email/');
+    console.log('API healthy:', healthy);
     console.log('Updating email for ondernemer', email, erkenningsNummer);
     const response = await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
     console.log('Response from updateOndernemerKjkEmail:', response);
+    return healthy;
 };
 

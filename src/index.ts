@@ -59,7 +59,6 @@ const updateOndernemerEmailMiddleware = (req, res, next) => {
         const email = keycloakUser.email;
         updateOndernemerKjkEmail(email, erkenningsNummer);
     }
-    next();
 };
 
 const app = express();
@@ -114,7 +113,7 @@ app.use(keycloak.middleware({ logout: '/logout' }));
 
 // Put the login route before the expired redirect to prevent an
 // endless loop.
-app.get('/login', [keycloak.protect(), updateOndernemerEmailMiddleware], (req: GrantedRequest, res: Response) => {
+app.get('/login', keycloak.protect(), updateOndernemerEmailMiddleware, (req: GrantedRequest, res: Response) => {
     if (req.query.next) {
         // To prevent open redirects, filter out absolute URLS
         res.redirect(!isAbsoluteUrl(req.query.next) ? req.query.next : '/');
@@ -123,7 +122,7 @@ app.get('/login', [keycloak.protect(), updateOndernemerEmailMiddleware], (req: G
     } else if (isMarktmeester(req)) {
         res.redirect('/markt/');
     } else if (isKramenzetter(req)) {
-        res.redirect('/kramenzetter')
+        res.redirect('/kramenzetter');
     } else {
         res.redirect('/');
     }
