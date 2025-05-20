@@ -5,44 +5,39 @@ requireEnv('DAALDER_API_USER_TOKEN');
 requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
 requireEnv('MM_RAH_MM_RAH_SERVICE_PORT');
 
+// MM_RAH_MM_RAH_SERVICE_HOST and PORT defined by helm/kubernetes. When service name changes, this var should be changed.
 export const daalderConfig = {
-  // MM_RAH_MM_RAH_SERVICE_HOST and PORT defined by helm/kubernetes. When service name changes, this var should be changed.
-  baseUrl: `http://${process.env.MM_RAH_MM_RAH_SERVICE_HOST}:${process.env.MM_RAH_MM_RAH_SERVICE_PORT}`,
-  authToken: `Token ${process.env.DAALDER_API_USER_TOKEN}`
-}
+    baseUrl: `http://${process.env.MM_RAH_MM_RAH_SERVICE_HOST}:${process.env.MM_RAH_MM_RAH_SERVICE_PORT}`,
+    authToken: `Token ${process.env.DAALDER_API_USER_TOKEN}`,
+};
 
-const getApi = (): AxiosInstance => {
-  return axios.create({
+// New Daalder API client
+const api = axios.create({
     baseURL: daalderConfig.baseUrl,
-    headers: {},
-  });
-}
+    headers: {
+        Authorization: daalderConfig.authToken,
+        'Content-Type': 'application/json',
+        'kjk-api-key': process.env.DAALDER_API_KEY,
+    },
+    timeout: 10000, // 10 seconds timeout
+});
 
-export const getAllocation = async (data: Object): Promise<Object> => {
-  const api = getApi();
+api.interceptors.response.use(
+    (response: AxiosResponse) => response.data,
+    error => {
+        if (error.response) {
+            console.error('Daalder API error response:', error.response.data);
+        } else {
+            console.error('API request error message', error.message);
+            console.log('Error:', error);
+        }
+        // throw new Error('Daalder API Request failed');
+    },
+);
 
-  try {
-    const response = await axios({
-      method: "post",
-      headers: { "Authorization": daalderConfig.authToken },
-      url: `${daalderConfig.baseUrl}/allocation/allocate/`,
-      data: {"data": data}
-    });
+export const getAllocation = async (data: Object): Promise<Object> =>
+    await api.post('/allocation/allocate/', { data: { data } });
 
+export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<Object> =>
+    await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
 
-    if (response.status >= 200 && response.status < 300) {
-      return response.data
-    } else {
-      return new Error("Api request failed")
-    }
-
-  } catch (error) {
-    console.log("ERROR: ", error)
-    if (error.response) {
-      console.error("API error response:", error.response.data);
-    } else {
-      console.error("Api request error message", error.message)
-    }
-    return error;
-  }
-}
