@@ -52,13 +52,14 @@ const getErkenningsNummer = (req: GrantedRequest) => {
     return isMarktondernemer(req) && tokenContent.preferred_username.replace(/\./g, '');
 };
 
-const updateOndernemerEmailMiddleware = (req, res, next) => {
+const updateOndernemerEmailMiddleware = async (req, res, next) => {
     if (isMarktondernemer(req)) {
         const erkenningsNummer = getErkenningsNummer(req);
         const keycloakUser = getKeycloakUser(req);
         const email = keycloakUser.email;
         updateOndernemerKjkEmail(email, erkenningsNummer);
     }
+    next();
 };
 
 const app = express();
