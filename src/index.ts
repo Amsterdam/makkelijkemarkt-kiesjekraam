@@ -59,6 +59,7 @@ const updateOndernemerEmailMiddleware = (req, res, next) => {
         const email = keycloakUser.email;
         updateOndernemerKjkEmail(email, erkenningsNummer);
     }
+    next();
 };
 
 const app = express();
