@@ -1,0 +1,26 @@
+services:
+  kiesjekraam:
+    extends:
+      file: docker-compose-dev.yml
+      service: kiesjekraam
+
+  mm-api-nginx:
+    extends:
+      file: ../makkelijkemarkt-api/docker-compose-dev.yml
+      service: mm-api-nginx
+  
+  mm-api:
+    extends:
+      file: ../makkelijkemarkt-api/docker-compose-dev.yml
+      service: mm-api
+
+  redis:
+    extends:
+      file: ../../dev-env/docker-compose-services.yml
+      service: redis
+  
+  keycloak:
+    extends:
+      file: ../../dev-env/docker-compose-services.yml
+      service: keycloak 
+  
