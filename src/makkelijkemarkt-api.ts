@@ -697,7 +697,7 @@ const cacheJSONResponse = async (key: string, response: unknown): Promise<void> 
     await redisClient.set(prefixCacheKey(key), JSON.stringify(response), 'EX', CACHE_TTL);
 };
 
-const getGenericBranches = async (): Promise<IGenericBranche[]> => {
+export const getGenericBranches = async (): Promise<IGenericBranche[]> => {
     const url = '/branche/all';
     const cachedResponse = await getCachedJSONResponse(CACHE_KEY_GENERIC_BRANCHES);
     if (cachedResponse) {
@@ -709,7 +709,7 @@ const getGenericBranches = async (): Promise<IGenericBranche[]> => {
     return genericBranches as unknown as IGenericBranche[];
 };
 
-const getLatestMarktConfig = async (marktId: string): Promise<IMarktConfiguratie> => {
+export const getLatestMarktConfig = async (marktId: string): Promise<IMarktConfiguratie> => {
     const url = `/markt/${marktId}/marktconfiguratie/latest`;
     const cacheKey = getCacheKeyForMarktConfiguratie(marktId);
     const cachedResponse = await getCachedJSONResponse(cacheKey);
@@ -734,7 +734,7 @@ const transformToLegacyBranches = (genericBranches: IGenericBranche[]): IBranche
     return legacyBranches;
 };
 
-const transformToLegacyMarktConfig = (genericBranches: IGenericBranche[], configJSON: IMarktConfiguratie) => {
+export const transformToLegacyMarktConfig = (genericBranches: IGenericBranche[], configJSON: IMarktConfiguratie) => {
     // this function is based on MarktConfig.store and MarktConfig.get methods
     const legacyBranches = transformToLegacyBranches(genericBranches);
     const { marktOpstelling: markt, ...rest } = configJSON;

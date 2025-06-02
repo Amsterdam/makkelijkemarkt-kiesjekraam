@@ -60,7 +60,7 @@ export const convertVoorkeur = (obj: IMarktondernemerVoorkeurRow): IMarktonderne
     verkoopinrichting: obj.inrichting ? [obj.inrichting] : [],
 });
 
-const enrichOndernemersWithVoorkeuren = (ondernemers: IMarktondernemer[], voorkeuren: IMarktondernemerVoorkeur[]) => {
+export const enrichOndernemersWithVoorkeuren = (ondernemers: IMarktondernemer[], voorkeuren: IMarktondernemerVoorkeur[]) => {
     return ondernemers.map(ondernemer => {
         let voorkeurVoorOndernemer = voorkeuren.find(
             voorkeur => voorkeur.erkenningsNummer === ondernemer.erkenningsNummer,
