@@ -18,7 +18,10 @@ import {
     indelingWaitingPage,
 } from './routes/market-allocation';
 import express, { NextFunction, Request, RequestHandler, Response } from 'express';
-import { getMarkt, getMarkten } from './makkelijkemarkt-api';
+import { getGenericBranches, getLatestMarktConfig, getMarkt, getMarkten,
+    getOndernemersByMarkt, getVoorkeurenByMarkt,
+    transformToLegacyMarktConfig, getAanmeldingenByMarktAndDate, getALijst } from './makkelijkemarkt-api';
+import { enrichOndernemersWithVoorkeuren } from './pakjekraam-api';
 import { GrantedRequest, TokenContent } from 'keycloak-connect';
 import { getQueryErrors, internalServerErrorPage, isAbsoluteUrl } from './express-util';
 import { keycloak, Roles, sessionMiddleware, hasEitherRole } from './authentication';
@@ -493,6 +496,56 @@ app.get(
     (req: GrantedRequest, res: Response) => {
         getAllUsersForExport().then((csv) => {
             res.attachment('users_export.csv').send(csv);
+        })
+    },
+)
+
+app.get(
+    '/custom-data/:marktId/:marktDate/',
+    keycloak.protect(Roles.MARKTBEWERKER),
+    async (req: GrantedRequest, res: Response) => {
+        const marktId: string = req.params.marktId;
+        const marktDate: string = req.params.marktDate;
+
+        // function getMarktBasics from src/makkelijkemarkt-api.ts
+        const markt = await getMarkt(marktId);
+        const { kiesJeKraamGeblokkeerdePlaatsen: geblokkeerdePlaatsen } = markt;
+        const genericBranches = await getGenericBranches();
+        const marktConfig = await getLatestMarktConfig(marktId);
+        const legacyMarktConfig = transformToLegacyMarktConfig(genericBranches, marktConfig);
+        if (geblokkeerdePlaatsen) {
+            const blocked = geblokkeerdePlaatsen.replace(/\s+/g, '').split(',');
+            legacyMarktConfig.marktplaatsen = legacyMarktConfig.marktplaatsen.map((plaats) => {
+                blocked.includes(plaats.plaatsId) ? (plaats.inactive = true) : null;
+                return plaats;
+            });
+        }
+
+        // function getMarktDetails from src/pakjekraam-api.ts
+        const ondernemers = await getOndernemersByMarkt(marktId)
+        const voorkeuren = await getVoorkeurenByMarkt(marktId);
+        const enrichedOndernemers = enrichOndernemersWithVoorkeuren(ondernemers, voorkeuren)
+        const aanwezigheid = await getAanmeldingenByMarktAndDate(marktId, marktDate)
+
+        // function getCalculationInput from src/pakjekraam-api.ts
+        const aLijstRaw = await getALijst(marktId, marktDate);
+        const aLijst = aLijstRaw.map(({ erkenningsnummer }) =>
+            enrichedOndernemers.find(({ erkenningsNummer }) => erkenningsnummer === erkenningsNummer),
+        );
+
+        await res.send({
+            marktId,
+            markt,
+            geblokkeerdePlaatsen,
+            genericBranches,
+            marktConfig,
+            legacyMarktConfig,
+            ondernemers,
+            voorkeuren,
+            enrichedOndernemers,
+            aanwezigheid,
+            aLijstRaw,
+            aLijst,
         })
     },
 )
