@@ -40,3 +40,6 @@ export const getAllocation = async (data: Object): Promise<Object> => await api.
 export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<Object> =>
     await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
 
+export const getGenericBranches = async (): Promise<Object> => await api.get('/kiesjekraam/branches/');
+
+
