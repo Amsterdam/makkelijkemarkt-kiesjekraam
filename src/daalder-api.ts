@@ -1,3 +1,4 @@
+import { IGenericBranche } from 'model/markt.model';
 import { requireEnv } from './util';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
@@ -35,11 +36,16 @@ api.interceptors.response.use(
     },
 );
 
-export const getAllocation = async (data: Object): Promise<Object> => await api.post('/allocation/allocate/', { data });
+export const getAllocation = async (data: Object): Promise<AxiosResponse> =>
+    await api.post('/allocation/allocate/', { data });
 
-export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<Object> =>
+export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<AxiosResponse> =>
     await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
 
-export const getGenericBranches = async (): Promise<Object> => await api.get('/kiesjekraam/branches/');
+export const getGenericBranches = async (): Promise<AxiosResponse> => await api.get('/kiesjekraam/branches/');
 
+export const getGenericBranch = async (brancheId: string): Promise<AxiosResponse> =>
+    await api.get(`/kiesjekraam/branches/${brancheId}/`);
 
+export const createGenericBranch = async (data: IGenericBranche): Promise<AxiosResponse> =>
+    await api.post('/kiesjekraam/branches/', data);
