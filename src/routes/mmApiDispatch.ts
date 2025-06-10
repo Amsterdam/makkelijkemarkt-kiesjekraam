@@ -117,30 +117,30 @@ router.get(
 
 // ================ Daalder API routes ================
 interface IDaalderRoute {
-    route_inbound: string;
+    routeInbound: string;
     method: HttpMethod;
-    api_call: (req: GrantedRequest, res: Response) => Promise<AxiosResponse>;
+    apiCall: (req: GrantedRequest, res: Response) => Promise<AxiosResponse>;
 }
 
 const daalderRoutes: IDaalderRoute[] = [
     {
-        route_inbound: 'branche/all',
+        routeInbound: 'branche/all',
         method: 'get',
-        api_call: (req, res) => getGenericBranches(),
+        apiCall: (req, res) => getGenericBranches(),
     },
     {
-        route_inbound: 'branche/:brancheId',
-        method: 'get',
-        api_call: (req, res) => getGenericBranch(req.params.brancheId),
+        routeInbound: 'branche',
+        method: 'post',
+        apiCall: (req, res) => createGenericBranche(req.body),
     }
 ]
 
 
 const createDaalderRoute = (route: IDaalderRoute) => {
-    router[route.method](route.route_inbound, async (req: GrantedRequest, res: Response) => {
+    router[route.method](route.routeInbound, async (req: GrantedRequest, res: Response) => {
         try {
-            const daalder_api_response = await route.api_call(req, res)
-            res.status(daalder_api_response.status).json(daalder_api_response.data);
+            const daalderApiResponse = await route.apiCall(req, res)
+            res.status(daalderApiResponse.status).json(daalderApiResponse.data);
         } catch (error) {
             res.status(error.response?.status || 500).json({
                 messgage: error.message,
