@@ -43,7 +43,7 @@ export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: 
     await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
 
 export const getGenericBranches = async (): Promise<AxiosResponse<IGenericBranche[]>> =>
-    await api.get('/kiesjekraam/branches/');
+    await api.get('/kiesjekraam/branche/');
 
 export const createGenericBranche = async (data: IGenericBranche): Promise<AxiosResponse<IGenericBranche>> =>
-    await api.post('/kiesjekraam/branches/', data);
+    await api.post('/kiesjekraam/branche/', data);
