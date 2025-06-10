@@ -10,7 +10,7 @@ import { keycloak, Roles } from '../authentication';
 import { GrantedRequest } from 'keycloak-connect';
 import { getKeycloakUser } from '../keycloak-api';
 
-import { getGenericBranch, getGenericBranches } from 'daalder-api';
+import { createGenericBranche, getGenericBranches } from 'daalder-api';
 import { Axios, AxiosResponse } from 'axios';
 
 const router = express.Router();
@@ -23,11 +23,11 @@ const koopmanRoutes = [
     '/rsvp_pattern',
 ];
 const subroutes = [
-    '/branche',
-    '/branche/:brancheId',
-    '/branche/all',
-    '/obstakel/all',
-    '/plaatseigenschap/all',
+    '/branche',                 // POST
+    '/branche/:brancheId',      // PUT, DELETE
+    '/branche/all',             // GET
+    '/obstakel/all',            // GET
+    '/plaatseigenschap/all',    // GET
     '/markt/:marktId',
     '/markt/:marktId/marktconfiguratie/latest',
     '/markt/:marktId/marktconfiguratie',

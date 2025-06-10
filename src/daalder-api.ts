@@ -42,10 +42,8 @@ export const getAllocation = async (data: Object): Promise<AxiosResponse> =>
 export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<AxiosResponse> =>
     await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
 
-export const getGenericBranches = async (): Promise<AxiosResponse> => await api.get('/kiesjekraam/branches/');
+export const getGenericBranches = async (): Promise<AxiosResponse<IGenericBranche[]>> =>
+    await api.get('/kiesjekraam/branches/');
 
-export const getGenericBranch = async (brancheId: string): Promise<AxiosResponse> =>
-    await api.get(`/kiesjekraam/branches/${brancheId}/`);
-
-export const createGenericBranch = async (data: IGenericBranche): Promise<AxiosResponse> =>
+export const createGenericBranche = async (data: IGenericBranche): Promise<AxiosResponse<IGenericBranche>> =>
     await api.post('/kiesjekraam/branches/', data);
