@@ -23,11 +23,11 @@ const koopmanRoutes = [
     '/rsvp_pattern',
 ];
 const subroutes = [
-    '/branche',                 // POST
-    '/branche/:brancheId',      // PUT, DELETE
-    '/branche/all',             // GET
-    '/obstakel/all',            // GET
-    '/plaatseigenschap/all',    // GET
+    '/branche', // POST
+    '/branche/:brancheId', // PUT, DELETE
+    '/branche/all', // GET
+    '/obstakel/all', // GET
+    '/plaatseigenschap/all', // GET
     '/markt/:marktId',
     '/markt/:marktId/marktconfiguratie/latest',
     '/markt/:marktId/marktconfiguratie',
@@ -38,8 +38,6 @@ const subroutes = [
     '/allocation_v2/:id',
     ...koopmanRoutes,
 ];
-
-
 
 const brancheRoutesWithCacheInvalidation = ['/branche', '/branche/:brancheId'];
 const MarktconfiguratieRoutesWithCacheInvalidation = ['/markt/:marktId/marktconfiguratie'];
@@ -68,12 +66,13 @@ const _invalidateCache = (subroute: string, req: GrantedRequest): void => {
 
 subroutes.forEach((subroute: string) => {
     const protectFunction = keycloak.protect((token: any, req: GrantedRequest) => {
-
         // Marktbewerkers are allowed to edit preferences of koopmannen,
         // marktmeesters have read access in almost all cases
-        if (token.hasRole(Roles.MARKTBEWERKER) ||
-            (token.hasRole(Roles.MARKTMEESTER) && !['POST','PUT'].includes(req.method))) {
-            return true
+        if (
+            token.hasRole(Roles.MARKTBEWERKER) ||
+            (token.hasRole(Roles.MARKTMEESTER) && !['POST', 'PUT'].includes(req.method))
+        ) {
+            return true;
         }
 
         if (koopmanRoutes.includes(subroute)) {
@@ -87,7 +86,7 @@ subroutes.forEach((subroute: string) => {
     });
     router.all(subroute, applyProtectionIfNeeded(protectFunction), async (req: GrantedRequest, res: Response) => {
         try {
-            const headers = { user: isProtectionDisabled ? 'security_disabled' : getKeycloakUser(req)?.email }
+            const headers = { user: isProtectionDisabled ? 'security_disabled' : getKeycloakUser(req)?.email };
             const result = await callApiGeneric(req.url, req.method.toLowerCase() as HttpMethod, req.body, headers);
             _invalidateCache(subroute, req);
             return res.send(result);
@@ -114,7 +113,6 @@ router.get(
     },
 );
 
-
 // ================ Daalder API routes ================
 interface IDaalderRoute {
     routeInbound: string;
@@ -132,14 +130,13 @@ const daalderRoutes: IDaalderRoute[] = [
         routeInbound: 'branche',
         method: 'post',
         apiCall: (req, res) => createGenericBranche(req.body),
-    }
-]
-
+    },
+];
 
 const createDaalderRoute = (route: IDaalderRoute) => {
     router[route.method](route.routeInbound, async (req: GrantedRequest, res: Response) => {
         try {
-            const daalderApiResponse = await route.apiCall(req, res)
+            const daalderApiResponse = await route.apiCall(req, res);
             res.status(daalderApiResponse.status).json(daalderApiResponse.data);
         } catch (error) {
             res.status(error.response?.status || 500).json({
@@ -147,13 +144,9 @@ const createDaalderRoute = (route: IDaalderRoute) => {
                 error: error.response?.data || 'An error occurred while processing the request.',
             });
         }
-    })
-}
+    });
+};
 
 daalderRoutes.forEach(createDaalderRoute);
-
-
-
-
 
 export default router;
