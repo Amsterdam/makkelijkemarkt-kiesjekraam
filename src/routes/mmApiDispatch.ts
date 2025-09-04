@@ -10,7 +10,7 @@ import { keycloak, Roles } from '../authentication';
 import { GrantedRequest } from 'keycloak-connect';
 import { getKeycloakUser } from '../keycloak-api';
 
-import { createGenericBranche, getGenericBranches } from 'daalder-api';
+import { createGenericBranche, getGenericBranches } from '../daalder-api';
 import { Axios, AxiosResponse } from 'axios';
 
 const router = express.Router();

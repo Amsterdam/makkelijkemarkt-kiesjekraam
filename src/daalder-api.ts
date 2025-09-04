@@ -9,16 +9,15 @@ requireEnv('MM_RAH_MM_RAH_SERVICE_PORT');
 // MM_RAH_MM_RAH_SERVICE_HOST and PORT defined by helm/kubernetes. When service name changes, this var should be changed.
 export const daalderConfig = {
     baseUrl: `http://${process.env.MM_RAH_MM_RAH_SERVICE_HOST}:${process.env.MM_RAH_MM_RAH_SERVICE_PORT}`,
-    authToken: `Token ${process.env.DAALDER_API_USER_TOKEN}`,
+    api_key: process.env.DAALDER_API_KEY as string,
 };
 
 // New Daalder API client
 const api = axios.create({
     baseURL: daalderConfig.baseUrl,
     headers: {
-        Authorization: daalderConfig.authToken,
         'Content-Type': 'application/json',
-        'kjk-api-key': process.env.DAALDER_API_KEY,
+        'kjk-api-key': daalderConfig.api_key,
     },
     timeout: 10000, // 10 seconds timeout
 });
