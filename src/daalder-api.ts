@@ -2,14 +2,14 @@ import { IGenericBranche } from 'model/markt.model';
 import { requireEnv } from './util';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-requireEnv('DAALDER_API_USER_TOKEN');
+// requireEnv('DAALDER_API_USER_TOKEN');
 requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
 requireEnv('MM_RAH_MM_RAH_SERVICE_PORT');
 
 // MM_RAH_MM_RAH_SERVICE_HOST and PORT defined by helm/kubernetes. When service name changes, this var should be changed.
 export const daalderConfig = {
     baseUrl: `http://${process.env.MM_RAH_MM_RAH_SERVICE_HOST}:${process.env.MM_RAH_MM_RAH_SERVICE_PORT}`,
-    api_key: process.env.DAALDER_API_KEY as string,
+    api_key: process.env.DAALDER_KJK_API_KEY as string,
 };
 
 // New Daalder API client
