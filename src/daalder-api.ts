@@ -1,5 +1,7 @@
+import { IMarktondernemerVoorkeur, IPlaatsvoorkeur, IRSVP, IRsvpPattern } from 'model/markt.model';
 import { requireEnv } from './util';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { orderBy } from 'lodash'
 
 requireEnv('DAALDER_API_USER_TOKEN');
 requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
@@ -40,3 +42,617 @@ export const getAllocation = async (data: Object): Promise<Object> => await api.
 export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<Object> =>
     await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
 
+const plaatsvoorkeurenData = [
+{
+    marktId: '20',
+    erkenningsNummer: '2019010303',
+    plaatsId: '133',
+    priority: 0
+  },
+  {
+    marktId: '20',
+    erkenningsNummer: '2019010303',
+    plaatsId: '135',
+    priority: 1
+  },
+  {
+    marktId: '20',
+    erkenningsNummer: '2019010303',
+    plaatsId: '139',
+    priority: 2
+  }
+]
+
+const indelingVoorkeurData = {
+  minimum: 1,
+  maximum: 2,
+  kraaminrichting: undefined,
+  anywhere: false,
+  brancheId: undefined,
+  parentBrancheId: undefined,
+  inrichting: undefined
+};
+
+// this is imported in src/routes/dashboard.ts but then not actually used in template that is rendered
+export const getPlaatsvoorkeurenOndernemer = async (ondernemerId: string): Promise<IPlaatsvoorkeur[]> => {
+    console.log('getPlaatsvoorkeurenOndernemer', ondernemerId);
+    // return await api.get(`/kiesjekraam/voorkeur/plaats/ondernemer/${ondernemerId}/`);
+    return plaatsvoorkeurenData.filter(pref => pref.erkenningsNummer === ondernemerId);
+};
+
+export const getPlaatsvoorkeurenByMarktEnOndernemer = async (marktId: string, ondernemerId: string): Promise<IPlaatsvoorkeur[]> => {
+    console.log('getPlaatsvoorkeurenByMarktEnOndernemer', marktId, ondernemerId);
+    // return await api.get(`/kiesjekraam/voorkeur/plaats/ondernemer/${ondernemerId}/markt/${marktId}/`);
+    return plaatsvoorkeurenData.filter(
+        pref => pref.priority !== -1 && pref.marktId === marktId && pref.erkenningsNummer === ondernemerId
+    );
+}
+
+export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], user: object): Promise<any> => {
+    console.log('updatePlaatsvoorkeur', plaatsvoorkeuren)
+    // The sorting widget works pretty weird:
+    // refer to convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren to see how it was done for MM.
+    // For MM, first they were ordered by ascending priority and then reversed.
+
+    // NB: marktId & erkenningsNummer are sent in the body of each voorkeur but not used in the API url.
+    // return await api.post(`/kiesjekraam/voorkeur/plaats/`);
+
+    // TODO: user is send to keep track of who made the changes.
+    console.log('user', user);
+
+    const updatedPlaatsen = plaatsvoorkeuren.map(pref => pref.plaatsId);
+    const existingPlaatsen = plaatsvoorkeurenData.map(pref => pref.plaatsId);
+    const toBeAdded = updatedPlaatsen.filter(plaats => !existingPlaatsen.includes(plaats));
+    const toBeRemoved = existingPlaatsen.filter(plaats => !updatedPlaatsen.includes(plaats));
+
+    console.log('toBeAdded', toBeAdded)
+    console.log('toBeRemoved', toBeRemoved)
+
+    plaatsvoorkeurenData.length = 0; // clear array
+
+    orderBy(plaatsvoorkeuren, ['priority'], ['desc']).forEach((updated, index) => {
+        updated.priority = index;
+        plaatsvoorkeurenData.push(updated)
+    });
+
+    return; // MM returns data that is not used, instead the page does a new GET for all data
+}
+
+export const getIndelingVoorkeur = async (ondernemerId: string, marktId: string) => {
+    return indelingVoorkeurData
+}
+
+export const updateMarktVoorkeur = async (
+    marktvoorkeur: IMarktondernemerVoorkeur,
+    user: object, // actually an email string like team.salmagundi.ois@amsterdam.nl
+): Promise<any> => {
+    console.log('updateMarktVoorkeur', marktvoorkeur);
+
+    // TODO: user is send to keep track of who made the changes.
+    console.log('user', user);
+
+    indelingVoorkeurData.minimum = Number(marktvoorkeur.minimum) || 0;
+    indelingVoorkeurData.maximum = Number(marktvoorkeur.maximum) || 0;
+    indelingVoorkeurData.anywhere = Boolean(marktvoorkeur.anywhere);
+    return;
+    // MM returns data that is not used, instead the page does a new GET for all data
+    // This GET is triggered by the redirect after posting the form
+}
+
+const ondernemer = {
+    id: 10385,
+    erkenningsnummer: '2019010303', // used frequently
+    voorletters: 'T.', // used frequently
+    tussenvoegsels: 'van', // used frequently
+    achternaam: 'Urk', // used frequently
+    // email: '',
+    // telefoon: '0612345678',
+    // status: 'Actief',
+    fotoUrl: 'https://acc.daalder.makkelijkemarkt.amsterdam.nl/image/open/ondernemer/foto/91b60cc8-8864-4318-a8bd-68774d9e2b5c.jpg',
+    // 'https://api.makkelijkemarkt.mrkt-a.azure.amsterdam.nl/media/cache/resolve/koopman_rect_small/a76e6b75520aab132a6f3cdde2f0ac18-2019010303.jpg',
+    fotoMediumUrl: 'https://acc.daalder.makkelijkemarkt.amsterdam.nl/image/open/ondernemer/foto/91b60cc8-8864-4318-a8bd-68774d9e2b5c.jpg',
+    // 'https://api.makkelijkemarkt.mrkt-a.azure.amsterdam.nl/media/cache/resolve/koopman_rect_medium/a76e6b75520aab132a6f3cdde2f0ac18-2019010303.jpg',
+    // pasUid: '0435986A041391',
+    // perfectViewNummer: null,
+    // handhavingsVerzoek: null,
+    // weging: 0,
+    // vervangers: [], // this key was not present in the testuser 2019010303. Probably not needed, but in handleAttendanceUpdate the vervangers are counted.
+    sollicitaties: [
+        {
+            id: 86851,
+            sollicitatieNummer: 1234,
+            status: 'soll', // of 'vpl'
+            vastePlaatsen: [], // used sometimes (array of numbers)
+            // aantal3MeterKramen: 0,
+            // aantal4MeterKramen: 0,
+            // aantalExtraMeters: 0,
+            // aantalElektra: 0,
+            // aantalAfvaleiland: 0,
+            // grootPerMeter: null,
+            // kleinPerMeter: null,
+            // grootReiniging: null,
+            // kleinReiniging: null,
+            // afvalEilandAgf: null,
+            // krachtstroomPerStuk: 0,
+            // krachtstroom: false,
+            doorgehaald: false, // used sometimes
+            // doorgehaaldReden: '',
+            // koppelveld: '4045_5247',
+            markt: {id: 20, naam: 'Plein 41-44', afkorting: '4144'}, // id used frequently, naam used only sometimes, afkorting used by typing AanwezigheidsPage
+        },
+    ],
+    vervangers: [], // used by aanwezigheidspage to count vervangers
+};
+
+export const getOndernemer = async (erkenningsNummer: string): Promise<any> => {
+    console.log('getOndernemer', erkenningsNummer);
+    return ondernemer;
+}
+
+// markten: id, naam, kiesJeKraamFase, marktDagen
+
+const markt_4045 = {
+    id: 20, // dit moet worden afgeleid uit een mapping van MM markt.id naar Daalder markt.id
+    afkorting: '4045',
+    naam: "Plein '42 - '43",
+    //   soort: 'dag', <== wordt niet gebruikt
+    //   geoArea: null, <== wordt niet gebruikt
+    marktDagen: ['di', 'wo', 'do', 'vr', 'za'], // also used bij AanwezigheidsPage
+    //   standaardKraamAfmeting: 4, <== wordt niet gebruikt
+    //   extraMetersMogelijk: true, <== wordt niet gebruikt (ook niet in allocation in Daalder)
+    //   aanwezigeOpties: {
+    //     '4mKramen': true,
+    //     extraMeters: true,
+    //     krachtstroom: true,
+    //     afvalEilandAgf: true
+    //   }, <== wordt niet gebruikt
+    //   perfectViewNummer: 19, <== wordt niet gebruikt
+    aantalKramen: 150,  // wordt gebruikt in MarketListPage
+    maxAantalKramenPerOndernemer: null, // <== belangrijk (via: const maxNumKramen = markt.maxAantalKramenPerOndernemer)
+    //   aantalMeter: 600, <== wordt niet gebruikt
+    //   auditMax: 10, <== wordt niet gebruikt
+    kiesJeKraamMededelingActief: true, // bepaald of mededeling getoond wordt op ondernemer markt detail page
+    kiesJeKraamMededelingTitel: "Dit is een titel voor een mededeling",
+    kiesJeKraamMededelingTekst: "Dit is een tekst voor een mededeling",
+    kiesJeKraamActief: true,
+    //   marktBeeindigd: false, <== wordt niet gebruikt
+    kiesJeKraamFase: 'live',
+    kiesJeKraamGeblokkeerdePlaatsen: null, // null of string
+    kiesJeKraamGeblokkeerdeData: null, // null of string van comma separated dates
+    //   kiesJeKraamEmailKramenzetter: 'a.hargens@amsterdam.nl', <== kramenzetter mail vanaf Daalder?
+    //   marktDagenTekst: 'di. t/m za.',  <== wordt niet gebruikt
+    //   indelingsTijdstipTekst: '15.00 uur', <== wordt niet gebruikt
+    //   telefoonNummerContact: '020 25429 12', <== wordt alleen in mailing gebruikt
+    //   makkelijkeMarktActief: true, <== wordt niet gebruikt
+    indelingstype: 'a/b-lijst',
+    //   isABlijstIndeling: false, <== wordt niet gebruikt
+};
+
+const markten = [
+    markt_4045,
+];
+
+export const getMarkten = async (includeInactive: boolean = false): Promise<any> => {
+    // nog filteren op:
+    // markten.filter(
+    //     (markt) =>
+    //         markt.kiesJeKraamActief &&
+    //         (includeInactive ||
+    //             markt.kiesJeKraamFase === 'wenperiode' ||
+    //             markt.kiesJeKraamFase === 'live' ||
+    //             markt.kiesJeKraamFase === 'activatie'),
+    // )
+    console.log('getMarkten');
+    return markten;
+}
+
+export const getMarkt = async (marktId: string): Promise<any> => {
+    console.log('getMarkt', marktId);
+    return markt_4045;
+}
+
+const marktplaatsen = [
+    // moeten nog weggelaten worden indien plaatsId in kiesJeKraamGeblokkeerdePlaatsen
+    {
+        // bakType: 'geen',
+        plaatsId: '26',
+        // branches: [],
+        // properties: [],
+        // verkoopinrichting: [],
+    },
+    {
+        // bakType: 'geen',
+        plaatsId: '27',
+        // branches: [],
+        // properties: [],
+        // verkoopinrichting: [],
+    },
+];
+
+const branches = [
+    // worden in dit format transformed door transformToLegacyBranches
+    {
+        number: 66,
+        brancheId: '505 -  NF - Gebruikte kleding - antiek',
+        description: '505 -  NF - Gebruikte kleding - antiek',
+        color: '#B8837A',
+        verplicht: false,
+    },
+    {
+        number: 69,
+        brancheId: '506 -  NF - Gebruikte modeaccessoires',
+        description: '506 - NF - Gebruikte modeaccessoires',
+        color: '#719790',
+        verplicht: false,
+    },
+];
+
+export const getMarktBasics = async (marktId: string): Promise<any> => {
+    // also used by getMarktDetails, die weer alleen door allocatie gerelateerde pages wordt gebruikt
+    console.log('getMarktBasics', marktId);
+    const markt = await getMarkt(marktId);
+    return {
+        markt, // getMarkt
+        marktplaatsen,
+        branches, // <== algemene voorkeuren page gebruikt branches
+        // rows: [],
+        // obstakels: [],
+        // paginas: []
+    };
+}
+
+export const deletePlaatsvoorkeurenByMarktAndKoopman = async (marktId: string, erkenningsNummer: string) => {
+    console.log('deletePlaatsvoorkeurenByMarktAndKoopman', marktId, erkenningsNummer);
+    plaatsvoorkeurenData.length = 0; // clear array
+}
+
+const voorkeur = {
+  // erkenningsNummer: '2019010303', die van ondernemer object wordt gebruikt
+  // marktId: '20', staat wel hidden in de AlgemeneVoorkeurenForm
+  // marktDate: null, staat wel hidden in de AlgemeneVoorkeurenForm
+  // minimum: 2, staat wel hidden in de AlgemeneVoorkeurenForm
+  // maximum: 2, staat wel hidden in de AlgemeneVoorkeurenForm
+  // anywhere: true, staat wel hidden in de AlgemeneVoorkeurenForm
+  // krachtStroom: null,
+  // kraaminrichting: undefined,
+  inrichting: '', // of: 'eigen-materieel',
+  bakType: 'bak-licht', // of: 'bak-licht', 'bak'
+  // branches: [ '206 -  FC - Stroopwafels' ],
+  // verkoopinrichting: [],
+  brancheId: '506 -  NF - Gebruikte modeaccessoires', // '206 -  FC - Stroopwafels', // used by KJK voorkeuren
+  branche: '506 -  NF - Gebruikte modeaccessoires', // used by AanwezigheidsPage
+  markt: '20', // used by AanwezigheidsPage
+  // parentBrancheId: ''
+}
+
+const voorkeuren = [voorkeur];
+
+export const getVoorkeurenByOndernemer = async (
+    erkenningsNummer: string,
+): Promise<any> => {
+    console.log('getVoorkeurenByOndernemer', erkenningsNummer);
+    return voorkeuren
+}
+
+export const getVoorkeurByMarktEnOndernemer = async (
+    marktId: string,
+    erkenningsNummer: string,
+): Promise<any> => {
+    console.log('getVoorkeurByMarktEnOndernemer', marktId, erkenningsNummer);
+    return voorkeur;
+}
+
+// updateVoorkeur {
+//   erkenningsNummer: '2019010303',
+//   marktId: '20',
+//   marktDate: null,
+//   bakType: 'bak-licht',
+//   anywhere: null,
+//   minimum: null,
+//   maximum: null,
+//   brancheId: '107 -  FM - Vis (nat)',
+//   parentBrancheId: null,
+//   inrichting: 'eigen-materieel',
+//   absentFrom: null,
+//   absentUntil: null,
+//   branches: [ '107 -  FM - Vis (nat)' ],
+//   verkoopinrichting: [ 'eigen-materieel' ]
+// }
+
+export const updateVoorkeur = async (
+    updatedVoorkeur: any,
+    user: string, // actually an email string like "team.salmagundi.ois@amsterdam.nl"
+): Promise<any> => {
+    console.log('updateVoorkeur', updatedVoorkeur);
+
+    // TODO: user is send to keep track of who made the changes
+    console.log('user', user);
+
+    // updatedVoorkeur.erkenningsNummer: '2019010303' kan gebruikt worden voor de api call
+    // updatedVoorkeur.marktId: kan gebruikt worden voor de api call
+    // updatedVoorkeur.inrichting: null | 'eigen-materieel'
+    // updatedVoorkeur.bakType: 'geen' | 'bak-licht' | 'bak'
+    voorkeur.bakType = updatedVoorkeur.bakType;
+    voorkeur.inrichting = updatedVoorkeur.inrichting;
+    voorkeur.brancheId = updatedVoorkeur.brancheId;
+}
+
+const allocations = [
+    {
+    id: 174421,
+    isAllocated: true,
+    rejectReason: null,
+    plaatsen: [ '131' ],
+    date: '2024-11-03',
+    anywhere: true,
+    minimum: 1,
+    maximum: 2,
+    // this shows as aantal 1,1 (waarschijnlijk minimum = 1 en extra plaatsen = 1)
+    bakType: 'geen', // 'bak-licht', 'bak' => maar tabel toont gewoon de inhoud van de string
+    hasInrichting: false, // true
+    koopman: '2019010303',
+    branche: '206 -  FC - Stroopwafels',
+    markt: '20',
+    plaatsvoorkeuren: [ '131', '133' ] // null or [] also allowed
+  }
+]
+
+const toewijzingen = allocations.map(allocation => ({ ...allocation, isAllocated: true }));
+const afwijzingen = allocations.map(allocation => ({ ...allocation, isAllocated: false }));
+
+export const getToewijzingenByOndernemer = async (erkenningsNummer: string): Promise<any> => {
+    console.log('getToewijzingenByOndernemer', erkenningsNummer);
+    return toewijzingen.filter(toewijzing => toewijzing.koopman === erkenningsNummer);
+}
+
+export const getToewijzingenByOndernemerAndMarkt = async (marktId: string, erkenningsNummer: string): Promise<any> => {
+    console.log('getToewijzingenByOndernemerAndMarkt', marktId, erkenningsNummer);
+    return toewijzingen.filter(toewijzing => toewijzing.koopman === erkenningsNummer && toewijzing.markt === marktId);
+}
+
+export const getAfwijzingenByOndernemer = async (erkenningsNummer: string): Promise<any> => {
+    console.log('getAfwijzingenByOndernemer', erkenningsNummer);
+    return afwijzingen.filter(afwijzing => afwijzing.koopman === erkenningsNummer);
+}
+
+export const getAfwijzingenByOndernemerAndMarkt = async (marktId: string, erkenningsNummer: string): Promise<any> => {
+    console.log('getAfwijzingenByOndernemerAndMarkt', marktId, erkenningsNummer);
+    return afwijzingen.filter(afwijzing => afwijzing.koopman === erkenningsNummer && afwijzing.markt === marktId);
+}
+
+const rsvps = [
+  // let op: id is null of een echt id (waarschijnlijk of ze al bestaan in db of net gegenereerd als nieuwe)
+  // twee weken aan rsvp data, gerekend vanaf maandag
+  {
+      "id": 16896,
+      "marktDate": "2025-10-13",
+      "attending": false,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": 16897,
+      "marktDate": "2025-10-14",
+      "attending": false,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": 16898,
+      "marktDate": "2025-10-15",
+      "attending": false,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": 16899,
+      "marktDate": "2025-10-16",
+      "attending": true,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": 16900,
+      "marktDate": "2025-10-17",
+      "attending": false,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": 16889,
+      "marktDate": "2025-10-18",
+      "attending": true,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": 16901,
+      "marktDate": "2025-10-19",
+      "attending": false,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": null,
+      "marktDate": "2025-10-20",
+      "attending": false,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": null,
+      "marktDate": "2025-10-21",
+      "attending": false,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": null,
+      "marktDate": "2025-10-22",
+      "attending": false,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": null,
+      "marktDate": "2025-10-23",
+      "attending": false,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": null,
+      "marktDate": "2025-10-24",
+      "attending": true,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": null,
+      "marktDate": "2025-10-25",
+      "attending": false,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": null,
+      "marktDate": "2025-10-26",
+      "attending": false,
+      "markt": "20",
+      "koopman": "2019010303"
+  },
+  {
+      "id": null,
+      "marktDate": "2025-10-13",
+      "attending": false,
+      "markt": "222", // andere markt
+      "koopman": "2019010303"
+  },
+  {
+      "id": null,
+      "marktDate": "2025-10-26",
+      "attending": false,
+      "markt": "496", // andere markt
+      "koopman": "2019010303"
+  }
+];
+
+const rsvpPatterns = [
+  {
+      "id": 2568,
+      "markt": "20",
+      "koopman": "2019010303",
+      // "patternDate": "2025-10-09 07:56:54", // probably not used, but verify MM
+      "monday": false,
+      "tuesday": false,
+      "wednesday": false,
+      "thursday": false,
+      "friday": true,
+      "saturday": false,
+      "sunday": false
+  },
+  {
+      "id": 2565,
+      "markt": "222",
+      "koopman": "2019010303",
+      // "patternDate": "2025-10-09 07:56:17", // probably not used, but verify MM
+      "monday": false,
+      "tuesday": false,
+      "wednesday": false,
+      "thursday": false,
+      "friday": false,
+      "saturday": false,
+      "sunday": false
+  },
+];
+
+interface ILegacyRSVP extends Omit<IRSVP, 'erkenningsNummer'> { id: number | null, koopman: string }
+interface ILegacyRSVPPattern extends Omit<IRsvpPattern, 'erkenningsNummer'> { id: number | null, koopman: string }
+
+export const getAanmeldingenByOndernemer = async (erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
+    console.log('getAanmeldingenByOndernemer', erkenningsNummer);
+    // probably only last two weeks
+    // add marktId for legacy
+    return rsvps.filter(rsvp => rsvp.koopman === erkenningsNummer).map(rsvp => ({ ...rsvp, marktId: rsvp.markt }));
+};
+
+export const getAanmeldingenByOndernemerEnMarkt = async (marktId: string, erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
+    console.log('getAanmeldingenByOndernemerEnMarkt', marktId, erkenningsNummer);
+    // add marktId for legacy
+    return rsvps
+        .filter(rsvp => rsvp.koopman === erkenningsNummer && rsvp.markt === marktId)
+        .map(rsvp => ({ ...rsvp, marktId: rsvp.markt }));
+};
+
+export const getRsvps = async (erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
+    // probably only last two weeks
+    return rsvps.filter(rsvp => rsvp.koopman === erkenningsNummer);
+};
+
+export const getRsvpPatterns = async (erkenningsNummer: string) => {
+    return rsvpPatterns.filter(pattern => pattern.koopman === erkenningsNummer);
+};
+
+export const saveRsvps = async (data: any, user: string) => {
+    console.log('saveRsvps', data, user);
+    // {
+    //   marktDate: '2025-10-17',
+    //   shortName: 'vr',
+    //   koopman: '2019010303',
+    //   markt: '20',
+    //   attending: false,
+    //   day: 'friday',
+    //   dateNL: '17-10-2025',
+    //   isInThePast: false,
+    //   isActiveMarketDay: true,
+    //   id: 16900,
+    //   koopmanErkenningsNummer: '2019010303',
+    //   marktId: '20'
+    // },
+    data.rsvps.forEach((updatedRsvp: any) => {
+        const existing = rsvps.find(existingRsvp => existingRsvp.marktDate === updatedRsvp.marktDate && existingRsvp.koopman === updatedRsvp.koopman && existingRsvp.markt === updatedRsvp.markt);
+        if (existing) {
+            existing.attending = updatedRsvp.attending;
+        } else {
+            const newId = Math.max(0, ...rsvps.map(rsvp => rsvp.id || 0)) + 1;
+            console.log('creating', newId)
+            rsvps.push({
+                id: newId,
+                marktDate: updatedRsvp.marktDate,
+                attending: updatedRsvp.attending,
+                markt: updatedRsvp.markt,
+                koopman: updatedRsvp.koopman,
+            });
+        }
+    });
+    return rsvps
+};
+
+export const saveRsvpPatterns = async (data: any, user: string) => {
+    console.log('saveRsvpPatterns', data, user);
+    // {
+    //   monday: false,
+    //   tuesday: false,
+    //   wednesday: false,
+    //   thursday: false,
+    //   friday: true,
+    //   saturday: false,
+    //   sunday: false,
+    //   erkenningsNummer: '2019010303',
+    //   markt: '20'
+    // }
+    const existingPattern: ILegacyRSVPPattern = rsvpPatterns.find(p => p.koopman === data.erkenningsNummer && p.markt === data.markt)
+    const pattern: Partial<ILegacyRSVPPattern> = existingPattern || {
+        id: Math.max(0, ...rsvpPatterns.map(p => p.id || 0)) + 1,
+        markt: data.markt,
+        koopman: data.erkenningsNummer,
+    };
+    pattern.monday = data.monday;
+    pattern.tuesday = data.tuesday;
+    pattern.wednesday = data.wednesday;
+    pattern.thursday = data.thursday;
+    pattern.friday = data.friday;
+    pattern.saturday = data.saturday;
+    pattern.sunday = data.sunday;
+    return pattern;
+};
