@@ -27,3 +27,7 @@ tmp/
 .ash_history
 .env_prod
 dist/style/screen.css
+
+# TEMPORARY
+.env.local
+.env.harm
