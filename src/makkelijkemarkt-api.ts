@@ -49,7 +49,8 @@ requireEnv('MM_API_NGINX_MM_API_SERVICE_PORT');
 
 export const mmConfig = {
     // MM_API_MM_API_SERVICE_HOST and PORT defined by helm/kubernetes. When service name changes, this var should be changed.
-    baseUrl: `http://${process.env.MM_API_NGINX_MM_API_SERVICE_HOST}:${process.env.MM_API_NGINX_MM_API_SERVICE_PORT}/api/1.1.0/`,
+    // baseUrl: `http://${process.env.MM_API_NGINX_MM_API_SERVICE_HOST}:${process.env.MM_API_NGINX_MM_API_SERVICE_PORT}/api/1.1.0/`,
+    baseUrl: `https://${process.env.MM_API_NGINX_MM_API_SERVICE_HOST}/api/1.1.0/`,
     appKey: process.env.API_MMAPPKEY,
     loginUrl: 'login/apiKey/',
     apiKey: process.env.API_KEY,
