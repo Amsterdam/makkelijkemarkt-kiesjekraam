@@ -1,0 +1,2113 @@
+{
+  "marktId": 20,
+  "id": 477,
+  "aanmaakDatumtijd": "2025-03-10 12:47:05",
+  "geografie": {
+    "obstakels": [
+      {
+        "kraamA": "6",
+        "kraamB": "7",
+        "obstakel": [
+          "loopje"
+        ]
+      },
+      {
+        "kraamA": "12",
+        "kraamB": "13",
+        "obstakel": [
+          "loopje"
+        ]
+      },
+      {
+        "kraamA": "15",
+        "kraamB": "16",
+        "obstakel": [
+          "lantaarnpaal"
+        ]
+      },
+      {
+        "kraamA": "41",
+        "kraamB": "42",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "47",
+        "kraamB": "48",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "23",
+        "kraamB": "24",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "29",
+        "kraamB": "30",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "77",
+        "kraamB": "78",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "83",
+        "kraamB": "84",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "86",
+        "kraamB": "87",
+        "obstakel": [
+          "lantaarnpaal"
+        ]
+      },
+      {
+        "kraamA": "59",
+        "kraamB": "60",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "65",
+        "kraamB": "66",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "112",
+        "kraamB": "113",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "118",
+        "kraamB": "119",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "94",
+        "kraamB": "95",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "100",
+        "kraamB": "101",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "141",
+        "kraamB": "142",
+        "obstakel": [
+          "doorloop"
+        ]
+      },
+      {
+        "kraamA": "147",
+        "kraamB": "148",
+        "obstakel": [
+          "doorloop"
+        ]
+      }
+    ]
+  },
+  "locaties": [
+    {
+      "bakType": "geen",
+      "plaatsId": "1",
+      "branches": [],
+      "properties": [
+        "lantaarnpaal"
+      ],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "2",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "3",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "4",
+      "branches": [
+        "109 -  FM - Zuivel"
+      ],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "5",
+      "branches": [
+        "109 -  FM - Zuivel"
+      ],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "6",
+      "branches": [
+        "109 -  FM - Zuivel"
+      ],
+      "properties": [
+        "lantaarnpaal"
+      ],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "7",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "8",
+      "branches": [],
+      "properties": [
+        "bankje"
+      ],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "9",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "10",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "11",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "12",
+      "branches": [],
+      "properties": [
+        "lantaarnpaal"
+      ],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "13",
+      "branches": [
+        "401 -  Overig markt - Experimentele zone"
+      ],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "14",
+      "branches": [
+        "401 -  Overig markt - Experimentele zone"
+      ],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "15",
+      "branches": [
+        "401 -  Overig markt - Experimentele zone"
+      ],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "16",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "17",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "36",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "37",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "38",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "39",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "40",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "41",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "42",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "43",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "44",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "45",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "46",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "47",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "48",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "49",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "50",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "51",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "52",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "53",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "18",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "19",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "20",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "21",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "22",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "23",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "24",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "25",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "26",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "27",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "28",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "29",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "30",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "31",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "32",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "33",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "34",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "35",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "72",
+      "branches": [],
+      "properties": [
+        "lantaarnpaal"
+      ],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "73",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "74",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "75",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "76",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "77",
+      "branches": [],
+      "properties": [
+        "lantaarnpaal"
+      ],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "78",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "79",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "80",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "81",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "82",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "83",
+      "branches": [],
+      "properties": [
+        "lantaarnpaal"
+      ],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "84",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "85",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "86",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "87",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "88",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "54",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "55",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "56",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "57",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "58",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "59",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "60",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "61",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "62",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "63",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "64",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "65",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "66",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "67",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "68",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "69",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "70",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "71",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "107",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "108",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "109",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "110",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "111",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "112",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "113",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "114",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "115",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "116",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "117",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "118",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "119",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "120",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "121",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "122",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "123",
+      "branches": [
+        "107 -  FM - Vis (nat)"
+      ],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "124",
+      "branches": [
+        "107 -  FM - Vis (nat)"
+      ],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "89",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "90",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "91",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "92",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "93",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "94",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "95",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "96",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "97",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "98",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "99",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "100",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "101",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "102",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "103",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "104",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "105",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "106",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "125",
+      "branches": [],
+      "properties": [
+        "lantaarnpaal"
+      ],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "126",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "127",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "128",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "129",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "130",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "131",
+      "branches": [],
+      "properties": [
+        "lantaarnpaal"
+      ],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "132",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "133",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "134",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "135",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "136",
+      "branches": [
+        "302 -  NF - Bloemen & planten  (v)"
+      ],
+      "properties": [
+        "water"
+      ],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "137",
+      "branches": [
+        "109 -  FM - Zuivel"
+      ],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "138",
+      "branches": [
+        "109 -  FM - Zuivel"
+      ],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "139",
+      "branches": [
+        "401 -  Overig markt - Experimentele zone"
+      ],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "140",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "141",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    },
+    {
+      "bakType": "bak",
+      "plaatsId": "142",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "143",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "144",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "145",
+      "branches": [],
+      "properties": [
+        "water"
+      ],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "146",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "147",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "148",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "149",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": [
+        "eigen-materieel"
+      ]
+    },
+    {
+      "bakType": "geen",
+      "plaatsId": "150",
+      "branches": [],
+      "properties": [],
+      "verkoopinrichting": []
+    }
+  ],
+  "marktOpstelling": {
+    "rows": [
+      [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      [
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      [
+        "13",
+        "14",
+        "15"
+      ],
+      [
+        "16",
+        "17"
+      ],
+      [
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41"
+      ],
+      [
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47"
+      ],
+      [
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53"
+      ],
+      [
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23"
+      ],
+      [
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29"
+      ],
+      [
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      [
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77"
+      ],
+      [
+        "78",
+        "79",
+        "80",
+        "81",
+        "82",
+        "83"
+      ],
+      [
+        "84",
+        "85",
+        "86"
+      ],
+      [
+        "87",
+        "88"
+      ],
+      [
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59"
+      ],
+      [
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65"
+      ],
+      [
+        "66",
+        "67",
+        "68",
+        "69",
+        "70",
+        "71"
+      ],
+      [
+        "107",
+        "108",
+        "109",
+        "110",
+        "111",
+        "112"
+      ],
+      [
+        "113",
+        "114",
+        "115",
+        "116",
+        "117",
+        "118"
+      ],
+      [
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124"
+      ],
+      [
+        "89",
+        "90",
+        "91",
+        "92",
+        "93",
+        "94"
+      ],
+      [
+        "95",
+        "96",
+        "97",
+        "98",
+        "99",
+        "100"
+      ],
+      [
+        "101",
+        "102",
+        "103",
+        "104",
+        "105",
+        "106"
+      ],
+      [
+        "125",
+        "126",
+        "127",
+        "128",
+        "129",
+        "130",
+        "131",
+        "132",
+        "133",
+        "134",
+        "135"
+      ],
+      [
+        "136",
+        "137",
+        "138",
+        "139",
+        "140",
+        "141"
+      ],
+      [
+        "142",
+        "143",
+        "144",
+        "145",
+        "146",
+        "147"
+      ],
+      [
+        "148",
+        "149",
+        "150"
+      ]
+    ]
+  },
+  "paginas": [
+    {
+      "title": "WINKELRIJ NR 1 TM 17",
+      "indelingslijstGroup": [
+        {
+          "class": "block-left",
+          "title": "",
+          "landmarkTop": "Tanger / Hoek winkelcentrum",
+          "landmarkBottom": "Marktkantoor Zij-rij",
+          "plaatsList": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "RIJ 2 EN 3, NR 18 TM 53",
+      "indelingslijstGroup": [
+        {
+          "class": "block-left",
+          "title": "RIJ 3, 36 TM 53",
+          "landmarkTop": "",
+          "landmarkBottom": "",
+          "plaatsList": [
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53"
+          ]
+        },
+        {
+          "class": "block-right",
+          "title": "RIJ 2,18 TM 35",
+          "landmarkTop": "",
+          "landmarkBottom": "",
+          "plaatsList": [
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "RIJ 4 EN 5, NR 54 TM 88",
+      "indelingslijstGroup": [
+        {
+          "class": "block-left",
+          "title": "RIJ 5, 72 TM 88",
+          "landmarkTop": "",
+          "landmarkBottom": "",
+          "plaatsList": [
+            "72",
+            "73",
+            "74",
+            "75",
+            "76",
+            "77",
+            "78",
+            "79",
+            "80",
+            "81",
+            "82",
+            "83",
+            "84",
+            "85",
+            "86",
+            "87",
+            "88"
+          ]
+        },
+        {
+          "class": "block-right",
+          "title": "RIJ 4, 54 TM 71",
+          "landmarkTop": "",
+          "landmarkBottom": "",
+          "plaatsList": [
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61",
+            "62",
+            "63",
+            "64",
+            "65",
+            "66",
+            "67",
+            "68",
+            "69",
+            "70",
+            "71"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "RIJ 6 EN 7, 89 TM 107",
+      "indelingslijstGroup": [
+        {
+          "class": "block-left",
+          "title": "RIJ 7, 107 TM 124",
+          "landmarkTop": "",
+          "landmarkBottom": "",
+          "plaatsList": [
+            "107",
+            "108",
+            "109",
+            "110",
+            "111",
+            "112",
+            "113",
+            "114",
+            "115",
+            "116",
+            "117",
+            "118",
+            "119",
+            "120",
+            "121",
+            "122",
+            "123",
+            "124"
+          ]
+        },
+        {
+          "class": "block-right",
+          "title": "RIJ 6, 89 TM 106",
+          "landmarkTop": "",
+          "landmarkBottom": "",
+          "plaatsList": [
+            "89",
+            "90",
+            "91",
+            "92",
+            "93",
+            "94",
+            "95",
+            "96",
+            "97",
+            "98",
+            "99",
+            "100",
+            "101",
+            "102",
+            "103",
+            "104",
+            "105",
+            "106"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "RIJ BIJ MARKTKANTOOR, NR 125 TM 135",
+      "indelingslijstGroup": [
+        {
+          "class": "block-left",
+          "title": "RIJ 8,125 TM 135",
+          "landmarkTop": "",
+          "landmarkBottom": "",
+          "plaatsList": [
+            "125",
+            "126",
+            "127",
+            "128",
+            "129",
+            "130",
+            "131",
+            "132",
+            "133",
+            "134",
+            "135"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "RIJ 9, BIJ FIETSPAD, NR 136 TM 150",
+      "indelingslijstGroup": [
+        {
+          "class": "block-left",
+          "title": "RIJ 9, 136 TM 150",
+          "landmarkTop": "",
+          "landmarkBottom": "",
+          "plaatsList": [
+            "136",
+            "137",
+            "138",
+            "139",
+            "140",
+            "141",
+            "142",
+            "143",
+            "144",
+            "145",
+            "146",
+            "147",
+            "148",
+            "149",
+            "150"
+          ]
+        }
+      ]
+    }
+  ],
+  "branches": [
+    {
+      "brancheId": "101 - FM - AGF (V)",
+      "maximumPlaatsen": 24,
+      "verplicht": false
+    },
+    {
+      "brancheId": "102 - FM - Paddenstoelen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "103 - FM - Brood & Banket",
+      "verplicht": false
+    },
+    {
+      "brancheId": "104 - FM - Hummus & olijven",
+      "verplicht": false
+    },
+    {
+      "brancheId": "105 -  FM - Noten & zuidvruchten",
+      "verplicht": false
+    },
+    {
+      "brancheId": "106 -  FM - O&K - Oliebollen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "107 -  FM - Vis (nat)",
+      "maximumPlaatsen": 2,
+      "verplicht": true
+    },
+    {
+      "brancheId": "108 -  FM - Vleeswaren (geen poelier)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "109 -  FM - Zuivel",
+      "verplicht": false
+    },
+    {
+      "brancheId": "110 -  FM - Poelier",
+      "verplicht": false
+    },
+    {
+      "brancheId": "111 -  FM - Exotische groenten (v)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "112 -  FM - Eieren",
+      "verplicht": false
+    },
+    {
+      "brancheId": "113 -  FN - Kruiden & eetbare planten",
+      "verplicht": false
+    },
+    {
+      "brancheId": "201 -  FC - Broodjes belegd (v)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "202 -  FC - Hotdogs (v)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "203 -  FC - IJs (v)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "204 -  FC - Koffie & versnaperingen (v)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "205 -  FC - Loempia's",
+      "verplicht": false
+    },
+    {
+      "brancheId": "206 -  FC - Stroopwafels",
+      "verplicht": false
+    },
+    {
+      "brancheId": "207 -  FC - Frituur",
+      "verplicht": false
+    },
+    {
+      "brancheId": "208 -  FC - Smoothies / Verssappen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "209 -  FC - Vis (gebakken)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "210 -  FC - Snoepwaren",
+      "verplicht": false
+    },
+    {
+      "brancheId": "211 -  FC - Delicatessen (hapjes)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "212 -  FC - Pannenkoeken & poffertjes",
+      "verplicht": false
+    },
+    {
+      "brancheId": "213 -  FC - Patat",
+      "verplicht": false
+    },
+    {
+      "brancheId": "214 -  FC - Vega/ Falafel",
+      "verplicht": false
+    },
+    {
+      "brancheId": "215 -  FC - Haring",
+      "verplicht": false
+    },
+    {
+      "brancheId": "216 -  FC - Mediterrane keuken",
+      "verplicht": false
+    },
+    {
+      "brancheId": "301 -  NF - Antiek & brocante",
+      "verplicht": false
+    },
+    {
+      "brancheId": "302 -  NF - Bloemen & planten  (v)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "303 -  NF - Boeken/ stripboeken/ muziek & film",
+      "verplicht": false
+    },
+    {
+      "brancheId": "304 -  NF - Dierenbenodigdheden ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "305 -  NF - Horloges, brillen & sieraden ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "306 -  NF - Huishoudelijke artikelen, meubels & apparatuur ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "307 -  NF - KLEDING - baby & kinderen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "308 -  NF - KLEDING - onder, beenmode en sokken ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "309 -  NF - KLEDING - volwassenen/ hoofddeksels",
+      "verplicht": false
+    },
+    {
+      "brancheId": "310 -  NF - KLEDING - vintage/ 2e hands",
+      "verplicht": false
+    },
+    {
+      "brancheId": "311 -  NF - Lampen ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "312 -  NF - O&K - Kerstbomen ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "313 -  NF - Parfumerie/ drogisterij & persoonlijke verzorging ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "314 -  NF - Partijhandel & inboedels",
+      "verplicht": false
+    },
+    {
+      "brancheId": "315 -  NF - Schoenen, tassen en lederwaren ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "316 -  NF - Souvenirs ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "317 -  NF - Speelgoed & spellen ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "318 -  NF - TECHNIEK - Doe-het-zelf, gereedschap & ijzerwaren ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "319 -  NF - TECHNIEK - Elektronica, mobieltjes en accessoires ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "320 -  NF - TECHNIEK - Fietsen & auto accessoires ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "321 -  NF - TEXTIEL - Stoffen, textiel & fournituren ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "322 -  NF - TEXTIEL - Tapijten en vloerkleden ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "323 -  NF - TEXTIEL - Raam & muur (wand) decoratie",
+      "verplicht": false
+    },
+    {
+      "brancheId": "324 -  NF - Ambachtelijk & handgemaakt (traditioneel)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "325 -  NF - Kunst",
+      "verplicht": false
+    },
+    {
+      "brancheId": "401 -  Overig markt - Experimentele zone",
+      "maximumPlaatsen": 6,
+      "verplicht": true
+    },
+    {
+      "brancheId": "402 -  Overig markt - Promotieplaats",
+      "verplicht": false
+    },
+    {
+      "brancheId": "403 -  Overig markt - Standwerker",
+      "verplicht": false
+    },
+    {
+      "brancheId": "501 -  NF - Gebruikte kleding - ongesorteerd",
+      "verplicht": false
+    },
+    {
+      "brancheId": "502 -  NF - Gebruikte kleding - gesorteerd",
+      "verplicht": false
+    },
+    {
+      "brancheId": "503 -  NF - Gebruikte kleding – vintage algemeen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "504 - NF - Gebruikte kleding – vintage gespecialiseerd",
+      "verplicht": false
+    },
+    {
+      "brancheId": "505 -  NF - Gebruikte kleding - antiek",
+      "verplicht": false
+    },
+    {
+      "brancheId": "506 -  NF - Gebruikte modeaccessoires",
+      "verplicht": false
+    },
+    {
+      "brancheId": "507 -  NF - Gebruikte schoenen, tassen en lederwaren",
+      "verplicht": false
+    },
+    {
+      "brancheId": "508 -  NF - Gebruikte horloges, brillen en sieraden - algemeen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "509 -  NF - Gebruikte horloges, brillen en sieraden – vintage en/of antiek",
+      "verplicht": false
+    },
+    {
+      "brancheId": "510 -  NF - Opnieuw gemaakte kleding -algemeen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "511 -  NF - Opnieuw gemaakte modeaccessoires ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "512 -  NF - Opnieuw gemaakte schoenen, tassen en lederwaren",
+      "verplicht": false
+    },
+    {
+      "brancheId": "513 -  NF - Gebruikte of nieuwe identiteits-kleding en identiteit-accessoires",
+      "verplicht": false
+    },
+    {
+      "brancheId": "520 -  NF - Gebruikt textiel algemeen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "521 -  NF - Gebruikt textiel gespecialiseerd",
+      "verplicht": false
+    },
+    {
+      "brancheId": "522 -  NF - Opnieuw gemaakt textiel",
+      "verplicht": false
+    },
+    {
+      "brancheId": "530 -  NF - Gebruikte techniek - stadsfietsen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "531 -  NF - Gebruikte techniek - gespecialiseerde fietsen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "532 -  NF - Gebruikte techniek - gereedschappen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "533 -  NF - Gebruikte techniek – elektronica en elektrische apparaten ",
+      "verplicht": false
+    },
+    {
+      "brancheId": "540 -  NF - Gebruikte goederen algemeen (geen witgoed)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "541 -  NF - Gebruikte (huishoudelijke) gebruiksvoorwerpen en woonaccessoires",
+      "verplicht": false
+    },
+    {
+      "brancheId": "542 -  NF - Opnieuw gemaakte gebruiks- en siervoorwerpen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "543 -  NF - Gebruikte lampen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "544 -  NF - Opnieuw gemaakte lampen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "550 -  NF - Gebruikte boeken en strips algemeen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "551 -  NF - Gebruikte boeken en strips antiquarisch",
+      "verplicht": false
+    },
+    {
+      "brancheId": "552 -  NF - Gebruikt speelgoed en spellen",
+      "verplicht": false
+    },
+    {
+      "brancheId": "553 -  NF - Gebruikte muziekdragers",
+      "verplicht": false
+    },
+    {
+      "brancheId": "554 -  NF - Gebruikte muziekinstrumenten",
+      "verplicht": false
+    },
+    {
+      "brancheId": "560 -  NF - Antiek en Brocante (Thema)",
+      "verplicht": false
+    },
+    {
+      "brancheId": "561 -  NF - Kunst van hergebruikte materialen en kunst benodigdheden",
+      "verplicht": false
+    },
+    {
+      "brancheId": "bak",
+      "maximumPlaatsen": 13,
+      "verplicht": true
+    }
+  ]
+}
