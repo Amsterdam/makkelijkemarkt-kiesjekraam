@@ -1,12 +1,21 @@
 import {
+    // deletePlaatsvoorkeurenByMarktAndKoopman,
+    // getIndelingVoorkeur,
+    // getMarktBasics,
+    // getOndernemer,
+    // getPlaatsvoorkeurenByMarktEnOndernemer,
+    // updateMarktVoorkeur,
+    // updatePlaatsvoorkeur,
+} from '../makkelijkemarkt-api';
+import {
+    getPlaatsvoorkeurenByMarktEnOndernemer,
+    updatePlaatsvoorkeur,
     deletePlaatsvoorkeurenByMarktAndKoopman,
     getIndelingVoorkeur,
-    getMarktBasics,
-    getOndernemer,
-    getPlaatsvoorkeurenByMarktEnOndernemer,
     updateMarktVoorkeur,
-    updatePlaatsvoorkeur,
-} from '../makkelijkemarkt-api';
+    getOndernemer,
+    getMarktBasics,
+} from '../daalder-api';
 import { getQueryErrors, HTTP_CREATED_SUCCESS, internalServerErrorPage } from '../express-util';
 import { NextFunction, Request, Response } from 'express';
 import { getKeycloakUser } from '../keycloak-api';
@@ -52,6 +61,11 @@ export const plaatsvoorkeurenPage = (
                 res.status(403);
                 res.send();
             }
+            // console.log('plaatsvoorkeurenPage marktBasics', marktBasics.branches)
+            // console.log('plaatsvoorkeurenPage plaatsvoorkeuren', plaatsvoorkeuren)
+            // console.log('plaatsvoorkeurenPage indelingVoorkeur', indelingVoorkeur)
+            // console.log('plaatsvoorkeurenPage sollicitatie', sollicitatie)
+            // console.log('ondernemer', ondernemer)
             res.render('VoorkeurenPage', {
                 ondernemer,
                 markt: marktBasics.markt,
@@ -91,6 +105,7 @@ export const updatePlaatsvoorkeuren = (
     const ignoreEmptyVoorkeur = (voorkeur: IPlaatsvoorkeurRow) => !!voorkeur.plaatsId;
 
     const insertFormData = () => {
+        // console.log('plaatsvoorkeuren opslaan', req.body.plaatsvoorkeuren);
         if (req.body.plaatsvoorkeuren) {
             console.log(`${req.body.plaatsvoorkeuren.length} (nieuwe) voorkeuren opslaan...`);
             console.log(req.body.plaatsvoorkeuren);
