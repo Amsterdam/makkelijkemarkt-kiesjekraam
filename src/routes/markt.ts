@@ -1,4 +1,16 @@
 import {
+    // getAanmeldingenByOndernemerEnMarkt,
+    // getAfwijzingenByOndernemerAndMarkt,
+    // getAfwijzingenByOndernemerAndMarkt,
+    // getIndelingVoorkeur,
+    // getMarkt,
+    // getMarktBasics,
+    // getOndernemer,
+    // getPlaatsvoorkeurenOndernemer,
+    // getToewijzingenByOndernemerAndMarkt,
+    // getVoorkeurByMarktEnOndernemer,
+} from '../makkelijkemarkt-api';
+import {
     getAanmeldingenByOndernemerEnMarkt,
     getAfwijzingenByOndernemerAndMarkt,
     getIndelingVoorkeur,
@@ -8,7 +20,7 @@ import {
     getPlaatsvoorkeurenOndernemer,
     getToewijzingenByOndernemerAndMarkt,
     getVoorkeurByMarktEnOndernemer,
-} from '../makkelijkemarkt-api';
+} from '../daalder-api';
 import {
     getDaysClosed,
     getMededelingen,
