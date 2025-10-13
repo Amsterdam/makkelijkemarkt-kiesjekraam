@@ -1,9 +1,15 @@
 import {
+    // getAfwijzingenByOndernemer,
+    // getMarkten,
+    // getOndernemer,
+    // getToewijzingenByOndernemer,
+} from '../makkelijkemarkt-api';
+import {
     getAfwijzingenByOndernemer,
     getMarkten,
     getOndernemer,
     getToewijzingenByOndernemer,
-} from '../makkelijkemarkt-api';
+} from '../daalder-api';
 import {
     getQueryErrors,
     internalServerErrorPage,
