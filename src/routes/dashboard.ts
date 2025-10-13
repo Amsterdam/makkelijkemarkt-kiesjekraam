@@ -1,11 +1,20 @@
 import {
+    // getAanmeldingenByOndernemer,
+    // getAfwijzingenByOndernemer,
+    // getAfwijzingenByOndernemer,
+    // getMarkten,
+    // getOndernemer,
+    // getPlaatsvoorkeurenOndernemer,
+    // getToewijzingenByOndernemer,
+} from '../makkelijkemarkt-api';
+import {
     getAanmeldingenByOndernemer,
     getAfwijzingenByOndernemer,
     getMarkten,
     getOndernemer,
     getPlaatsvoorkeurenOndernemer,
     getToewijzingenByOndernemer,
-} from '../makkelijkemarkt-api';
+} from '../daalder-api';
 import {
     getQueryErrors,
     internalServerErrorPage
@@ -33,10 +42,10 @@ export const dashboardPage = (req: GrantedRequest, res: Response, next: NextFunc
     Promise.props({
         ondernemer: getOndernemer(erkenningsNummer),
         markten: getMarkten(),
-        plaatsvoorkeuren: getPlaatsvoorkeurenOndernemer(erkenningsNummer),
+        plaatsvoorkeuren: getPlaatsvoorkeurenOndernemer(erkenningsNummer),  // not used on dashboard page
         aanmeldingen: getAanmeldingenByOndernemer(erkenningsNummer),
-        toewijzingen: getToewijzingenByOndernemer(erkenningsNummer),
-        afwijzingen: getAfwijzingenByOndernemer(erkenningsNummer),
+        toewijzingen: getToewijzingenByOndernemer(erkenningsNummer), // not used on dashboard page
+        afwijzingen: getAfwijzingenByOndernemer(erkenningsNummer), // not used on dashboard page
     })
         .then(result => {
             res.render('OndernemerDashboard', {
