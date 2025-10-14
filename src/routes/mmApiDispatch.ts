@@ -10,6 +10,9 @@ import { keycloak, Roles } from '../authentication';
 import { GrantedRequest } from 'keycloak-connect';
 import { getKeycloakUser } from '../keycloak-api';
 
+import { createGenericBranche, getGenericBranches } from '../daalder-api';
+import { Axios, AxiosResponse } from 'axios';
+
 const router = express.Router();
 const koopmanRoutes = [
     '/koopman/erkenningsnummer/:erkenningsNummer',
@@ -63,12 +66,13 @@ const _invalidateCache = (subroute: string, req: GrantedRequest): void => {
 
 subroutes.forEach((subroute: string) => {
     const protectFunction = keycloak.protect((token: any, req: GrantedRequest) => {
-
         // Marktbewerkers are allowed to edit preferences of koopmannen,
         // marktmeesters have read access in almost all cases
-        if (token.hasRole(Roles.MARKTBEWERKER) ||
-            (token.hasRole(Roles.MARKTMEESTER) && !['POST','PUT'].includes(req.method))) {
-            return true
+        if (
+            token.hasRole(Roles.MARKTBEWERKER) ||
+            (token.hasRole(Roles.MARKTMEESTER) && !['POST', 'PUT'].includes(req.method))
+        ) {
+            return true;
         }
 
         if (koopmanRoutes.includes(subroute)) {
@@ -82,7 +86,7 @@ subroutes.forEach((subroute: string) => {
     });
     router.all(subroute, applyProtectionIfNeeded(protectFunction), async (req: GrantedRequest, res: Response) => {
         try {
-            const headers = { user: isProtectionDisabled ? 'security_disabled' : getKeycloakUser(req)?.email }
+            const headers = { user: isProtectionDisabled ? 'security_disabled' : getKeycloakUser(req)?.email };
             const result = await callApiGeneric(req.url, req.method.toLowerCase() as HttpMethod, req.body, headers);
             _invalidateCache(subroute, req);
             return res.send(result);
@@ -108,5 +112,41 @@ router.get(
         }
     },
 );
+
+// ================ Daalder API routes ================
+interface IDaalderRoute {
+    routeInbound: string;
+    method: HttpMethod;
+    apiCall: (req: GrantedRequest, res: Response) => Promise<AxiosResponse>;
+}
+
+const daalderRoutes: IDaalderRoute[] = [
+    {
+        routeInbound: 'branche/all',
+        method: 'get',
+        apiCall: (req, res) => getGenericBranches(),
+    },
+    {
+        routeInbound: 'branche',
+        method: 'post',
+        apiCall: (req, res) => createGenericBranche(req.body),
+    },
+];
+
+const createDaalderRoute = (route: IDaalderRoute) => {
+    router[route.method](route.routeInbound, async (req: GrantedRequest, res: Response) => {
+        try {
+            const daalderApiResponse = await route.apiCall(req, res);
+            res.status(daalderApiResponse.status).json(daalderApiResponse.data);
+        } catch (error) {
+            res.status(error.response?.status || 500).json({
+                messgage: error.message,
+                error: error.response?.data || 'An error occurred while processing the request.',
+            });
+        }
+    });
+};
+
+daalderRoutes.forEach(createDaalderRoute);
 
 export default router;
