@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 
 requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
 requireEnv('MM_RAH_MM_RAH_SERVICE_PORT');
+requireEnv('DAALDER_KJK_API_KEY');
 
 // MM_RAH_MM_RAH_SERVICE_HOST and PORT defined by helm/kubernetes. When service name changes, this var should be changed.
 export const daalderConfig = {
