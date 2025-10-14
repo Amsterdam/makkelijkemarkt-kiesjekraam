@@ -22,9 +22,24 @@ const api = axios.create({
     timeout: 10000, // 10 seconds timeout
 });
 
+api.interceptors.request.use(
+    (config) => {
+        // You can modify the request config here if needed
+        console.log(`Daalder API Request: ${config.method} ${config.url}`);
+        return config;
+    },
+    (error) => {
+        console.error('Error in Daalder API request:', error.message);
+        return Promise.reject(error);
+    },
+);
+
 api.interceptors.response.use(
-    (response: AxiosResponse) => response.data,
-    error => {
+    (response: AxiosResponse) => {
+        console.log(`Daalder API Response: ${response.status} ${response.config.url}`);
+        return response.data;
+    },
+    (error) => {
         if (error.response) {
             console.error('Daalder API error response:', error.response.data);
         } else {
