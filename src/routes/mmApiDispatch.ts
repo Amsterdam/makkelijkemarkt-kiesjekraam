@@ -10,8 +10,6 @@ import { keycloak, Roles } from '../authentication';
 import { GrantedRequest } from 'keycloak-connect';
 import { getKeycloakUser } from '../keycloak-api';
 
-import { createGenericBranche, getGenericBranches } from '../daalder-api';
-import { Axios, AxiosResponse } from 'axios';
 
 const router = express.Router();
 const koopmanRoutes = [
@@ -112,41 +110,5 @@ router.get(
         }
     },
 );
-
-// ================ Daalder API routes ================
-interface IDaalderRoute {
-    routeInbound: string;
-    method: HttpMethod;
-    apiCall: (req: GrantedRequest, res: Response) => Promise<AxiosResponse>;
-}
-
-const daalderRoutes: IDaalderRoute[] = [
-    {
-        routeInbound: 'branche/all',
-        method: 'get',
-        apiCall: (req, res) => getGenericBranches(),
-    },
-    {
-        routeInbound: 'branche',
-        method: 'post',
-        apiCall: (req, res) => createGenericBranche(req.body),
-    },
-];
-
-const createDaalderRoute = (route: IDaalderRoute) => {
-    router[route.method](route.routeInbound, async (req: GrantedRequest, res: Response) => {
-        try {
-            const daalderApiResponse = await route.apiCall(req, res);
-            res.status(daalderApiResponse.status).json(daalderApiResponse.data);
-        } catch (error) {
-            res.status(error.response?.status || 500).json({
-                messgage: error.message,
-                error: error.response?.data || 'An error occurred while processing the request.',
-            });
-        }
-    });
-};
-
-daalderRoutes.forEach(createDaalderRoute);
 
 export default router;
