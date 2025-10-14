@@ -21,11 +21,11 @@ const koopmanRoutes = [
     '/rsvp_pattern',
 ];
 const subroutes = [
-    '/branche', // POST
-    '/branche/:brancheId', // PUT, DELETE
-    '/branche/all', // GET
-    '/obstakel/all', // GET
-    '/plaatseigenschap/all', // GET
+    '/branche',
+    '/branche/:brancheId',
+    '/branche/all',
+    '/obstakel/all',
+    '/plaatseigenschap/all',
     '/markt/:marktId',
     '/markt/:marktId/marktconfiguratie/latest',
     '/markt/:marktId/marktconfiguratie',

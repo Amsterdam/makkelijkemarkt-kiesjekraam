@@ -1,8 +1,6 @@
-import { IGenericBranche } from 'model/markt.model';
 import { requireEnv } from './util';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
-// requireEnv('DAALDER_API_USER_TOKEN');
 requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
 requireEnv('MM_RAH_MM_RAH_SERVICE_PORT');
 
@@ -24,7 +22,6 @@ const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
-        // You can modify the request config here if needed
         console.log(`Daalder API Request: ${config.method} ${config.url}`);
         return config;
     },
@@ -44,9 +41,8 @@ api.interceptors.response.use(
             console.error('Daalder API error response:', error.response.data);
         } else {
             console.error('API request error message', error.message);
-            console.log('Error:', error);
         }
-        // throw new Error('Daalder API Request failed');
+        throw new Error('Daalder API Request failed');
     },
 );
 
@@ -55,4 +51,3 @@ export const getAllocation = async (data: Object): Promise<AxiosResponse> =>
 
 export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<AxiosResponse> =>
     await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
-
