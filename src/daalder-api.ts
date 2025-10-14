@@ -1,5 +1,6 @@
+import { IGenericBranche } from 'model/markt.model';
 import { requireEnv } from './util';
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
 requireEnv('MM_RAH_MM_RAH_SERVICE_PORT');
@@ -51,3 +52,9 @@ export const getAllocation = async (data: Object): Promise<AxiosResponse> =>
 
 export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<AxiosResponse> =>
     await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
+
+export const getGenericBranches = async (): Promise<AxiosResponse<IGenericBranche[]>> =>
+    await api.get('/kiesjekraam/branche/');
+
+export const createGenericBranche = async (data: IGenericBranche): Promise<AxiosResponse<IGenericBranche>> =>
+    await api.post('/kiesjekraam/branche/', data);
