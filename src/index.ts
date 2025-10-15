@@ -92,9 +92,11 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: true }) as RequestHandler);
 app.use(express.json() as RequestHandler);
 app.use(cookieParser());
-if (process.env.ENABLE_CORS_FOR_ORIGIN) {
-    app.use(cors({ origin: process.env.ENABLE_CORS_FOR_ORIGIN }));
-}
+// if (process.env.ENABLE_CORS_FOR_ORIGIN) {
+//     app.use(cors({ origin: process.env.ENABLE_CORS_FOR_ORIGIN }));
+// }
+// TEMP enable cors for AanwezigheidsPage dev server
+app.use(cors({ origin: 'http://localhost:3001' }));
 
 // Static files that are public (robots.txt, favicon.ico)
 app.use(express.static('./dist/'));
