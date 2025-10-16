@@ -42,102 +42,7 @@ export const getAllocation = async (data: Object): Promise<Object> => await api.
 export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<Object> =>
     await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
 
-const plaatsvoorkeurenData = [
-{
-    marktId: '20',
-    erkenningsNummer: '2019010303',
-    plaatsId: '133',
-    priority: 0
-  },
-  {
-    marktId: '20',
-    erkenningsNummer: '2019010303',
-    plaatsId: '135',
-    priority: 1
-  },
-  {
-    marktId: '20',
-    erkenningsNummer: '2019010303',
-    plaatsId: '139',
-    priority: 2
-  }
-]
-
-const indelingVoorkeurData = {
-  minimum: 1,
-  maximum: 2,
-  kraaminrichting: undefined,
-  anywhere: false,
-  brancheId: undefined,
-  parentBrancheId: undefined,
-  inrichting: undefined
-};
-
-// this is imported in src/routes/dashboard.ts but then not actually used in template that is rendered
-export const getPlaatsvoorkeurenOndernemer = async (ondernemerId: string): Promise<IPlaatsvoorkeur[]> => {
-    console.log('getPlaatsvoorkeurenOndernemer', ondernemerId);
-    // return await api.get(`/kiesjekraam/voorkeur/plaats/ondernemer/${ondernemerId}/`);
-    return plaatsvoorkeurenData.filter(pref => pref.erkenningsNummer === ondernemerId);
-};
-
-export const getPlaatsvoorkeurenByMarktEnOndernemer = async (marktId: string, ondernemerId: string): Promise<IPlaatsvoorkeur[]> => {
-    console.log('getPlaatsvoorkeurenByMarktEnOndernemer', marktId, ondernemerId);
-    // return await api.get(`/kiesjekraam/voorkeur/plaats/ondernemer/${ondernemerId}/markt/${marktId}/`);
-    return plaatsvoorkeurenData.filter(
-        pref => pref.priority !== -1 && pref.marktId === marktId && pref.erkenningsNummer === ondernemerId
-    );
-}
-
-export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], user: object): Promise<any> => {
-    console.log('updatePlaatsvoorkeur', plaatsvoorkeuren)
-    // The sorting widget works pretty weird:
-    // refer to convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren to see how it was done for MM.
-    // For MM, first they were ordered by ascending priority and then reversed.
-
-    // NB: marktId & erkenningsNummer are sent in the body of each voorkeur but not used in the API url.
-    // return await api.post(`/kiesjekraam/voorkeur/plaats/`);
-
-    // TODO: user is send to keep track of who made the changes.
-    console.log('user', user);
-
-    const updatedPlaatsen = plaatsvoorkeuren.map(pref => pref.plaatsId);
-    const existingPlaatsen = plaatsvoorkeurenData.map(pref => pref.plaatsId);
-    const toBeAdded = updatedPlaatsen.filter(plaats => !existingPlaatsen.includes(plaats));
-    const toBeRemoved = existingPlaatsen.filter(plaats => !updatedPlaatsen.includes(plaats));
-
-    console.log('toBeAdded', toBeAdded)
-    console.log('toBeRemoved', toBeRemoved)
-
-    plaatsvoorkeurenData.length = 0; // clear array
-
-    orderBy(plaatsvoorkeuren, ['priority'], ['desc']).forEach((updated, index) => {
-        updated.priority = index;
-        plaatsvoorkeurenData.push(updated)
-    });
-
-    return; // MM returns data that is not used, instead the page does a new GET for all data
-}
-
-export const getIndelingVoorkeur = async (ondernemerId: string, marktId: string) => {
-    return indelingVoorkeurData
-}
-
-export const updateMarktVoorkeur = async (
-    marktvoorkeur: IMarktondernemerVoorkeur,
-    user: object, // actually an email string like team.salmagundi.ois@amsterdam.nl
-): Promise<any> => {
-    console.log('updateMarktVoorkeur', marktvoorkeur);
-
-    // TODO: user is send to keep track of who made the changes.
-    console.log('user', user);
-
-    indelingVoorkeurData.minimum = Number(marktvoorkeur.minimum) || 0;
-    indelingVoorkeurData.maximum = Number(marktvoorkeur.maximum) || 0;
-    indelingVoorkeurData.anywhere = Boolean(marktvoorkeur.anywhere);
-    return;
-    // MM returns data that is not used, instead the page does a new GET for all data
-    // This GET is triggered by the redirect after posting the form
-}
+// Mock Daalder API
 
 const ondernemer = {
     id: 10385,
@@ -301,9 +206,106 @@ export const getMarktBasics = async (marktId: string): Promise<any> => {
     };
 }
 
+const plaatsvoorkeurenData = [
+{
+    marktId: '20',
+    erkenningsNummer: '2019010303',
+    plaatsId: '133',
+    priority: 0
+  },
+  {
+    marktId: '20',
+    erkenningsNummer: '2019010303',
+    plaatsId: '135',
+    priority: 1
+  },
+  {
+    marktId: '20',
+    erkenningsNummer: '2019010303',
+    plaatsId: '139',
+    priority: 2
+  }
+]
+
+// this is imported in src/routes/dashboard.ts but then not actually used in template that is rendered
+export const getPlaatsvoorkeurenOndernemer = async (ondernemerId: string): Promise<IPlaatsvoorkeur[]> => {
+    console.log('getPlaatsvoorkeurenOndernemer', ondernemerId);
+    // return await api.get(`/kiesjekraam/voorkeur/plaats/ondernemer/${ondernemerId}/`);
+    return plaatsvoorkeurenData.filter(pref => pref.erkenningsNummer === ondernemerId);
+};
+
+export const getPlaatsvoorkeurenByMarktEnOndernemer = async (marktId: string, ondernemerId: string): Promise<IPlaatsvoorkeur[]> => {
+    console.log('getPlaatsvoorkeurenByMarktEnOndernemer', marktId, ondernemerId);
+    // return await api.get(`/kiesjekraam/voorkeur/plaats/ondernemer/${ondernemerId}/markt/${marktId}/`);
+    return plaatsvoorkeurenData.filter(
+        pref => pref.priority !== -1 && pref.marktId === marktId && pref.erkenningsNummer === ondernemerId
+    );
+}
+
 export const deletePlaatsvoorkeurenByMarktAndKoopman = async (marktId: string, erkenningsNummer: string) => {
     console.log('deletePlaatsvoorkeurenByMarktAndKoopman', marktId, erkenningsNummer);
     plaatsvoorkeurenData.length = 0; // clear array
+}
+
+export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], user: object): Promise<any> => {
+    console.log('updatePlaatsvoorkeur', plaatsvoorkeuren)
+    // The sorting widget works pretty weird:
+    // refer to convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren to see how it was done for MM.
+    // For MM, first they were ordered by ascending priority and then reversed.
+
+    // NB: marktId & erkenningsNummer are sent in the body of each voorkeur but not used in the API url.
+    // return await api.post(`/kiesjekraam/voorkeur/plaats/`);
+
+    // TODO: user is send to keep track of who made the changes.
+    console.log('user', user);
+
+    const updatedPlaatsen = plaatsvoorkeuren.map(pref => pref.plaatsId);
+    const existingPlaatsen = plaatsvoorkeurenData.map(pref => pref.plaatsId);
+    const toBeAdded = updatedPlaatsen.filter(plaats => !existingPlaatsen.includes(plaats));
+    const toBeRemoved = existingPlaatsen.filter(plaats => !updatedPlaatsen.includes(plaats));
+
+    console.log('toBeAdded', toBeAdded)
+    console.log('toBeRemoved', toBeRemoved)
+
+    plaatsvoorkeurenData.length = 0; // clear array
+
+    orderBy(plaatsvoorkeuren, ['priority'], ['desc']).forEach((updated, index) => {
+        updated.priority = index;
+        plaatsvoorkeurenData.push(updated)
+    });
+
+    return; // MM returns data that is not used, instead the page does a new GET for all data
+}
+
+const indelingVoorkeurData = {
+  minimum: 1,
+  maximum: 2,
+  kraaminrichting: undefined,
+  anywhere: false,
+  brancheId: undefined,
+  parentBrancheId: undefined,
+  inrichting: undefined
+};
+
+export const getIndelingVoorkeur = async (ondernemerId: string, marktId: string) => {
+    return indelingVoorkeurData
+}
+
+export const updateMarktVoorkeur = async (
+    marktvoorkeur: IMarktondernemerVoorkeur,
+    user: object, // actually an email string like team.salmagundi.ois@amsterdam.nl
+): Promise<any> => {
+    console.log('updateMarktVoorkeur', marktvoorkeur);
+
+    // TODO: user is send to keep track of who made the changes.
+    console.log('user', user);
+
+    indelingVoorkeurData.minimum = Number(marktvoorkeur.minimum) || 0;
+    indelingVoorkeurData.maximum = Number(marktvoorkeur.maximum) || 0;
+    indelingVoorkeurData.anywhere = Boolean(marktvoorkeur.anywhere);
+    return;
+    // MM returns data that is not used, instead the page does a new GET for all data
+    // This GET is triggered by the redirect after posting the form
 }
 
 const voorkeur = {
