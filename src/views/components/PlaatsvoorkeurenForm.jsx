@@ -215,6 +215,7 @@ class PlaatsvoorkeurenForm extends React.Component {
                                         <div className="PlaatsvoorkeurenForm__list-item__extra PlaatsvoorkeurenForm__list-item__optional" />
                                     </div>
                                 </div>
+                                {!!markt.kiesJeKraamGeblokkeerdePlaatsen && <span>Let op, plaatsen {markt.kiesJeKraamGeblokkeerdePlaatsen} zijn geblokkeerd op deze markt!</span>}
                             </div>
                         </div>
                         <h4 className="Fieldset__header">Prioriteit voorkeur wijzigen</h4>
