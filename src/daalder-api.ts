@@ -122,7 +122,7 @@ const markt_4045 = {
     kiesJeKraamActief: true,
     //   marktBeeindigd: false, <== wordt niet gebruikt
     kiesJeKraamFase: 'live',
-    kiesJeKraamGeblokkeerdePlaatsen: null, // null of string
+    kiesJeKraamGeblokkeerdePlaatsen: '26,133', // null of string
     kiesJeKraamGeblokkeerdeData: null, // null of string van comma separated dates
     //   kiesJeKraamEmailKramenzetter: 'a.hargens@amsterdam.nl', <== kramenzetter mail vanaf Daalder?
     //   marktDagenTekst: 'di. t/m za.',  <== wordt niet gebruikt
@@ -160,6 +160,7 @@ const marktplaatsen = [
     // moeten nog weggelaten worden indien plaatsId in kiesJeKraamGeblokkeerdePlaatsen
     {
         // bakType: 'geen',
+        id: 1, // use standplaats.id or concat marktId + plaatsId
         plaatsId: '26',
         // branches: [],
         // properties: [],
@@ -167,6 +168,7 @@ const marktplaatsen = [
     },
     {
         // bakType: 'geen',
+        id: 2,
         plaatsId: '27',
         // branches: [],
         // properties: [],
@@ -208,18 +210,21 @@ export const getMarktBasics = async (marktId: string): Promise<any> => {
 
 const plaatsvoorkeurenData = [
 {
+    id: 1, // use standplaats.id or concat marktId + plaatsId
     marktId: '20',
     erkenningsNummer: '2019010303',
     plaatsId: '133',
     priority: 0
   },
   {
+    id: 2,
     marktId: '20',
     erkenningsNummer: '2019010303',
     plaatsId: '135',
     priority: 1
   },
   {
+    id: 3,
     marktId: '20',
     erkenningsNummer: '2019010303',
     plaatsId: '139',
@@ -256,6 +261,8 @@ export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], 
     // NB: marktId & erkenningsNummer are sent in the body of each voorkeur but not used in the API url.
     // return await api.post(`/kiesjekraam/voorkeur/plaats/`);
 
+    // TODO: test for maximum number of plaatsvoorkeuren - where is this defined?
+
     // TODO: user is send to keep track of who made the changes.
     console.log('user', user);
 
@@ -273,22 +280,45 @@ export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], 
         updated.priority = index;
         plaatsvoorkeurenData.push(updated)
     });
+    // Does this sort affect the order as shown on the card OndernemerMarktVoorkeuren ? If so the fix there needs to be removed.
 
     return; // MM returns data that is not used, instead the page does a new GET for all data
 }
 
-const indelingVoorkeurData = {
+const voorkeur = {
+  // erkenningsNummer: '2019010303', die van ondernemer object wordt gebruikt
+  // marktId: '20', staat wel hidden in de AlgemeneVoorkeurenForm
+  // marktDate: null, staat wel hidden in de AlgemeneVoorkeurenForm
+  // minimum: 2, staat wel hidden in de AlgemeneVoorkeurenForm
+  // maximum: 2, staat wel hidden in de AlgemeneVoorkeurenForm
+  // anywhere: true, staat wel hidden in de AlgemeneVoorkeurenForm
+  // krachtStroom: null,
+  inrichting: '', // of: 'eigen-materieel',
+  bakType: 'bak-licht', // of: 'bak-licht', 'bak'
+  // branches: [ '206 -  FC - Stroopwafels' ],
+  // verkoopinrichting: [],
+  brancheId: '506 -  NF - Gebruikte modeaccessoires', // '206 -  FC - Stroopwafels', // used by KJK voorkeuren
+  branche: '506 -  NF - Gebruikte modeaccessoires', // used by AanwezigheidsPage
+  markt: '20', // used by AanwezigheidsPage
+  parentBrancheId: undefined,
   minimum: 1,
   maximum: 2,
-  kraaminrichting: undefined,
+  // kraaminrichting: undefined, <== not used
   anywhere: false,
-  brancheId: undefined,
-  parentBrancheId: undefined,
-  inrichting: undefined
-};
+}
+
+// const indelingVoorkeurData = {
+//   minimum: 1,
+//   maximum: 2,
+//   kraaminrichting: undefined,
+//   anywhere: false,
+//   brancheId: undefined,
+//   parentBrancheId: undefined,
+//   inrichting: undefined
+// };
 
 export const getIndelingVoorkeur = async (ondernemerId: string, marktId: string) => {
-    return indelingVoorkeurData
+    return voorkeur
 }
 
 export const updateMarktVoorkeur = async (
@@ -300,31 +330,12 @@ export const updateMarktVoorkeur = async (
     // TODO: user is send to keep track of who made the changes.
     console.log('user', user);
 
-    indelingVoorkeurData.minimum = Number(marktvoorkeur.minimum) || 0;
-    indelingVoorkeurData.maximum = Number(marktvoorkeur.maximum) || 0;
-    indelingVoorkeurData.anywhere = Boolean(marktvoorkeur.anywhere);
+    voorkeur.minimum = Number(marktvoorkeur.minimum) || 0;
+    voorkeur.maximum = Number(marktvoorkeur.maximum) || 0;
+    voorkeur.anywhere = Boolean(marktvoorkeur.anywhere);
     return;
     // MM returns data that is not used, instead the page does a new GET for all data
     // This GET is triggered by the redirect after posting the form
-}
-
-const voorkeur = {
-  // erkenningsNummer: '2019010303', die van ondernemer object wordt gebruikt
-  // marktId: '20', staat wel hidden in de AlgemeneVoorkeurenForm
-  // marktDate: null, staat wel hidden in de AlgemeneVoorkeurenForm
-  // minimum: 2, staat wel hidden in de AlgemeneVoorkeurenForm
-  // maximum: 2, staat wel hidden in de AlgemeneVoorkeurenForm
-  // anywhere: true, staat wel hidden in de AlgemeneVoorkeurenForm
-  // krachtStroom: null,
-  // kraaminrichting: undefined,
-  inrichting: '', // of: 'eigen-materieel',
-  bakType: 'bak-licht', // of: 'bak-licht', 'bak'
-  // branches: [ '206 -  FC - Stroopwafels' ],
-  // verkoopinrichting: [],
-  brancheId: '506 -  NF - Gebruikte modeaccessoires', // '206 -  FC - Stroopwafels', // used by KJK voorkeuren
-  branche: '506 -  NF - Gebruikte modeaccessoires', // used by AanwezigheidsPage
-  markt: '20', // used by AanwezigheidsPage
-  // parentBrancheId: ''
 }
 
 const voorkeuren = [voorkeur];
