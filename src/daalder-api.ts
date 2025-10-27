@@ -163,6 +163,10 @@ export const getMarkten = async (includeInactive: boolean = false): Promise<any>
     //             markt.kiesJeKraamFase === 'live' ||
     //             markt.kiesJeKraamFase === 'activatie'),
     // )
+    //
+    // includeInactive is set to true when logging in as Marktmeester or Marktbewerker,
+    // so no need to further support this given that KJK will only be used by ondernemers the future.
+    // From Daalder, only marktVersion with active = True are returned.
     console.log('getMarkten');
     // return markten;
     const markten: any[] = await api.get('/kiesjekraam/markt/');
