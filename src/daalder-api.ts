@@ -135,7 +135,7 @@ const markt_4045 = {
     kiesJeKraamMededelingActief: true, // bepaald of mededeling getoond wordt op ondernemer markt detail page
     kiesJeKraamMededelingTitel: "Dit is een titel voor een mededeling",
     kiesJeKraamMededelingTekst: "Dit is een tekst voor een mededeling",
-    kiesJeKraamActief: true,
+    // kiesJeKraamActief: true, // <== wordt gebruikt in combinatie met kiesJeKraamFase
     //   marktBeeindigd: false, <== wordt niet gebruikt
     kiesJeKraamFase: 'live',
     kiesJeKraamGeblokkeerdePlaatsen: '26,133', // null of string
@@ -143,7 +143,7 @@ const markt_4045 = {
     //   kiesJeKraamEmailKramenzetter: 'a.hargens@amsterdam.nl', <== kramenzetter mail vanaf Daalder?
     //   marktDagenTekst: 'di. t/m za.',  <== wordt niet gebruikt
     //   indelingsTijdstipTekst: '15.00 uur', <== wordt niet gebruikt
-    //   telefoonNummerContact: '020 25429 12', <== wordt alleen in mailing gebruikt
+    telefoonNummerContact: '020 25429 12', // wordt gebruikt in OndernemerMarktDetailPage
     //   makkelijkeMarktActief: true, <== wordt niet gebruikt
     indelingstype: 'a/b-lijst',
     //   isABlijstIndeling: false, <== wordt niet gebruikt
