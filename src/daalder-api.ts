@@ -145,8 +145,8 @@ const markt_4045 = {
     //   indelingsTijdstipTekst: '15.00 uur', <== wordt niet gebruikt
     telefoonNummerContact: '020 25429 12', // wordt gebruikt in OndernemerMarktDetailPage
     //   makkelijkeMarktActief: true, <== wordt niet gebruikt
-    indelingstype: 'a/b-lijst',
-    //   isABlijstIndeling: false, <== wordt niet gebruikt
+    // indelingstype: 'a/b-lijst', <== wordt niet gebruikt, alleen om A/B lijst knopje te tonen (of bij allocation misschien)
+    //   isABlijstIndeling: false, <== wordt niet gebruikt (of bij allocation misschien)
 };
 
 const markten = [
