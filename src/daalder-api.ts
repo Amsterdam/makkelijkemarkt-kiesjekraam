@@ -509,15 +509,15 @@ export const getAanmeldingenByOndernemer = async (erkenningsNummer: string): Pro
     console.log('getAanmeldingenByOndernemer', erkenningsNummer);
     // probably only last two weeks
     // add marktId for legacy
-    return rsvps.filter(rsvp => rsvp.koopman === erkenningsNummer).map(rsvp => ({ ...rsvp, marktId: rsvp.markt }));
+    return rsvps.filter(rsvp => rsvp.koopman === erkenningsNummer).map(rsvp => ({ ...rsvp, marktId: rsvp.markt.toString() }));
 };
 
-export const getAanmeldingenByOndernemerEnMarkt = async (marktId: string, erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
+export const getAanmeldingenByOndernemerEnMarkt = async (marktId: string | number, erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
     console.log('getAanmeldingenByOndernemerEnMarkt', marktId, erkenningsNummer);
     // add marktId for legacy
     return rsvps
-        .filter(rsvp => rsvp.koopman === erkenningsNummer && rsvp.markt === marktId)
-        .map(rsvp => ({ ...rsvp, marktId: rsvp.markt }));
+        .filter(rsvp => rsvp.koopman === erkenningsNummer && rsvp.markt === Number(marktId))
+        .map(rsvp => ({ ...rsvp, marktId: rsvp.markt.toString() }));
 };
 
 export const getRsvps = async (erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
