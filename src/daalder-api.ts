@@ -164,6 +164,8 @@ export const getMarkten = async (includeInactive: boolean = false): Promise<any>
     //             markt.kiesJeKraamFase === 'activatie'),
     // )
     console.log('getMarkten');
+    // return markten;
+    const markten: any[] = await api.get('/kiesjekraam/markt/');
     return markten;
 }
 
