@@ -455,117 +455,19 @@ const rsvps = [
   // let op: id is null of een echt id (waarschijnlijk of ze al bestaan in db of net gegenereerd als nieuwe)
   // twee weken aan rsvp data, gerekend vanaf maandag
   {
-      "id": 16896,
-      "marktDate": "2025-10-13",
-      "attending": false,
-      "markt": "20",
-      "koopman": "2019010303"
-  },
-  {
-      "id": 16897,
-      "marktDate": "2025-10-14",
-      "attending": false,
-      "markt": "20",
-      "koopman": "2019010303"
-  },
-  {
-      "id": 16898,
-      "marktDate": "2025-10-15",
-      "attending": false,
-      "markt": "20",
-      "koopman": "2019010303"
-  },
-  {
-      "id": 16899,
-      "marktDate": "2025-10-16",
+      "id": null,
+      "marktDate": "2025-10-28",
       "attending": true,
-      "markt": "20",
+      "markt": 311,
       "koopman": "2019010303"
   },
   {
-      "id": 16900,
-      "marktDate": "2025-10-17",
-      "attending": false,
-      "markt": "20",
-      "koopman": "2019010303"
-  },
-  {
-      "id": 16889,
-      "marktDate": "2025-10-18",
+      "id": null,
+      "marktDate": "2025-10-29",
       "attending": true,
-      "markt": "20",
+      "markt": 311,
       "koopman": "2019010303"
   },
-  {
-      "id": 16901,
-      "marktDate": "2025-10-19",
-      "attending": false,
-      "markt": "20",
-      "koopman": "2019010303"
-  },
-  {
-      "id": null,
-      "marktDate": "2025-10-20",
-      "attending": false,
-      "markt": "20",
-      "koopman": "2019010303"
-  },
-  {
-      "id": null,
-      "marktDate": "2025-10-21",
-      "attending": false,
-      "markt": "20",
-      "koopman": "2019010303"
-  },
-  {
-      "id": null,
-      "marktDate": "2025-10-22",
-      "attending": false,
-      "markt": "20",
-      "koopman": "2019010303"
-  },
-  {
-      "id": null,
-      "marktDate": "2025-10-23",
-      "attending": false,
-      "markt": "20",
-      "koopman": "2019010303"
-  },
-  {
-      "id": null,
-      "marktDate": "2025-10-24",
-      "attending": true,
-      "markt": "20",
-      "koopman": "2019010303"
-  },
-  {
-      "id": null,
-      "marktDate": "2025-10-25",
-      "attending": false,
-      "markt": "20",
-      "koopman": "2019010303"
-  },
-  {
-      "id": null,
-      "marktDate": "2025-10-26",
-      "attending": false,
-      "markt": "20",
-      "koopman": "2019010303"
-  },
-  {
-      "id": null,
-      "marktDate": "2025-10-13",
-      "attending": false,
-      "markt": "222", // andere markt
-      "koopman": "2019010303"
-  },
-  {
-      "id": null,
-      "marktDate": "2025-10-26",
-      "attending": false,
-      "markt": "496", // andere markt
-      "koopman": "2019010303"
-  }
 ];
 
 const rsvpPatterns = [
