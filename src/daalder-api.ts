@@ -169,9 +169,12 @@ export const getMarkten = async (includeInactive: boolean = false): Promise<any>
     return markten;
 }
 
-export const getMarkt = async (marktId: string): Promise<any> => {
+export const getMarkt = async (marktId: string | number): Promise<any> => {
     console.log('getMarkt', marktId);
-    return markt_4045;
+    // return markt_4045;
+
+    const markt = await api.get(`/kiesjekraam/markt/${marktId}/`);
+    return markt;
 }
 
 const marktplaatsen = [
