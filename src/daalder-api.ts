@@ -411,7 +411,14 @@ export const getVoorkeurByMarktEnOndernemer = async (
     erkenningsNummer: string,
 ): Promise<any> => {
     console.log('getVoorkeurByMarktEnOndernemer', marktId, erkenningsNummer);
-    return voorkeur;
+    const prefs = await getOndernemerMarktPrefs(erkenningsNummer, marktId);
+    return {
+        ...prefs,
+        branche: prefs.brancheId,
+        parentBrancheId: null,
+        markt: String(marktId),
+    };
+    // return voorkeur;
 }
 
 // updateVoorkeur {
