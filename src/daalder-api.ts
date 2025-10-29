@@ -267,9 +267,16 @@ export const getPlaatsvoorkeurenOndernemer = async (ondernemerId: string): Promi
 export const getPlaatsvoorkeurenByMarktEnOndernemer = async (marktId: string, ondernemerId: string): Promise<IPlaatsvoorkeur[]> => {
     console.log('getPlaatsvoorkeurenByMarktEnOndernemer', marktId, ondernemerId);
     // return await api.get(`/kiesjekraam/voorkeur/plaats/ondernemer/${ondernemerId}/markt/${marktId}/`);
-    return plaatsvoorkeurenData.filter(
-        pref => pref.priority !== -1 && pref.marktId === marktId && pref.erkenningsNummer === ondernemerId
-    );
+
+    const pref: {specs: any} = await api.get(`/kiesjekraam/pref/markt/${marktId}/ondernemer/${ondernemerId}/`);
+    console.log(pref);
+    const {specs = {}} = pref;
+    const {plaatsen = []}: {plaatsen: IPlaatsvoorkeur[]} = specs;
+    return plaatsen;
+
+    // return plaatsvoorkeurenData.filter(
+    //     pref => pref.priority !== -1 && pref.marktId === marktId && pref.erkenningsNummer === ondernemerId
+    // );
 }
 
 export const deletePlaatsvoorkeurenByMarktAndKoopman = async (marktId: string, erkenningsNummer: string) => {
@@ -279,32 +286,40 @@ export const deletePlaatsvoorkeurenByMarktAndKoopman = async (marktId: string, e
 
 export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], user: object): Promise<any> => {
     console.log('updatePlaatsvoorkeur', plaatsvoorkeuren)
-    // The sorting widget works pretty weird:
-    // refer to convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren to see how it was done for MM.
-    // For MM, first they were ordered by ascending priority and then reversed.
-
-    // NB: marktId & erkenningsNummer are sent in the body of each voorkeur but not used in the API url.
-    // return await api.post(`/kiesjekraam/voorkeur/plaats/`);
-
     // TODO: test for maximum number of plaatsvoorkeuren - where is this defined?
-
     // TODO: user is send to keep track of who made the changes.
     console.log('user', user);
 
-    const updatedPlaatsen = plaatsvoorkeuren.map(pref => pref.plaatsId);
-    const existingPlaatsen = plaatsvoorkeurenData.map(pref => pref.plaatsId);
-    const toBeAdded = updatedPlaatsen.filter(plaats => !existingPlaatsen.includes(plaats));
-    const toBeRemoved = existingPlaatsen.filter(plaats => !updatedPlaatsen.includes(plaats));
+    const first = plaatsvoorkeuren[0];
+    if (!first) {
+        throw new Error('No plaatsvoorkeuren provided');
+    }
 
-    console.log('toBeAdded', toBeAdded)
-    console.log('toBeRemoved', toBeRemoved)
+    // The sorting widget works pretty weird:
+    // refer to convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren to see how it was done for MM.
+    const reIndexedPlaatsvoorkeuren = orderBy(plaatsvoorkeuren, ['priority'], ['desc']).map((plaats: any, index:number) => ({
+        ...plaats,
+        priority: index + 1, // priority starts at 1
+    }));
 
-    plaatsvoorkeurenData.length = 0; // clear array
+    const data = {specs: {plaatsen: reIndexedPlaatsvoorkeuren}}
+    const {marktId, erkenningsNummer} = first;
+    await api.patch(`/kiesjekraam/pref/markt/${marktId}/ondernemer/${erkenningsNummer}/`, data);
 
-    orderBy(plaatsvoorkeuren, ['priority'], ['desc']).forEach((updated, index) => {
-        updated.priority = index;
-        plaatsvoorkeurenData.push(updated)
-    });
+    // const updatedPlaatsen = plaatsvoorkeuren.map(pref => pref.plaatsId);
+    // const existingPlaatsen = plaatsvoorkeurenData.map(pref => pref.plaatsId);
+    // const toBeAdded = updatedPlaatsen.filter(plaats => !existingPlaatsen.includes(plaats));
+    // const toBeRemoved = existingPlaatsen.filter(plaats => !updatedPlaatsen.includes(plaats));
+
+    // console.log('toBeAdded', toBeAdded)
+    // console.log('toBeRemoved', toBeRemoved)
+
+    // plaatsvoorkeurenData.length = 0; // clear array
+
+    // orderBy(plaatsvoorkeuren, ['priority'], ['desc']).forEach((updated, index) => {
+    //     updated.priority = index;
+    //     plaatsvoorkeurenData.push(updated)
+    // });
     // Does this sort affect the order as shown on the card OndernemerMarktVoorkeuren ? If so the fix there needs to be removed.
 
     return; // MM returns data that is not used, instead the page does a new GET for all data
