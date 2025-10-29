@@ -444,9 +444,14 @@ export const updateVoorkeur = async (
     // updatedVoorkeur.marktId: kan gebruikt worden voor de api call
     // updatedVoorkeur.inrichting: null | 'eigen-materieel'
     // updatedVoorkeur.bakType: 'geen' | 'bak-licht' | 'bak'
-    voorkeur.bakType = updatedVoorkeur.bakType;
-    voorkeur.inrichting = updatedVoorkeur.inrichting;
-    voorkeur.brancheId = updatedVoorkeur.brancheId;
+
+    const {marktId, erkenningsNummer, inrichting, bakType, brancheId} = updatedVoorkeur;
+    const data = { inrichting, bakType, brancheId };
+    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, data);
+
+    // voorkeur.bakType = updatedVoorkeur.bakType;
+    // voorkeur.inrichting = updatedVoorkeur.inrichting;
+    // voorkeur.brancheId = updatedVoorkeur.brancheId;
 }
 
 const allocations = [
