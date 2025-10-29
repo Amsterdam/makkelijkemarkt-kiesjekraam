@@ -365,7 +365,14 @@ const voorkeur = {
 // };
 
 export const getIndelingVoorkeur = async (ondernemerId: string, marktId: string) => {
-    return voorkeur
+    console.log('getIndelingVoorkeur')
+    const {minimum, maximum, anywhere} = await getOndernemerMarktPrefs(ondernemerId, marktId);
+    return {
+        minimum,
+        maximum,
+        anywhere,
+    };
+    // return voorkeur
 }
 
 export const updateMarktVoorkeur = async (
@@ -377,12 +384,17 @@ export const updateMarktVoorkeur = async (
     // TODO: user is send to keep track of who made the changes.
     console.log('user', user);
 
-    voorkeur.minimum = Number(marktvoorkeur.minimum) || 0;
-    voorkeur.maximum = Number(marktvoorkeur.maximum) || 0;
-    voorkeur.anywhere = Boolean(marktvoorkeur.anywhere);
-    return;
+    const {marktId, erkenningsNummer, minimum, maximum, anywhere} = marktvoorkeur;
+    const data = { minimum, maximum, anywhere };
+    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, data);
+
+    // voorkeur.minimum = Number(marktvoorkeur.minimum) || 0;
+    // voorkeur.maximum = Number(marktvoorkeur.maximum) || 0;
+    // voorkeur.anywhere = Boolean(marktvoorkeur.anywhere);
+
     // MM returns data that is not used, instead the page does a new GET for all data
     // This GET is triggered by the redirect after posting the form
+    return;
 }
 
 const voorkeuren = [voorkeur];
