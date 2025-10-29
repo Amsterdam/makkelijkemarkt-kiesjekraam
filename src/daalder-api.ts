@@ -301,6 +301,7 @@ export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], 
     if (!first) {
         throw new Error('No plaatsvoorkeuren provided');
     }
+    const {marktId, erkenningsNummer} = first;
 
     // The sorting widget works pretty weird:
     // refer to convertIPlaatsvoorkeurArrayToApiPlaatsvoorkeuren to see how it was done for MM.
@@ -309,9 +310,8 @@ export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], 
         priority: index + 1, // priority starts at 1
     }));
 
-    const data = {specs: {plaatsen: reIndexedPlaatsvoorkeuren}}
-    const {marktId, erkenningsNummer} = first;
-    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, data);
+    const prefs = {plaatsen: reIndexedPlaatsvoorkeuren}
+    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, prefs);
 
     // const updatedPlaatsen = plaatsvoorkeuren.map(pref => pref.plaatsId);
     // const existingPlaatsen = plaatsvoorkeurenData.map(pref => pref.plaatsId);
