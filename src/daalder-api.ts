@@ -257,6 +257,21 @@ const plaatsvoorkeurenData = [
   }
 ]
 
+const getOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: number|string): Promise<any> => {
+    console.log('getOndernemerMarktPrefs', erkenningsNummer, marktId);
+    const response: {specs: {}} = await api.get(`/kiesjekraam/pref/markt/${marktId}/ondernemer/${erkenningsNummer}/`);
+    // console.log('response', response)
+    return response.specs;
+}
+
+const updateOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: number|string, prefs: any): Promise<any> => {
+    console.log('updateOndernemerMarktPrefs', prefs);
+    const data = {specs: prefs}
+    const response = await api.patch(`/kiesjekraam/pref/markt/${marktId}/ondernemer/${erkenningsNummer}/`, data);
+    // console.log('response', response)
+    return response;
+}
+
 // this is imported in src/routes/dashboard.ts but then not actually used in template that is rendered
 export const getPlaatsvoorkeurenOndernemer = async (ondernemerId: string): Promise<IPlaatsvoorkeur[]> => {
     console.log('getPlaatsvoorkeurenOndernemer', ondernemerId);
@@ -266,17 +281,9 @@ export const getPlaatsvoorkeurenOndernemer = async (ondernemerId: string): Promi
 
 export const getPlaatsvoorkeurenByMarktEnOndernemer = async (marktId: string, ondernemerId: string): Promise<IPlaatsvoorkeur[]> => {
     console.log('getPlaatsvoorkeurenByMarktEnOndernemer', marktId, ondernemerId);
-    // return await api.get(`/kiesjekraam/voorkeur/plaats/ondernemer/${ondernemerId}/markt/${marktId}/`);
-
-    const pref: {specs: any} = await api.get(`/kiesjekraam/pref/markt/${marktId}/ondernemer/${ondernemerId}/`);
-    console.log(pref);
-    const {specs = {}} = pref;
-    const {plaatsen = []}: {plaatsen: IPlaatsvoorkeur[]} = specs;
+    const prefs = await getOndernemerMarktPrefs(ondernemerId, marktId);
+    const {plaatsen = []}: {plaatsen: IPlaatsvoorkeur[]} = prefs;
     return plaatsen;
-
-    // return plaatsvoorkeurenData.filter(
-    //     pref => pref.priority !== -1 && pref.marktId === marktId && pref.erkenningsNummer === ondernemerId
-    // );
 }
 
 export const deletePlaatsvoorkeurenByMarktAndKoopman = async (marktId: string, erkenningsNummer: string) => {
@@ -304,7 +311,7 @@ export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], 
 
     const data = {specs: {plaatsen: reIndexedPlaatsvoorkeuren}}
     const {marktId, erkenningsNummer} = first;
-    await api.patch(`/kiesjekraam/pref/markt/${marktId}/ondernemer/${erkenningsNummer}/`, data);
+    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, data);
 
     // const updatedPlaatsen = plaatsvoorkeuren.map(pref => pref.plaatsId);
     // const existingPlaatsen = plaatsvoorkeurenData.map(pref => pref.plaatsId);
