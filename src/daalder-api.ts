@@ -260,9 +260,8 @@ const plaatsvoorkeurenData = [
 
 const getOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: number|string): Promise<any> => {
     console.log('getOndernemerMarktPrefs', erkenningsNummer, marktId);
-    const response: {specs: {}} = await api.get(`/kiesjekraam/pref/markt/${marktId}/ondernemer/${erkenningsNummer}/`);
-    // console.log('response', response)
-    return response.specs;
+    const {id, specs}: {id: number, specs: {}} = await api.get(`/kiesjekraam/pref/markt/${marktId}/ondernemer/${erkenningsNummer}/`);
+    return {id, ...specs};
 }
 
 const updateOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: number|string, prefs: any): Promise<any> => {
