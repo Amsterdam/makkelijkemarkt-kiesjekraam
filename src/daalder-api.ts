@@ -218,9 +218,10 @@ export const getMarktBasics = async (marktId: string): Promise<any> => {
     console.log('getMarktBasics', marktId);
     const markt = await getMarkt(marktId);
     const branches = await getBranches();
+    const standplaatsen = await getStandplaatsen(marktId);
     return {
         markt, // getMarkt
-        marktplaatsen,
+        marktplaatsen: standplaatsen, // <== algemene voorkeuren page gebruikt standplaatsen
         branches, // <== algemene voorkeuren page gebruikt branches
         // rows: [],
         // obstakels: [],
@@ -278,6 +279,12 @@ const getBranches = async (includeInactive: boolean = false): Promise<any[]> => 
     const queryParms = includeInactive ? '' : '?active=true';
     const branches: any[] = await api.get(`/kiesjekraam/branche/${queryParms}`);
     return branches;
+}
+
+const getStandplaatsen = async (marktId: number|string, includeInactive: boolean = false): Promise<any[]> => {
+    const queryParms = `?markt_version_id=${marktId}` + (includeInactive ? '' : '&active=true');
+    const standplaatsen: any[] = await api.get(`/kiesjekraam/standplaats/${queryParms}`);
+    return standplaatsen;
 }
 
 // this is imported in src/routes/dashboard.ts but then not actually used in template that is rendered
