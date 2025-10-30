@@ -1,7 +1,7 @@
 import { IMarktondernemerVoorkeur, IPlaatsvoorkeur, IRSVP, IRsvpPattern } from 'model/markt.model';
 import { requireEnv } from './util';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { orderBy } from 'lodash'
+import { flatten, orderBy } from 'lodash'
 
 requireEnv('DAALDER_API_USER_TOKEN');
 requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
@@ -290,7 +290,10 @@ const getBranches = async (includeInactive: boolean = false): Promise<any[]> => 
 export const getPlaatsvoorkeurenOndernemer = async (ondernemerId: string): Promise<IPlaatsvoorkeur[]> => {
     console.log('getPlaatsvoorkeurenOndernemer', ondernemerId);
     // return await api.get(`/kiesjekraam/voorkeur/plaats/ondernemer/${ondernemerId}/`);
-    return plaatsvoorkeurenData.filter(pref => pref.erkenningsNummer === ondernemerId);
+    // return plaatsvoorkeurenData.filter(pref => pref.erkenningsNummer === ondernemerId);
+
+    const prefs = await getOndernemerPrefs(ondernemerId);
+    return flatten(prefs.map((pref: any) => pref.plaatsen));
 };
 
 export const getPlaatsvoorkeurenByMarktEnOndernemer = async (marktId: string, ondernemerId: string): Promise<IPlaatsvoorkeur[]> => {
