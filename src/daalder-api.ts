@@ -223,6 +223,7 @@ export const getMarktBasics = async (marktId: string): Promise<any> => {
     // also used by getMarktDetails, die weer alleen door allocatie gerelateerde pages wordt gebruikt
     console.log('getMarktBasics', marktId);
     const markt = await getMarkt(marktId);
+    const branches = await getBranches();
     return {
         markt, // getMarkt
         marktplaatsen,
@@ -270,6 +271,13 @@ const updateOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: num
     const response = await api.patch(`/kiesjekraam/pref/markt/${marktId}/ondernemer/${erkenningsNummer}/`, data);
     // console.log('response', response)
     return response;
+}
+
+const getBranches = async (includeInactive: boolean = false): Promise<any[]> => {
+    console.log('getBranches', includeInactive);
+    const queryParms = includeInactive ? '' : '?active=true';
+    const branches: any[] = await api.get(`/kiesjekraam/branche/${queryParms}`);
+    return branches;
 }
 
 // this is imported in src/routes/dashboard.ts but then not actually used in template that is rendered
