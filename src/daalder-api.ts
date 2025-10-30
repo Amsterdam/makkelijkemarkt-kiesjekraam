@@ -423,6 +423,7 @@ export const getVoorkeurenByOndernemer = async (
     erkenningsNummer: string,
 ): Promise<any> => {
     console.log('getVoorkeurenByOndernemer', erkenningsNummer);
+    // used by RSVP page via DaalderApiDispatch and useMarktVoorkeur hook
     return voorkeuren
 }
 
@@ -529,14 +530,14 @@ const rsvps = [
   // twee weken aan rsvp data, gerekend vanaf maandag
   {
       "id": null,
-      "marktDate": "2025-10-28",
+      "marktDate": "2025-10-30",
       "attending": true,
       "markt": 311,
       "koopman": "2019010303"
   },
   {
       "id": null,
-      "marktDate": "2025-10-29",
+      "marktDate": "2025-10-31",
       "attending": true,
       "markt": 311,
       "koopman": "2019010303"
