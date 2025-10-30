@@ -305,7 +305,9 @@ export const getPlaatsvoorkeurenByMarktEnOndernemer = async (marktId: string, on
 
 export const deletePlaatsvoorkeurenByMarktAndKoopman = async (marktId: string, erkenningsNummer: string) => {
     console.log('deletePlaatsvoorkeurenByMarktAndKoopman', marktId, erkenningsNummer);
-    plaatsvoorkeurenData.length = 0; // clear array
+    // plaatsvoorkeurenData.length = 0; // clear array
+    const prefs = {plaatsen: []}
+    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, prefs);
 }
 
 export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], user: object): Promise<any> => {
