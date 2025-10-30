@@ -100,13 +100,7 @@ export const getOndernemer = async (erkenningsNummer: string): Promise<any> => {
     console.log('getOndernemer', erkenningsNummer);
     // return ondernemer;
 
-    const serial = erkenningsNummerToSerial(erkenningsNummer);
-    const ondernemers: any[] = await api.get(`/kiesjekraam/ondernemer/?serial=${serial}`);
-    // use a filter query because using a serial as primary key is not great within a url
-    if (!ondernemers || !ondernemers.length) {
-        throw new Error(`Ondernemer not found: ${erkenningsNummer}`);
-    }
-    const ondernemer = ondernemers[0];
+    const ondernemer: any = await api.get(`/kiesjekraam/ondernemer/${erkenningsNummer}/`);
     return ondernemer;
 }
 
