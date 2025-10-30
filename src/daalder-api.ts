@@ -258,6 +258,13 @@ const plaatsvoorkeurenData = [
   }
 ]
 
+const getOndernemerPrefs = async (erkenningsNummer: string): Promise<any> => {
+    console.log('getOndernemerPrefs', erkenningsNummer);
+    const serial = erkenningsNummerToSerial(erkenningsNummer);
+    const response: [{specs: {}, id: number}] = await api.get(`/kiesjekraam/pref/?inschrijving__ondernemer__serial=${serial}`);
+    return response.map(({id, specs}) => ({id, ...specs}));
+}
+
 const getOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: number|string): Promise<any> => {
     console.log('getOndernemerMarktPrefs', erkenningsNummer, marktId);
     const {id, specs}: {id: number, specs: {}} = await api.get(`/kiesjekraam/pref/markt/${marktId}/ondernemer/${erkenningsNummer}/`);
