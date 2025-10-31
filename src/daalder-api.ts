@@ -530,16 +530,16 @@ const rsvps = [
   // twee weken aan rsvp data, gerekend vanaf maandag
   {
       "id": null,
-      "marktDate": "2025-10-30",
+      "marktDate": "2025-10-31",
       "attending": true,
-      "markt": 311,
+      "markt": '311',
       "koopman": "2019010303"
   },
   {
       "id": null,
-      "marktDate": "2025-10-31",
+      "marktDate": "2025-11-01",
       "attending": true,
-      "markt": 311,
+      "markt": '311',
       "koopman": "2019010303"
   },
 ];
@@ -547,7 +547,7 @@ const rsvps = [
 const rsvpPatterns = [
   {
       "id": 2568,
-      "markt": "20",
+      "markt": "311",
       "koopman": "2019010303",
       // "patternDate": "2025-10-09 07:56:54", // probably not used, but verify MM
       "monday": false,
@@ -587,7 +587,7 @@ export const getAanmeldingenByOndernemerEnMarkt = async (marktId: string | numbe
     console.log('getAanmeldingenByOndernemerEnMarkt', marktId, erkenningsNummer);
     // add marktId for legacy
     return rsvps
-        .filter(rsvp => rsvp.koopman === erkenningsNummer && rsvp.markt === Number(marktId))
+        .filter(rsvp => rsvp.koopman === erkenningsNummer && rsvp.markt === marktId)
         .map(rsvp => ({ ...rsvp, marktId: rsvp.markt.toString() }));
 };
 
