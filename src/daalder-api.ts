@@ -605,8 +605,9 @@ export const getRsvpPatterns = async (erkenningsNummer: string) => {
     return rsvpPatterns.filter(pattern => pattern.koopman === erkenningsNummer);
 };
 
-export const saveRsvps = async (data: any, user: string) => {
+export const saveRsvps = async (data: any, user: string): Promise<any[]> => {
     console.log('saveRsvps', data, user);
+
     // {
     //   marktDate: '2025-10-17',
     //   shortName: 'vr',
@@ -621,23 +622,27 @@ export const saveRsvps = async (data: any, user: string) => {
     //   koopmanErkenningsNummer: '2019010303',
     //   marktId: '20'
     // },
-    data.rsvps.forEach((updatedRsvp: any) => {
-        const existing = rsvps.find(existingRsvp => existingRsvp.marktDate === updatedRsvp.marktDate && existingRsvp.koopman === updatedRsvp.koopman && existingRsvp.markt === updatedRsvp.markt);
-        if (existing) {
-            existing.attending = updatedRsvp.attending;
-        } else {
-            const newId = Math.max(0, ...rsvps.map(rsvp => rsvp.id || 0)) + 1;
-            console.log('creating', newId)
-            rsvps.push({
-                id: newId,
-                marktDate: updatedRsvp.marktDate,
-                attending: updatedRsvp.attending,
-                markt: updatedRsvp.markt,
-                koopman: updatedRsvp.koopman,
-            });
-        }
-    });
-    return rsvps
+
+    const rsvps: any[] = await api.post('/kiesjekraam/rsvp/', { ...data });
+    return rsvps;  // although returned rsvps are not consumed by AanwezigheidsPage
+
+    // data.rsvps.forEach((updatedRsvp: any) => {
+    //     const existing = rsvps.find(existingRsvp => existingRsvp.marktDate === updatedRsvp.marktDate && existingRsvp.koopman === updatedRsvp.koopman && existingRsvp.markt === updatedRsvp.markt);
+    //     if (existing) {
+    //         existing.attending = updatedRsvp.attending;
+    //     } else {
+    //         const newId = Math.max(0, ...rsvps.map(rsvp => rsvp.id || 0)) + 1;
+    //         console.log('creating', newId)
+    //         rsvps.push({
+    //             id: newId,
+    //             marktDate: updatedRsvp.marktDate,
+    //             attending: updatedRsvp.attending,
+    //             markt: updatedRsvp.markt,
+    //             koopman: updatedRsvp.koopman,
+    //         });
+    //     }
+    // });
+    // return rsvps
 };
 
 export const saveRsvpPatterns = async (data: any, user: string) => {
