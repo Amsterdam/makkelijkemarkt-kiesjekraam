@@ -592,8 +592,13 @@ export const getAanmeldingenByOndernemerEnMarkt = async (marktId: string | numbe
 };
 
 export const getRsvps = async (erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
+    console.log('getRsvps', erkenningsNummer);
     // probably only last two weeks
-    return rsvps.filter(rsvp => rsvp.koopman === erkenningsNummer);
+    // return rsvps.filter(rsvp => rsvp.koopman === erkenningsNummer);
+    const serial = erkenningsNummerToSerial(erkenningsNummer);
+    const rsvps: ILegacyRSVP[] = await api.get(`/kiesjekraam/rsvp/?inschrijving__ondernemer__serial=${serial}`);
+    console.log(rsvps)
+    return rsvps
 };
 
 export const getRsvpPatterns = async (erkenningsNummer: string) => {
