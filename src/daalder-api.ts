@@ -419,13 +419,14 @@ export const updateMarktVoorkeur = async (
 
 const voorkeuren = [voorkeur];
 
-export const getVoorkeurenByOndernemer = async (
-    erkenningsNummer: string,
-): Promise<any> => {
-    console.log('getVoorkeurenByOndernemer', erkenningsNummer);
-    // used by RSVP page via DaalderApiDispatch and useMarktVoorkeur hook
-    return voorkeuren
-}
+// export const getVoorkeurenByOndernemer = async (
+//     erkenningsNummer: string,
+// ): Promise<any> => {
+//     console.log('getVoorkeurenByOndernemer', erkenningsNummer);
+//     // used by RSVP page via DaalderApiDispatch and useMarktVoorkeur hook
+//     return voorkeuren
+// }
+// ==> made this function obsolete, no longer used by the new AanwezigheidsPage
 
 export const getVoorkeurByMarktEnOndernemer = async (
     marktId: string,
