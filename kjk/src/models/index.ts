@@ -32,15 +32,16 @@ export interface IMarkt {
 }
 
 export interface IMarktVoorkeur {
-  absentFrom: null
-  absentUntil: null
+  absentFrom: null // not sent by Daalder API
+  absentUntil: null // not sent by Daalder API
   anywhere: boolean
   bakType: string
-  branche: string
-  hasInrichting: boolean
+  branche: string // <== only prop of voorkeur used on Aanwezigheids page
+  hasInrichting: boolean // not sent by Daalder API
+  inrichting: string // from Daalder API the prop "inrichting" with a string value is sent instead of hasInrichting boolean
   id: number
-  koopman: ErkenningsNummer
-  markt: string
+  koopman: ErkenningsNummer // not sent by Daalder API
+  markt: string  // not sent by Daalder API
   maximum: number
   minimum: number
 }

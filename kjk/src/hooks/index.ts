@@ -58,11 +58,11 @@ export const useSaveRsvpPattern = () => {
   )
 }
 
-export const useMarktVoorkeur = (erkenningsNummer: string) => {
-  return useQuery<IMarktVoorkeur[], IApiError>(
+export const useMarktVoorkeur = (marktId: string, erkenningsNummer: string) => {
+  return useQuery<IMarktVoorkeur, IApiError>(
     'marktVoorkeur',
     () => {
-      return mmApi.get(`/marktvoorkeur/koopman/${erkenningsNummer}`)
+      return mmApi.get(`/voorkeur/markt/${marktId}/koopman/${erkenningsNummer}`)
     },
     MM_API_QUERY_CONFIG
   )

@@ -88,7 +88,7 @@ const AanwezigheidsPage: React.VFC = () => {
   const ondernemerData = useOndernemer(erkenningsNummer)
   const rsvpData = useRsvp(erkenningsNummer)
   const rsvpPatternData = useRsvpPattern(erkenningsNummer)
-  const marktVoorkeurData = useMarktVoorkeur(erkenningsNummer)
+  const marktVoorkeurData = useMarktVoorkeur(marktId, erkenningsNummer)
   const marktData = useMarkt(marktId)
 
   const {
@@ -295,7 +295,7 @@ const AanwezigheidsPage: React.VFC = () => {
   }, [erkenningsNummer, marktId, ondernemerData.data, marktData.data, rsvpPatternData.data, rsvpData.data])
 
   const rsvpPerMarkt = groupBy(rsvps, 'markt')
-  const marktVoorkeur: Partial<IMarktVoorkeur> = find(marktVoorkeurData.data || [], { markt: marktId }) || {}
+  const marktVoorkeur: Partial<IMarktVoorkeur> = marktVoorkeurData.data || {}
   const hasValidBranche =
     !marktVoorkeurData.data ||
     (!isEmpty(marktVoorkeur) && marktVoorkeur.branche && marktVoorkeur.branche !== EMPTY_BRANCH)

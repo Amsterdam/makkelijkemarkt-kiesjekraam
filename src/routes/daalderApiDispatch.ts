@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import { keycloak, Roles } from '../authentication';
 import { GrantedRequest } from 'keycloak-connect';
 import { getKeycloakUser } from '../keycloak-api';
-import { getMarkt, getOndernemer, getRsvps, getRsvpPatterns, getVoorkeurenByOndernemer, saveRsvps, saveRsvpPatterns } from '../daalder-api';
+import { getMarkt, getOndernemer, getRsvps, getRsvpPatterns, saveRsvps, saveRsvpPatterns, getVoorkeurByMarktEnOndernemer } from '../daalder-api';
 
 interface ISubRoute {
   route: string
@@ -15,7 +15,7 @@ const router = express.Router();
 const subroutes: ISubRoute[] = [
     {route: '/koopman/erkenningsnummer/:erkenningsNummer', getHandler: (req: GrantedRequest) => getOndernemer(req.params.erkenningsNummer)},
     {route: '/ondernemer/markt/:marktId', getHandler: (req: GrantedRequest) => getMarkt(req.params.marktId)},
-    {route: '/marktvoorkeur/koopman/:erkenningsNummer', getHandler: (req: GrantedRequest) => getVoorkeurenByOndernemer(req.params.erkenningsNummer)},
+    {route: '/voorkeur/markt/:marktId/koopman/:erkenningsNummer', getHandler: (req: GrantedRequest) => getVoorkeurByMarktEnOndernemer(req.params.marktId, req.params.erkenningsNummer)},
     {route: '/rsvp/koopman/:erkenningsNummer', getHandler: (req: GrantedRequest) => getRsvps(req.params.erkenningsNummer)},
     {route: '/rsvp_pattern/koopman/:erkenningsNummer', getHandler: (req: GrantedRequest) => getRsvpPatterns(req.params.erkenningsNummer)},
     {route: '/rsvp', postHandler: (req: GrantedRequest, user: string) => saveRsvps(req.body, user)},
