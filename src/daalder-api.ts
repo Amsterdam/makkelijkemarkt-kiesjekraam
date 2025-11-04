@@ -26,15 +26,15 @@ const api = axios.create({
 
 api.interceptors.response.use(
     (response: AxiosResponse) => response.data,
-    error => {
-        if (error.response) {
-            console.error('Daalder API error response:', error.response.data);
-        } else {
-            console.error('API request error message', error.message);
-            console.log('Error:', error);
-        }
-        // throw new Error('Daalder API Request failed');
-    },
+    // error => {
+    //     if (error.response) {
+    //         console.error('Daalder API error response:', error.response.data);
+    //     } else {
+    //         console.error('API request error message', error.message);
+    //         console.log('Error:', error);
+    //     }
+    //     throw new Error(error);
+    // },
 );
 
 export const getAllocation = async (data: Object): Promise<Object> => await api.post('/allocation/allocate/', { data });
