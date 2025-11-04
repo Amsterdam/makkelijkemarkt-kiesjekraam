@@ -194,7 +194,7 @@ const AanwezigheidsPage: React.VFC = () => {
   const saveRsvps = async () => {
     saveRsvpApi(
       rsvps
-        .filter((rsvp) => rsvp.markt === marktId)
+        .filter((rsvp) => (rsvp.markt === marktId) && !rsvp.isInThePast)
         .map((rsvp) => {
           return {
             ...rsvp,
