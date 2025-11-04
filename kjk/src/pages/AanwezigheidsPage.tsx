@@ -173,6 +173,15 @@ const AanwezigheidsPage: React.VFC = () => {
   }
 
   const save = async () => {
+    const alreadyExpiredDates = rsvps.filter((rsvp) => !rsvp.isInThePast && checkIfDateIsInThePast(rsvp.marktDate))
+    if (alreadyExpiredDates.length) {
+      notification.error({
+        message: 'Opslaan niet meer mogelijk',
+        description: 'Deze gegevens zijn ondertussen achterhaald geraakt. Ververs eerst de pagina en probeer dan opnieuw.',
+      })
+      return
+    }
+
     const invalidDates = getInvalidDates(rsvps)
     if (invalidDates.length) {
       vervangerWarning({ dates: invalidDates })
