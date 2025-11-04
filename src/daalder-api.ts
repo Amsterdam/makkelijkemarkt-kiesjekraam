@@ -2,6 +2,7 @@ import { IMarktondernemerVoorkeur, IPlaatsvoorkeur, IRSVP, IRsvpPattern } from '
 import { requireEnv } from './util';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { flatten, orderBy } from 'lodash'
+import moment from 'moment';
 
 requireEnv('DAALDER_API_USER_TOKEN');
 requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
@@ -594,11 +595,14 @@ export const getAanmeldingenByOndernemerEnMarkt = async (marktId: string | numbe
 
 export const getRsvps = async (erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
     console.log('getRsvps', erkenningsNummer);
-    // probably only last two weeks
-    // return rsvps.filter(rsvp => rsvp.koopman === erkenningsNummer);
+    // Get monday of the same week as today
+    const monday = moment().startOf('isoWeek').format('YYYY-MM-DD');
+    // Get sunday two weeks later
+    const sundayInTwoWeeks = moment().startOf('isoWeek').add(13, 'days').format('YYYY-MM-DD');
+
     const serial = erkenningsNummerToSerial(erkenningsNummer);
-    const rsvps: ILegacyRSVP[] = await api.get(`/kiesjekraam/rsvp/?inschrijving__ondernemer__serial=${serial}`);
-    console.log(rsvps)
+    const queryParms = `?inschrijving__ondernemer__serial=${serial}&day__gte=${monday}&day__lte=${sundayInTwoWeeks}`;
+    const rsvps: ILegacyRSVP[] = await api.get(`/kiesjekraam/rsvp/${queryParms}`);
     return rsvps
 };
 
