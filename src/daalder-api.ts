@@ -606,8 +606,12 @@ export const getRsvps = async (erkenningsNummer: string): Promise<ILegacyRSVP[]>
     return rsvps
 };
 
-export const getRsvpPatterns = async (erkenningsNummer: string) => {
-    return rsvpPatterns.filter(pattern => pattern.koopman === erkenningsNummer);
+export const getRsvpPatterns = async (erkenningsNummer: string): Promise<IRsvpPattern[]> => {
+    console.log('getRsvpPatterns', erkenningsNummer);
+    const serial = erkenningsNummerToSerial(erkenningsNummer);
+    const queryParms = `?inschrijving__ondernemer__serial=${serial}`;
+    const rsvpPatterns: IRsvpPattern[] = await api.get(`/kiesjekraam/rsvp-pattern/${queryParms}`);
+    return rsvpPatterns;
 };
 
 export const saveRsvps = async (data: any, user: string): Promise<any[]> => {
@@ -663,18 +667,27 @@ export const saveRsvpPatterns = async (data: any, user: string) => {
     //   erkenningsNummer: '2019010303',
     //   markt: '20'
     // }
-    const existingPattern: ILegacyRSVPPattern = rsvpPatterns.find(p => p.koopman === data.erkenningsNummer && p.markt === data.markt)
-    const pattern: Partial<ILegacyRSVPPattern> = existingPattern || {
-        id: Math.max(0, ...rsvpPatterns.map(p => p.id || 0)) + 1,
-        markt: data.markt,
-        koopman: data.erkenningsNummer,
-    };
-    pattern.monday = data.monday;
-    pattern.tuesday = data.tuesday;
-    pattern.wednesday = data.wednesday;
-    pattern.thursday = data.thursday;
-    pattern.friday = data.friday;
-    pattern.saturday = data.saturday;
-    pattern.sunday = data.sunday;
-    return pattern;
+
+    // const existingPattern: ILegacyRSVPPattern = rsvpPatterns.find(p => p.koopman === data.erkenningsNummer && p.markt === data.markt)
+    // const pattern: Partial<ILegacyRSVPPattern> = existingPattern || {
+    //     id: Math.max(0, ...rsvpPatterns.map(p => p.id || 0)) + 1,
+    //     markt: data.markt,
+    //     koopman: data.erkenningsNummer,
+    // };
+    // pattern.monday = data.monday;
+    // pattern.tuesday = data.tuesday;
+    // pattern.wednesday = data.wednesday;
+    // pattern.thursday = data.thursday;
+    // pattern.friday = data.friday;
+    // pattern.saturday = data.saturday;
+    // pattern.sunday = data.sunday;
+    // return pattern;
+
+    if (data.id) {
+        const updatedPattern = await api.patch(`/kiesjekraam/rsvp-pattern/${data.id}/`, { ...data });
+        return updatedPattern;
+    } else {
+        const newPattern = await api.post('/kiesjekraam/rsvp-pattern/', { ...data });
+        return newPattern;
+    }
 };
