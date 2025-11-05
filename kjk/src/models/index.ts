@@ -14,6 +14,8 @@ export interface IRsvp {
 }
 
 export interface IRsvpPattern {
+  id?: number | undefined
+  inschrijving?: number | undefined
   markt: string
   erkenningsNummer: ErkenningsNummer
   monday: boolean
