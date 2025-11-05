@@ -121,7 +121,7 @@ export const updatePlaatsvoorkeuren = (
 
             return updatePlaatsvoorkeur(voorkeuren, userEmail);
         } else {
-            return deletePlaatsvoorkeurenByMarktAndKoopman(marktId, erkenningsNummer);
+            return deletePlaatsvoorkeurenByMarktAndKoopman(marktId, erkenningsNummer, userEmail);
         }
     };
 
