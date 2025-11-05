@@ -580,13 +580,14 @@ interface ILegacyRSVPPattern extends Omit<IRsvpPattern, 'erkenningsNummer'> { id
 
 export const getAanmeldingenByOndernemer = async (erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
     console.log('getAanmeldingenByOndernemer', erkenningsNummer);
-    // probably only last two weeks
+    const rsvps: ILegacyRSVP[] = await getRsvps(erkenningsNummer);
     // add marktId for legacy
     return rsvps.filter(rsvp => rsvp.koopman === erkenningsNummer).map(rsvp => ({ ...rsvp, marktId: rsvp.markt.toString() }));
 };
 
 export const getAanmeldingenByOndernemerEnMarkt = async (marktId: string | number, erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
     console.log('getAanmeldingenByOndernemerEnMarkt', marktId, erkenningsNummer);
+    const rsvps: ILegacyRSVP[] = await getRsvps(erkenningsNummer);
     // add marktId for legacy
     return rsvps
         .filter(rsvp => rsvp.koopman === erkenningsNummer && rsvp.markt === marktId)
