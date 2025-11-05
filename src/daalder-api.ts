@@ -575,8 +575,7 @@ const rsvpPatterns = [
   },
 ];
 
-interface ILegacyRSVP extends Omit<IRSVP, 'erkenningsNummer'> { id: number | null, koopman: string }
-interface ILegacyRSVPPattern extends Omit<IRsvpPattern, 'erkenningsNummer'> { id: number | null, koopman: string }
+interface ILegacyRSVP extends Omit<IRSVP, 'erkenningsNummer'> { id: number | null, koopman: string, markt: string }
 
 export const getAanmeldingenByOndernemer = async (erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
     console.log('getAanmeldingenByOndernemer', erkenningsNummer);
