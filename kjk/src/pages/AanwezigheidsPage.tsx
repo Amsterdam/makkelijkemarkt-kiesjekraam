@@ -250,12 +250,12 @@ const AanwezigheidsPage: React.VFC = () => {
       const patternFromApi: IRsvpPattern | undefined = find(rsvpPatternData.data, (p) => p.markt === marktId)
       if (!patternFromApi) {
         Object.keys(WEEKDAY_NAME_MAP).forEach((day) => {
-          pattern[day as keyof IRsvpPatternExt] =
-            isStatusLikeVpl && includes(marktDagen, WEEKDAY_NAME_MAP[day as keyof IRsvpPatternExt])
+          pattern[day as keyof typeof WEEKDAY_NAME_MAP] =
+            isStatusLikeVpl && includes(marktDagen, WEEKDAY_NAME_MAP[day as keyof typeof WEEKDAY_NAME_MAP])
         })
       } else {
-        const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } = patternFromApi
-        pattern = { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
+        const { id, monday, tuesday, wednesday, thursday, friday, saturday, sunday } = patternFromApi
+        pattern = { id, monday, tuesday, wednesday, thursday, friday, saturday, sunday }
       }
       setPattern(pattern)
 
@@ -469,13 +469,13 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
 
   const role = useContext(RoleContext)
   const marktDagen = useContext(MarktDagenContext)
-  const renderedPattern = Object.keys(props.pattern).map((item) => {
-    const name = WEEKDAY_NAME_MAP[item as keyof IRsvpPatternExt]
+  const renderedPattern = Object.keys(props.pattern).filter(item => item !== 'id').map((item) => {
+    const name = WEEKDAY_NAME_MAP[item as keyof typeof WEEKDAY_NAME_MAP]
     return (
       <DayUI
         key={item}
         onChange={updatePattern}
-        checked={props.pattern[item as keyof IRsvpPatternExt]}
+        checked={props.pattern[item as keyof typeof WEEKDAY_NAME_MAP]}
         disabled={!includes(marktDagen, name) || role.isMarktMeester}
         value={item}
         name={name}
