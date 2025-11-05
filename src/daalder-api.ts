@@ -52,6 +52,10 @@ const erkenningsNummerToSerial = (erkenningsNummer: string): string => {
     return erkenningsNummer.slice(0, 8) + '.' + erkenningsNummer.slice(8, 10);
 }
 
+const getUserHeader = (user: string) => ({
+    'KJK-User': user,
+});
+
 const ondernemer = {
     id: 10385,
     erkenningsnummer: '2019010303', // used frequently
@@ -267,10 +271,14 @@ const getOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: number
     return {id, ...specs};
 }
 
-const updateOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: number|string, prefs: any): Promise<any> => {
-    console.log('updateOndernemerMarktPrefs', prefs);
+const updateOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: number|string, prefs: any, user: string): Promise<any> => {
+    console.log('updateOndernemerMarktPrefs', prefs, user);
     const data = {specs: prefs}
-    const response = await api.patch(`/kiesjekraam/pref/markt/${marktId}/ondernemer/${erkenningsNummer}/`, data);
+    const headers = getUserHeader(user);
+    const response = await api.patch(
+        `/kiesjekraam/pref/markt/${marktId}/ondernemer/${erkenningsNummer}/`,
+        data,
+        { headers })
     // console.log('response', response)
     return response;
 }
@@ -305,18 +313,16 @@ export const getPlaatsvoorkeurenByMarktEnOndernemer = async (marktId: string, on
     return plaatsen;
 }
 
-export const deletePlaatsvoorkeurenByMarktAndKoopman = async (marktId: string, erkenningsNummer: string) => {
+export const deletePlaatsvoorkeurenByMarktAndKoopman = async (marktId: string, erkenningsNummer: string, user: string) => {
     console.log('deletePlaatsvoorkeurenByMarktAndKoopman', marktId, erkenningsNummer);
     // plaatsvoorkeurenData.length = 0; // clear array
     const prefs = {plaatsen: []}
-    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, prefs);
+    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, prefs, user);
 }
 
-export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], user: object): Promise<any> => {
-    console.log('updatePlaatsvoorkeur', plaatsvoorkeuren)
-    // TODO: test for maximum number of plaatsvoorkeuren - where is this defined?
-    // TODO: user is send to keep track of who made the changes.
-    console.log('user', user);
+export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], user: string): Promise<any> => {
+    console.log('updatePlaatsvoorkeur', plaatsvoorkeuren, user)
+    // max number of plaatsvoorkeuren is determined by the prop markt.maxAantalKramenPerOndernemer (in the PlaatsvoorkeurenForm)
 
     const first = plaatsvoorkeuren[0];
     if (!first) {
@@ -332,7 +338,7 @@ export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], 
     }));
 
     const prefs = {plaatsen: reIndexedPlaatsvoorkeuren}
-    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, prefs);
+    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, prefs, user);
 
     // const updatedPlaatsen = plaatsvoorkeuren.map(pref => pref.plaatsId);
     // const existingPlaatsen = plaatsvoorkeurenData.map(pref => pref.plaatsId);
@@ -398,7 +404,7 @@ export const getIndelingVoorkeur = async (ondernemerId: string, marktId: string)
 
 export const updateMarktVoorkeur = async (
     marktvoorkeur: IMarktondernemerVoorkeur,
-    user: object, // actually an email string like team.salmagundi.ois@amsterdam.nl
+    user: string, // actually an email string like team.salmagundi.ois@amsterdam.nl
 ): Promise<any> => {
     console.log('updateMarktVoorkeur', marktvoorkeur);
 
@@ -407,7 +413,7 @@ export const updateMarktVoorkeur = async (
 
     const {marktId, erkenningsNummer, minimum, maximum, anywhere} = marktvoorkeur;
     const data = { minimum, maximum, anywhere };
-    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, data);
+    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, data, user);
 
     // voorkeur.minimum = Number(marktvoorkeur.minimum) || 0;
     // voorkeur.maximum = Number(marktvoorkeur.maximum) || 0;
@@ -465,11 +471,7 @@ export const updateVoorkeur = async (
     updatedVoorkeur: any,
     user: string, // actually an email string like "team.salmagundi.ois@amsterdam.nl"
 ): Promise<any> => {
-    console.log('updateVoorkeur', updatedVoorkeur);
-
-    // TODO: user is send to keep track of who made the changes
-    console.log('user', user);
-
+    console.log('updateVoorkeur', updatedVoorkeur, user);
     // updatedVoorkeur.erkenningsNummer: '2019010303' kan gebruikt worden voor de api call
     // updatedVoorkeur.marktId: kan gebruikt worden voor de api call
     // updatedVoorkeur.inrichting: null | 'eigen-materieel'
@@ -477,7 +479,7 @@ export const updateVoorkeur = async (
 
     const {marktId, erkenningsNummer, inrichting, bakType, brancheId} = updatedVoorkeur;
     const data = { inrichting, bakType, brancheId };
-    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, data);
+    await updateOndernemerMarktPrefs(erkenningsNummer, marktId, data, user);
 
     // voorkeur.bakType = updatedVoorkeur.bakType;
     // voorkeur.inrichting = updatedVoorkeur.inrichting;
@@ -632,7 +634,8 @@ export const saveRsvps = async (data: any, user: string): Promise<any[]> => {
     //   marktId: '20'
     // },
 
-    const rsvps: any[] = await api.post('/kiesjekraam/rsvp/', { ...data });
+    const headers = getUserHeader(user);
+    const rsvps: any[] = await api.post('/kiesjekraam/rsvp/', data, { headers });
     return rsvps;  // although returned rsvps are not consumed by AanwezigheidsPage
 
     // data.rsvps.forEach((updatedRsvp: any) => {
@@ -683,11 +686,12 @@ export const saveRsvpPatterns = async (data: any, user: string) => {
     // pattern.sunday = data.sunday;
     // return pattern;
 
-    if (data.id) {
-        const updatedPattern = await api.patch(`/kiesjekraam/rsvp-pattern/${data.id}/`, { ...data });
+    const headers = getUserHeader(user);
+        if (data.id) {
+        const updatedPattern = await api.patch(`/kiesjekraam/rsvp-pattern/${data.id}/`, data, { headers });
         return updatedPattern;
     } else {
-        const newPattern = await api.post('/kiesjekraam/rsvp-pattern/', { ...data });
+        const newPattern = await api.post('/kiesjekraam/rsvp-pattern/', data, { headers });
         return newPattern;
     }
 };
