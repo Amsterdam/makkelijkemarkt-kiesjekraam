@@ -63,8 +63,14 @@ export const updateMarketPreferences = (
     }
 
     // updateMarktVoorkeur(convertVoorkeur(data), getKeycloakUser(req).email);
-    updateVoorkeur(convertVoorkeur(data), getKeycloakUser(req).email);
-    res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next ? req.body.next : '/');
+    // res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next ? req.body.next : '/');
+    updateVoorkeur(convertVoorkeur(data), getKeycloakUser(req).email)
+        .then(() => {
+            res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next ? req.body.next : '/');
+        })
+        .catch((err) => {
+            next(err);
+        });
 };
 
 export const marketPreferencesPage = (
