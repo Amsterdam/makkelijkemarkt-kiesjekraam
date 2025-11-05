@@ -198,7 +198,7 @@ const AanwezigheidsPage: React.VFC = () => {
         .map((rsvp) => {
           return {
             ...rsvp,
-            koopmanErkenningsNummer: rsvp.koopman,
+            koopmanErkenningsNummer: rsvp.koopman, // this MM prop is probably obsolete after connecting to Daalder API
             marktId,
           }
         })
