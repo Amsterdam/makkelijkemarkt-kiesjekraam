@@ -1,16 +1,16 @@
 import { useMutation, useQuery } from 'react-query'
 
-import { MM_API_QUERY_CONFIG } from '../constants'
+import { DAALDER_API_QUERY_CONFIG } from '../constants'
 import { IApiError, IMarkt, IMarktVoorkeur, IOndernemer, IRsvp, IRsvpPattern } from '../models'
-import * as mmApi from '../services/mmApi'
+import * as api from '../services/daalderApi'
 
 export const useOndernemer = (erkenningsNummer: string) => {
   return useQuery<IOndernemer, IApiError>(
     'ondernemer',
     () => {
-      return mmApi.get(`/koopman/erkenningsnummer/${erkenningsNummer}`)
+      return api.get(`/koopman/erkenningsnummer/${erkenningsNummer}`)
     },
-    MM_API_QUERY_CONFIG
+    DAALDER_API_QUERY_CONFIG
   )
 }
 
@@ -18,19 +18,19 @@ export const useRsvp = (erkenningsNummer: string) => {
   return useQuery<IRsvp[], IApiError>(
     'rsvp',
     () => {
-      return mmApi.get(`/rsvp/koopman/${erkenningsNummer}`)
+      return api.get(`/rsvp/koopman/${erkenningsNummer}`)
     },
-    MM_API_QUERY_CONFIG
+    DAALDER_API_QUERY_CONFIG
   )
 }
 
 export const useSaveRsvp = () => {
   return useMutation<IRsvp[], IApiError, IRsvp[]>(
     (rsvp) => {
-      return mmApi.post(`/rsvp`, { rsvps: rsvp })
+      return api.post(`/rsvp`, { rsvps: rsvp })
     },
     {
-      ...MM_API_QUERY_CONFIG,
+      ...DAALDER_API_QUERY_CONFIG,
       // onSuccess: () => queryClient.invalidateQueries('rsvp'), // do not invalidate to preserve actual state
     }
   )
@@ -40,19 +40,19 @@ export const useRsvpPattern = (erkenningsNummer: string) => {
   return useQuery<IRsvpPattern[], IApiError>(
     'rsvpPattern',
     () => {
-      return mmApi.get(`/rsvp_pattern/koopman/${erkenningsNummer}`)
+      return api.get(`/rsvp_pattern/koopman/${erkenningsNummer}`)
     },
-    MM_API_QUERY_CONFIG
+    DAALDER_API_QUERY_CONFIG
   )
 }
 
 export const useSaveRsvpPattern = () => {
   return useMutation<IRsvpPattern, IApiError, IRsvpPattern>(
     (rsvpPattern) => {
-      return mmApi.post(`/rsvp_pattern`, rsvpPattern)
+      return api.post(`/rsvp_pattern`, rsvpPattern)
     },
     {
-      ...MM_API_QUERY_CONFIG,
+      ...DAALDER_API_QUERY_CONFIG,
       // onSuccess: () => queryClient.invalidateQueries('rsvpPattern'), // do not invalidate to preserve actual state
     }
   )
@@ -62,9 +62,9 @@ export const useMarktVoorkeur = (marktId: string, erkenningsNummer: string) => {
   return useQuery<IMarktVoorkeur, IApiError>(
     'marktVoorkeur',
     () => {
-      return mmApi.get(`/voorkeur/markt/${marktId}/koopman/${erkenningsNummer}`)
+      return api.get(`/voorkeur/markt/${marktId}/koopman/${erkenningsNummer}`)
     },
-    MM_API_QUERY_CONFIG
+    DAALDER_API_QUERY_CONFIG
   )
 }
 
@@ -72,8 +72,8 @@ export const useMarkt = (marktId: string) => {
   return useQuery<IMarkt, IApiError>(
     'markt',
     () => {
-      return mmApi.get(`/ondernemer/markt/${marktId}`)
+      return api.get(`/ondernemer/markt/${marktId}`)
     },
-    MM_API_QUERY_CONFIG
+    DAALDER_API_QUERY_CONFIG
   )
 }
