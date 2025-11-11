@@ -222,7 +222,7 @@ export const getMarktBasics = async (marktId: string): Promise<any> => {
     // also used by getMarktDetails, die weer alleen door allocatie gerelateerde pages wordt gebruikt
     console.log('getMarktBasics', marktId);
     const markt = await getMarkt(marktId);
-    const branches = await getBranches();
+    const branches = await getBranches(); // TODO: filter per markt
     const standplaatsen = await getStandplaatsen(marktId);
     return {
         markt, // getMarkt
@@ -284,6 +284,7 @@ const updateOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: num
 }
 
 const getBranches = async (includeInactive: boolean = false): Promise<any[]> => {
+    // TODO: filter per markt
     console.log('getBranches', includeInactive);
     const queryParms = includeInactive ? '' : '?active=true';
     const branches: any[] = await api.get(`/kiesjekraam/branche/${queryParms}`);
