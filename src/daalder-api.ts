@@ -694,3 +694,9 @@ export const saveRsvpPatterns = async (data: any, user: string) => {
         return newPattern;
     }
 };
+
+export const getMarktConfig = async (id: number): Promise<any> => {
+    console.log('getMarktConfig', id);
+    const marktConfig = await api.get(`/kiesjekraam/markt-configuratie/${id}/`);
+    return marktConfig;
+}
