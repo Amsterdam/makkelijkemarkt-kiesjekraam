@@ -134,7 +134,7 @@ const markt_4045 = {
     kiesJeKraamMededelingActief: true, // bepaald of mededeling getoond wordt op ondernemer markt detail page
     kiesJeKraamMededelingTitel: "Dit is een titel voor een mededeling",
     kiesJeKraamMededelingTekst: "Dit is een tekst voor een mededeling",
-    // kiesJeKraamActief: true, // <== wordt gebruikt in combinatie met kiesJeKraamFase
+    // kiesJeKraamActief: true, // <== wordt alleen gebruikt om beschikbare markten te filteren, hoeft niet doorgegeven te worden
     //   marktBeeindigd: false, <== wordt niet gebruikt
     kiesJeKraamFase: 'live',
     kiesJeKraamGeblokkeerdePlaatsen: '26,133', // null of string
