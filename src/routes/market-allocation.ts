@@ -7,7 +7,7 @@ import {
     getIndelingslijst,
 } from '../pakjekraam-api';
 import { createAllocationsV2 } from '../makkelijkemarkt-api'
-import { getAllocation } from '../daalder-api';
+import { getAllocation, getMarktConfig } from '../daalder-api';
 import {
     getKeycloakUser,
 } from '../keycloak-api';
@@ -88,31 +88,58 @@ export const indelingPage = (req: GrantedRequest, res: Response, indelingstype =
 
 export const directConceptIndelingPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
+    console.log("Concept Indeling Page", marktId, marktDate)
     const indelingstype = 'concept-indelingslijst'
-    console.log("Conect Indeling Page")
-    getCalculationInput(marktId, marktDate).then(data => {
+    const daalderToMMMarktId = {
+        '311': '20', // 4045
+        '323': '28', // LBZ
+        '442': '249', // AC
+    }
+    getCalculationInput(daalderToMMMarktId[marktId], marktDate).then(data => {
         data = JSON.parse(JSON.stringify(data));
-        data['mode'] = ALLOCATION_MODE_CONCEPT;
-        data['version'] = 2;
-        getAllocation(data).then(async (indeling: any) => {
-            const email = getKeycloakUser(req).email
-            const payload = {
-                allocationStatus: allocationHasFailed(indeling) ? ALLOCATION_STATUS.ERROR : ALLOCATION_STATUS.SUCCESS,
-                allocationType: ALLOCATION_TYPE.CONCEPT,
-                allocationVersion: data['version'],
-                email,
-                allocation: indeling,
-                input: data,
-            }
+        const payload = {
+            mode: ALLOCATION_MODE_CONCEPT,
+            version: 2,
+            marktDate,
+            marktId,
+            legacyData: data,
+        }
+        // data['mode'] = ALLOCATION_MODE_CONCEPT;
+        // data['version'] = 2;
+        getAllocation(payload).then(async (indeling: any) => {
+            // const email = getKeycloakUser(req).email
 
-            const alloc_v2_response = await createAllocationsV2(marktId, marktDate, payload)
-            const allocation = alloc_v2_response.data;
+            // const payload = {
+            //     allocationStatus: allocationHasFailed(indeling) ? ALLOCATION_STATUS.ERROR : ALLOCATION_STATUS.SUCCESS,
+            //     allocationType: ALLOCATION_TYPE.CONCEPT,
+            //     allocationVersion: data['version'],
+            //     email,
+            //     allocation: indeling,
+            //     input: data,
+            // }
+
+            // const alloc_v2_response = await createAllocationsV2(marktId, marktDate, payload)
+            // const allocation = alloc_v2_response.data;
+
+            console.log(JSON.stringify(indeling))
+            console.log(Object.keys(indeling))
+
+            const {configuratie} = await getMarktConfig(indeling.input['config_id']);
 
             res.render('IndelingslijstPage.tsx', {
-                ...allocation.input,
-                ...indeling.allocation,
-                indelingstype,
+                // ...allocation.input,
+                aanmeldingen: indeling.input.aanwezigheid,
+                obstakels: configuratie.geografie.obstakels,
+                marktplaatsen: configuratie.locaties,
+                ondernemers: indeling.input.ondernemers,
+                paginas: configuratie.paginas,
+                toewijzingen: indeling.allocation.toewijzingen,
+                afwijzingen: indeling.allocation.afwijzingen,
+                markt: indeling.input.markt,
+                marktId,
                 datum: marktDate,
+                indelingstype,
+                branches: configuratie.branches,
                 role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
                 user: getKeycloakUser(req),
             });
