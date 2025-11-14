@@ -18,7 +18,8 @@ import {
     indelingWaitingPage,
 } from './routes/market-allocation';
 import express, { NextFunction, Request, RequestHandler, Response } from 'express';
-import { getMarkt, getMarkten } from './makkelijkemarkt-api';
+// import { getMarkt, getMarkten } from './makkelijkemarkt-api';
+import { getMarkt, getMarkten } from './daalder-api';
 import { GrantedRequest, TokenContent } from 'keycloak-connect';
 import { getQueryErrors, internalServerErrorPage, isAbsoluteUrl } from './express-util';
 import { keycloak, Roles, sessionMiddleware, hasEitherRole } from './authentication';
