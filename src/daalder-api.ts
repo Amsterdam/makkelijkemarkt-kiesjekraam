@@ -38,7 +38,7 @@ api.interceptors.response.use(
     },
 );
 
-export const getAllocation = async (data: Object): Promise<Object> => await api.post('/allocation/allocate/', { data });
+export const getAllocation = async (data: Object): Promise<Object> => await api.post('/allocation/allocate/', data);
 
 export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: string): Promise<Object> =>
     await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
