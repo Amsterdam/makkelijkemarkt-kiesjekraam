@@ -7,7 +7,7 @@ import {
     getIndelingslijst,
 } from '../pakjekraam-api';
 import { createAllocationsV2 } from '../makkelijkemarkt-api'
-import { getAllocation, getMarktConfig } from '../daalder-api';
+import { getAllocation, getIndelingData, getMarktConfig, mergeIndelingData } from '../daalder-api';
 import {
     getKeycloakUser,
 } from '../keycloak-api';
@@ -75,7 +75,7 @@ export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
 export const indelingPage = (req: GrantedRequest, res: Response, indelingstype = 'indeling') => {
     const { marktDate, marktId } = req.params;
 
-    getIndelingslijst(marktId, marktDate).then(indeling => {
+    getIndelingData(marktId, marktDate).then(indeling => {
         res.render('IndelingslijstPage.tsx', {
             ...indeling,
             indelingstype,
