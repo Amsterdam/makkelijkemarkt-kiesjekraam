@@ -1,12 +1,17 @@
 import { IMarktondernemerVoorkeur, IPlaatsvoorkeur, IRSVP, IRsvpPattern } from 'model/markt.model';
 import { requireEnv } from './util';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { flatten, orderBy } from 'lodash'
+import { flatten, last, orderBy } from 'lodash'
 import moment from 'moment';
 
 requireEnv('DAALDER_API_USER_TOKEN');
 requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
 requireEnv('MM_RAH_MM_RAH_SERVICE_PORT');
+
+const ALLOCATION_MODE = {
+    SCHEDULED: 1,
+    CONCEPT: 2,
+};
 
 // MM_RAH_MM_RAH_SERVICE_HOST and PORT defined by helm/kubernetes. When service name changes, this var should be changed.
 export const daalderConfig = {
@@ -699,4 +704,39 @@ export const getMarktConfig = async (id: number): Promise<any> => {
     console.log('getMarktConfig', id);
     const marktConfig = await api.get(`/kiesjekraam/markt-configuratie/${id}/`);
     return marktConfig;
+}
+
+export const getAllocationResult = async (marktId: string, marktDate: string): Promise<any> => {
+    console.log('getAllocationResults', marktDate, marktId);
+    const mode = ALLOCATION_MODE.SCHEDULED;
+    const queryParms = `?day=${marktDate}&markt_version_id=${marktId}&mode=${mode}`;
+    const allocationResult = await api.get(`/kiesjekraam/allocation-result/${queryParms}`);
+    return last(allocationResult);
+}
+
+export const mergeIndelingData = (configuratie: any, inputData: any): any => {
+    return {
+        markt: inputData.markt,
+        ondernemers: inputData.ondernemers,
+        aanmeldingen: inputData.aanwezigheid,
+        obstakels: configuratie.geografie.obstakels,
+        marktplaatsen: configuratie.locaties,
+        paginas: configuratie.paginas,
+        branches: configuratie.branches,
+    }
+}
+
+export const getIndelingData = async (marktId: string, marktDate: string): Promise<any> => {
+    console.log('getIndelingData', marktDate, marktId);
+    const allocationResult = await getAllocationResult(marktId, marktDate);
+    const inputData = allocationResult['input_data'] || {};
+    const configId = inputData['config_id'];
+    const {configuratie} = await getMarktConfig(configId);
+    return {
+        marktId,
+        datum: marktDate,
+        toewijzingen: allocationResult.toewijzingen,
+        afwijzingen: allocationResult.afwijzingen,
+        ...mergeIndelingData(configuratie, inputData),
+    }
 }
