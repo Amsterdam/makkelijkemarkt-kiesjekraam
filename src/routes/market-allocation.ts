@@ -104,42 +104,16 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
             marktId,
             legacyData: data,
         }
-        // data['mode'] = ALLOCATION_MODE_CONCEPT;
-        // data['version'] = 2;
         getAllocation(payload).then(async (indeling: any) => {
-            // const email = getKeycloakUser(req).email
-
-            // const payload = {
-            //     allocationStatus: allocationHasFailed(indeling) ? ALLOCATION_STATUS.ERROR : ALLOCATION_STATUS.SUCCESS,
-            //     allocationType: ALLOCATION_TYPE.CONCEPT,
-            //     allocationVersion: data['version'],
-            //     email,
-            //     allocation: indeling,
-            //     input: data,
-            // }
-
-            // const alloc_v2_response = await createAllocationsV2(marktId, marktDate, payload)
-            // const allocation = alloc_v2_response.data;
-
-            console.log(JSON.stringify(indeling))
-            console.log(Object.keys(indeling))
-
             const {configuratie} = await getMarktConfig(indeling.input['config_id']);
 
             res.render('IndelingslijstPage.tsx', {
-                // ...allocation.input,
-                aanmeldingen: indeling.input.aanwezigheid,
-                obstakels: configuratie.geografie.obstakels,
-                marktplaatsen: configuratie.locaties,
-                ondernemers: indeling.input.ondernemers,
-                paginas: configuratie.paginas,
-                toewijzingen: indeling.allocation.toewijzingen,
-                afwijzingen: indeling.allocation.afwijzingen,
-                markt: indeling.input.markt,
                 marktId,
                 datum: marktDate,
+                toewijzingen: indeling.allocation.toewijzingen,
+                afwijzingen: indeling.allocation.afwijzingen,
+                ...mergeIndelingData(configuratie, indeling.input),
                 indelingstype,
-                branches: configuratie.branches,
                 role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
                 user: getKeycloakUser(req),
             });
