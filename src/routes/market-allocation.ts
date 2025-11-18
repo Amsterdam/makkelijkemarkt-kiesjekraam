@@ -15,6 +15,7 @@ import {
     GrantedRequest,
 } from 'keycloak-connect';
 import {
+    HTTP_PAGE_NOT_FOUND,
     internalServerErrorPage,
 } from '../express-util';
 import {
@@ -76,6 +77,10 @@ export const indelingPage = (req: GrantedRequest, res: Response, indelingstype =
     const { marktDate, marktId } = req.params;
 
     getIndelingData(marktId, marktDate).then(indeling => {
+        if (!indeling) {
+            res.status(HTTP_PAGE_NOT_FOUND).send(`De indeling voor markt ${marktId} voor ${marktDate} is niet gevonden!!!`);
+            return;
+        }
         res.render('IndelingslijstPage.tsx', {
             ...indeling,
             indelingstype,
