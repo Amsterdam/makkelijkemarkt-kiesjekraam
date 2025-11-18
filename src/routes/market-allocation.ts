@@ -91,7 +91,7 @@ export const indelingPage = (req: GrantedRequest, res: Response, indelingstype =
     }, internalServerErrorPage(res));
 };
 
-export const directConceptIndelingPage = (req: GrantedRequest, res: Response) => {
+export const directConceptIndelingPage = async (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
     console.log("Concept Indeling Page", marktId, marktDate)
     const indelingstype = 'concept-indelingslijst'
@@ -100,31 +100,36 @@ export const directConceptIndelingPage = (req: GrantedRequest, res: Response) =>
         '323': '28', // LBZ
         '442': '249', // AC
     }
-    getCalculationInput(daalderToMMMarktId[marktId], marktDate).then(data => {
-        data = JSON.parse(JSON.stringify(data));
+
+    try {
+        const data = await getCalculationInput(daalderToMMMarktId[marktId], marktDate)
+        const legacyData = JSON.parse(JSON.stringify(data));
+
         const payload = {
             mode: ALLOCATION_MODE_CONCEPT,
             version: 2,
             marktDate,
             marktId,
-            legacyData: data,
+            legacyData,
         }
-        getAllocation(payload).then(async (indeling: any) => {
-            const {configuratie} = await getMarktConfig(indeling.input['config_id']);
 
-            res.render('IndelingslijstPage.tsx', {
-                marktId,
-                datum: marktDate,
-                toewijzingen: indeling.allocation.toewijzingen,
-                afwijzingen: indeling.allocation.afwijzingen,
-                ...mergeIndelingData(configuratie, indeling.input),
-                indelingstype,
-                role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
-                user: getKeycloakUser(req),
-            });
-        })
-    }, internalServerErrorPage(res));
-};
+        const indeling: any = await getAllocation(payload);
+        const {configuratie} = await getMarktConfig(indeling.input['config_id']);
+
+        res.render('IndelingslijstPage.tsx', {
+            marktId,
+            datum: marktDate,
+            toewijzingen: indeling.allocation.toewijzingen,
+            afwijzingen: indeling.allocation.afwijzingen,
+            ...mergeIndelingData(configuratie, indeling.input),
+            indelingstype,
+            role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+            user: getKeycloakUser(req),
+        });
+    } catch (err) {
+        internalServerErrorPage(res)(err)
+    }
+}
 
 export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
