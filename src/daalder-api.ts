@@ -710,8 +710,8 @@ export const getAllocationResult = async (marktId: string, marktDate: string): P
     console.log('getAllocationResults', marktDate, marktId);
     const mode = ALLOCATION_MODE.SCHEDULED;
     const queryParms = `?day=${marktDate}&markt_version_id=${marktId}&mode=${mode}`;
-    const allocationResult = await api.get(`/kiesjekraam/allocation-result/${queryParms}`);
-    return last(allocationResult);
+    const allocationResults = await api.get(`/kiesjekraam/allocation-result/${queryParms}`);
+    return allocationResults ? last(allocationResults) : {};
 }
 
 export const mergeIndelingData = (configuratie: any, inputData: any): any => {
@@ -729,14 +729,17 @@ export const mergeIndelingData = (configuratie: any, inputData: any): any => {
 export const getIndelingData = async (marktId: string, marktDate: string): Promise<any> => {
     console.log('getIndelingData', marktDate, marktId);
     const allocationResult = await getAllocationResult(marktId, marktDate);
-    const inputData = allocationResult['input_data'] || {};
-    const configId = inputData['config_id'];
-    const {configuratie} = await getMarktConfig(configId);
-    return {
-        marktId,
-        datum: marktDate,
-        toewijzingen: allocationResult.toewijzingen,
-        afwijzingen: allocationResult.afwijzingen,
-        ...mergeIndelingData(configuratie, inputData),
+    if (allocationResult) {
+        const inputData = allocationResult['input_data'];
+        const configId = inputData['config_id'];
+        const {configuratie} = await getMarktConfig(configId);
+        return {
+            marktId,
+            datum: marktDate,
+            toewijzingen: allocationResult.toewijzingen,
+            afwijzingen: allocationResult.afwijzingen,
+            ...mergeIndelingData(configuratie, inputData),
+        }
     }
+    return null;
 }
