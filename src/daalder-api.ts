@@ -513,25 +513,35 @@ const allocations = [
 const toewijzingen = allocations.map(allocation => ({ ...allocation, isAllocated: true }));
 const afwijzingen = allocations.map(allocation => ({ ...allocation, isAllocated: false }));
 
-export const getToewijzingenByOndernemer = async (erkenningsNummer: string): Promise<any> => {
-    console.log('getToewijzingenByOndernemer', erkenningsNummer);
-    return toewijzingen.filter(toewijzing => toewijzing.koopman === erkenningsNummer);
+export const getToewijzingenAfwijzingen = async (erkenningsNummer: string, marktId:string = ''): Promise<any> => {
+    console.log('getToewijzingenAfwijzingen', erkenningsNummer);
+    const since = moment().subtract(2, 'months').format('YYYY-MM-DD');
+    const queryParms = `?date__gte=${since}&mode=${ALLOCATION_MODE.SCHEDULED}`;
+    const markt = marktId ? `/markt/${marktId}` : ''
+    const results = await api.get(`/kiesjekraam/allocation-result/ondernemer/${erkenningsNummer}${markt}/${queryParms}`);
+    // console.log(results);
+    return results;
 }
 
-export const getToewijzingenByOndernemerAndMarkt = async (marktId: string, erkenningsNummer: string): Promise<any> => {
-    console.log('getToewijzingenByOndernemerAndMarkt', marktId, erkenningsNummer);
-    return toewijzingen.filter(toewijzing => toewijzing.koopman === erkenningsNummer && toewijzing.markt === marktId);
-}
+// export const getToewijzingenByOndernemer = async (erkenningsNummer: string): Promise<any> => {
+//     console.log('getToewijzingenByOndernemer', erkenningsNummer);
+//     return toewijzingen.filter(toewijzing => toewijzing.koopman === erkenningsNummer);
+// }
 
-export const getAfwijzingenByOndernemer = async (erkenningsNummer: string): Promise<any> => {
-    console.log('getAfwijzingenByOndernemer', erkenningsNummer);
-    return afwijzingen.filter(afwijzing => afwijzing.koopman === erkenningsNummer);
-}
+// export const getToewijzingenByOndernemerAndMarkt = async (marktId: string, erkenningsNummer: string): Promise<any> => {
+//     console.log('getToewijzingenByOndernemerAndMarkt', marktId, erkenningsNummer);
+//     return toewijzingen.filter(toewijzing => toewijzing.koopman === erkenningsNummer && toewijzing.markt === marktId);
+// }
 
-export const getAfwijzingenByOndernemerAndMarkt = async (marktId: string, erkenningsNummer: string): Promise<any> => {
-    console.log('getAfwijzingenByOndernemerAndMarkt', marktId, erkenningsNummer);
-    return afwijzingen.filter(afwijzing => afwijzing.koopman === erkenningsNummer && afwijzing.markt === marktId);
-}
+// export const getAfwijzingenByOndernemer = async (erkenningsNummer: string): Promise<any> => {
+//     console.log('getAfwijzingenByOndernemer', erkenningsNummer);
+//     return afwijzingen.filter(afwijzing => afwijzing.koopman === erkenningsNummer);
+// }
+
+// export const getAfwijzingenByOndernemerAndMarkt = async (marktId: string, erkenningsNummer: string): Promise<any> => {
+//     console.log('getAfwijzingenByOndernemerAndMarkt', marktId, erkenningsNummer);
+//     return afwijzingen.filter(afwijzing => afwijzing.koopman === erkenningsNummer && afwijzing.markt === marktId);
+// }
 
 const rsvps = [
   // let op: id is null of een echt id (waarschijnlijk of ze al bestaan in db of net gegenereerd als nieuwe)
