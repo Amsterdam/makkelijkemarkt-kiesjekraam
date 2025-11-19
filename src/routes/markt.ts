@@ -12,13 +12,13 @@ import {
 } from '../makkelijkemarkt-api';
 import {
     getAanmeldingenByOndernemerEnMarkt,
-    getAfwijzingenByOndernemerAndMarkt,
+    // getAfwijzingenByOndernemerAndMarkt,
     getIndelingVoorkeur,
     getMarkt,
     getMarktBasics,
     getOndernemer,
     getPlaatsvoorkeurenOndernemer,
-    getToewijzingenByOndernemerAndMarkt,
+    getToewijzingenAfwijzingen,
     getVoorkeurByMarktEnOndernemer,
 } from '../daalder-api';
 import {
@@ -76,8 +76,8 @@ export const marktDetail = (
         getAanmeldingenByOndernemerEnMarkt(marktId, erkenningsNummer),
         getIndelingVoorkeur(erkenningsNummer, req.params.marktId),
         getMededelingen(),
-        getToewijzingenByOndernemerAndMarkt(marktId, erkenningsNummer),
-        getAfwijzingenByOndernemerAndMarkt(marktId, erkenningsNummer),
+        getToewijzingenAfwijzingen(erkenningsNummer, marktId),
+        // getAfwijzingenByOndernemerAndMarkt(marktId, erkenningsNummer),
         getVoorkeurByMarktEnOndernemer(marktId, erkenningsNummer),
         getDaysClosed(),
     ])
@@ -89,11 +89,12 @@ export const marktDetail = (
                 aanmeldingen,
                 plaatsvoorkeur,
                 mededelingen,
-                toewijzingen,
-                afwijzingen,
+                toewijzingenAfwijzingen,
+                // afwijzingen,
                 algemeneVoorkeur,
                 daysClosed,
             ]) => {
+                const { toewijzingen, afwijzingen } = toewijzingenAfwijzingen;
                 res.render('OndernemerMarktDetailPage', {
                     ondernemer,
                     plaatsvoorkeuren,

@@ -5,10 +5,11 @@ import {
     // getToewijzingenByOndernemer,
 } from '../makkelijkemarkt-api';
 import {
-    getAfwijzingenByOndernemer,
+    // getAfwijzingenByOndernemer,
     getMarkten,
     getOndernemer,
-    getToewijzingenByOndernemer,
+    getToewijzingenAfwijzingen,
+    // getToewijzingenByOndernemer,
 } from '../daalder-api';
 import {
     getQueryErrors,
@@ -56,21 +57,25 @@ export const toewijzingenAfwijzingenPage = (
     const messages = getQueryErrors(req.query);
 
     Promise.all([
-        getToewijzingenByOndernemer(erkenningsNummer),
-        getAfwijzingenByOndernemer(erkenningsNummer),
+        // getToewijzingenByOndernemer(erkenningsNummer),
+        // getAfwijzingenByOndernemer(erkenningsNummer),
+        getToewijzingenAfwijzingen(erkenningsNummer),
         getOndernemer(erkenningsNummer),
         getMarkten(),
     ])
-        .then(([toewijzingen, afwijzingen, ondernemer, markten]) => {
+        .then(([toewijzingenAfwijzingen, ondernemer, markten]) => {
+            let { toewijzingen, afwijzingen } = toewijzingenAfwijzingen;
             const relevanteMarkten =
                 role === Roles.MARKTONDERNEMER ? markten.filter(markt => markt.kiesJeKraamFase === 'live') : markten;
-            const marktIds = relevanteMarkten.map(markt => markt.id.toString());
+            const marktIds = relevanteMarkten.map(markt => markt.id);
+
+            // console.log('toewijzingenAfwijzingenPage', toewijzingen);
 
             afwijzingen = afwijzingen.filter(afwijzing => {
-                return marktIds.includes(afwijzing.markt);
+                return marktIds.includes(afwijzing.marktId);
             });
             toewijzingen = toewijzingen.filter(toewijzing => {
-                return marktIds.includes(toewijzing.markt);
+                return marktIds.includes(toewijzing.marktId);
             });
 
             res.render('ToewijzingenAfwijzingenPage', {
