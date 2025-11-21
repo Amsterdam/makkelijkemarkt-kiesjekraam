@@ -225,6 +225,11 @@ export const getRsvpPatternByOndernemer = (erkenningsNummer: string): Promise<IR
         return response.data;
     });
 
+export const getRsvpPatternByMarktAndMarktDate = (marktId: string, marktDate: string): Promise<IRsvpPattern[]> =>
+    apiBase(`rsvp_pattern/markt/${marktId}/date/${marktDate}`).then((response) => {
+        return response.data;
+    });
+
 const convertApiPlaatsvoorkeurenToIPlaatsvoorkeurArray = (
     plaatsvoorkeuren: MMMarktPlaatsvoorkeuren[],
 ): IPlaatsvoorkeur[] => {
