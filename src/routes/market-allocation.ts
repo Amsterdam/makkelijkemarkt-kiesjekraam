@@ -6,7 +6,7 @@ import {
     getCalculationInput,
     getIndelingslijst,
 } from '../pakjekraam-api';
-import { createAllocationsV2 } from '../makkelijkemarkt-api'
+import { createAllocationsV2, getAanmeldingenByMarktAndDate, getOndernemersByMarkt, getPlaatsvoorkeurenByMarkt, getRsvpPatternByMarktAndMarktDate, getVoorkeurenByMarkt } from '../makkelijkemarkt-api'
 import { getAllocation } from '../daalder-api';
 import {
     getKeycloakUser,
@@ -153,6 +153,28 @@ export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
             allocations,
         });
     }, internalServerErrorPage(res));
+};
+
+export const snapshotPage = async (req: GrantedRequest, res: Response) => {
+    const { marktDate, marktId } = req.params;
+
+    try {
+        const ondernemers = await getOndernemersByMarkt(marktId);
+        const voorkeuren = await getVoorkeurenByMarkt(marktId);
+        const rsvsps = await getAanmeldingenByMarktAndDate(marktId, marktDate);
+        const patterns = await getRsvpPatternByMarktAndMarktDate(marktId, marktDate);
+        const plaatsvoorkeuren = await getPlaatsvoorkeurenByMarkt(marktId);
+
+        res.send({
+            patterns,
+            plaatsvoorkeuren,
+            rsvsps,
+            voorkeuren,
+            ondernemers,
+        })
+    } catch (error) {
+        internalServerErrorPage(res)(error);
+    }
 };
 
 export const indelingLogsPage = async (req: GrantedRequest, res: Response) => {

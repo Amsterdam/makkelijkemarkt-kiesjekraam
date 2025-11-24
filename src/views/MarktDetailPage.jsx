@@ -217,6 +217,14 @@ class MarktDetailPage extends React.Component {
                             </a>
                         </li>
                     )}
+
+                    {indeling && (
+                        <li className="LinkList__item">
+                            <a href={`/markt/${marktId}/${date}/snapshot/`} className="Link">
+                                Snapshot
+                            </a>
+                        </li>
+                    )}
                 </ul>
             </div>
         );
