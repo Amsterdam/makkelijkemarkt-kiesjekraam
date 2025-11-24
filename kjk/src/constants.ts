@@ -1,7 +1,7 @@
 export const MM_API_BASE_ORIGIN = process.env.REACT_APP_KJK_API_ORIGIN || ''
 export const MM_API_BASE_URL = `${MM_API_BASE_ORIGIN}/api`
 
-export const DAALDER_API_BASE_ORIGIN = process.env.REACT_APP_KJK_API_ORIGIN || ''
+export const DAALDER_API_BASE_ORIGIN = 'http://localhost:3000' // process.env.REACT_APP_KJK_API_ORIGIN || ''
 export const DAALDER_API_BASE_URL = `${DAALDER_API_BASE_ORIGIN}/daalder`
 
 export const MM_API_QUERY_CONFIG = {
