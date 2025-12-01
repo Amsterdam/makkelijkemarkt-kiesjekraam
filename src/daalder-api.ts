@@ -712,7 +712,7 @@ export const saveRsvpPatterns = async (data: any, user: string) => {
 
 export const getMarktConfig = async (id: number): Promise<any> => {
     console.log('getMarktConfig', id);
-    const marktConfig = await api.get(`/kiesjekraam/markt-configuratie/${id}/`);
+    const marktConfig = await api.get(`/kiesjekraam/markt-config/${id}/`);
     return marktConfig;
 }
 
@@ -724,15 +724,15 @@ export const getAllocationResult = async (marktId: string, marktDate: string): P
     return allocationResults ? last(allocationResults) : {};
 }
 
-export const mergeIndelingData = (configuratie: any, inputData: any): any => {
+export const mergeIndelingData = (config: any, inputData: any): any => {
     return {
         markt: inputData.markt,
         ondernemers: inputData.ondernemers,
         aanmeldingen: inputData.aanwezigheid,
-        obstakels: configuratie.geografie.obstakels,
-        marktplaatsen: configuratie.locaties,
-        paginas: configuratie.paginas,
-        branches: configuratie.branches,
+        obstakels: config.geografie.obstakels,
+        marktplaatsen: config.locaties,
+        paginas: config.paginas,
+        branches: config.branches,
     }
 }
 
@@ -742,13 +742,13 @@ export const getIndelingData = async (marktId: string, marktDate: string): Promi
     if (allocationResult) {
         const inputData = allocationResult['input_data'];
         const configId = inputData['config_id'];
-        const {configuratie} = await getMarktConfig(configId);
+        const martkConfig = await getMarktConfig(configId);
         return {
             marktId,
             datum: marktDate,
             toewijzingen: allocationResult.toewijzingen,
             afwijzingen: allocationResult.afwijzingen,
-            ...mergeIndelingData(configuratie, inputData),
+            ...mergeIndelingData(martkConfig.specs, inputData),
         }
     }
     return null;

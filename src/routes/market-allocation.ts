@@ -114,14 +114,14 @@ export const directConceptIndelingPage = async (req: GrantedRequest, res: Respon
         }
 
         const indeling: any = await getAllocation(payload);
-        const {configuratie} = await getMarktConfig(indeling.input['config_id']);
+        const martkConfig = await getMarktConfig(indeling.input['config_id']);
 
         res.render('IndelingslijstPage.tsx', {
             marktId,
             datum: marktDate,
             toewijzingen: indeling.allocation.toewijzingen,
             afwijzingen: indeling.allocation.afwijzingen,
-            ...mergeIndelingData(configuratie, indeling.input),
+            ...mergeIndelingData(martkConfig.specs, indeling.input),
             indelingstype,
             role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
             user: getKeycloakUser(req),
