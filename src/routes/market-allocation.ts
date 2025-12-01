@@ -103,14 +103,14 @@ export const directConceptIndelingPage = async (req: GrantedRequest, res: Respon
 
     try {
         const data = await getCalculationInput(daalderToMMMarktId[marktId], marktDate)
-        const legacyData = JSON.parse(JSON.stringify(data));
+        // const legacyData = JSON.parse(JSON.stringify(data));
 
         const payload = {
             mode: ALLOCATION_MODE_CONCEPT,
-            version: 2,
+            version: '2',
             marktDate,
             marktId,
-            legacyData,
+            // legacyData,
         }
 
         const indeling: any = await getAllocation(payload);
