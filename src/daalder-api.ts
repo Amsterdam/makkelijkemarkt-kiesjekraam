@@ -8,9 +8,9 @@ requireEnv('DAALDER_API_USER_TOKEN');
 requireEnv('MM_RAH_MM_RAH_SERVICE_HOST');
 requireEnv('MM_RAH_MM_RAH_SERVICE_PORT');
 
-const ALLOCATION_MODE = {
+const DAALDER_ALLOCATION_MODE = {
+    CONCEPT: 0,
     SCHEDULED: 1,
-    CONCEPT: 2,
 };
 
 // MM_RAH_MM_RAH_SERVICE_HOST and PORT defined by helm/kubernetes. When service name changes, this var should be changed.
@@ -516,7 +516,7 @@ const afwijzingen = allocations.map(allocation => ({ ...allocation, isAllocated:
 export const getToewijzingenAfwijzingen = async (erkenningsNummer: string, marktId:string = ''): Promise<any> => {
     console.log('getToewijzingenAfwijzingen', erkenningsNummer);
     const since = moment().subtract(2, 'months').format('YYYY-MM-DD');
-    const queryParms = `?date__gte=${since}&mode=${ALLOCATION_MODE.SCHEDULED}`;
+    const queryParms = `?date__gte=${since}&mode=${DAALDER_ALLOCATION_MODE.SCHEDULED}`;
     const markt = marktId ? `/markt/${marktId}` : ''
     const results = await api.get(`/kiesjekraam/allocation-result/ondernemer/${erkenningsNummer}${markt}/${queryParms}`);
     // console.log(results);
@@ -718,7 +718,7 @@ export const getMarktConfig = async (id: number): Promise<any> => {
 
 export const getAllocationResult = async (marktId: string, marktDate: string): Promise<any> => {
     console.log('getAllocationResults', marktDate, marktId);
-    const mode = ALLOCATION_MODE.SCHEDULED;
+    const mode = DAALDER_ALLOCATION_MODE.SCHEDULED;
     const queryParms = `?day=${marktDate}&markt_version_id=${marktId}&mode=${mode}`;
     const allocationResults = await api.get(`/kiesjekraam/allocation-result/${queryParms}`);
     return allocationResults ? last(allocationResults) : {};
