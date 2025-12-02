@@ -1,14 +1,25 @@
 import {
+    // getAanmeldingenByOndernemerEnMarkt,
+    // getAfwijzingenByOndernemerAndMarkt,
+    // getAfwijzingenByOndernemerAndMarkt,
+    // getIndelingVoorkeur,
+    // getMarkt,
+    // getMarktBasics,
+    // getOndernemer,
+    // getPlaatsvoorkeurenOndernemer,
+    // getToewijzingenByOndernemerAndMarkt,
+    // getVoorkeurByMarktEnOndernemer,
+} from '../makkelijkemarkt-api';
+import {
     getAanmeldingenByOndernemerEnMarkt,
-    getAfwijzingenByOndernemerAndMarkt,
     getIndelingVoorkeur,
     getMarkt,
     getMarktBasics,
     getOndernemer,
     getPlaatsvoorkeurenOndernemer,
-    getToewijzingenByOndernemerAndMarkt,
+    getToewijzingenAfwijzingen,
     getVoorkeurByMarktEnOndernemer,
-} from '../makkelijkemarkt-api';
+} from '../daalder-api';
 import {
     getDaysClosed,
     getMededelingen,
@@ -64,8 +75,9 @@ export const marktDetail = (
         getAanmeldingenByOndernemerEnMarkt(marktId, erkenningsNummer),
         getIndelingVoorkeur(erkenningsNummer, req.params.marktId),
         getMededelingen(),
-        getToewijzingenByOndernemerAndMarkt(marktId, erkenningsNummer),
-        getAfwijzingenByOndernemerAndMarkt(marktId, erkenningsNummer),
+        // getToewijzingenByOndernemerAndMarkt(marktId, erkenningsNummer),
+        // getAfwijzingenByOndernemerAndMarkt(marktId, erkenningsNummer),
+        getToewijzingenAfwijzingen(erkenningsNummer, marktId),
         getVoorkeurByMarktEnOndernemer(marktId, erkenningsNummer),
         getDaysClosed(),
     ])
@@ -77,11 +89,13 @@ export const marktDetail = (
                 aanmeldingen,
                 plaatsvoorkeur,
                 mededelingen,
-                toewijzingen,
-                afwijzingen,
+                // toewijzingen,
+                // afwijzingen,
+                toewijzingenAfwijzingen,
                 algemeneVoorkeur,
                 daysClosed,
             ]) => {
+                const { toewijzingen, afwijzingen } = toewijzingenAfwijzingen;
                 res.render('OndernemerMarktDetailPage', {
                     ondernemer,
                     plaatsvoorkeuren,
