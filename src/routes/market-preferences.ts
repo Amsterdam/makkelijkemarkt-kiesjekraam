@@ -1,8 +1,8 @@
 import {
-    getMarktBasics,
-    getOndernemer,
-    getVoorkeurByMarktEnOndernemer,
-    updateMarktVoorkeur,
+    // getMarktBasics,
+    // getOndernemer,
+    // getVoorkeurByMarktEnOndernemer,
+    // updateMarktVoorkeur,
 } from '../makkelijkemarkt-api';
 import { getQueryErrors, HTTP_CREATED_SUCCESS, internalServerErrorPage } from '../express-util';
 import { NextFunction, Request, Response } from 'express';
@@ -12,6 +12,12 @@ import { GrantedRequest } from 'keycloak-connect';
 import moment from 'moment';
 import { voorkeurenFormData } from '../model/voorkeur.functions';
 import { Roles } from '../authentication'
+import {
+    getMarktBasics,
+    getOndernemer,
+    getVoorkeurByMarktEnOndernemer,
+    updateVoorkeur,
+} from '../daalder-api';
 
 const isMakingChangesToLongTermAbsent = (data: any) => {
     return !!data.absentFrom || !!data.absentUntil
@@ -55,8 +61,15 @@ export const updateMarketPreferences = (
         return res.redirect(`./?error=${formError}`);
     }
 
-    updateMarktVoorkeur(convertVoorkeur(data), getKeycloakUser(req).email);
-    res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next ? req.body.next : '/');
+    // updateMarktVoorkeur(convertVoorkeur(data), getKeycloakUser(req).email);
+    // res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next ? req.body.next : '/');
+    updateVoorkeur(convertVoorkeur(data), getKeycloakUser(req).email)
+        .then(() => {
+            res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next ? req.body.next : '/');
+        })
+        .catch((err) => {
+            next(err);
+        });
 };
 
 export const marketPreferencesPage = (
