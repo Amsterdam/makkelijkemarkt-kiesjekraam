@@ -88,7 +88,7 @@ const AanwezigheidsPage: React.VFC = () => {
   const ondernemerData = useOndernemer(erkenningsNummer)
   const rsvpData = useRsvp(erkenningsNummer)
   const rsvpPatternData = useRsvpPattern(erkenningsNummer)
-  const marktVoorkeurData = useMarktVoorkeur(erkenningsNummer)
+  const marktVoorkeurData = useMarktVoorkeur(marktId, erkenningsNummer)
   const marktData = useMarkt(marktId)
 
   const {
@@ -173,6 +173,15 @@ const AanwezigheidsPage: React.VFC = () => {
   }
 
   const save = async () => {
+    const alreadyExpiredDates = rsvps.filter((rsvp) => !rsvp.isInThePast && checkIfDateIsInThePast(rsvp.marktDate))
+    if (alreadyExpiredDates.length) {
+      notification.error({
+        message: 'Opslaan niet meer mogelijk',
+        description: 'Deze gegevens zijn ondertussen achterhaald geraakt. Ververs eerst de pagina en probeer dan opnieuw.',
+      })
+      return
+    }
+
     const invalidDates = getInvalidDates(rsvps)
     if (invalidDates.length) {
       vervangerWarning({ dates: invalidDates })
@@ -185,11 +194,11 @@ const AanwezigheidsPage: React.VFC = () => {
   const saveRsvps = async () => {
     saveRsvpApi(
       rsvps
-        .filter((rsvp) => rsvp.markt === marktId)
+        .filter((rsvp) => (rsvp.markt === marktId) && !rsvp.isInThePast)
         .map((rsvp) => {
           return {
             ...rsvp,
-            koopmanErkenningsNummer: rsvp.koopman,
+            koopmanErkenningsNummer: rsvp.koopman, // this MM prop is probably obsolete after connecting to Daalder API
             marktId,
           }
         })
@@ -241,12 +250,12 @@ const AanwezigheidsPage: React.VFC = () => {
       const patternFromApi: IRsvpPattern | undefined = find(rsvpPatternData.data, (p) => p.markt === marktId)
       if (!patternFromApi) {
         Object.keys(WEEKDAY_NAME_MAP).forEach((day) => {
-          pattern[day as keyof IRsvpPatternExt] =
-            isStatusLikeVpl && includes(marktDagen, WEEKDAY_NAME_MAP[day as keyof IRsvpPatternExt])
+          pattern[day as keyof typeof WEEKDAY_NAME_MAP] =
+            isStatusLikeVpl && includes(marktDagen, WEEKDAY_NAME_MAP[day as keyof typeof WEEKDAY_NAME_MAP])
         })
       } else {
-        const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } = patternFromApi
-        pattern = { monday, tuesday, wednesday, thursday, friday, saturday, sunday }
+        const { id, monday, tuesday, wednesday, thursday, friday, saturday, sunday } = patternFromApi
+        pattern = { id, monday, tuesday, wednesday, thursday, friday, saturday, sunday }
       }
       setPattern(pattern)
 
@@ -295,10 +304,10 @@ const AanwezigheidsPage: React.VFC = () => {
   }, [erkenningsNummer, marktId, ondernemerData.data, marktData.data, rsvpPatternData.data, rsvpData.data])
 
   const rsvpPerMarkt = groupBy(rsvps, 'markt')
-  const marktVoorkeur: Partial<IMarktVoorkeur> = find(marktVoorkeurData.data || [], { markt: marktId }) || {}
+  const marktVoorkeur: Partial<IMarktVoorkeur> = marktVoorkeurData.data || {}
   const hasValidBranche =
-    !marktVoorkeurData.data ||
-    (!isEmpty(marktVoorkeur) && marktVoorkeur.branche && marktVoorkeur.branche !== EMPTY_BRANCH)
+  !marktVoorkeurData.data ||
+  (!isEmpty(marktVoorkeur) && marktVoorkeur.branche && marktVoorkeur.branche !== EMPTY_BRANCH)
 
   const marktComponent = (
     <Markt
@@ -460,13 +469,13 @@ const Pattern: React.VFC<PatternPropsType> = (props) => {
 
   const role = useContext(RoleContext)
   const marktDagen = useContext(MarktDagenContext)
-  const renderedPattern = Object.keys(props.pattern).map((item) => {
-    const name = WEEKDAY_NAME_MAP[item as keyof IRsvpPatternExt]
+  const renderedPattern = Object.keys(props.pattern).filter(item => item !== 'id').map((item) => {
+    const name = WEEKDAY_NAME_MAP[item as keyof typeof WEEKDAY_NAME_MAP]
     return (
       <DayUI
         key={item}
         onChange={updatePattern}
-        checked={props.pattern[item as keyof IRsvpPatternExt]}
+        checked={props.pattern[item as keyof typeof WEEKDAY_NAME_MAP]}
         disabled={!includes(marktDagen, name) || role.isMarktMeester}
         value={item}
         name={name}
