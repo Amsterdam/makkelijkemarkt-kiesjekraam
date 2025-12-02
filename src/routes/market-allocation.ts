@@ -7,7 +7,7 @@ import {
     getIndelingslijst,
 } from '../pakjekraam-api';
 import { createAllocationsV2, getAanmeldingenByMarktAndDate, getOndernemersByMarkt, getPlaatsvoorkeurenByMarkt, getRsvpPatternByMarktAndMarktDate, getVoorkeurenByMarkt } from '../makkelijkemarkt-api'
-import { getAllocation } from '../daalder-api';
+import { getAllocation, getIndelingData, getMarktConfig, mergeIndelingData } from '../daalder-api';
 import {
     getKeycloakUser,
 } from '../keycloak-api';
@@ -15,6 +15,7 @@ import {
     GrantedRequest,
 } from 'keycloak-connect';
 import {
+    HTTP_PAGE_NOT_FOUND,
     internalServerErrorPage,
 } from '../express-util';
 import {
@@ -75,7 +76,11 @@ export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
 export const indelingPage = (req: GrantedRequest, res: Response, indelingstype = 'indeling') => {
     const { marktDate, marktId } = req.params;
 
-    getIndelingslijst(marktId, marktDate).then(indeling => {
+    getIndelingData(marktId, marktDate).then(indeling => {
+        if (!indeling) {
+            res.status(HTTP_PAGE_NOT_FOUND).send(`De indeling voor markt ${marktId} voor ${marktDate} is niet gevonden!!!`);
+            return;
+        }
         res.render('IndelingslijstPage.tsx', {
             ...indeling,
             indelingstype,
@@ -86,39 +91,35 @@ export const indelingPage = (req: GrantedRequest, res: Response, indelingstype =
     }, internalServerErrorPage(res));
 };
 
-export const directConceptIndelingPage = (req: GrantedRequest, res: Response) => {
+export const directConceptIndelingPage = async (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
     const indelingstype = 'concept-indelingslijst'
-    console.log("Conect Indeling Page")
-    getCalculationInput(marktId, marktDate).then(data => {
-        data = JSON.parse(JSON.stringify(data));
-        data['mode'] = ALLOCATION_MODE_CONCEPT;
-        data['version'] = 2;
-        getAllocation(data).then(async (indeling: any) => {
-            const email = getKeycloakUser(req).email
-            const payload = {
-                allocationStatus: allocationHasFailed(indeling) ? ALLOCATION_STATUS.ERROR : ALLOCATION_STATUS.SUCCESS,
-                allocationType: ALLOCATION_TYPE.CONCEPT,
-                allocationVersion: data['version'],
-                email,
-                allocation: indeling,
-                input: data,
-            }
 
-            const alloc_v2_response = await createAllocationsV2(marktId, marktDate, payload)
-            const allocation = alloc_v2_response.data;
+    try {
+        const payload = {
+            mode: ALLOCATION_MODE_CONCEPT,
+            version: '2',
+            marktDate,
+            marktId,
+        }
 
-            res.render('IndelingslijstPage.tsx', {
-                ...allocation.input,
-                ...indeling.allocation,
-                indelingstype,
-                datum: marktDate,
-                role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
-                user: getKeycloakUser(req),
-            });
-        })
-    }, internalServerErrorPage(res));
-};
+        const indeling: any = await getAllocation(payload);
+        const martkConfig = await getMarktConfig(indeling.input['config_id']);
+
+        res.render('IndelingslijstPage.tsx', {
+            marktId,
+            datum: marktDate,
+            toewijzingen: indeling.allocation.toewijzingen,
+            afwijzingen: indeling.allocation.afwijzingen,
+            ...mergeIndelingData(martkConfig.specs, indeling.input),
+            indelingstype,
+            role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+            user: getKeycloakUser(req),
+        });
+    } catch (err) {
+        internalServerErrorPage(res)(err)
+    }
+}
 
 export const indelingStatsPage = (req: GrantedRequest, res: Response) => {
     const { marktDate, marktId } = req.params;
