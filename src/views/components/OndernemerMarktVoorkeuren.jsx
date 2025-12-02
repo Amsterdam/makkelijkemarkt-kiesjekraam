@@ -5,17 +5,17 @@ const { isVast } = require('../../domain-knowledge.ts');
 
 const OndernemerMarktVoorkeuren = ({ plaatsvoorkeuren, markt, mededelingen, sollicitatie, voorkeur }) => {
     const blockUrl = `../../voorkeuren/${markt.id}/`;
-    const entriesFiltered = plaatsvoorkeuren.filter(entry => entry.marktId === markt.id);
+    const entriesFiltered = plaatsvoorkeuren.filter(entry => entry.marktId === String(markt.id));
     const defaultPlaatsCount = isVast(sollicitatie.status) ? sollicitatie.vastePlaatsen.length : 1;
     const defaultVoorkeur = {
         minimum: defaultPlaatsCount,
         maximum: defaultPlaatsCount,
-        anwhere: true,
+        anywhere: true,
     };
     const voorkeurDef = voorkeur || defaultVoorkeur;
 
     const entriesSplit = entriesFiltered
-        .sort((a, b) => b.priority - a.priority)
+        .sort((a, b) => a.priority - b.priority)
         .reduce((t, e) => {
             !t.includes(e.priority) && t.push(e.priority);
             return t;
