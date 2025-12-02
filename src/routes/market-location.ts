@@ -1,12 +1,21 @@
 import {
+    // deletePlaatsvoorkeurenByMarktAndKoopman,
+    // getIndelingVoorkeur,
+    // getMarktBasics,
+    // getOndernemer,
+    // getPlaatsvoorkeurenByMarktEnOndernemer,
+    // updateMarktVoorkeur,
+    // updatePlaatsvoorkeur,
+} from '../makkelijkemarkt-api';
+import {
+    getPlaatsvoorkeurenByMarktEnOndernemer,
+    updatePlaatsvoorkeur,
     deletePlaatsvoorkeurenByMarktAndKoopman,
     getIndelingVoorkeur,
-    getMarktBasics,
-    getOndernemer,
-    getPlaatsvoorkeurenByMarktEnOndernemer,
     updateMarktVoorkeur,
-    updatePlaatsvoorkeur,
-} from '../makkelijkemarkt-api';
+    getOndernemer,
+    getMarktBasics,
+} from '../daalder-api';
 import { getQueryErrors, HTTP_CREATED_SUCCESS, internalServerErrorPage } from '../express-util';
 import { NextFunction, Request, Response } from 'express';
 import { getKeycloakUser } from '../keycloak-api';
@@ -106,7 +115,7 @@ export const updatePlaatsvoorkeuren = (
 
             return updatePlaatsvoorkeur(voorkeuren, userEmail);
         } else {
-            return deletePlaatsvoorkeurenByMarktAndKoopman(marktId, erkenningsNummer);
+            return deletePlaatsvoorkeurenByMarktAndKoopman(marktId, erkenningsNummer, userEmail);
         }
     };
 
