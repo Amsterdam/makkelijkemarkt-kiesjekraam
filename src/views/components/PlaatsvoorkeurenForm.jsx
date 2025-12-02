@@ -70,6 +70,7 @@ class PlaatsvoorkeurenForm extends React.Component {
 
         const isMarktBewerkerEnVph = role === Roles.MARKTBEWERKER && isVastOfExp(sollicitatie.status);
         const maxNumKramen = markt.maxAantalKramenPerOndernemer;
+        const blocked = (markt.kiesJeKraamGeblokkeerdePlaatsen || '').split(',').map(s => s.trim());
 
         plaatsvoorkeuren = plaatsvoorkeuren
             .map((plaatsvoorkeur, index) => {
@@ -87,7 +88,9 @@ class PlaatsvoorkeurenForm extends React.Component {
         marktplaatsen
             .sort((a, b) => plaatsSort(a, b, 'plaatsId'))
             .map(plaats => {
-                plaats.disabled = !!plaatsvoorkeuren.find(entry => entry.plaatsId === plaats.plaatsId);
+                plaats.disabled = (!!plaatsvoorkeuren.find(entry => entry.plaatsId === plaats.plaatsId) ||
+                    blocked.includes(plaats.plaatsId)
+                );
                 return plaats;
             });
 
