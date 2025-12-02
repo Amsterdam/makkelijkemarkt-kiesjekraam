@@ -35,6 +35,21 @@ class ToewijzingenAfwijzingenPage extends React.Component {
 
         let toewijzingenAfwijzingen = [...toewijzingen, ...afwijzingen];
 
+        toewijzingenAfwijzingen = toewijzingenAfwijzingen.map(item => {
+            const branches = item.ondernemer.voorkeur.branches || [];
+            const branche = branches[0]; // TODO: not sure it this is correct
+            return {
+                ...item,
+                date: item.marktDate,
+                branche,
+                minimum: item.ondernemer.voorkeur.minimum,
+                maximum: item.ondernemer.voorkeur.maximum,
+                anywhere: item.ondernemer.voorkeur.anywhere,
+                verkoopinrichting: item.ondernemer.voorkeur.verkoopinrichting,
+                plaatsvoorkeuren: item.ondernemer.plaatsvoorkeuren,
+            }
+        });
+
         toewijzingenAfwijzingen = toewijzingenAfwijzingen.sort(
             (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
         );
@@ -42,15 +57,12 @@ class ToewijzingenAfwijzingenPage extends React.Component {
         toewijzingenAfwijzingen = toewijzingenAfwijzingen.slice(0, 13);
 
         function isVph(ondernemerObj, marktId) {
-            const sollicitatie = ondernemerObj.sollicitaties.find(soll => soll.markt.id.toString() === marktId);
-            console.log(sollicitatie);
-            console.log(marktId);
+            const sollicitatie = ondernemerObj.sollicitaties.find(soll => soll.markt.id === marktId);
             return !!(!sollicitatie || sollicitatie.status === 'vpl');
         }
 
         function getMarktAfkorting(marktId) {
-            console.log(marktId);
-            const marktFound = markten.find(markt => markt.id.toString() === marktId);
+            const marktFound = markten.find(markt => markt.id === marktId);
             return marktFound ? marktFound.afkorting : '';
         }
 
@@ -65,6 +77,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                     {role === 'marktmeester' ? <h2 className="Heading Heading--intro">Ondernemer</h2> : null}
                     {role === 'marktmeester' ? <OndernemerProfileHeader inline={true} user={ondernemer} /> : null}
                     <h1 className="Heading Heading--intro">Toewijzingen/afwijzingen</h1>
+                    <h2>laatste 2 maanden</h2>
                     <div className="Table Table__responsive Table--toewijzingen-afwijzingen">
                         <table className="Table__table">
                             <tr>
@@ -82,7 +95,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                 {toewijzingenAfwijzingen.map((item, index) => (
                                     <tr key={index}>
                                         <td>{moment(item.date).tz('Europe/Amsterdam').format('DD-MM')}</td>
-                                        <td>{getMarktAfkorting(item.markt)}</td>
+                                        <td>{getMarktAfkorting(item.marktId)}</td>
                                         <td>{item.type}</td>
                                         <td>
                                             {item.minimum ? (
@@ -93,7 +106,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                         </td>
                                         <td>
                                             {item.anywhere !== null
-                                                ? !isVph(ondernemer, item.markt)
+                                                ? !isVph(ondernemer, item.marktId)
                                                     ? item.anywhere === true
                                                         ? 'AAN'
                                                         : 'UIT'
@@ -102,11 +115,7 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                                         </td>
                                         <td>{(item.bakType && item.bakType.length>0) ? item.bakType : 'geen'}</td>
                                         <td>
-                                            {item.hasInrichting !== null
-                                                ? item.hasInrichting === true
-                                                    ? 'AAN'
-                                                    : 'UIT'
-                                                : null}
+                                            {item.verkoopinrichting ? 'AAN' : 'UIT'}
                                         </td>
                                         <td>
                                             {item.plaatsvoorkeuren !== null ? item.plaatsvoorkeuren.join(',') : null}
