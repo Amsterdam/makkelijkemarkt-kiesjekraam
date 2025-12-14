@@ -14,16 +14,14 @@ interface ISubRoute {
   validateHandler?: validateFunctionType
 }
 
-
-const SIMULATED_ERKENNINGS_NUMMER = '1234567890'
 const IS_PROTECTION_DISABLED = Boolean(process.env.DISABLE_DAALDER_API_DISPATCH_PROTECTION);
 
 const validateOwnErkenningsNummerInReqParams: validateFunctionType = (token, req) => {
     const isOwnErkenningsNummer = req.params.erkenningsNummer === token.content.preferred_username;
-    if (req.params.erkenningsNummer && !isOwnErkenningsNummer) {
-        return false;
+    if (req.params.erkenningsNummer) {
+        return (isOwnErkenningsNummer || token.hasRole(Roles.MARKTBEWERKER) || token.hasRole(Roles.MARKTMEESTER));
     }
-    return token.hasRole(Roles.MARKTONDERNEMER);
+    return true;
 };
 
 const validateOwnErkenningsNummerInRsvps: validateFunctionType = (token, req) => {
@@ -61,20 +59,22 @@ const subroutes: ISubRoute[] = [
 
 const applyProtectionFactory = (validateFunction: validateFunctionType): RequestHandler => {
     if (IS_PROTECTION_DISABLED) {
-    const simulatedToken = {
-        hasRole: (role: string) => true,
-        content: {preferred_username: SIMULATED_ERKENNINGS_NUMMER},
-    }
-    return (req: Request, res: Response, next: NextFunction) => {
-        const isValid = validateFunction(simulatedToken, req);
-        if (isValid) {
-        next();
-        } else {
-        res.status(403).send({ message: 'Forbidden' });
+        // This flow can be used for local testing without Keycloak setup
+        const SIMULATED_ERKENNINGS_NUMMER = '1234567890';
+        const simulatedToken = {
+            hasRole: (role: string) => role === Roles.MARKTONDERNEMER,
+            content: {preferred_username: SIMULATED_ERKENNINGS_NUMMER},
         }
-    }
+        return (req: Request, res: Response, next: NextFunction) => {
+            const isValid = validateFunction(simulatedToken, req);
+            if (isValid) {
+            next();
+            } else {
+            res.status(403).send({ message: 'Forbidden' });
+            }
+        }
     } else {
-    return keycloak.protect(validateFunction);
+        return keycloak.protect(validateFunction);
     }
 };
 
