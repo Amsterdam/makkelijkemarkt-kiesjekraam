@@ -256,8 +256,8 @@ export const getRsvps = async (erkenningsNummer: string): Promise<ILegacyRSVP[]>
     console.log('getRsvps', erkenningsNummer);
     // Get monday of the same week as today
     const monday = moment().startOf('isoWeek').format('YYYY-MM-DD');
-    // Get sunday two weeks later
-    const sundayInTwoWeeks = moment().startOf('isoWeek').add(13, 'days').format('YYYY-MM-DD');
+    // Get sunday 3 weeks later
+    const sundayInTwoWeeks = moment(monday).add(20, 'days').format('YYYY-MM-DD');
 
     const serial = erkenningsNummerToSerial(erkenningsNummer);
     const queryParms = `?inschrijving__ondernemer__serial=${serial}&day__gte=${monday}&day__lte=${sundayInTwoWeeks}`;
