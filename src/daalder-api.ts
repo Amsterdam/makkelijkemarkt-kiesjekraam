@@ -98,6 +98,11 @@ export const getMarktBasics = async (marktId: string): Promise<any> => {
     };
 }
 
+export const getMarktAanwezigheid = async (marktId: string, day: string): Promise<any> => {
+    const aanwezigheid = await api.get(`/kiesjekraam/markt/${marktId}/aanwezigheid/day/${day}/`);
+    return aanwezigheid;
+}
+
 const getOndernemerPrefs = async (erkenningsNummer: string): Promise<any> => {
     const serial = erkenningsNummerToSerial(erkenningsNummer);
     const response: [{specs: {}, id: number}] = await api.get(`/kiesjekraam/pref/?inschrijving__ondernemer__serial=${serial}`);
@@ -105,7 +110,7 @@ const getOndernemerPrefs = async (erkenningsNummer: string): Promise<any> => {
 }
 
 const getOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: number|string): Promise<any> => {
-    const {id, specs}: {id: number, specs: {}} = await api.get(`/kiesjekraam/pref/markt/${marktId}/ondernemer/${erkenningsNummer}/`);
+    const {id, specs}: {id: number, specs: {}} = await api.get(`/kiesjekraam/markt/${marktId}/pref/ondernemer/${erkenningsNummer}/`);
     return {id, ...specs};
 }
 
@@ -114,7 +119,7 @@ const updateOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: num
     const data = {specs: prefs}
     const headers = getUserHeader(user);
     const response = await api.patch(
-        `/kiesjekraam/pref/markt/${marktId}/ondernemer/${erkenningsNummer}/`,
+        `/kiesjekraam/markt/${marktId}/pref/ondernemer/${erkenningsNummer}/`,
         data,
         { headers })
     return response;
