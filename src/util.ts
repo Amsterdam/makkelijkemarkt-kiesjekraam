@@ -239,7 +239,7 @@ export const getBreadcrumbsOndernemer = (ondernemer: any, role: string) => {
                 url: '/markt/',
             },
             {
-                title: `${ondernemer.tussenvoegsels} ${ondernemer.achternaam} ${ondernemer.voorletters}`,
+                title: `${ondernemer.tussenvoegsels ? `${ondernemer.tussenvoegsels} ` : ''}${ondernemer.achternaam} ${ondernemer.voorletters}`,
                 url: `/profile/${ondernemer.erkenningsnummer}/`,
             },
         ];
