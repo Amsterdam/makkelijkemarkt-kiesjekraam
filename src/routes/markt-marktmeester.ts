@@ -1,11 +1,15 @@
 import {
     getAanmeldingenByMarktAndDate,
     getIndelingVoorkeuren,
-    getMarkt,
+    // getMarkt,
     getOndernemersByMarkt,
     getPlaatsvoorkeurenByMarkt,
     getToewijzingen,
 } from '../makkelijkemarkt-api';
+import {
+    getMarkt,
+    getMarktAanwezigheid,
+} from '../daalder-api';
 import {
     getCalculationInput,
     getSollicitantenlijstInput,
@@ -169,60 +173,54 @@ export const ondernemersNietIngedeeldPage = (req: GrantedRequest, res: Response,
         .catch(next);
 };
 
-export const alleSollicitantenPage = (req: GrantedRequest, res: Response, next: NextFunction) => {
-    const datum = req.params.datum;
-    const marktId = req.params.marktId;
+// export const alleSollicitantenPage = (req: GrantedRequest, res: Response, next: NextFunction) => {
+//     const datum = req.params.datum;
+//     const marktId = req.params.marktId;
 
-    Promise.all([
-        getOndernemersByMarkt(marktId),
-        getAanmeldingenByMarktAndDate(marktId, datum),
-        getPlaatsvoorkeurenByMarkt(marktId),
-        getMarkt(marktId),
-        getToewijzingen(marktId, datum),
-        getIndelingVoorkeuren(marktId),
-    ])
-        .then(([ondernemers, aanmeldingen, plaatsvoorkeuren, markt, toewijzingen, algemenevoorkeuren]) => {
-            const role = isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER
-            res.render('AanwezigheidLijst', {
-                ondernemers: ondernemers.filter(ondernemer => !isVast(ondernemer.status)),
-                aanmeldingen,
-                plaatsvoorkeuren,
-                toewijzingen,
-                markt,
-                datum,
-                role,
-                user: getKeycloakUser(req),
-                algemenevoorkeuren,
-            });
-        }, internalServerErrorPage(res))
-        .catch(next);
-};
+//     Promise.all([
+//         getOndernemersByMarkt(marktId),
+//         getAanmeldingenByMarktAndDate(marktId, datum),
+//         getPlaatsvoorkeurenByMarkt(marktId),
+//         getMarkt(marktId),
+//         getToewijzingen(marktId, datum),
+//         getIndelingVoorkeuren(marktId),
+//     ])
+//         .then(([ondernemers, aanmeldingen, plaatsvoorkeuren, markt, toewijzingen, algemenevoorkeuren]) => {
+//             const role = isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER
+//             res.render('AanwezigheidLijst', {
+//                 ondernemers: ondernemers.filter(ondernemer => !isVast(ondernemer.status)),
+//                 aanmeldingen,
+//                 plaatsvoorkeuren,
+//                 toewijzingen,
+//                 markt,
+//                 datum,
+//                 role,
+//                 user: getKeycloakUser(req),
+//                 algemenevoorkeuren,
+//             });
+//         }, internalServerErrorPage(res))
+//         .catch(next);
+// };
 
 export const sollicitantentAanwezigheidLijst = (req: GrantedRequest, res: Response, next: NextFunction) => {
     const datum = req.params.datum;
     const marktId = req.params.marktId;
 
+    console.log('sollicitantentAanwezigheidLijst', datum, marktId)
+
     Promise.all([
-        getOndernemersByMarkt(marktId),
-        getAanmeldingenByMarktAndDate(marktId, datum),
-        getPlaatsvoorkeurenByMarkt(marktId),
+        getMarktAanwezigheid(marktId, datum),
         getMarkt(marktId),
-        getToewijzingen(marktId, datum),
-        getIndelingVoorkeuren(marktId),
     ])
-        .then(([ondernemers, aanmeldingen, plaatsvoorkeuren, markt, toewijzingen, algemenevoorkeuren]) => {
+        .then(([ondernemers, markt]) => {
             const role = isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER
 
             res.render('AanwezigheidLijstPage', {
-                ondernemers: ondernemers.filter(ondernemer => !isVast(ondernemer.status)),
-                aanmeldingen,
-                plaatsvoorkeuren,
-                toewijzingen,
+                ondernemers: ondernemers.filter(ondernemer => !isVast(ondernemer.kind.toLowerCase())),
                 markt,
                 datum,
                 role,
                 user: getKeycloakUser(req),
-                algemenevoorkeuren,
                 title: 'Alle sollicitanten',
             });
         }, internalServerErrorPage(res))
