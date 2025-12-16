@@ -23,7 +23,7 @@ class MarktenPage extends React.Component {
         return (
             <Page>
                 <Header role={role} user={user} breadcrumbs={breadcrumbs}>
-                    <ConfigurationPullDownMenu />
+                    {/* <ConfigurationPullDownMenu /> */}
                 </Header>
                 <Content>
                     <h1 className="Heading Heading--intro">Markten</h1>
