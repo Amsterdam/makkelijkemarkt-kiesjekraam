@@ -52,9 +52,9 @@ class MarktDetailPage extends React.Component {
                         Ondernemers langdurig afgemeld
                     </span>
                     {markt.kiesJeKraamFase !== 'wenperiode' ? (
-                        <span href={`./${today()}/alle-sollicitanten/`} className="">
+                        <a href={`./${today()}/alle-sollicitanten/`} className="">
                             Alle sollicitanten
-                        </span>
+                        </a>
                     ) : null}
                     {markt.kiesJeKraamFase === 'activatie' || markt.kiesJeKraamFase === 'voorbereiding' ? (
                         <span href={`./${today()}/indelingslijst/`} className="">
@@ -196,9 +196,9 @@ class MarktDetailPage extends React.Component {
 
                     {alleSollicitanten && (
                         <li className="LinkList__item">
-                            <span href={`./${date}/alle-sollicitanten/`} className="">
+                            <a href={`./${date}/alle-sollicitanten/`} className="">
                                 Alle sollicitanten
-                            </span>
+                            </a>
                         </li>
                     )}
 
