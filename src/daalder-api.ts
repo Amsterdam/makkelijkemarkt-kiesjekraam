@@ -85,7 +85,6 @@ export const getMarkt = async (marktId: string | number): Promise<any> => {
     return markt;
 }
 
-
 export const getMarktBasics = async (marktId: string): Promise<any> => {
     // also used by getMarktDetails, which is used by allocation related stuff
     const markt = await getMarkt(marktId);
