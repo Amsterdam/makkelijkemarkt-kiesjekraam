@@ -67,64 +67,8 @@ export const attendancePage = (
     messages: object[] = [],
     newAanmeldingen?: IRSVP[],
 ) => {
-    const thresholdDate = getMarktThresholdDate(role);
-    const ondernemerPromise = getOndernemer(erkenningsNummer);
-    const includeInactive = role === Roles.MARKTMEESTER || role === Roles.MARKTBEWERKER;
-    const marktenPromise = getMarktenForOndernemer(ondernemerPromise, includeInactive);
-    const aanmeldingenPromise = getAanmeldingenByOndernemer(erkenningsNummer);
-    const rsvpPatternPromise = getRsvpPatternByOndernemer(erkenningsNummer);
-    const voorkeurenPromise = getVoorkeurenByOndernemer(erkenningsNummer);
-
-    return Promise.all([
-        ondernemerPromise,
-        aanmeldingenPromise,
-        rsvpPatternPromise,
-        marktenPromise,
-        getMededelingen(),
-        voorkeurenPromise,
-    ])
-        .then(([ondernemer, aanmeldingen, rsvpPattern, markten, mededelingen, voorkeuren]) => {
-            const sollicitaties = ondernemer.sollicitaties.reduce((result, sollicitatie) => {
-                result[sollicitatie.markt.id] = sollicitatie;
-                return result;
-            }, {});
-
-            if (newAanmeldingen) {
-                aanmeldingen = [...aanmeldingen, ...newAanmeldingen].reduce((result, aanmelding) => {
-                    const existing = result.find(isEqualAanmelding(aanmelding));
-                    if (existing) {
-                        return result;
-                    }
-
-                    const newAanmelding = newAanmeldingen.find(isEqualAanmelding(aanmelding));
-                    return newAanmelding ? result.concat(newAanmelding) : result.concat(aanmelding);
-                }, []);
-            }
-
-            return [
-                ondernemer,
-                sollicitaties,
-                groupAanmeldingenPerMarktPerWeek(markten, sollicitaties, aanmeldingen, thresholdDate),
-                rsvpPatternPerMarkt(markten, rsvpPattern),
-                mededelingen,
-                voorkeuren,
-            ];
-        })
-        .then(([ondernemer, sollicitaties, aanmeldingenPerMarktPerWeek, rsvpPattern, mededelingen, voorkeuren]) => {
-            res.render('AanwezigheidPage', {
-                aanmeldingenPerMarktPerWeek,
-                rsvpPattern,
-                csrfToken,
-                mededelingen,
-                voorkeuren,
-                messages,
-                ondernemer,
-                role,
-                sollicitaties,
-                user: getKeycloakUser(req),
-            });
-        })
-        .catch((err) => internalServerErrorPage(res)(err));
+    // Show a warning page instead of the old AanwezigheidPage that could still be reached
+    res.render('OudeAanwezigheidPage')
 };
 
 export const handleAttendanceUpdate = (
