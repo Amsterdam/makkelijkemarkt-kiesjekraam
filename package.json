@@ -11,7 +11,7 @@
     "build": "gulp build",
     "build:typescript": "tsc --project tsconfig.json",
     "clean": "rm -rf dist/* node_modules/.cache/",
-    "dev-server": "( export $(cat .env) && npm run dev)",
+    "dev-server": "( export $(cat .env | xargs) && npm run dev)",
     "start": "ts-node --transpile-only src/index.ts",
     "dev": "ENABLE_CORS_FOR_ORIGIN='http://localhost:3000' ts-node-dev --ignore-watch node_modules src/index.ts",
     "allocation": "ts-node src/allocation.ts",
