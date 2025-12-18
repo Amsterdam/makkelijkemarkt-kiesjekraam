@@ -271,13 +271,16 @@ const AanwezigheidsPage: React.VFC = () => {
           const year = date.getFullYear()
           const marktDate = `${year}-${(month > 9 ? '' : '0') + month}-${(day > 9 ? '' : '0') + day}`
           const shortName = date.toLocaleDateString('nl-NL', { weekday: 'short' })
+          const longName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
+          const attendingFromPattern = pattern[longName as keyof typeof WEEKDAY_NAME_MAP] || false
+          const attending = (isStatusLikeVpl || attendingFromPattern) && includes(marktDagen, shortName)
           return {
             marktDate,
             shortName,
             koopman: erkenningsNummer,
             markt: marktId,
-            attending: isStatusLikeVpl && includes(marktDagen, shortName),
-            day: date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+            attending,
+            day: longName,
             dateNL: date.toLocaleDateString('nl-NL'),
             isInThePast: checkIfDateIsInThePast(marktDate),
             isActiveMarketDay: includes(marktDagen, shortName),
