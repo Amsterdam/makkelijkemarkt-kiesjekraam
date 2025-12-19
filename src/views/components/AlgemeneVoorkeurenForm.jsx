@@ -57,7 +57,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
 
                                     {/* We need to send the brancheId to the API, but disabling
                                     removes the brancheId from the POST params. Therefore show just the
-                                    chosen one for non marktondernemers or marktbewerkers. 
+                                    chosen one for non marktondernemers or marktbewerkers.
                                      */}
                                     {(role === Roles.MARKTONDERNEMER || role === Roles.MARKTBEWERKER) ? (
                                         branches.map(branche => (
@@ -68,8 +68,8 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                             >
                                                 {branche.description}
                                             </option>
-                                        ))       
-                                    ) : 
+                                        ))
+                                    ) :
                                         <option
                                             value={voorkeur.brancheId}
                                             selected={voorkeur.brancheId}
@@ -77,7 +77,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                             {voorkeur.brancheId}
                                         </option>
                                     }
-                                
+
                                 </select>{' '}
                             </div>
                         </div>
@@ -111,7 +111,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
                             <label htmlFor="inrichting">Ja, ik kom met een eigen verkoopwagen/eigen materiaal.</label>
                         </p>
                     </div>
-                    {(role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER) ? (
+                    {/* {(role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER) ? (
                         <div className={`Fieldset Fieldset--highlighted`}>
                             <h2 className="Fieldset__header">Langdurige afwezigheid</h2>
                             <p className="InputField  InputField--text">
@@ -141,7 +141,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
                                 />
                             </p>
                         </div>
-                    ) : null}
+                    ) : null} */}
                 </div>
 
                 <div className="Fieldset">
@@ -172,14 +172,14 @@ class AlgemeneVoorkeurenForm extends React.Component {
                             type="submit"
                             name="next"
                             value={
-                                (role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER) 
+                                (role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER)
                                 ?  `/profile/${ondernemer.erkenningsnummer}?error=algemene-voorkeuren-saved#marktprofiel`
                                 : `/markt-detail/${markt.id}?error=algemene-voorkeuren-saved#marktprofiel`
                             }
                         >
                             Opslaan
                         </button>
-                 
+
                     </p>
                 </div>
             </Form>
