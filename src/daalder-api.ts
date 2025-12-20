@@ -1,5 +1,5 @@
-import { IMarktondernemerVoorkeur, IPlaatsvoorkeur, IRSVP, IRsvpPattern } from 'model/markt.model';
-import { requireEnv } from './util';
+import { IAanwezigheid, IMarktondernemerVoorkeur, IMarktondernemerVoorkeurRow, IPlaatsvoorkeur, IRSVP, IRsvpPattern } from 'model/markt.model';
+import { requireEnv, safeCastStringValueToInt } from './util';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { flatten, last, orderBy } from 'lodash';
 import moment from 'moment';
@@ -80,13 +80,15 @@ export const getMarkten = async (includeInactive: boolean = false): Promise<any>
     return markten;
 }
 
-export const getMarkt = async (marktId: string | number): Promise<any> => {
+export const getMarkt = async (marktId: string ): Promise<any> => {
+    safeCastStringValueToInt(marktId);
     const markt = await api.get(`/kiesjekraam/markt/${marktId}/`);
     return markt;
 }
 
 export const getMarktBasics = async (marktId: string): Promise<any> => {
     // also used by getMarktDetails, which is used by allocation related stuff
+    safeCastStringValueToInt(marktId);
     const markt = await getMarkt(marktId);
     const branches = await getBranches(marktId);
     const standplaatsen = await getStandplaatsen(marktId);
@@ -98,6 +100,7 @@ export const getMarktBasics = async (marktId: string): Promise<any> => {
 }
 
 export const getMarktAanwezigheid = async (marktId: string, day: string): Promise<any> => {
+    safeCastStringValueToInt(marktId);
     const aanwezigheid = await api.get(`/kiesjekraam/markt/${marktId}/aanwezigheid/day/${day}/`);
     return aanwezigheid;
 }
@@ -108,13 +111,14 @@ const getOndernemerPrefs = async (erkenningsNummer: string): Promise<any> => {
     return response.map(({id, specs}) => ({id, ...specs}));
 }
 
-const getOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: number|string): Promise<any> => {
+const getOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: string): Promise<any> => {
     const {id, specs}: {id: number, specs: {}} = await api.get(`/kiesjekraam/markt/${marktId}/pref/ondernemer/${erkenningsNummer}/`);
     return {id, ...specs};
 }
 
-const updateOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: number|string, prefs: any, user: string): Promise<any> => {
+const updateOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: string, prefs: any, user: string): Promise<any> => {
     console.log('updateOndernemerMarktPrefs', prefs, user);
+    safeCastStringValueToInt(marktId);
     const data = {specs: prefs}
     const headers = getUserHeader(user);
     const response = await api.patch(
@@ -124,13 +128,15 @@ const updateOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: num
     return response;
 }
 
-const getBranches = async (marktId: number|string): Promise<any[]> => {
+const getBranches = async (marktId: string): Promise<any[]> => {
     console.log('getBranches', marktId);
+    safeCastStringValueToInt(marktId);
     const branches: any[] = await api.get(`/kiesjekraam/markt/${marktId}/branche/`);
     return branches;
 }
 
-const getStandplaatsen = async (marktId: number|string, includeInactive: boolean = false): Promise<any[]> => {
+const getStandplaatsen = async (marktId: string, includeInactive: boolean = false): Promise<any[]> => {
+    safeCastStringValueToInt(marktId);
     const queryParms = `?markt_version_id=${marktId}` + (includeInactive ? '' : '&active=true');
     const standplaatsen: any[] = await api.get(`/kiesjekraam/standplaats/${queryParms}`);
     return standplaatsen;
@@ -145,6 +151,7 @@ export const getPlaatsvoorkeurenOndernemer = async (ondernemerId: string): Promi
 
 export const getPlaatsvoorkeurenByMarktEnOndernemer = async (marktId: string, ondernemerId: string): Promise<IPlaatsvoorkeur[]> => {
     console.log('getPlaatsvoorkeurenByMarktEnOndernemer', marktId, ondernemerId);
+    safeCastStringValueToInt(marktId);
     const prefs = await getOndernemerMarktPrefs(ondernemerId, marktId);
     const {plaatsen = []}: {plaatsen: IPlaatsvoorkeur[]} = prefs;
     return plaatsen;
@@ -153,6 +160,7 @@ export const getPlaatsvoorkeurenByMarktEnOndernemer = async (marktId: string, on
 export const deletePlaatsvoorkeurenByMarktAndKoopman = async (marktId: string, erkenningsNummer: string, user: string) => {
     console.log('deletePlaatsvoorkeurenByMarktAndKoopman', marktId, erkenningsNummer);
     // plaatsvoorkeurenData.length = 0; // clear array
+    safeCastStringValueToInt(marktId);
     const prefs = {plaatsen: []}
     await updateOndernemerMarktPrefs(erkenningsNummer, marktId, prefs, user);
 }
@@ -182,6 +190,7 @@ export const updatePlaatsvoorkeur = async (plaatsvoorkeuren: IPlaatsvoorkeur[], 
 
 export const getIndelingVoorkeur = async (ondernemerId: string, marktId: string) => {
     console.log('getIndelingVoorkeur')
+    safeCastStringValueToInt(marktId);
     const {minimum, maximum, anywhere} = await getOndernemerMarktPrefs(ondernemerId, marktId);
     return {
         minimum,
@@ -210,6 +219,7 @@ export const getVoorkeurByMarktEnOndernemer = async (
     erkenningsNummer: string,
 ): Promise<any> => {
     console.log('getVoorkeurByMarktEnOndernemer', marktId, erkenningsNummer);
+    safeCastStringValueToInt(marktId);
     const prefs = await getOndernemerMarktPrefs(erkenningsNummer, marktId);
     return {
         ...prefs,
@@ -220,7 +230,7 @@ export const getVoorkeurByMarktEnOndernemer = async (
 }
 
 export const updateVoorkeur = async (
-    updatedVoorkeur: any,
+    updatedVoorkeur: IMarktondernemerVoorkeurRow,
     user: string, // actually an email string like "team.salmagundi.ois@amsterdam.nl"
 ): Promise<any> => {
     console.log('updateVoorkeur', updatedVoorkeur, user);
@@ -229,8 +239,11 @@ export const updateVoorkeur = async (
     await updateOndernemerMarktPrefs(erkenningsNummer, marktId, data, user);
 }
 
-export const getToewijzingenAfwijzingen = async (erkenningsNummer: string, marktId:string = ''): Promise<any> => {
+export const getToewijzingenAfwijzingen = async (erkenningsNummer: string, marktId: string = ''): Promise<any> => {
     console.log('getToewijzingenAfwijzingen', erkenningsNummer);
+    if (marktId) {
+        safeCastStringValueToInt(marktId);
+    }
     const since = moment().subtract(2, 'months').format('YYYY-MM-DD');
     const queryParms = `?date__gte=${since}&mode=${DAALDER_ALLOCATION_MODE.SCHEDULED}`;
     const markt = marktId ? `/markt/${marktId}` : ''
@@ -240,20 +253,25 @@ export const getToewijzingenAfwijzingen = async (erkenningsNummer: string, markt
 
 interface ILegacyRSVP extends Omit<IRSVP, 'erkenningsNummer'> { id: number | null, koopman: string, markt: string }
 
-export const getAanmeldingenByOndernemer = async (erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
+export const getAanmeldingenByOndernemer = async (erkenningsNummer: string): Promise<IAanwezigheid[]> => {
     console.log('getAanmeldingenByOndernemer', erkenningsNummer);
-    const rsvps: ILegacyRSVP[] = await getRsvps(erkenningsNummer);
+    // const rsvps: ILegacyRSVP[] = await getRsvps(erkenningsNummer);
     // add marktId for legacy
-    return rsvps.filter(rsvp => rsvp.koopman === erkenningsNummer).map(rsvp => ({ ...rsvp, marktId: rsvp.markt.toString() }));
+    const aanwezigheid: IAanwezigheid[] = await api.get(`/kiesjekraam/ondernemer/${erkenningsNummer}/aanwezigheid/`);
+    return aanwezigheid
+    // return rsvps.filter(rsvp => rsvp.koopman === erkenningsNummer).map(rsvp => ({ ...rsvp, marktId: rsvp.markt.toString() }));
 };
 
-export const getAanmeldingenByOndernemerEnMarkt = async (marktId: string | number, erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
+export const getAanmeldingenByOndernemerEnMarkt = async (marktId: string, erkenningsNummer: string): Promise<IAanwezigheid[]> => {
     console.log('getAanmeldingenByOndernemerEnMarkt', marktId, erkenningsNummer);
-    const rsvps: ILegacyRSVP[] = await getRsvps(erkenningsNummer);
+    // const rsvps: ILegacyRSVP[] = await getRsvps(erkenningsNummer);
+    safeCastStringValueToInt(marktId);
+    const aanwezigheid: IAanwezigheid[] = await getAanmeldingenByOndernemer(erkenningsNummer);
+    return aanwezigheid.filter(item => item.marktId === safeCastStringValueToInt(marktId))
     // add marktId for legacy
-    return rsvps
-        .filter(rsvp => rsvp.koopman === erkenningsNummer && rsvp.markt === marktId)
-        .map(rsvp => ({ ...rsvp, marktId: rsvp.markt.toString() }));
+    // return rsvps
+        // .filter(rsvp => rsvp.koopman === erkenningsNummer && rsvp.markt === marktId)
+        // .map(rsvp => ({ ...rsvp, marktId: rsvp.markt.toString() }));
 };
 
 export const getRsvps = async (erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
@@ -304,6 +322,7 @@ export const getMarktConfig = async (id: number): Promise<any> => {
 
 export const getAllocationResult = async (marktId: string, marktDate: string): Promise<any> => {
     console.log('getAllocationResults', marktDate, marktId);
+    safeCastStringValueToInt(marktId);
     const mode = DAALDER_ALLOCATION_MODE.SCHEDULED;
     const queryParms = `?day=${marktDate}&markt_version_id=${marktId}&mode=${mode}`;
     const allocationResults = await api.get(`/kiesjekraam/allocation-result/${queryParms}`);
@@ -324,6 +343,7 @@ export const mergeIndelingData = (config: any, inputData: any): any => {
 
 export const getIndelingData = async (marktId: string, marktDate: string): Promise<any> => {
     console.log('getIndelingData', marktDate, marktId);
+    safeCastStringValueToInt(marktId);
     const allocationResult = await getAllocationResult(marktId, marktDate);
     if (allocationResult) {
         const inputData = allocationResult['input_data'];
