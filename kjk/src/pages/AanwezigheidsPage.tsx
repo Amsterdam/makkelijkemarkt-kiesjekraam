@@ -273,7 +273,7 @@ const AanwezigheidsPage: React.VFC = () => {
           const shortName = date.toLocaleDateString('nl-NL', { weekday: 'short' })
           const longName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
           const attendingFromPattern = pattern[longName as keyof typeof WEEKDAY_NAME_MAP] || false
-          const attending = (isStatusLikeVpl || attendingFromPattern) && includes(marktDagen, shortName)
+          const attending = (patternFromApi? attendingFromPattern : isStatusLikeVpl) && includes(marktDagen, shortName)
           return {
             marktDate,
             shortName,
