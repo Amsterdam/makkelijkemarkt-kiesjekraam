@@ -76,8 +76,13 @@ export const plaatsvoorkeurenPage = (
                 user: getKeycloakUser(req),
             });
         },
-        (err) => internalServerErrorPage(res)(err),
-    );
+    ).catch((err) => {
+        if (err?.response?.status === 404) {
+            res.render('GeenInschrijvingGevondenPage')
+        } else {
+            internalServerErrorPage(res)(err);
+        }
+    });
 };
 
 const voorkeurenFormDataToObject = (formData: any): IPlaatsvoorkeurRow => ({
