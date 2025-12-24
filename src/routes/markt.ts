@@ -115,8 +115,13 @@ export const marktDetail = (
                     daysClosed,
                     user: getKeycloakUser(req),
                 });
-            },
-            internalServerErrorPage(res),
+            }
         )
-        .catch(next);
+        .catch((err) => {
+            if (err?.response?.status === 404) {
+                res.render('GeenInschrijvingGevondenPage')
+            } else {
+                next(err);
+            }
+        });
 };
