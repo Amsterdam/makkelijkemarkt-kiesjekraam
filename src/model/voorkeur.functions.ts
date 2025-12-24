@@ -14,7 +14,10 @@ export const voorkeurenFormData = (
     body: any
 ): IMarktondernemerVoorkeurRow => {
     const { absentFrom, absentUntil, erkenningsNummer, marktId, marktDate, brancheId, parentBrancheId, inrichting, bakType } = body;
-    const anywhere = JSON.parse(body.anywhere);
+    // Next line is a patch for when anywhere is not passed,
+    // because when we update voorkeur from Daalder we use different update functions for marktprofiel vs plaatsvoorkeur,
+    // whereas the MM implementation uses the same function for both.
+    const anywhere = body.anywhere === '' ? null : JSON.parse(body.anywhere);
     const minimum = typeof body.minimum === 'string' ? parseInt(body.minimum, 10) || null : null;
     const maximum = typeof body.maximum === 'string' ? parseInt(body.maximum, 10) || null : null;
 

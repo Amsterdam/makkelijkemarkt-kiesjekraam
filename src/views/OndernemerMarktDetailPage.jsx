@@ -60,7 +60,7 @@ class OndernemerMarktDetailPage extends React.Component {
         const sollicitatie = ondernemer.sollicitaties.find(soll => soll.markt.id === markt.id);
 
         const rsvpEntries = filterRsvpList(
-            aanmeldingen.filter(aanmelding => aanmelding.marktId === markt.id.toString()),
+            aanmeldingen.filter(aanmelding => aanmelding.marktId === markt.id),
             markt,
             today(),
         );
@@ -104,7 +104,7 @@ class OndernemerMarktDetailPage extends React.Component {
                         afwijzingen={afwijzingen}
                         aanmeldingen={aanmeldingen}
                     />
-                    {absentGemeld ? (
+                    {/* {absentGemeld ? (
                         <Alert type="warning" inline={true}>
                             <span>
                                 LET OP: U bent langere tijd afwezig gemeld{' '}
@@ -116,7 +116,7 @@ class OndernemerMarktDetailPage extends React.Component {
                                 {markt.telefoonNummerContact}.
                             </span>
                         </Alert>
-                    ) : null}
+                    ) : null} */}
                     {!algemeneVoorkeur || !algemeneVoorkeur.brancheId || !branchesObj[algemeneVoorkeur.brancheId] ? (
                         <Alert type="warning" inline={true}>
                             <span>
