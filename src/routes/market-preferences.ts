@@ -102,5 +102,12 @@ export const marketPreferencesPage = (
             csrfToken,
             user: getKeycloakUser(req),
         });
-    }, internalServerErrorPage(res));
+    })
+    .catch((err) => {
+        if (err?.response?.status === 404) {
+            res.render('GeenInschrijvingGevondenPage')
+        } else {
+            next(err);
+        }
+    });
 };
