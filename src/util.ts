@@ -7,6 +7,13 @@ export const capitalize = (s: string) => {
     return typeof s === 'string' ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 };
 
+export const safeCastStringValueToInt = (value: string): number => {
+    if (/^[0-9]+$/.test(value)) {
+        return parseInt(value);
+    }
+    throw new TypeError(`Value "${value}" is not a valid integer string`);
+}
+
 export const TIMEZONE = 'Europe/Amsterdam';
 export const DAYS_IN_WEEK = 7;
 export const MILLISECONDS_IN_SECOND = 1000;
@@ -239,7 +246,7 @@ export const getBreadcrumbsOndernemer = (ondernemer: any, role: string) => {
                 url: '/markt/',
             },
             {
-                title: `${ondernemer.tussenvoegsels} ${ondernemer.achternaam} ${ondernemer.voorletters}`,
+                title: `${ondernemer.tussenvoegsels ? `${ondernemer.tussenvoegsels} ` : ''}${ondernemer.achternaam} ${ondernemer.voorletters}`,
                 url: `/profile/${ondernemer.erkenningsnummer}/`,
             },
         ];

@@ -17,7 +17,7 @@ const OndernemerMarktAlgVoorkeuren = ({ markt, voorkeur, branches }) => {
                         <dt>Branche</dt>
                         <dd>{voorkeur.brancheId ? branchesObj[voorkeur.brancheId].description : 'geen'}</dd>
                         <dt>Bakplaats nodig?</dt>
-                        <dd>{voorkeur.parentBrancheId ? voorkeur.parentBrancheId : 'geen'}</dd>
+                        <dd>{voorkeur.bakType ? voorkeur.bakType : 'geen'}</dd>
                         <dt>Verkoopwagen / eigen materiaal?</dt>
                         <dd>{voorkeur.inrichting ? voorkeur.inrichting : 'geen'}</dd>
                     </dl>

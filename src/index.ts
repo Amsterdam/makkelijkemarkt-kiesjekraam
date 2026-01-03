@@ -19,7 +19,8 @@ import {
     snapshotPage,
 } from './routes/market-allocation';
 import express, { NextFunction, Request, RequestHandler, Response } from 'express';
-import { getMarkt, getMarkten } from './makkelijkemarkt-api';
+// import { getMarkt, getMarkten } from './makkelijkemarkt-api';
+import { getMarkt, getMarkten } from './daalder-api';
 import { GrantedRequest, TokenContent } from 'keycloak-connect';
 import { getQueryErrors, internalServerErrorPage, isAbsoluteUrl } from './express-util';
 import { keycloak, Roles, sessionMiddleware, hasEitherRole } from './authentication';
@@ -37,6 +38,7 @@ import { dashboardPage } from './routes/dashboard';
 import { getAllUsersForExport, getKeycloakUser } from './keycloak-api';
 import marktmeesterApp from './routes/marktmeesterApp';
 import mmApiDispatch from './routes/mmApiDispatch';
+import daalderApiDispatch from './routes/daalderApiDispatch';
 import morgan from 'morgan';
 import path from 'path';
 import { requireEnv } from './util';
@@ -133,7 +135,7 @@ app.get('/login', keycloak.protect(), updateOndernemerEmailMiddleware, (req: Gra
 app.get('/', (req: Request, res: Response) => {
     res.render('HomePage');
 });
-
+app.use('/daalder', daalderApiDispatch);
 app.use('/api', mmApiDispatch);
 app.use('/marktmeester', marktmeesterApp);
 

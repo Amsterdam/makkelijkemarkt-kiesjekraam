@@ -69,6 +69,13 @@ export interface IRSVP {
     attending: boolean;
 }
 
+export interface IAanwezigheid {
+    marktId: number;
+    marktDate: string;
+    erkenningsNummer: ErkenningsNummer;
+    attending: boolean;
+}
+
 export interface IRsvpPattern {
     markt: string;
     erkenningsNummer: ErkenningsNummer;

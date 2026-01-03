@@ -3,13 +3,14 @@ import { NextFunction, Response } from 'express';
 
 import { MMMarkt } from '../model/makkelijkemarkt.model'
 import { getAllowedMarketsFromToken } from "../roles";
-import { getMarkten, getMarkt } from '../makkelijkemarkt-api'
+// import { getMarkten, getMarkt } from '../makkelijkemarkt-api'
+import { getMarkten, getMarkt, getIndelingData } from '../daalder-api'
 import { Roles } from '../authentication'
 import { getKeycloakUser } from '../keycloak-api';
-import { internalServerErrorPage, HTTP_FORBIDDEN_ERROR } from '../express-util';
+import { internalServerErrorPage, HTTP_FORBIDDEN_ERROR, HTTP_PAGE_NOT_FOUND } from '../express-util';
 import { getMarktDays, parseMarktDag, isAfterMailingTime } from '../domain-knowledge'
 import { today, tomorrow } from '../util'
-import { getIndelingslijst } from '../pakjekraam-api';
+// import { getIndelingslijst } from '../pakjekraam-api';
 
 const _getAllowedMarkets = (req: GrantedRequest) => {
     const allowedMarkets = getAllowedMarketsFromToken(req)
@@ -71,7 +72,10 @@ export const getKramenzetterIndelingsPage = async (req: GrantedRequest, res: Res
     }
 
     try {
-        const indeling = await getIndelingslijst(marktId, marktDate)
+        const indeling = await getIndelingData(marktId, marktDate)
+        if (!indeling) {
+            return res.status(HTTP_PAGE_NOT_FOUND).send(`Indeling voor ${marktDate} niet gevonden!`)
+        }
         return res.render('IndelingslijstPage.tsx', {
             ...indeling,
             indelingstype,
@@ -84,4 +88,3 @@ export const getKramenzetterIndelingsPage = async (req: GrantedRequest, res: Res
         internalServerErrorPage(res)
     }
 }
-
