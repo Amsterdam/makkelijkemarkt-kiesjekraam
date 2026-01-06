@@ -2,7 +2,9 @@ FROM node:24-alpine AS bdm_build
 
 COPY bdm/package.json bdm/
 COPY bdm/package-lock.json bdm/
-COPY bdm/config bdm/config
+COPY bdm/tsconfig.json bdm/
+COPY bdm/vite.config.ts bdm/
+COPY bdm/index.html bdm/
 COPY bdm/public bdm/public
 COPY bdm/src bdm/src
 
@@ -18,7 +20,9 @@ FROM node:24-alpine AS kjk_build
 
 COPY kjk/package.json kjk/
 COPY kjk/package-lock.json kjk/
-COPY kjk/config kjk/config
+COPY kjk/tsconfig.json kjk/
+COPY kjk/vite.config.ts kjk/
+COPY kjk/index.html kjk/
 COPY kjk/public kjk/public
 COPY kjk/src kjk/src
 
