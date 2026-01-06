@@ -1,4 +1,4 @@
-FROM node:20-alpine as bdm_build
+FROM node:24-alpine AS bdm_build
 
 COPY bdm/package.json bdm/
 COPY bdm/package-lock.json bdm/
@@ -6,7 +6,7 @@ COPY bdm/config bdm/config
 COPY bdm/public bdm/public
 COPY bdm/src bdm/src
 
-ENV PATH /srv/bdm/node_modules/.bin:$PATH
+ENV PATH=/srv/bdm/node_modules/.bin:$PATH
 
 WORKDIR /bdm
 
@@ -14,7 +14,7 @@ RUN npm ci --loglevel verbose
 RUN npm run build
 
 
-FROM node:20-alpine as kjk_build
+FROM node:24-alpine AS kjk_build
 
 COPY kjk/package.json kjk/
 COPY kjk/package-lock.json kjk/
@@ -22,7 +22,7 @@ COPY kjk/config kjk/config
 COPY kjk/public kjk/public
 COPY kjk/src kjk/src
 
-ENV PATH /srv/kjk/node_modules/.bin:$PATH
+ENV PATH=/srv/kjk/node_modules/.bin:$PATH
 
 WORKDIR /kjk
 
@@ -31,7 +31,7 @@ RUN npm ci --loglevel verbose
 RUN npm run build
 
 
-FROM node:20-alpine
+FROM node:24-alpine
 
 RUN apk add ca-certificates
 COPY certificates/adp_rootca.crt /usr/local/share/ca-certificates/adp_rootca.crt
