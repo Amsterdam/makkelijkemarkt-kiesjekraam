@@ -42,7 +42,7 @@
     "@types/jest": "27.4.1",
     "@types/keycloak-connect": "^7.0.0",
     "@types/morgan": "1.7.35",
-    "@types/node": "16.4.2",
+    "@types/node": "24.1.0",
     "@types/node-sass": "4.11.2",
     "@types/prop-types": "15.7.1",
     "@types/qs": "6.5.3",
