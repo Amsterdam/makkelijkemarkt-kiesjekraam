@@ -309,8 +309,8 @@ const AanwezigheidsPage: React.VFC = () => {
   const rsvpPerMarkt = groupBy(rsvps, 'markt')
   const marktVoorkeur: Partial<IMarktVoorkeur> = marktVoorkeurData.data || {}
   const hasValidBranche =
-  !marktVoorkeurData.data ||
-  (!isEmpty(marktVoorkeur) && marktVoorkeur.branche && marktVoorkeur.branche !== EMPTY_BRANCH)
+    !marktVoorkeurData.data ||
+    (!isEmpty(marktVoorkeur) && marktVoorkeur.branche && marktVoorkeur.branche !== EMPTY_BRANCH)
 
   const marktComponent = (
     <Markt
