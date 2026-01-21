@@ -65,7 +65,11 @@ export const updateMarketPreferences = (
     // res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next ? req.body.next : '/');
     updateVoorkeur(convertVoorkeur(data), getKeycloakUser(req).email)
         .then(() => {
-            res.status(HTTP_CREATED_SUCCESS).redirect(req.body.next ? req.body.next : '/');
+            const nextPage = (
+                role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER)
+                ?  `/profile/${data.erkenningsNummer}?error=algemene-voorkeuren-saved#marktprofiel`
+                : `/markt-detail/${data.marktId}?error=algemene-voorkeuren-saved#marktprofiel`
+            res.status(HTTP_CREATED_SUCCESS).redirect(nextPage);
         })
         .catch((err) => {
             next(err);

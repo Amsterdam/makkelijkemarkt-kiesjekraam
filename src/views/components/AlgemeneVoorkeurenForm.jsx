@@ -170,12 +170,6 @@ class AlgemeneVoorkeurenForm extends React.Component {
                         <button
                             className="Button Button--secondary"
                             type="submit"
-                            name="next"
-                            value={
-                                (role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER)
-                                ?  `/profile/${ondernemer.erkenningsnummer}?error=algemene-voorkeuren-saved#marktprofiel`
-                                : `/markt-detail/${markt.id}?error=algemene-voorkeuren-saved#marktprofiel`
-                            }
                         >
                             Opslaan
                         </button>
