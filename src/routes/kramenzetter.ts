@@ -9,7 +9,7 @@ import { Roles } from '../authentication'
 import { getKeycloakUser } from '../keycloak-api';
 import { internalServerErrorPage, HTTP_FORBIDDEN_ERROR, HTTP_PAGE_NOT_FOUND } from '../express-util';
 import { getMarktDays, parseMarktDag, isAfterMailingTime } from '../domain-knowledge'
-import { today, tomorrow } from '../util'
+import { safeCastStringValueToInt, today, tomorrow, validateDateStringHasISOFormat } from '../util'
 // import { getIndelingslijst } from '../pakjekraam-api';
 
 const _getAllowedMarkets = (req: GrantedRequest) => {
@@ -64,14 +64,18 @@ export const getKramenzetterIndelingsPage = async (req: GrantedRequest, res: Res
     const marktDate = req.params.datum
     const indelingstype = 'indeling'
     const user = getKeycloakUser(req)
-    const markt = await getMarkt(marktId)
-
-    if (!_isAllowedToSeeIndeling(req, markt, marktDate)) {
-        console.log(`[Not Allowed] Kramenzetter ${user.sub} tried to access markt id ${marktId} on ${marktDate}`)
-        return res.status(HTTP_FORBIDDEN_ERROR).send('Het is niet toegestaan om als kramenzetter deze indeling te zien')
-    }
 
     try {
+        // validate inputs
+        safeCastStringValueToInt(marktId);
+        validateDateStringHasISOFormat(marktDate);
+
+        const markt = await getMarkt(marktId)
+        if (!_isAllowedToSeeIndeling(req, markt, marktDate)) {
+            console.log(`[Not Allowed] Kramenzetter ${user.sub} tried to access markt id ${marktId} on ${marktDate}`)
+            return res.status(HTTP_FORBIDDEN_ERROR).send('Het is niet toegestaan om als kramenzetter deze indeling te zien')
+        }
+
         const indeling = await getIndelingData(marktId, marktDate)
         if (!indeling) {
             return res.status(HTTP_PAGE_NOT_FOUND).send(`Indeling voor ${marktDate} niet gevonden!`)
