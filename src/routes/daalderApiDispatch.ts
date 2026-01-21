@@ -68,9 +68,9 @@ const applyProtectionFactory = (validateFunction: validateFunctionType): Request
         return (req: Request, res: Response, next: NextFunction) => {
             const isValid = validateFunction(simulatedToken, req);
             if (isValid) {
-            next();
+                next();
             } else {
-            res.status(403).send({ message: 'Forbidden' });
+                res.status(403).send({ message: 'Forbidden' });
             }
         }
     } else {
