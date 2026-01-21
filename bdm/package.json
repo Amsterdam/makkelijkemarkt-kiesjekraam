@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "cracoConfig": "./config/craco.config.js",
-
   "scripts": {
     "start": "GENERATE_SOURCEMAP=false SKIP_PREFLIGHT_CHECK=true craco start",
     "start:msw": "GENERATE_SOURCEMAP=false SKIP_PREFLIGHT_CHECK=true REACT_APP_MOCK_SERVICE_WORKER=true craco start",
@@ -20,7 +19,7 @@
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
-    "@types/node": "^16.11.41",
+    "@types/node": "24.1.0",
     "antd": "^4.21.4",
     "jszip": "^3.10.0",
     "lodash": "^4.17.21",
