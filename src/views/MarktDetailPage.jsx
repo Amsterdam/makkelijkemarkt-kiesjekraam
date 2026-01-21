@@ -150,16 +150,16 @@ class MarktDetailPage extends React.Component {
                     )}
                     {indeling && (
                         <li className="LinkList__item">
-                            <span href={`./${date}/indeling-stats/`} className="">
+                            <span>
                                 Indeling stats
                             </span>
                         </li>
                     )}
                     {bewerkVoorlopigeIndeling && (
                         <li className="LinkList__item">
-                            <div href={`/bdm/fix-allocation/${marktId}/${date}/`} className="">
+                            <span>
                                 Bewerk voorlopige indeling
-                            </div>
+                            </span>
                         </li>
                     )}
 
@@ -173,14 +173,14 @@ class MarktDetailPage extends React.Component {
                     )}
 
                     <li className="LinkList__item">
-                        <span href={`/bdm/markt/${marktId}/${date}/allocation`} className="">
+                        <span>
                             Indeling overzicht V2
                         </span>
                     </li>
 
                     {nietIngedeeld && (
                         <li className="LinkList__item">
-                            <span href={`./${date}/ondernemers-niet-ingedeeld/`} className="">
+                            <span>
                                 Ondernemers niet ingedeeld
                             </span>
                         </li>
@@ -188,7 +188,7 @@ class MarktDetailPage extends React.Component {
 
                     {voorrangsLijst && (
                         <li className="LinkList__item">
-                            <span href={`./${date}/voorrangslijst/`} className="">
+                            <span>
                                 Voorrangslijst
                             </span>
                         </li>
@@ -204,7 +204,7 @@ class MarktDetailPage extends React.Component {
 
                     {afmeldingenVPHs && (
                         <li className="LinkList__item">
-                            <span href={`./${date}/afmeldingen-vasteplaatshouders/`} className="">
+                            <span>
                                 Afmeldingen vasteplaatshouders
                             </span>
                         </li>
@@ -212,7 +212,7 @@ class MarktDetailPage extends React.Component {
 
                     {abLijst && (
                         <li className="LinkList__item">
-                            <span href={`./${date}/a-b-lijst/`} className="">
+                            <span>
                                 A/B lijst
                             </span>
                         </li>
