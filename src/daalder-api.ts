@@ -59,7 +59,8 @@ export const updateOndernemerKjkEmail = async (email: string, erkenningsNummer: 
     await api.post('/kiesjekraam/update-kjk-email/', { email, erkenningsNummer });
 
 const erkenningsNummerToSerial = (erkenningsNummer: string): string => {
-    if (erkenningsNummer.length !== 10) {
+    const erkenningsNummerRegex = /^\d{10}$/;  // only 10 digits allowed
+    if (erkenningsNummerRegex.test(erkenningsNummer) === false) {
         throw new Error(`Invalid erkenningsNummer: ${erkenningsNummer}`);
     }
     return erkenningsNummer.slice(0, 8) + '.' + erkenningsNummer.slice(8, 10);
