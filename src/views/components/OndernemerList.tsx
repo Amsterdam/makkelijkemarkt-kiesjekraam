@@ -1,17 +1,22 @@
 import * as React from 'react';
 import {
     IMarkt,
-    IMarktondernemer,
     IRSVP
 } from '../../model/markt.model';
 import PropTypes from 'prop-types';
 
+interface IAanwezigheid {
+    present: boolean;
+    erkenningsNummer: string;
+    kind: string;
+    name: string;
+    rank: string;
+}
+
 const OndernemerList = ({
     ondernemers,
-    aanmeldingen,
-    algemenevoorkeuren,
 }: {
-    ondernemers: IMarktondernemer[];
+    ondernemers: IAanwezigheid[];
     markt: IMarkt;
     aanmeldingen: IRSVP[];
     plaatsvoorkeuren: any;
@@ -22,37 +27,18 @@ const OndernemerList = ({
         <table className="OndernemerList__table">
             <tbody>
                 {ondernemers.map(ondernemer => {
-                    const aanmelding =
-                        ondernemer &&
-                        aanmeldingen.find(rsvp => rsvp.erkenningsNummer === ondernemer.erkenningsNummer);
-                    const algemenevoorkeur = algemenevoorkeuren[ondernemer.erkenningsNummer];
-
+                    const kind = ondernemer.kind.toLowerCase()
                     return (
-                        <tr key={ondernemer.erkenningsNummer} className={ondernemer.status}>
+                        <tr key={ondernemer.erkenningsNummer} className={kind}>
                             <td>
-                                <span id={`soll-${ondernemer.sollicitatieNummer}`} />
-                                <a href={`/profile/${ondernemer.erkenningsNummer}`}>{ondernemer.sollicitatieNummer}</a>
+                                <span id={`soll-${ondernemer.rank}`} />
+                                <a href={`/profile/${ondernemer.erkenningsNummer}`}>{ondernemer.rank}</a>
                             </td>
-                            <td>{ondernemer.status}</td>
-                            <td>{ondernemer.description}</td>
+                            <td>{kind}</td>
+                            <td>{ondernemer.name}</td>
 
-                            <td
-                                className={`${
-                                    aanmelding && aanmelding.attending !== null && !aanmelding.attending
-                                        ? 'OndernemerList__ondernemer--not-attending'
-                                        : ''
-                                } ${aanmelding && aanmelding.attending ? 'OndernemerList__ondernemer--attending' : ''}`}
-                            />
-                            <td>
-                                {algemenevoorkeur ? (
-                                    <strong>
-                                        ({algemenevoorkeur.minimum},{' '}
-                                        {algemenevoorkeur.maximum - algemenevoorkeur.minimum}){' '}
-                                    </strong>
-                                ) : (
-                                    ''
-                                )}
-                            </td>
+                            <td className={ondernemer.present ?
+                                'OndernemerList__ondernemer--attending' : 'OndernemerList__ondernemer--not-attending'} />
                         </tr>
                     );
                 })}

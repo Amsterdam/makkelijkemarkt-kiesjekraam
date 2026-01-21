@@ -7,21 +7,13 @@ const {
     paginate,
     getBreadcrumbsMarkt,
 } = require('../util');
-const {
-    isAanwezig,
-} = require('../routes/markt-marktmeester');
 
 class template extends React.Component {
     propTypes = {
         markt: PropTypes.object.isRequired,
         ondernemers: PropTypes.object,
-        aanmeldingen: PropTypes.object,
-        voorkeuren: PropTypes.object,
         datum: PropTypes.string,
         title: PropTypes.string,
-        toewijzingen: PropTypes.array.isRequired,
-        algemenevoorkeuren: PropTypes.array,
-        plaatsvoorkeuren: PropTypes.array,
         role: PropTypes.string,
         user: PropTypes.object,
     };
@@ -29,19 +21,16 @@ class template extends React.Component {
     render() {
         const {
             markt,
-            aanmeldingen,
-            plaatsvoorkeuren,
             datum,
             user,
-            algemenevoorkeuren,
             role,
             title,
             ondernemers,
         } = this.props;
 
         let groups = [
-            ondernemers.filter(ondernemer => isAanwezig(ondernemer, aanmeldingen, datum)),
-            ondernemers.filter(ondernemer => !isAanwezig(ondernemer, aanmeldingen, datum)),
+            ondernemers.filter(ondernemer => ondernemer.present),
+            ondernemers.filter(ondernemer => !ondernemer.present),
         ];
         groups = groups.map(group => paginate(paginate(group, 40), 2));
 
@@ -77,9 +66,6 @@ class template extends React.Component {
                                           ondernemers={list}
                                           markt={markt}
                                           datum={datum}
-                                          aanmeldingen={aanmeldingen}
-                                          plaatsvoorkeuren={plaatsvoorkeuren}
-                                          algemenevoorkeuren={algemenevoorkeuren}
                                       />
                                   ))}
                               </PrintPage>

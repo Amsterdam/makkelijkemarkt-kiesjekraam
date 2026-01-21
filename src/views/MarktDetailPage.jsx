@@ -48,18 +48,18 @@ class MarktDetailPage extends React.Component {
                 role={role}
             >
                 <div className="Section Section--column">
-                    <a href={`./langdurig-afgemeld/`} className="Link">
+                    <span href={`./langdurig-afgemeld/`} className="">
                         Ondernemers langdurig afgemeld
-                    </a>
+                    </span>
                     {markt.kiesJeKraamFase !== 'wenperiode' ? (
-                        <a href={`./${today()}/alle-sollicitanten/`} className="Link">
+                        <a href={`./${today()}/alle-sollicitanten/`} className="">
                             Alle sollicitanten
                         </a>
                     ) : null}
                     {markt.kiesJeKraamFase === 'activatie' || markt.kiesJeKraamFase === 'voorbereiding' ? (
-                        <a href={`./${today()}/indelingslijst/`} className="Link">
+                        <span href={`./${today()}/indelingslijst/`} className="">
                             Positie vasteplaatshouders
-                        </a>
+                        </span>
                     ) : null}
                     {markt.kiesJeKraamFase === 'wenperiode' || markt.kiesJeKraamFase === 'live' ? (
                         <a
@@ -71,12 +71,12 @@ class MarktDetailPage extends React.Component {
                             Kaart {markt.naam}
                         </a>
                     ) : null}
-                    <a href={`/bdm/markt/${this.props.markt.id}`} className="Link">
+                    <span href={`/bdm/markt/${this.props.markt.id}`} className="">
                         Bewerk deze markt
-                    </a>
-                    <a href={`/audit-logs`} className="Link" target="_blank">
+                    </span>
+                    <span href={`/audit-logs`} className="" target="_blank">
                         Download marktvoorkeur logs (laatste 30 dagen)
-                    </a>
+                    </span>
                 </div>
                 {markt.kiesJeKraamGeblokkeerdePlaatsen ? (
                     <AlertLine
@@ -150,20 +150,20 @@ class MarktDetailPage extends React.Component {
                     )}
                     {indeling && (
                         <li className="LinkList__item">
-                            <a href={`./${date}/indeling-stats/`} className="Link">
+                            <span>
                                 Indeling stats
-                            </a>
+                            </span>
                         </li>
                     )}
                     {bewerkVoorlopigeIndeling && (
                         <li className="LinkList__item">
-                            <a href={`/bdm/fix-allocation/${marktId}/${date}/`} className="Link">
+                            <span>
                                 Bewerk voorlopige indeling
-                            </a>
+                            </span>
                         </li>
                     )}
 
-                    {/* Direct link Concept INdeling */}
+                    {/* Direct link Concept Indeling */}
                     {conceptIndeling && (
                         <li className="LinkList__item">
                             <a href={`./${date}/direct-concept-indelingslijst/`} className="Link">
@@ -173,30 +173,30 @@ class MarktDetailPage extends React.Component {
                     )}
 
                     <li className="LinkList__item">
-                        <a href={`/bdm/markt/${marktId}/${date}/allocation`} className="Link">
+                        <span>
                             Indeling overzicht V2
-                        </a>
+                        </span>
                     </li>
 
                     {nietIngedeeld && (
                         <li className="LinkList__item">
-                            <a href={`./${date}/ondernemers-niet-ingedeeld/`} className="Link">
+                            <span>
                                 Ondernemers niet ingedeeld
-                            </a>
+                            </span>
                         </li>
                     )}
 
                     {voorrangsLijst && (
                         <li className="LinkList__item">
-                            <a href={`./${date}/voorrangslijst/`} className="Link">
+                            <span>
                                 Voorrangslijst
-                            </a>
+                            </span>
                         </li>
                     )}
 
                     {alleSollicitanten && (
                         <li className="LinkList__item">
-                            <a href={`./${date}/alle-sollicitanten/`} className="Link">
+                            <a href={`./${date}/alle-sollicitanten/`} className="">
                                 Alle sollicitanten
                             </a>
                         </li>
@@ -204,17 +204,17 @@ class MarktDetailPage extends React.Component {
 
                     {afmeldingenVPHs && (
                         <li className="LinkList__item">
-                            <a href={`./${date}/afmeldingen-vasteplaatshouders/`} className="Link">
+                            <span>
                                 Afmeldingen vasteplaatshouders
-                            </a>
+                            </span>
                         </li>
                     )}
 
                     {abLijst && (
                         <li className="LinkList__item">
-                            <a href={`./${date}/a-b-lijst/`} className="Link">
+                            <span>
                                 A/B lijst
-                            </a>
+                            </span>
                         </li>
                     )}
 

@@ -1,11 +1,12 @@
 import {
     getAanmeldingenByOndernemer,
-    getAfwijzingenByOndernemer,
+    // getAfwijzingenByOndernemer,
     getMarkten,
     getOndernemer,
     getPlaatsvoorkeurenOndernemer,
-    getToewijzingenByOndernemer,
-} from '../makkelijkemarkt-api';
+    getToewijzingenAfwijzingen,
+    // getToewijzingenByOndernemer,
+} from '../daalder-api';
 import {
     getQueryErrors,
     internalServerErrorPage
@@ -33,14 +34,18 @@ export const dashboardPage = (req: GrantedRequest, res: Response, next: NextFunc
     Promise.props({
         ondernemer: getOndernemer(erkenningsNummer),
         markten: getMarkten(),
-        plaatsvoorkeuren: getPlaatsvoorkeurenOndernemer(erkenningsNummer),
+        plaatsvoorkeuren: getPlaatsvoorkeurenOndernemer(erkenningsNummer),  // not used on dashboard page
         aanmeldingen: getAanmeldingenByOndernemer(erkenningsNummer),
-        toewijzingen: getToewijzingenByOndernemer(erkenningsNummer),
-        afwijzingen: getAfwijzingenByOndernemer(erkenningsNummer),
+        // toewijzingen: getToewijzingenByOndernemer(erkenningsNummer), // not used on dashboard page
+        // afwijzingen: getAfwijzingenByOndernemer(erkenningsNummer), // not used on dashboard page
+        toewijzingenAfwijzingen: getToewijzingenAfwijzingen(erkenningsNummer),
     })
         .then(result => {
+            const {toewijzingen, afwijzingen} = result.toewijzingenAfwijzingen;
             res.render('OndernemerDashboard', {
                 ...result,
+                toewijzingen,
+                afwijzingen,
                 messages,
                 role: Roles.MARKTONDERNEMER,
                 user: getKeycloakUser(req),
