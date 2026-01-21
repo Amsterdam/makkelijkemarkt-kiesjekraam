@@ -14,6 +14,12 @@ export const safeCastStringValueToInt = (value: string): number => {
     throw new TypeError(`Value "${value}" is not a valid integer string`);
 }
 
+export const validateDateStringHasISOFormat = (dateString: string): void => {
+    if (!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(dateString)) {
+        throw new TypeError(`Date string "${dateString}" is not in ISO format YYYY-MM-DD`);
+    }
+}
+
 export const TIMEZONE = 'Europe/Amsterdam';
 export const DAYS_IN_WEEK = 7;
 export const MILLISECONDS_IN_SECOND = 1000;
