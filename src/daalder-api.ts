@@ -207,7 +207,7 @@ export const getIndelingVoorkeur = async (ondernemerId: string, marktId: string)
 
 export const updateMarktVoorkeur = async (
     marktvoorkeur: IMarktondernemerVoorkeur,
-    user: string, // actually an email string like team.salmagundi.ois@amsterdam.nl
+    user: string, // actually an email string like "voorbeeld@amsterdam.nl"
 ): Promise<any> => {
     console.log('updateMarktVoorkeur', marktvoorkeur);
 
@@ -237,7 +237,7 @@ export const getVoorkeurByMarktEnOndernemer = async (
 
 export const updateVoorkeur = async (
     updatedVoorkeur: IMarktondernemerVoorkeurRow,
-    user: string, // actually an email string like "team.salmagundi.ois@amsterdam.nl"
+    user: string, // actually an email string like "voorbeeld@amsterdam.nl"
 ): Promise<any> => {
     console.log('updateVoorkeur', updatedVoorkeur, user);
     const {marktId, erkenningsNummer, inrichting, bakType, brancheId} = updatedVoorkeur;
