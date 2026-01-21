@@ -263,24 +263,16 @@ interface ILegacyRSVP extends Omit<IRSVP, 'erkenningsNummer'> { id: number | nul
 export const getAanmeldingenByOndernemer = async (erkenningsNummer: string): Promise<IAanwezigheid[]> => {
     console.log('getAanmeldingenByOndernemer', erkenningsNummer);
     erkenningsNummerToSerial(erkenningsNummer); // validate
-    // const rsvps: ILegacyRSVP[] = await getRsvps(erkenningsNummer);
-    // add marktId for legacy
     const aanwezigheid: IAanwezigheid[] = await api.get(`/kiesjekraam/ondernemer/${erkenningsNummer}/aanwezigheid/`);
     return aanwezigheid
-    // return rsvps.filter(rsvp => rsvp.koopman === erkenningsNummer).map(rsvp => ({ ...rsvp, marktId: rsvp.markt.toString() }));
 };
 
 export const getAanmeldingenByOndernemerEnMarkt = async (marktId: string, erkenningsNummer: string): Promise<IAanwezigheid[]> => {
     console.log('getAanmeldingenByOndernemerEnMarkt', marktId, erkenningsNummer);
-    // const rsvps: ILegacyRSVP[] = await getRsvps(erkenningsNummer);
     safeCastStringValueToInt(marktId);
     erkenningsNummerToSerial(erkenningsNummer); // validate
     const aanwezigheid: IAanwezigheid[] = await getAanmeldingenByOndernemer(erkenningsNummer);
     return aanwezigheid.filter(item => item.marktId === safeCastStringValueToInt(marktId))
-    // add marktId for legacy
-    // return rsvps
-        // .filter(rsvp => rsvp.koopman === erkenningsNummer && rsvp.markt === marktId)
-        // .map(rsvp => ({ ...rsvp, marktId: rsvp.markt.toString() }));
 };
 
 export const getRsvps = async (erkenningsNummer: string): Promise<ILegacyRSVP[]> => {
