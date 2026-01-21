@@ -72,6 +72,7 @@ const getUserHeader = (user: string) => ({
 
 export const getOndernemer = async (erkenningsNummer: string): Promise<any> => {
     console.log('getOndernemer', erkenningsNummer);
+    erkenningsNummerToSerial(erkenningsNummer); // validate
     const ondernemer: any = await api.get(`/kiesjekraam/ondernemer/${erkenningsNummer}/`);
     return ondernemer;
 }
@@ -113,6 +114,9 @@ const getOndernemerPrefs = async (erkenningsNummer: string): Promise<any> => {
 }
 
 const getOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: string): Promise<any> => {
+    console.log('getOndernemerMarktPrefs', erkenningsNummer, marktId);
+    erkenningsNummerToSerial(erkenningsNummer); // validate
+    safeCastStringValueToInt(marktId);
     const {id, specs}: {id: number, specs: {}} = await api.get(`/kiesjekraam/markt/${marktId}/pref/ondernemer/${erkenningsNummer}/`);
     return {id, ...specs};
 }
@@ -120,6 +124,7 @@ const getOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: string
 const updateOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: string, prefs: any, user: string): Promise<any> => {
     console.log('updateOndernemerMarktPrefs', prefs, user);
     safeCastStringValueToInt(marktId);
+    erkenningsNummerToSerial(erkenningsNummer); // validate
     const data = {specs: prefs}
     const headers = getUserHeader(user);
     const response = await api.patch(
@@ -245,6 +250,7 @@ export const getToewijzingenAfwijzingen = async (erkenningsNummer: string, markt
     if (marktId) {
         safeCastStringValueToInt(marktId);
     }
+    erkenningsNummerToSerial(erkenningsNummer); // validate
     const since = moment().subtract(2, 'months').format('YYYY-MM-DD');
     const queryParms = `?date__gte=${since}&mode=${DAALDER_ALLOCATION_MODE.SCHEDULED}`;
     const markt = marktId ? `/markt/${marktId}` : ''
@@ -256,6 +262,7 @@ interface ILegacyRSVP extends Omit<IRSVP, 'erkenningsNummer'> { id: number | nul
 
 export const getAanmeldingenByOndernemer = async (erkenningsNummer: string): Promise<IAanwezigheid[]> => {
     console.log('getAanmeldingenByOndernemer', erkenningsNummer);
+    erkenningsNummerToSerial(erkenningsNummer); // validate
     // const rsvps: ILegacyRSVP[] = await getRsvps(erkenningsNummer);
     // add marktId for legacy
     const aanwezigheid: IAanwezigheid[] = await api.get(`/kiesjekraam/ondernemer/${erkenningsNummer}/aanwezigheid/`);
@@ -267,6 +274,7 @@ export const getAanmeldingenByOndernemerEnMarkt = async (marktId: string, erkenn
     console.log('getAanmeldingenByOndernemerEnMarkt', marktId, erkenningsNummer);
     // const rsvps: ILegacyRSVP[] = await getRsvps(erkenningsNummer);
     safeCastStringValueToInt(marktId);
+    erkenningsNummerToSerial(erkenningsNummer); // validate
     const aanwezigheid: IAanwezigheid[] = await getAanmeldingenByOndernemer(erkenningsNummer);
     return aanwezigheid.filter(item => item.marktId === safeCastStringValueToInt(marktId))
     // add marktId for legacy
