@@ -89,6 +89,6 @@ export const getKramenzetterIndelingsPage = async (req: GrantedRequest, res: Res
         });
     } catch (err) {
         console.log(`Cant get indeling for ${Roles.KRAMENZETTER} for marktId ${marktId} on ${marktDate}`)
-        internalServerErrorPage(res)
+        internalServerErrorPage(res)(err)
     }
 }
