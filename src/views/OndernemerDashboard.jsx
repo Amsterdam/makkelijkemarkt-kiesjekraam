@@ -50,7 +50,7 @@ class OndernemerDashboard extends React.Component {
                 <Content>
                     <div className="Section Section--column">
                         <a
-                            href="https://www.amsterdam.nl/ondernemen/markt-straathandel/digitaal-indelen/"
+                            href="https://www.amsterdam.nl/ondernemen/markt-straathandel/"
                             rel="noopener noreferrer"
                             target="_blank"
                             className="Link"
