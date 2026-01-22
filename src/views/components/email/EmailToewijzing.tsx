@@ -38,34 +38,36 @@ export class EmailToewijzing extends React.Component<EmailIndelingProps> {
             ['Plaats(en):', <strong key="markt">{plaatsen}</strong>],
         ];
 
-        const infoLink = 'https://www.amsterdam.nl/ondernemen/markt-straathandel/digitaal-indelen/';
+        const infoLink = 'https://www.amsterdam.nl/ondernemen/markt-straathandel/';
 
         return (
             <EmailBase lang="nl" appName="Kies je kraam" domain="kiesjekraam.amsterdam.nl" subject={subject}>
                 <EmailContent>
                     <p>Beste {ondernemer.description},</p>
-                    {isWenPeriode &&
+                    {isWenPeriode && (
                         <p>
-                            Dit is een testmail tijdens de wenperiode van digitaal indelen.
-                            U kunt geen rechten ontlenen aan deze de toegewezen plaats(en).
-                            De loting vindt, zoals u gewend bent plaats, door de marktmeester ochtends op de markt.
+                            Dit is een testmail tijdens de wenperiode van digitaal indelen. U kunt geen rechten ontlenen
+                            aan deze de toegewezen plaats(en). De loting vindt, zoals u gewend bent plaats, door de
+                            marktmeester ochtends op de markt.
                         </p>
-                    }
+                    )}
                     <p>
                         Op {dayOfTheWeek} {formattedDate} bent u ingedeeld op de markt.
                     </p>
                     <EmailTable data={tableData} />
                     <h4>Meer informatie</h4>
                     <p>
-                        Op <a href='https://www.amsterdam.nl/ondernemen/markt-straathandel/digitaal-indelen/'>
-                                https://www.amsterdam.nl/ondernemen/markt-straathandel/digitaal-indelen/
-                            </a> kunt u informatie vinden over digitaal indelen.
-                        Wij raden u aan de website te bezoeken als u wilt
-                        weten hoe digitaal indelen precies werkt.
+                        Op{' '}
+                        <a href="https://www.amsterdam.nl/ondernemen/markt-straathandel/">
+                            https://www.amsterdam.nl/ondernemen/markt-straathandel/
+                        </a>{' '}
+                        kunt u informatie vinden over digitaal indelen. Wij raden u aan de website te bezoeken als u
+                        wilt weten hoe digitaal indelen precies werkt.
                     </p>
                     <p>
-                        Heeft u een andere plaats toegewezen gekregen dan u verwacht had, of heeft u vragen,
-                        dan kunt u deze aan de marktmeester stellen of mailen naar <a href='mailto: marktbureau@amsterdam.nl'>marktbureau@amsterdam.nl</a>
+                        Heeft u een andere plaats toegewezen gekregen dan u verwacht had, of heeft u vragen, dan kunt u
+                        deze aan de marktmeester stellen of mailen naar{' '}
+                        <a href="mailto: marktbureau@amsterdam.nl">marktbureau@amsterdam.nl</a>
                     </p>
                     <p>
                         Met vriendelijke groet,
