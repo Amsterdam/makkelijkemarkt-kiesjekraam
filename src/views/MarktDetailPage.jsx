@@ -48,12 +48,9 @@ class MarktDetailPage extends React.Component {
                 role={role}
             >
                 <div className="Section Section--column">
-                    <span href={`./langdurig-afgemeld/`} className="">
-                        Ondernemers langdurig afgemeld
-                    </span>
                     {markt.kiesJeKraamFase !== 'wenperiode' ? (
                         <a href={`./${today()}/alle-sollicitanten/`} className="">
-                            Alle sollicitanten
+                            Alle sollicitanten (van vandaag)
                         </a>
                     ) : null}
                     {markt.kiesJeKraamFase === 'activatie' || markt.kiesJeKraamFase === 'voorbereiding' ? (
