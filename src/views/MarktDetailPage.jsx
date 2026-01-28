@@ -68,12 +68,6 @@ class MarktDetailPage extends React.Component {
                             Kaart {markt.naam}
                         </a>
                     ) : null}
-                    <span href={`/bdm/markt/${this.props.markt.id}`} className="">
-                        Bewerk deze markt
-                    </span>
-                    <span href={`/audit-logs`} className="" target="_blank">
-                        Download marktvoorkeur logs (laatste 30 dagen)
-                    </span>
                 </div>
                 {markt.kiesJeKraamGeblokkeerdePlaatsen ? (
                     <AlertLine
@@ -145,20 +139,6 @@ class MarktDetailPage extends React.Component {
                             </a>
                         </li>
                     )}
-                    {indeling && (
-                        <li className="LinkList__item">
-                            <span>
-                                Indeling stats
-                            </span>
-                        </li>
-                    )}
-                    {bewerkVoorlopigeIndeling && (
-                        <li className="LinkList__item">
-                            <span>
-                                Bewerk voorlopige indeling
-                            </span>
-                        </li>
-                    )}
 
                     {/* Direct link Concept Indeling */}
                     {conceptIndeling && (
@@ -168,12 +148,6 @@ class MarktDetailPage extends React.Component {
                             </a>
                         </li>
                     )}
-
-                    <li className="LinkList__item">
-                        <span>
-                            Indeling overzicht V2
-                        </span>
-                    </li>
 
                     {nietIngedeeld && (
                         <li className="LinkList__item">
@@ -212,14 +186,6 @@ class MarktDetailPage extends React.Component {
                             <span>
                                 A/B lijst
                             </span>
-                        </li>
-                    )}
-
-                    {indeling && (
-                        <li className="LinkList__item">
-                            <a href={`/markt/${marktId}/${date}/snapshot/`} className="Link">
-                                Snapshot
-                            </a>
                         </li>
                     )}
                 </ul>
