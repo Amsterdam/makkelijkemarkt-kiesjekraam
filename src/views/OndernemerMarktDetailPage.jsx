@@ -21,6 +21,9 @@ const OndernemerMarktAlgVoorkeuren = require('./components/OndernemerMarktAlgVoo
 const Alert = require('./components/Alert');
 const Uitslag = require('./components/Uitslag');
 
+// TODO: pass this time from the backend so it can be configured generically and per markt
+const INDELING_DISPLAY_TIME = '15:00' // The time when the indeling is created (in CET)
+
 class OndernemerMarktDetailPage extends React.Component {
     propTypes = {
         ondernemer: PropTypes.object.isRequired,
@@ -91,6 +94,15 @@ class OndernemerMarktDetailPage extends React.Component {
                     {markt.kiesJeKraamFase ? (
                         <p dangerouslySetInnerHTML={{ __html: mededelingen.marktDetail[markt.kiesJeKraamFase] }} />
                     ) : null}
+                    {markt.kiesJeKraamFase === 'live' && (
+                        <p>
+                            De indeling van de marktdag wordt digitaal samengesteld op basis van uw voorkeuren om <strong>{INDELING_DISPLAY_TIME}</strong> op de dag vóór
+                            de marktdag.<br />
+                            Wijzigt u uw voorkeuren voor {INDELING_DISPLAY_TIME}? Dan worden deze nog meegenomen in de indeling voor de dag erna.<br />
+                            Wijzigt u uw voorkeuren pas na {INDELING_DISPLAY_TIME}? Dan heeft dit geen invloed meer op de indeling van de dag erna,
+                            maar pas op de indeling die daarop volgt.
+                        </p>
+                    )}
                     {markt.kiesJeKraamMededelingActief ? (
                         <Alert type="warning" inline={true} title={markt.kiesJeKraamMededelingTitel}>
                             {markt.kiesJeKraamMededelingTekst}

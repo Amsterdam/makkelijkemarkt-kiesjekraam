@@ -77,7 +77,8 @@ class ToewijzingenAfwijzingenPage extends React.Component {
                     {role === 'marktmeester' ? <h2 className="Heading Heading--intro">Ondernemer</h2> : null}
                     {role === 'marktmeester' ? <OndernemerProfileHeader inline={true} user={ondernemer} /> : null}
                     <h1 className="Heading Heading--intro">Toewijzingen/afwijzingen</h1>
-                    <h2>laatste 2 maanden</h2>
+                    <p>Ziet u bepaalde toewijzingen of afwijzingen niet? Een overzicht van uw toewijzingen/afwijzingen is opvraagbaar bij het Marktbureau.</p>
+                    <h2>Laatste 2 maanden</h2>
                     <div className="Table Table__responsive Table--toewijzingen-afwijzingen">
                         <table className="Table__table">
                             <tr>
