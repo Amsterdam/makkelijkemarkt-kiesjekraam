@@ -304,7 +304,7 @@ const AanwezigheidsPage: React.VFC = () => {
       const mergedRsvps = mergeRsvps(initialRsvps)
       setRsvps(mergedRsvps)
     }
-  }, [erkenningsNummer, marktId, ondernemerData.data, marktData.data, rsvpPatternData.data, rsvpData.data])
+  }, [erkenningsNummer, marktId, ondernemerData.data, marktData.data, rsvpPatternData.data, rsvpData.data, rsvpData.dataUpdatedAt, rsvpPatternData.dataUpdatedAt])
 
   const rsvpPerMarkt = groupBy(rsvps, 'markt')
   const marktVoorkeur: Partial<IMarktVoorkeur> = marktVoorkeurData.data || {}
