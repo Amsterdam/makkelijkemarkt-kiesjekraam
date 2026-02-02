@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 import { DAALDER_API_QUERY_CONFIG } from '../constants'
 import { IApiError, IMarkt, IMarktVoorkeur, IOndernemer, IRsvp, IRsvpPattern } from '../models'
@@ -16,7 +16,7 @@ export const useOndernemer = (erkenningsNummer: string) => {
 
 export const useRsvp = (erkenningsNummer: string) => {
   return useQuery<IRsvp[], IApiError>(
-    'rsvp',
+    ['rsvpAndPattern', 'rsvp'],
     () => {
       return api.get(`/rsvp/koopman/${erkenningsNummer}`)
     },
@@ -25,6 +25,7 @@ export const useRsvp = (erkenningsNummer: string) => {
 }
 
 export const useSaveRsvp = () => {
+  const queryClient = useQueryClient()
   return useMutation<IRsvp[], IApiError, IRsvp[]>(
     (rsvp) => {
       return api.post(`/rsvp`, { rsvps: rsvp })
@@ -32,13 +33,14 @@ export const useSaveRsvp = () => {
     {
       ...DAALDER_API_QUERY_CONFIG,
       // onSuccess: () => queryClient.invalidateQueries('rsvp'), // do not invalidate to preserve actual state
+      onError: () => queryClient.invalidateQueries('rsvpAndPattern'),
     }
   )
 }
 
 export const useRsvpPattern = (erkenningsNummer: string) => {
   return useQuery<IRsvpPattern[], IApiError>(
-    'rsvpPattern',
+    ['rsvpAndPattern', 'rsvpPattern'],
     () => {
       return api.get(`/rsvp_pattern/koopman/${erkenningsNummer}`)
     },
@@ -47,6 +49,7 @@ export const useRsvpPattern = (erkenningsNummer: string) => {
 }
 
 export const useSaveRsvpPattern = () => {
+  const queryClient = useQueryClient()
   return useMutation<IRsvpPattern, IApiError, IRsvpPattern>(
     (rsvpPattern) => {
       return api.post(`/rsvp_pattern`, rsvpPattern)
@@ -54,7 +57,8 @@ export const useSaveRsvpPattern = () => {
     {
       ...DAALDER_API_QUERY_CONFIG,
       // onSuccess: () => queryClient.invalidateQueries('rsvpPattern'), // do not invalidate to preserve actual state
-    }
+      onError: () => queryClient.invalidateQueries('rsvpAndPattern'),
+      }
   )
 }
 
