@@ -54,6 +54,9 @@ export const updateMarketPreferences = (
     erkenningsNummer: string,
     role: string,
 ) => {
+    if (role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER) {
+        return res.render('WijzigenNietToegestaanPage');
+    }
     const data = voorkeurenFormData(req.body);
     const formError = algemeneVoorkeurenFormCheckForError(req.body, role);
 
