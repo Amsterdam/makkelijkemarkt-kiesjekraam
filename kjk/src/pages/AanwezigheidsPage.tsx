@@ -563,7 +563,7 @@ const BackButton: React.VFC = () => {
   const role = useContext(RoleContext)
 
   let targetUrl = `/markt-detail/${marktId}`
-  if (role.isMarktMeester) {
+  if (role.isMarktMeester || role.isMarktbewerker) {
     targetUrl = `/profile/${erkenningsNummer}`
   }
 
