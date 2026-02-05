@@ -208,6 +208,7 @@ const AanwezigheidsPage: React.VFC = () => {
   useEffect(() => {
     if (saveRsvpIsSuccess && savePatternIsSuccess) {
       notification.success({
+        placement: 'topLeft',
         message: 'Opgeslagen',
         description: 'Uw aanwezigheidsvoorkeuren zijn opgeslagen',
       })
