@@ -1,0 +1,39 @@
+services:
+  kiesjekraam:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    container_name: kiesjekraam
+    networks:
+      - markten
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      MM_API_NGINX_MM_API_SERVICE_HOST: mm-api-nginx
+      MM_API_NGINX_MM_API_SERVICE_PORT: 8080
+      MM_RAH_MM_RAH_SERVICE_HOST: daalder
+      MM_RAH_MM_RAH_SERVICE_PORT: 8000
+
+      # IAM_URL: http://localhost:8080/auth
+      # IAM_CLIENT_ID: kiesjekraam
+      # IAM_CLIENT_SECRET: insecure
+      # IAM_REALM: kiesjekraam
+      # IAM_ADMIN_USER: admin
+      # IAM_ADMIN_PASS: insecure
+    ports:
+      - "8093:3000"
+    command: "npm run dev-server"
+    
+
+volumes:
+  postgres_data:
+
+
+networks:
+  markten:
+    external: true
