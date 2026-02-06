@@ -397,7 +397,9 @@ app.post(
     keycloak.protect(Roles.MARKTBEWERKER),
     csrfProtection,
     (req: GrantedRequest, res: Response, next: NextFunction) =>
-        updatePlaatsvoorkeuren(req, res, next, req.params.marktId, req.params.erkenningsNummer),
+        {
+            return res.render('WijzigenNietToegestaanPage');
+        },
 );
 
 app.get(

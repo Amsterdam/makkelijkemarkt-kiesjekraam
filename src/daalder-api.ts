@@ -125,7 +125,7 @@ const updateOndernemerMarktPrefs = async (erkenningsNummer: string, marktId: str
     console.log('updateOndernemerMarktPrefs', prefs, user);
     safeCastStringValueToInt(marktId);
     erkenningsNummerToSerial(erkenningsNummer); // validate
-    const data = {specs: prefs}
+    const data = {specs: prefs, erkenningsNummer, marktId} // also send marktId and erkenningsNummer to identify log entries
     const headers = getUserHeader(user);
     const response = await api.patch(
         `/kiesjekraam/markt/${marktId}/pref/ondernemer/${erkenningsNummer}/`,

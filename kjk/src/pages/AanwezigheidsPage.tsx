@@ -3,7 +3,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { ArrowLeftOutlined, UserOutlined, WarningOutlined } from '@ant-design/icons'
 import { find, findLast, groupBy, includes, isEmpty, orderBy } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { RoleContext } from '../components/providers/RoleProvider'
 
 import { SaveButton } from '../components/buttons'
@@ -208,6 +208,7 @@ const AanwezigheidsPage: React.VFC = () => {
   useEffect(() => {
     if (saveRsvpIsSuccess && savePatternIsSuccess) {
       notification.success({
+        placement: 'topLeft',
         message: 'Opgeslagen',
         description: 'Uw aanwezigheidsvoorkeuren zijn opgeslagen',
       })
@@ -559,11 +560,18 @@ const DayUI: React.FC<DayUIPropsType> = (props) => {
 }
 
 const BackButton: React.VFC = () => {
-  const history = useHistory()
+  const { erkenningsNummer, marktId } = useParams<IAanwezigheidsPageRouteParams>()
+  const role = useContext(RoleContext)
+
+  let targetUrl = `/markt-detail/${marktId}`
+  if (role.isMarktMeester || role.isMarktbewerker) {
+    targetUrl = `/profile/${erkenningsNummer}`
+  }
+
   return (
-    <Link onClick={history.goBack}>
+    <a href={targetUrl}>
       <ArrowLeftOutlined /> Terug
-    </Link>
+    </a>
   )
 }
 
