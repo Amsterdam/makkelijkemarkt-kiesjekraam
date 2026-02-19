@@ -1,6 +1,5 @@
 import { keycloakLogin } from '../support/login'
-import { addBranch, assertMarketsOverview, deleteLastBranche, openEditBranchePage } from '../support/marktenoverzicht'
-import { assertPossibleToOpenPage } from '../support/marktdetails'
+import { assertMarketsOverview } from '../support/marktenoverzicht'
 
 describe('Marktmeester', () => {
   beforeEach(() => {
@@ -11,9 +10,6 @@ describe('Marktmeester', () => {
   it('Should show the markets overview page', () => {
     cy.contains('Markten').should('be.visible')
     assertMarketsOverview()
-  })
-  it('Should not be allowed to visit edit branches page as a marktmeester', () => {
-    assertPossibleToOpenPage('marktmeester', '/bdm/branches')
   })
 })
 
@@ -26,10 +22,5 @@ describe('Marktbewerker', () => {
   it('Should show the markets overview page', () => {
     cy.contains('Markten').should('be.visible')
     assertMarketsOverview()
-  })
-  it('Should be allowed to edit branches page as a marktbewerker', () => {
-    openEditBranchePage()
-    addBranch('999 - Test', '999 - Branche')
-    deleteLastBranche()
   })
 })

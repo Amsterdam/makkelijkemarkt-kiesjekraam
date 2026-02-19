@@ -102,7 +102,6 @@ if (process.env.ENABLE_CORS_FOR_ORIGIN) {
 // Static files that are public (robots.txt, favicon.ico)
 app.use(express.static('./dist/'));
 
-app.use('/bdm/static', express.static('bdm/build/static', { index: false }));
 app.get('/kjk/static/*/(*.js|*.css)', function(req, res, next) {
     const contentType = /\.js$/.test(req.url) ? 'application/javascript' : 'text/css';
     res.set('Content-Type', contentType);
@@ -138,10 +137,6 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/daalder', daalderApiDispatch);
 // app.use('/api', mmApiDispatch);
 app.use('/marktmeester', marktmeesterApp);
-
-app.get('/bdm/*', keycloak.protect(Roles.MARKTBEWERKER), (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'bdm', 'build', 'index.html'));
-});
 
 app.get('/kjk/ondernemer/:erkenningsNummer/aanwezigheid/markt/:marktId', keycloak.protect(), (req: GrantedRequest, res) => {
     if (isMarktondernemer(req) && req.params.erkenningsNummer === getErkenningsNummer(req)) {

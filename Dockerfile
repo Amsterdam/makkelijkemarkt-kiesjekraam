@@ -1,19 +1,3 @@
-FROM node:24-alpine AS bdm_build
-
-COPY bdm/package.json bdm/
-COPY bdm/package-lock.json bdm/
-COPY bdm/config bdm/config
-COPY bdm/public bdm/public
-COPY bdm/src bdm/src
-
-ENV PATH=/srv/bdm/node_modules/.bin:$PATH
-
-WORKDIR /bdm
-
-RUN npm ci --loglevel verbose
-RUN npm run build
-
-
 FROM node:24-alpine AS kjk_build
 
 COPY kjk/package.json kjk/
@@ -73,7 +57,6 @@ ENV \
 
 EXPOSE 8080
 
-COPY --from=bdm_build --chown=node /bdm/build /srv/bdm/build
 COPY --from=kjk_build --chown=node /kjk/build /srv/kjk/build
 RUN gzip /srv/kjk/build/static/js/*.js
 RUN gzip /srv/kjk/build/static/css/*.css

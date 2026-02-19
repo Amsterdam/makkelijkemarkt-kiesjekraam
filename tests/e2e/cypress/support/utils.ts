@@ -14,13 +14,9 @@ export const addDays = (date: Date, days: number): Date => {
  * @param {'marktmeester'} role - if role is marktmeester, the assert skips a link to edit a market.
  * @example assertAllLinksOnPage()
  */
-export const assertAllLinksOnPage = (role?: 'marktmeester'): void => {
+export const assertAllLinksOnPage = (): void => {
   cy.get("a:not([href*='logout'])").each(page => {
-    if (page[0].getAttribute('href') === '/bdm/markt/39' && role === 'marktmeester') {
-      console.log('this link is not working')
-    } else {
-      cy.request(page.prop('href'))
-    }
+    cy.request(page.prop('href'))
   })
 }
 
