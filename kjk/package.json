@@ -19,8 +19,8 @@
   },
   "scripts": {
     "start": "vite",
-    "start:msw": "REACT_APP_MOCK_SERVICE_WORKER=true vite",
-    "dev": "REACT_APP_KJK_API_ORIGIN=http://localhost:8093 vite",
+    "start:msw": "VITE_REACT_APP_MOCK_SERVICE_WORKER=true vite",
+    "dev": "VITE_KJK_API_ORIGIN=http://localhost:8093 vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "prettier_check": "npx prettier --check .",
