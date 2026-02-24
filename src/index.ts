@@ -40,7 +40,7 @@ const csrfProtection = csrf({ cookie: true });
 
 requireEnv('APP_SECRET');
 
-const HTTP_DEFAULT_PORT = 8093;
+const HTTP_DEFAULT_PORT = 8080;
 
 const getErkenningsNummer = (req: GrantedRequest) => {
     const tokenContent: TokenContent = req.kauth.grant.access_token.content;
