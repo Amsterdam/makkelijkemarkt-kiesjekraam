@@ -1,5 +1,5 @@
+import 'dotenv/config';
 import {
-    calculateIndelingslijst,
     getCalculationInput,
     getDaysClosed,
 } from './pakjekraam-api';
@@ -26,9 +26,6 @@ import {
 import {
     MMMarkt,
 } from './model/makkelijkemarkt.model';
-import {
-    RedisClient,
-} from './redis-client';
 import { getAllocation } from './daalder-api';
 
 const DEFAULT_ALLOCATION_VERSION = '2';
@@ -43,7 +40,6 @@ if(process.env.INDELING_DAG_OFFSET && process.env.INDELING_DAG_OFFSET != 'false'
     timezoneTime.add(INDELING_DAG_OFFSET, 'days');
 }
 const marktDate = timezoneTime.format('YYYY-MM-DD');
-const redisClient = new RedisClient().getAsyncClient();
 
 async function createToewijzingenAfwijzingen(
     afkorting: string,

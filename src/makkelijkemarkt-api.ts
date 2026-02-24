@@ -26,10 +26,9 @@ import {
     MMSollicitatieStandalone,
 } from './model/makkelijkemarkt.model';
 import packageJSON = require('../package.json');
-import { RedisClient } from './redis-client';
 import moment from 'moment';
 
-const redisClient = new RedisClient().getAsyncClient();
+let mmApiSessionToken: string | null = null;
 
 const SESSION_LIFETIME = 1000 * 60 * 60 * 6; // 6 hours in ms
 
@@ -38,8 +37,6 @@ const MAX_RETRY_40X = 10;
 export const EMPTY_BRANCH: BrancheId = '000-EMPTY';
 
 const HTTP_HEADER_REQUEST_START_TIME = 'requestStartTime';
-const CACHE_PREFIX = 'CACHE_';
-const CACHE_TTL = 30; // seconds
 
 requireEnv('API_MMAPPKEY');
 requireEnv('API_KEY');
@@ -117,7 +114,7 @@ const apiBase = (url: string, httpMethod: HttpMethod = 'get', request?, throwErr
 
     const retry = (api: any) => {
         return login(api).then((res: any) => {
-            redisClient.set(mmConfig.sessionKey, res.data.uuid);
+            mmApiSessionToken = res.data.uuid;
             return httpFunction(url, res.data.uuid, requestBody, headers);
         });
     };
@@ -171,9 +168,9 @@ const apiBase = (url: string, httpMethod: HttpMethod = 'get', request?, throwErr
         },
     );
 
-    return redisClient.get(mmConfig.sessionKey).then((mmApiSessionToken: any) => {
-        return mmApiSessionToken ? httpFunction(url, mmApiSessionToken, requestBody, headers) : retry(api);
-    });
+    return mmApiSessionToken
+        ? httpFunction(url, mmApiSessionToken, requestBody, headers)
+        : retry(api);
 };
 
 export const updateRsvp = (
@@ -680,51 +677,12 @@ export const getAfwijzingenByOndernemer = (erkenningsNummer: string): Promise<IA
     });
 };
 
-export const CACHE_KEY_GENERIC_BRANCHES = 'genericBranches';
-export const getCacheKeyForMarktConfiguratie = (marktId: string) => `marktconfiguratie/${marktId}`;
-const prefixCacheKey = (key: string): string => `${CACHE_PREFIX}${key}`;
-
-export const invalidateCache = async (key: string): Promise<void> => {
-    console.log(`CACHE invalidate ${prefixCacheKey(key)}`);
-    await redisClient.del(prefixCacheKey(key));
-};
-
-const getCachedJSONResponse = async (key: string): Promise<JSON | void> => {
-    const cachedResponse: any = await redisClient.get(prefixCacheKey(key));
-    if (cachedResponse) {
-        console.log(`CACHE hit ${key}`);
-        return JSON.parse(cachedResponse);
-    }
-};
-
-const cacheJSONResponse = async (key: string, response: unknown): Promise<void> => {
-    console.log(`CACHE set ${key} ttl ${CACHE_TTL}`);
-    await redisClient.set(prefixCacheKey(key), JSON.stringify(response), 'EX', CACHE_TTL);
-};
-
 const getGenericBranches = async (): Promise<IGenericBranche[]> => {
-    const url = '/branche/all';
-    const cachedResponse = await getCachedJSONResponse(CACHE_KEY_GENERIC_BRANCHES);
-    if (cachedResponse) {
-        return cachedResponse as unknown as IGenericBranche[];
-    }
-
-    const genericBranches = await callApiGeneric(url, 'get');
-    await cacheJSONResponse(CACHE_KEY_GENERIC_BRANCHES, genericBranches);
-    return genericBranches as unknown as IGenericBranche[];
+    return await callApiGeneric('/branche/all', 'get') as unknown as IGenericBranche[];
 };
 
 const getLatestMarktConfig = async (marktId: string): Promise<IMarktConfiguratie> => {
-    const url = `/markt/${marktId}/marktconfiguratie/latest`;
-    const cacheKey = getCacheKeyForMarktConfiguratie(marktId);
-    const cachedResponse = await getCachedJSONResponse(cacheKey);
-    if (cachedResponse) {
-        return cachedResponse as unknown as IMarktConfiguratie;
-    }
-
-    const marktConfig = await callApiGeneric(url, 'get');
-    await cacheJSONResponse(cacheKey, marktConfig);
-    return marktConfig as unknown as IMarktConfiguratie;
+    return await callApiGeneric(`/markt/${marktId}/marktconfiguratie/latest`, 'get') as unknown as IMarktConfiguratie;
 };
 
 const transformToLegacyBranches = (genericBranches: IGenericBranche[]): IBranche[] => {

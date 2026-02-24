@@ -1,13 +1,5 @@
 import Keycloak from 'keycloak-connect';
-import {
-    RedisClient,
-} from './redis-client';
 import session from 'express-session';
-const RedisStore = require('connect-redis')(session);
-
-const redisClient = new RedisClient().getClient();
-
-const sessionStore = new RedisStore({ client: redisClient });
 
 export const Roles = {
     MARKTMEESTER: 'marktmeester',
@@ -21,9 +13,11 @@ export const hasEitherRole = (roles: string[], token: Keycloak.Token) =>
         return total || token.hasRole(role);
     }, false);
 
+const memoryStore = new session.MemoryStore();
+
 export const keycloak = new Keycloak(
     {
-        store: sessionStore,
+        store: memoryStore,
     },
     {
         realm: process.env.IAM_REALM,
@@ -39,7 +33,7 @@ export const keycloak = new Keycloak(
 
 export const sessionMiddleware = () =>
     session({
-        store: sessionStore,
+        store: memoryStore,
         secret: process.env.APP_SECRET,
         resave: false,
         saveUninitialized: false,

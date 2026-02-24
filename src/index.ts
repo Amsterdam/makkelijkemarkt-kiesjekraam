@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import * as reactViews from 'express-react-views';
 import {
     afmeldingenVasteplaatshoudersPage,
@@ -8,16 +9,7 @@ import {
     voorrangslijstPage,
 } from './routes/markt-marktmeester';
 import { attendancePage, handleAttendanceUpdate, auditLogPage } from './routes/market-application';
-import {
-    directConceptIndelingPage,
-    indelingErrorStacktracePage,
-    indelingInputJobPage,
-    indelingLogsPage,
-    indelingPage,
-    indelingStatsPage,
-    indelingWaitingPage,
-    snapshotPage,
-} from './routes/market-allocation';
+import { directConceptIndelingPage, indelingPage, indelingStatsPage, snapshotPage } from './routes/market-allocation';
 import express, { NextFunction, Request, RequestHandler, Response } from 'express';
 // import { getMarkt, getMarkten } from './makkelijkemarkt-api';
 import { getMarkt, getMarkten } from './daalder-api';
@@ -48,7 +40,7 @@ const csrfProtection = csrf({ cookie: true });
 
 requireEnv('APP_SECRET');
 
-const HTTP_DEFAULT_PORT = 8080;
+const HTTP_DEFAULT_PORT = 8093;
 
 const getErkenningsNummer = (req: GrantedRequest) => {
     const tokenContent: TokenContent = req.kauth.grant.access_token.content;
@@ -156,10 +148,6 @@ app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Res
     res.render('EmailPage');
 });
 
-app.get('/job/:jobId/', keycloak.protect(Roles.MARKTMEESTER), indelingWaitingPage);
-app.get('/logs/:jobId/', keycloak.protect(Roles.MARKTMEESTER), indelingLogsPage);
-app.get('/input/:jobId/', keycloak.protect(Roles.MARKTMEESTER), indelingInputJobPage);
-app.get('/error/:jobId/', keycloak.protect(Roles.MARKTMEESTER), indelingErrorStacktracePage);
 
 app.get('/markt/', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
     getMarkten(true).then((markten: any) => {

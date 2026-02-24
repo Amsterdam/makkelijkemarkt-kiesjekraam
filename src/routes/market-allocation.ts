@@ -1,12 +1,7 @@
 import {
-    ALLOCATION_MODE_CONCEPT,
-    ConceptQueue,
-} from '../concept-queue';
-import {
-    getCalculationInput,
     getIndelingslijst,
 } from '../pakjekraam-api';
-import { createAllocationsV2, getAanmeldingenByMarktAndDate, getOndernemersByMarkt, getPlaatsvoorkeurenByMarkt, getRsvpPatternByMarktAndMarktDate, getVoorkeurenByMarkt } from '../makkelijkemarkt-api'
+import { getAanmeldingenByMarktAndDate, getOndernemersByMarkt, getPlaatsvoorkeurenByMarkt, getRsvpPatternByMarktAndMarktDate, getVoorkeurenByMarkt } from '../makkelijkemarkt-api'
 import { getAllocation, getIndelingData, getMarktConfig, mergeIndelingData } from '../daalder-api';
 import {
     getKeycloakUser,
@@ -19,9 +14,6 @@ import {
     internalServerErrorPage,
 } from '../express-util';
 import {
-    RedisClient,
-} from '../redis-client';
-import {
     Response,
 } from 'express';
 import {
@@ -30,48 +22,7 @@ import {
 import {
     isMarktBewerker
 } from '../roles';
-import {
-    ALLOCATION_TYPE,
-    ALLOCATION_STATUS,
-} from '../domain-knowledge';
 
-const conceptQueue = new ConceptQueue();
-let allocationQueue = conceptQueue.getQueueForDispatcher();
-const client = new RedisClient().getAsyncClient();
-
-// TODO: Decom concept indeling
-export const conceptIndelingPage = (req: GrantedRequest, res: Response) => {
-    const { marktDate, marktId } = req.params;
-    const { version = '1', direct = 'false' } = req.query;
-    const bDirect = (direct as string).toLowerCase() === 'true';
-    console.log("Conect Indeling Page", version, bDirect, direct)
-    getCalculationInput(marktId, marktDate).then(data => {
-        data = JSON.parse(JSON.stringify(data));
-        data['mode'] = ALLOCATION_MODE_CONCEPT;
-        data['version'] = version;
-        if (bDirect) {
-            getAllocation(data).then(alloc => {
-                console.log("Received Direct allocation:", alloc)
-            })
-        }
-        const job = allocationQueue.createJob(data);
-        console.log('GET CALC INPUT');
-        job.save()
-            .then((job: any) => {
-                console.log('allocation job: ', job.id);
-                return res.redirect(`/job/` + job.id + `/`);
-            })
-            .catch(error => {
-                console.log('job error: ', error);
-                if (!client.connected) {
-                    res.render('RedisErrorPage.jsx');
-                    return;
-                }
-                allocationQueue = conceptQueue.getQueueForDispatcher();
-                return res.redirect(req.originalUrl);
-            });
-    });
-};
 
 export const indelingPage = (req: GrantedRequest, res: Response, indelingstype = 'indeling') => {
     const { marktDate, marktId } = req.params;
@@ -97,7 +48,7 @@ export const directConceptIndelingPage = async (req: GrantedRequest, res: Respon
 
     try {
         const payload = {
-            mode: ALLOCATION_MODE_CONCEPT,
+            mode: 'concept',
             version: '2',
             marktDate,
             marktId,
@@ -178,104 +129,3 @@ export const snapshotPage = async (req: GrantedRequest, res: Response) => {
     }
 };
 
-export const indelingLogsPage = async (req: GrantedRequest, res: Response) => {
-    const { jobId } = req.params;
-    try {
-        const reply: any = await client.get('LOGS_' + jobId);
-        if (reply) {
-            const type = 'concept-indeling-logs';
-            const data = JSON.parse(reply);
-            res.render('IndelingsLogsPage.tsx', {
-                data,
-                type,
-                datum: data.marktDate,
-                role: Roles.MARKTMEESTER,
-                user: getKeycloakUser(req),
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-export const indelingInputJobPage = async (req: GrantedRequest, res: Response) => {
-    const { jobId } = req.params;
-    try {
-        const reply: any = await client.get('JOB_' + jobId);
-        if (reply) {
-            const data = JSON.parse(reply);
-            const jsonPretty = JSON.stringify(data, null, 2);
-            res.render('IndelingsInputJobPage.tsx', {
-                data: jsonPretty,
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-export const indelingErrorStacktracePage = async (req: GrantedRequest, res: Response) => {
-    const { jobId } = req.params;
-    try {
-        const reply: any = await client.get('ERROR_' + jobId);
-        if (reply) {
-            res.render('IndelingsInputJobPage.tsx', {
-                data: reply,
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-function allocationHasFailed(resultData: any) {
-    return resultData.error !== undefined;
-}
-
-export const indelingWaitingPage = async (req: GrantedRequest, res: Response) => {
-    try {
-        const { jobId } = req.params;
-        const reply: any = await client.get('RESULT_' + jobId);
-        const logs: any = await client.get('LOGS_' + jobId);
-        const inputData: any = await client.get('JOB_' + jobId);
-        if (!reply || !logs || !inputData) {
-            return res.render('WaitingPage.jsx');
-        }
-
-        const indelingstype = 'concept-indelingslijst';
-        const data = JSON.parse(reply);
-        const log = JSON.parse(logs);
-        const input = JSON.parse(inputData);
-        const { marktId, marktDate, toewijzingen, afwijzingen, version='' } = data;
-        const email = getKeycloakUser(req).email
-        const payload = {
-            allocationStatus: allocationHasFailed(data) ? ALLOCATION_STATUS.ERROR : ALLOCATION_STATUS.SUCCESS,
-            allocationType: ALLOCATION_TYPE.CONCEPT,
-            allocationVersion: version,
-            email,
-            allocation: {toewijzingen, afwijzingen},
-            log,
-            input,
-        }
-        const request = await createAllocationsV2(marktId, marktDate, payload)
-
-        if (allocationHasFailed(data)) {
-            return res.render('IndelingsErrorPage.tsx', {
-                ...data,
-                role: Roles.MARKTMEESTER,
-                user: getKeycloakUser(req),
-            });
-        }
-
-        return res.render('IndelingslijstPage.tsx', {
-            ...data,
-            indelingstype,
-            datum: data.marktDate,
-            role: Roles.MARKTMEESTER,
-            user: getKeycloakUser(req),
-            job: jobId,
-        });
-    } catch (error) {
-        console.log(error);
-    }
-};
