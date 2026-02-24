@@ -28,7 +28,8 @@ const CustomHeader = () => {
 export default class App extends Component {
   render() {
     return (
-      <ThemeProvider>
+      // deep={false}: avoids deepmerge on the null-prototype ESM namespace object (ascDefaultTheme), which crashes in the Rollup production build
+      <ThemeProvider deep={false}>
         <QueryClientProvider client={queryClient}>
           <GlobalStyle />
           <div className="App">
