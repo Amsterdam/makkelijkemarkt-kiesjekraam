@@ -9,7 +9,7 @@ import {
     voorrangslijstPage,
 } from './routes/markt-marktmeester';
 import { attendancePage, handleAttendanceUpdate, auditLogPage } from './routes/market-application';
-import { directConceptIndelingPage, indelingPage, indelingStatsPage, snapshotPage } from './routes/market-allocation';
+import { directConceptIndelingPage, indelingPage, indelingStatsPage } from './routes/market-allocation';
 import express, { NextFunction, Request, RequestHandler, Response } from 'express';
 // import { getMarkt, getMarkten } from './makkelijkemarkt-api';
 import { getMarkt, getMarkten } from './daalder-api';
@@ -214,12 +214,6 @@ app.get(
     '/markt/:marktId/:marktDate/indeling-stats/',
     keycloak.protect(Roles.MARKTMEESTER),
     (req: GrantedRequest, res: Response, next: NextFunction) => indelingStatsPage(req, res),
-);
-
-app.get(
-    '/markt/:marktId/:marktDate/snapshot/',
-    keycloak.protect(Roles.MARKTBEWERKER),
-    (req: GrantedRequest, res: Response, next: NextFunction) => snapshotPage(req, res),
 );
 
 app.get('/markt/:marktId/:datum/vasteplaatshouders/', keycloak.protect(Roles.MARKTMEESTER), vasteplaatshoudersPage);
