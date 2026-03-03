@@ -19,11 +19,6 @@ RUN npm run build
 
 FROM node:24-alpine
 
-RUN apk add ca-certificates
-COPY certificates/adp_rootca.crt /usr/local/share/ca-certificates/adp_rootca.crt
-RUN chmod 644 /usr/local/share/ca-certificates/adp_rootca.crt \
-  && update-ca-certificates --fresh
-
 RUN mkdir -p /srv /deploy \
     && chown -R node:node /srv \
     && chown -R node:node /deploy
@@ -34,28 +29,13 @@ ADD --chown=node:node ./package.json ./package-lock.json /srv/
 
 USER node
 
-ARG NPM_TOKEN
-
 ARG NODE_ENV
-
 
 ADD --chown=node ./ /srv/
 
-RUN echo "//registry.npmjs.org/:_authToken=\"${NPM_TOKEN}\"" >> .npmrc \
-    && npm install \
-    && rm .npmrc \
-    && npm cache clean --force 2> /dev/null \
+RUN npm ci \
     && npm run build \
-    && npm prune
-
-ENV \
-    HTTP_PROXY=$HTTP_PROXY \
-    HTTPS_PROXY=$HTTPS_PROXY \
-    NO_PROXY=$NO_PROXY \
-    http_proxy=$HTTP_PROXY \
-    https_proxy=$HTTPS_PROXY \
-    no_proxy=$NO_PROXY \
-    NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-cert-adp_rootca.pem
+    && npm prune --production
 
 EXPOSE 8080
 
