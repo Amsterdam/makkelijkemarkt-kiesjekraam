@@ -22,28 +22,27 @@ import {
     GrantedRequest,
 } from 'keycloak-connect';
 import {
-    Promise,
-} from 'bluebird';
-import {
     Roles,
 } from '../authentication';
 
 export const dashboardPage = (req: GrantedRequest, res: Response, next: NextFunction, erkenningsNummer: string) => {
     const messages = getQueryErrors(req.query);
 
-    Promise.props({
-        ondernemer: getOndernemer(erkenningsNummer),
-        markten: getMarkten(),
-        plaatsvoorkeuren: getPlaatsvoorkeurenOndernemer(erkenningsNummer),  // not used on dashboard page
-        aanmeldingen: getAanmeldingenByOndernemer(erkenningsNummer),
-        // toewijzingen: getToewijzingenByOndernemer(erkenningsNummer), // not used on dashboard page
-        // afwijzingen: getAfwijzingenByOndernemer(erkenningsNummer), // not used on dashboard page
-        toewijzingenAfwijzingen: getToewijzingenAfwijzingen(erkenningsNummer),
-    })
-        .then(result => {
-            const {toewijzingen, afwijzingen} = result.toewijzingenAfwijzingen;
+    Promise.all([
+        getOndernemer(erkenningsNummer),
+        getMarkten(),
+        getPlaatsvoorkeurenOndernemer(erkenningsNummer),
+        getAanmeldingenByOndernemer(erkenningsNummer),
+        getToewijzingenAfwijzingen(erkenningsNummer),
+    ])
+        .then(([ondernemer, markten, plaatsvoorkeuren, aanmeldingen, toewijzingenAfwijzingen]) => {
+            const {toewijzingen, afwijzingen} = toewijzingenAfwijzingen;
             res.render('OndernemerDashboard', {
-                ...result,
+                ondernemer,
+                markten,
+                plaatsvoorkeuren,
+                aanmeldingen,
+                toewijzingenAfwijzingen,
                 toewijzingen,
                 afwijzingen,
                 messages,

@@ -146,11 +146,6 @@ app.get('/kjk/*', keycloak.protect(), (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'kjk', 'build', 'index.html'));
 });
 
-app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
-    res.render('EmailPage');
-});
-
-
 app.get('/markt/', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
     getMarkten(true).then((markten: any) => {
         res.render(
