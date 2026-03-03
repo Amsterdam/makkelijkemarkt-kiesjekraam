@@ -35,7 +35,7 @@ ADD --chown=node ./ /srv/
 
 RUN npm ci \
     && npm run build \
-    && npm prune
+    && npm prune --production
 
 
 EXPOSE 8080
