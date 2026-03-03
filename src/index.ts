@@ -52,7 +52,9 @@ const updateOndernemerEmailMiddleware = (req, res, next) => {
         const erkenningsNummer = getErkenningsNummer(req);
         const keycloakUser = getKeycloakUser(req);
         const email = keycloakUser.email;
-        updateOndernemerKjkEmail(email, erkenningsNummer);
+        updateOndernemerKjkEmail(email, erkenningsNummer).catch((err) => {
+            console.error(`[updateOndernemerKjkEmail] Failed to update KJK email for ondernemer ${erkenningsNummer}: ${err.response?.data?.error || err.message}`);
+        });
     }
     next();
 };
