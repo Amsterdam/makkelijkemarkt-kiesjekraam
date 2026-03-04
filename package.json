@@ -6,7 +6,7 @@
   "main": "src/index.ts",
   "directories": {},
   "scripts": {
-    "build": "gulp build",
+    "build": "sass --style=compressed src/scss/screen.scss dist/style/screen.css",
     "build:typescript": "tsc --project tsconfig.json",
     "clean": "rm -rf dist/* node_modules/.cache/",
     "dev-server": "npm run dev",
@@ -20,7 +20,7 @@
     "lint-fix:prettier": "prettier --write '**/*.js' '**/*.json' '**/*.jsx' '*.yml'",
     "lint-non-npm": "git ls-files '*.yml' | tr '\n' '\\0' | xargs -0 yamllint",
     "prewatch": "npm run clean && npm run build",
-    "sass": "gulp watch"
+    "sass": "sass --watch --style=compressed src/scss:dist/style"
   },
   "author": "",
   "license": "MPL-2.0",
@@ -45,9 +45,6 @@
     "eslint": "8.10.0",
     "eslint-config-prettier": "4.3.0",
     "eslint-plugin-react": "^7.13.0",
-    "gulp": "4.0.2",
-    "gulp-clean-css": "4.2.0",
-    "gulp-sass": "^5.1.0",
     "husky": "2.3.0",
     "lint-staged": "12.3.4",
     "node-dev": "7.1.0",
@@ -64,7 +61,7 @@
     "express-react-views": "^0.11.0",
     "express-session": "^1.17.2",
     "jsonschema": "1.2.5",
-    "keycloak-admin": "1.14.22",
+    "@keycloak/keycloak-admin-client": "^26.5.4",
     "keycloak-connect": "21.1.1",
     "moment": "2.29.4",
     "moment-timezone": "^0.5.43",
