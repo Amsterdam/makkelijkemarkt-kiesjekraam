@@ -8,15 +8,6 @@ import ErrorPage from './pages/ErrorPage'
 import AanwezigheidsPage from './pages/AanwezigheidsPage'
 import RoleProvider, { RoleContext } from './components/providers/RoleProvider'
 
-if (import.meta.env.VITE_MOCK_SERVICE_WORKER) {
-  const { worker } = require('./mocks/mmApiServiceWorker/browser')
-  worker.start({
-    serviceWorker: {
-      url: '/kjk/mockServiceWorker.js',
-    },
-  })
-}
-
 const { Footer } = Layout
 const queryClient = new QueryClient()
 
