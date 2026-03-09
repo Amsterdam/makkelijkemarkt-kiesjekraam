@@ -3,8 +3,8 @@ FROM node:24-alpine AS kjk_build
 COPY kjk/package.json kjk/
 COPY kjk/package-lock.json kjk/
 COPY kjk/tsconfig.json kjk/
-COPY kjk/vite.config.ts kjk/
 COPY kjk/index.html kjk/
+COPY kjk/vite.config.ts kjk/
 COPY kjk/public kjk/public
 COPY kjk/src kjk/src
 
