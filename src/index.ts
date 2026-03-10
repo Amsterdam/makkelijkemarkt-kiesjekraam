@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import * as reactViews from 'express-react-views';
 import {
     afmeldingenVasteplaatshoudersPage,
@@ -8,16 +9,7 @@ import {
     voorrangslijstPage,
 } from './routes/markt-marktmeester';
 import { attendancePage, handleAttendanceUpdate, auditLogPage } from './routes/market-application';
-import {
-    directConceptIndelingPage,
-    indelingErrorStacktracePage,
-    indelingInputJobPage,
-    indelingLogsPage,
-    indelingPage,
-    indelingStatsPage,
-    indelingWaitingPage,
-    snapshotPage,
-} from './routes/market-allocation';
+import { directConceptIndelingPage, indelingPage, indelingStatsPage } from './routes/market-allocation';
 import express, { NextFunction, Request, RequestHandler, Response } from 'express';
 // import { getMarkt, getMarkten } from './makkelijkemarkt-api';
 import { getMarkt, getMarkten } from './daalder-api';
@@ -60,7 +52,9 @@ const updateOndernemerEmailMiddleware = (req, res, next) => {
         const erkenningsNummer = getErkenningsNummer(req);
         const keycloakUser = getKeycloakUser(req);
         const email = keycloakUser.email;
-        updateOndernemerKjkEmail(email, erkenningsNummer);
+        updateOndernemerKjkEmail(email, erkenningsNummer).catch((err) => {
+            console.error(`[updateOndernemerKjkEmail] Failed to update KJK email for ondernemer ${erkenningsNummer}: ${err.response?.data?.error || err.message}`);
+        });
     }
     next();
 };
@@ -102,7 +96,6 @@ if (process.env.ENABLE_CORS_FOR_ORIGIN) {
 // Static files that are public (robots.txt, favicon.ico)
 app.use(express.static('./dist/'));
 
-app.use('/bdm/static', express.static('bdm/build/static', { index: false }));
 app.get('/kjk/static/*/(*.js|*.css)', function(req, res, next) {
     const contentType = /\.js$/.test(req.url) ? 'application/javascript' : 'text/css';
     res.set('Content-Type', contentType);
@@ -139,10 +132,6 @@ app.use('/daalder', daalderApiDispatch);
 // app.use('/api', mmApiDispatch);
 app.use('/marktmeester', marktmeesterApp);
 
-app.get('/bdm/*', keycloak.protect(Roles.MARKTBEWERKER), (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'bdm', 'build', 'index.html'));
-});
-
 app.get('/kjk/ondernemer/:erkenningsNummer/aanwezigheid/markt/:marktId', keycloak.protect(), (req: GrantedRequest, res) => {
     if (isMarktondernemer(req) && req.params.erkenningsNummer === getErkenningsNummer(req)) {
         res.sendFile(path.join(__dirname, '..', 'kjk', 'build', 'index.html'));
@@ -156,15 +145,6 @@ app.get('/kjk/ondernemer/:erkenningsNummer/aanwezigheid/markt/:marktId', keycloa
 app.get('/kjk/*', keycloak.protect(), (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'kjk', 'build', 'index.html'));
 });
-
-app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
-    res.render('EmailPage');
-});
-
-app.get('/job/:jobId/', keycloak.protect(Roles.MARKTMEESTER), indelingWaitingPage);
-app.get('/logs/:jobId/', keycloak.protect(Roles.MARKTMEESTER), indelingLogsPage);
-app.get('/input/:jobId/', keycloak.protect(Roles.MARKTMEESTER), indelingInputJobPage);
-app.get('/error/:jobId/', keycloak.protect(Roles.MARKTMEESTER), indelingErrorStacktracePage);
 
 app.get('/markt/', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
     getMarkten(true).then((markten: any) => {
@@ -229,12 +209,6 @@ app.get(
     '/markt/:marktId/:marktDate/indeling-stats/',
     keycloak.protect(Roles.MARKTMEESTER),
     (req: GrantedRequest, res: Response, next: NextFunction) => indelingStatsPage(req, res),
-);
-
-app.get(
-    '/markt/:marktId/:marktDate/snapshot/',
-    keycloak.protect(Roles.MARKTBEWERKER),
-    (req: GrantedRequest, res: Response, next: NextFunction) => snapshotPage(req, res),
 );
 
 app.get('/markt/:marktId/:datum/vasteplaatshouders/', keycloak.protect(Roles.MARKTMEESTER), vasteplaatshoudersPage);

@@ -6,13 +6,13 @@ import {
 } from './util';
 import {
     Credentials,
-} from 'keycloak-admin/lib/utils/auth';
+} from '@keycloak/keycloak-admin-client/lib/utils/auth';
 import {
     GrantedRequest,
 } from 'keycloak-connect';
-import KeycloakAdminClient from 'keycloak-admin';
+import KeycloakAdminClient from '@keycloak/keycloak-admin-client';
 import { IKeycloakUserData } from 'model/markt.model';
-import UserRepresentation from 'keycloak-admin/lib/defs/userRepresentation';
+import UserRepresentation from '@keycloak/keycloak-admin-client/lib/defs/userRepresentation';
 
 requireEnv('IAM_URL');
 requireEnv('IAM_REALM');

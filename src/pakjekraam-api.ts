@@ -1,9 +1,5 @@
 import * as fs from 'fs';
 import {
-    ALLOCATION_MODE_SCHEDULED,
-    ConceptQueue,
-} from './concept-queue';
-import {
     getAanmeldingenByMarktAndDate,
     getALijst,
     getAllocations,
@@ -27,13 +23,8 @@ import {
 import {
     isVast,
 } from './domain-knowledge';
-import { RedisClient } from './redis-client';
 import { getAfwijzingReason } from './model/afwijzing.functions';
 import { getMarktondernemerFromMMOndernemerStandaloneByMarkt } from './model/ondernemer.functions';
-
-const conceptQueue = new ConceptQueue();
-let allocationQueue = conceptQueue.getQueueForDispatcher();
-const client = new RedisClient().getAsyncClient();
 
 
 const loadJSON = <T>(path: string, defaultValue: T = null): Promise<T> =>
@@ -150,24 +141,6 @@ export const getIndelingslijst = (marktId: string, marktDate: string) => {
     });
 };
 
-export const calculateIndelingslijst = async (marktId: string, date: string, version: string) => {
-    try {
-        let data = await getCalculationInput(marktId, date);
-        data = JSON.parse(JSON.stringify(data));
-        data['mode'] = ALLOCATION_MODE_SCHEDULED;
-        data['version'] = version;
-        const job = allocationQueue.createJob(data);
-        const result = await job.save();
-        return result.id;
-    } catch (error) {
-        console.log('job error: ', error);
-        if (!client.connected) {
-            console.log('REDIS: connection error: ', error);
-            return;
-        }
-        allocationQueue = conceptQueue.getQueueForDispatcher();
-    }
-};
 
 export const getToewijzingslijst = (marktId: string, marktDate: string) =>
     Promise.all([getCalculationInput(marktId, marktDate), getToewijzingen(marktId, marktDate)]).then(

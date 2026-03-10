@@ -27,3 +27,4 @@ tmp/
 .ash_history
 .env_prod
 dist/style/screen.css
+dist/style/screen.css.map

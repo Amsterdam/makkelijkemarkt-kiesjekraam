@@ -1,13 +1,45 @@
 import Keycloak from 'keycloak-connect';
-import {
-    RedisClient,
-} from './redis-client';
 import session from 'express-session';
-const RedisStore = require('connect-redis')(session);
+import { createClient } from 'redis';
+import RedisStore from 'connect-redis';
 
-const redisClient = new RedisClient().getClient();
+const createSessionStore = (): session.Store => {
+    const REDISURL = process.env.REDIS_URL;
+    const REDISHOST = process.env.REDIS_HOST;
+    const REDISPORT = process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : 6379;
+    const SESSIONPREFIX = process.env.REDIS_SESSION_PREFIX || 'mm-kiesjekraam:sess:';
+    const TTL = process.env.SESSION_TTL_SECONDS ? Number(process.env.SESSION_TTL_SECONDS) : undefined;
 
-const sessionStore = new RedisStore({ client: redisClient });
+    if (!REDISURL && !REDISHOST) {
+        throw new Error('Missing Redis configuration. Set REDIS_URL or REDIS_HOST/REDIS_PORT for the session store.');
+    }
+
+    const redisClient = REDISURL
+        ? createClient({ url: REDISURL })
+        : createClient({
+              socket: {
+                  host: REDISHOST,
+                  port: REDISPORT,
+                  tls: process.env.APP_ENV !== 'local',
+              },
+              password: process.env.REDIS_PASSWORD || undefined,
+          });
+
+    redisClient.on('error', (err: unknown) => {
+        console.error('[session][redis] client error', err);
+    });
+
+    redisClient.connect().catch((err: unknown) => {
+        console.error('[session][redis] failed to connect', err);
+        throw err;
+    });
+
+    return new RedisStore({
+        client: redisClient as any,
+        prefix: SESSIONPREFIX,
+        ttl: TTL,
+    }) as unknown as session.Store;
+};
 
 export const Roles = {
     MARKTMEESTER: 'marktmeester',
@@ -20,6 +52,8 @@ export const hasEitherRole = (roles: string[], token: Keycloak.Token) =>
     roles.reduce((total, role) => {
         return total || token.hasRole(role);
     }, false);
+
+const sessionStore = createSessionStore();
 
 export const keycloak = new Keycloak(
     {
@@ -41,9 +75,11 @@ export const sessionMiddleware = () =>
     session({
         store: sessionStore,
         secret: process.env.APP_SECRET,
+        proxy: true,
         resave: false,
         saveUninitialized: false,
         cookie: {
             sameSite: true,
+            secure: process.env.NODE_ENV === 'production',
         },
     });
