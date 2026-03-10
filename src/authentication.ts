@@ -4,22 +4,22 @@ import { createClient } from 'redis';
 import RedisStore from 'connect-redis';
 
 const createSessionStore = (): session.Store => {
-    const redisUrl = process.env.REDIS_URL;
-    const redisHost = process.env.REDIS_HOST;
+    const REDISURL = process.env.REDIS_URL;
+    const REDISHOST = process.env.REDIS_HOST;
+    const REDISPORT = process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : 6379;
+    const SESSIONPREFIX = process.env.REDIS_SESSION_PREFIX || 'mm-kiesjekraam:sess:';
+    const TTL = process.env.SESSION_TTL_SECONDS ? Number(process.env.SESSION_TTL_SECONDS) : undefined;
 
-    if (!redisUrl && !redisHost) {
+    if (!REDISURL && !REDISHOST) {
         throw new Error('Missing Redis configuration. Set REDIS_URL or REDIS_HOST/REDIS_PORT for the session store.');
     }
 
-    const redisPort = process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : 6379;
-    const sessionPrefix = process.env.REDIS_SESSION_PREFIX || 'mm-kiesjekraam:sess:';
-
-    const redisClient = redisUrl
-        ? createClient({ url: redisUrl })
+    const redisClient = REDISURL
+        ? createClient({ url: REDISURL })
         : createClient({
               socket: {
-                  host: redisHost,
-                  port: redisPort,
+                  host: REDISHOST,
+                  port: REDISPORT,
                   tls: process.env.APP_ENV !== 'local',
               },
               password: process.env.REDIS_PASSWORD || undefined,
@@ -34,12 +34,10 @@ const createSessionStore = (): session.Store => {
         throw err;
     });
 
-    const ttl = process.env.SESSION_TTL_SECONDS ? Number(process.env.SESSION_TTL_SECONDS) : undefined;
-
     return new RedisStore({
         client: redisClient as any,
-        prefix: sessionPrefix,
-        ttl,
+        prefix: SESSIONPREFIX,
+        ttl: TTL,
     }) as unknown as session.Store;
 };
 
