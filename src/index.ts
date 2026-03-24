@@ -1,23 +1,21 @@
 import 'dotenv/config';
 import * as reactViews from 'express-react-views';
-import {
-    afmeldingenVasteplaatshoudersPage,
-    alleOndernemersAanwezigheidLijst,
-    ondernemersNietIngedeeldPage,
-    sollicitantentAanwezigheidLijst,
-    vasteplaatshoudersPage,
-    voorrangslijstPage,
-} from './routes/markt-marktmeester';
-import { attendancePage, handleAttendanceUpdate, auditLogPage } from './routes/market-application';
-import { directConceptIndelingPage, indelingPage, indelingStatsPage } from './routes/market-allocation';
 import express, { NextFunction, Request, RequestHandler, Response } from 'express';
-// import { getMarkt, getMarkten } from './makkelijkemarkt-api';
-import { getMarkt, getMarkten } from './daalder-api';
+import {
+    getMarkt,
+    getMarkten,
+    getMarktAanwezigheid,
+    getIndelingData,
+    getAllocation,
+    getMarktConfig,
+    mergeIndelingData,
+} from './daalder-api';
+import { isVast } from './domain-knowledge';
 import { GrantedRequest, TokenContent } from 'keycloak-connect';
-import { getQueryErrors, internalServerErrorPage, isAbsoluteUrl } from './express-util';
+import { internalServerErrorPage, isAbsoluteUrl, HTTP_PAGE_NOT_FOUND } from './express-util';
 import { keycloak, Roles, sessionMiddleware, hasEitherRole } from './authentication';
 import { isMarktmeester, isMarktondernemer, isMarktBewerker, isKramenzetter } from './roles'
-import { keycloakHealth, makkelijkeMarktHealth, serverHealth, serverTime } from './routes/status';
+import { keycloakHealth, serverHealth, serverTime } from './routes/status';
 import { langdurigAfgemeld, marktDetail } from './routes/markt';
 import { marketPreferencesPage, updateMarketPreferences } from './routes/market-preferences';
 import { plaatsvoorkeurenPage, updatePlaatsvoorkeuren } from './routes/market-location';
@@ -28,8 +26,6 @@ import cors from 'cors';
 import csrf from 'csurf';
 import { dashboardPage } from './routes/dashboard';
 import { getAllUsersForExport, getKeycloakUser } from './keycloak-api';
-import marktmeesterApp from './routes/marktmeesterApp';
-// import mmApiDispatch from './routes/mmApiDispatch';
 import daalderApiDispatch from './routes/daalderApiDispatch';
 import morgan from 'morgan';
 import path from 'path';
@@ -53,7 +49,9 @@ const updateOndernemerEmailMiddleware = (req, res, next) => {
         const keycloakUser = getKeycloakUser(req);
         const email = keycloakUser.email;
         updateOndernemerKjkEmail(email, erkenningsNummer).catch((err) => {
-            console.error(`[updateOndernemerKjkEmail] Failed to update KJK email for ondernemer ${erkenningsNummer}: ${err.response?.data?.error || err.message}`);
+            console.error(
+                `[updateOndernemerKjkEmail] Failed to update KJK email for ondernemer ${erkenningsNummer}: ${err.response?.data?.error || err.message}`,
+            );
         });
     }
     next();
@@ -76,7 +74,6 @@ app.use(morgan(':date[iso] :method :status :url :response-time ms'));
 app.get('/status/health', serverHealth);
 app.get('/status/time', serverTime);
 app.get('/status/keycloak', keycloakHealth);
-app.get('/status/makkelijkemarkt', makkelijkeMarktHealth);
 
 app.use((req, res, next) => {
     res.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
@@ -129,8 +126,6 @@ app.get('/', (req: Request, res: Response) => {
     res.render('HomePage');
 });
 app.use('/daalder', daalderApiDispatch);
-// app.use('/api', mmApiDispatch);
-app.use('/marktmeester', marktmeesterApp);
 
 app.get('/kjk/ondernemer/:erkenningsNummer/aanwezigheid/markt/:marktId', keycloak.protect(), (req: GrantedRequest, res) => {
     if (isMarktondernemer(req) && req.params.erkenningsNummer === getErkenningsNummer(req)) {
@@ -145,6 +140,11 @@ app.get('/kjk/ondernemer/:erkenningsNummer/aanwezigheid/markt/:marktId', keycloa
 app.get('/kjk/*', keycloak.protect(), (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'kjk', 'build', 'index.html'));
 });
+
+app.get('/email/', keycloak.protect(Roles.MARKTMEESTER), (req: Request, res: Response) => {
+    res.render('EmailPage');
+});
+
 
 app.get('/markt/', keycloak.protect(Roles.MARKTMEESTER), (req: GrantedRequest, res: Response) => {
     getMarkten(true).then((markten: any) => {
@@ -176,6 +176,122 @@ app.get(
 );
 
 app.get(
+    '/markt/:marktId/:datum/alle-sollicitanten/',
+    keycloak.protect(Roles.MARKTMEESTER),
+    (req: GrantedRequest, res: Response, next: NextFunction) => {
+        const { marktId, datum } = req.params;
+        Promise.all([getMarktAanwezigheid(marktId, datum), getMarkt(marktId)])
+            .then(([ondernemers, markt]) => {
+                res.render('AanwezigheidLijstPage', {
+                    ondernemers: ondernemers.filter((ondernemer: any) => !isVast(ondernemer.kind.toLowerCase())),
+                    markt,
+                    datum,
+                    role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+                    user: getKeycloakUser(req),
+                    title: 'Alle sollicitanten',
+                });
+            }, internalServerErrorPage(res))
+            .catch(next);
+    },
+);
+
+app.get(
+    '/markt/:marktId/:datum/voorrangslijst/',
+    keycloak.protect(Roles.MARKTMEESTER),
+    (req: GrantedRequest, res: Response, next: NextFunction) => {
+        const { marktId, datum } = req.params;
+        Promise.all([getMarktAanwezigheid(marktId, datum), getMarkt(marktId)])
+            .then(([ondernemers, markt]) => {
+                res.render('AanwezigheidLijstPage', {
+                    ondernemers: ondernemers.filter((ondernemer: any) => !isVast(ondernemer.kind.toLowerCase())),
+                    markt,
+                    datum,
+                    role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+                    user: getKeycloakUser(req),
+                    title: 'Voorrangslijst',
+                });
+            }, internalServerErrorPage(res))
+            .catch(next);
+    },
+);
+
+app.get(
+    '/markt/:marktId/:marktDate/indelingslijst/',
+    keycloak.protect(Roles.MARKTMEESTER),
+    (req: GrantedRequest, res: Response, next: NextFunction) => {
+        const { marktId, marktDate } = req.params;
+        getIndelingData(marktId, marktDate).then((indeling) => {
+            if (!indeling) {
+                res.status(HTTP_PAGE_NOT_FOUND).send(
+                    `De indeling voor markt ${marktId} voor ${marktDate} is niet gevonden!!!`,
+                );
+                return;
+            }
+            res.render('IndelingslijstPage.tsx', {
+                ...indeling,
+                indelingstype: 'wenperiode',
+                datum: marktDate,
+                role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+                user: getKeycloakUser(req),
+            });
+        }, internalServerErrorPage(res));
+    },
+);
+
+app.get(
+    '/markt/:marktId/:marktDate/indeling/',
+    keycloak.protect(Roles.MARKTMEESTER),
+    async (req: GrantedRequest, res: Response) => {
+        const { marktId, marktDate } = req.params;
+        try {
+            const indeling = await getIndelingData(marktId, marktDate);
+
+            if (!indeling) {
+                res.status(HTTP_PAGE_NOT_FOUND).send(
+                    `De indeling voor markt ${marktId} voor ${marktDate} is niet gevonden!!!`,
+                );
+                return;
+            }
+
+            res.render('IndelingslijstPage.tsx', {
+                ...indeling,
+                indelingstype: 'indeling',
+                datum: marktDate,
+                role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+                user: getKeycloakUser(req),
+            });
+        } catch (err) {
+            internalServerErrorPage(res)(err);
+        }
+    },
+);
+
+app.get(
+    '/markt/:marktId/:marktDate/direct-concept-indelingslijst/',
+    keycloak.protect(Roles.MARKTMEESTER),
+    async (req: GrantedRequest, res: Response) => {
+        const { marktId, marktDate } = req.params;
+        try {
+            const payload = { mode: 'concept', version: '2', marktDate, marktId };
+            const indeling: any = await getAllocation(payload);
+            const marktConfig = await getMarktConfig(indeling.input['config_id']);
+            res.render('IndelingslijstPage.tsx', {
+                marktId,
+                datum: marktDate,
+                toewijzingen: indeling.allocation.toewijzingen,
+                afwijzingen: indeling.allocation.afwijzingen,
+                ...mergeIndelingData(marktConfig.specs, indeling.input),
+                indelingstype: 'concept-indelingslijst',
+                role: isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
+                user: getKeycloakUser(req),
+            });
+        } catch (err) {
+            internalServerErrorPage(res)(err);
+        }
+    },
+);
+
+app.get(
     '/markt/:marktId/langdurig-afgemeld',
     keycloak.protect(Roles.MARKTMEESTER),
     (req: GrantedRequest, res: Response, next: NextFunction) =>
@@ -185,64 +301,6 @@ app.get(
             req.params.marktId,
             isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
         ),
-);
-
-app.get(
-    '/markt/:marktId/:marktDate/indelingslijst/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    (req: GrantedRequest, res: Response, next: NextFunction) => indelingPage(req, res, 'wenperiode'),
-);
-
-app.get(
-    '/markt/:marktId/:marktDate/indeling/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    (req: GrantedRequest, res: Response, next: NextFunction) => indelingPage(req, res, 'indeling'),
-);
-
-app.get(
-    '/markt/:marktId/:marktDate/direct-concept-indelingslijst/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    (req: GrantedRequest, res: Response, next: NextFunction) => directConceptIndelingPage(req, res),
-);
-
-app.get(
-    '/markt/:marktId/:marktDate/indeling-stats/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    (req: GrantedRequest, res: Response, next: NextFunction) => indelingStatsPage(req, res),
-);
-
-app.get('/markt/:marktId/:datum/vasteplaatshouders/', keycloak.protect(Roles.MARKTMEESTER), vasteplaatshoudersPage);
-
-app.get('/markt/:marktId/:datum/a-b-lijst/', keycloak.protect(Roles.MARKTMEESTER), voorrangslijstPage);
-
-app.get(
-    '/markt/:marktId/:datum/ondernemers-niet-ingedeeld/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    ondernemersNietIngedeeldPage,
-);
-
-app.get(
-    '/markt/:marktId/:datum/voorrangslijst/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    sollicitantentAanwezigheidLijst,
-);
-
-app.get(
-    '/markt/:marktId/:datum/alle-sollicitanten/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    sollicitantentAanwezigheidLijst,
-);
-
-app.get(
-    '/markt/:marktId/:datum/alle-ondernemers/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    alleOndernemersAanwezigheidLijst,
-);
-
-app.get(
-    '/markt/:marktId/:datum/afmeldingen-vasteplaatshouders/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    afmeldingenVasteplaatshoudersPage,
 );
 
 app.get(
@@ -273,52 +331,6 @@ app.get(
 // -----------------------
 const registrationAndActivation = require('./routes/registration')();
 app.use(registrationAndActivation);
-
-app.get(
-    '/ondernemer/:erkenningsNummer/aanwezigheid/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    csrfProtection,
-    (req: GrantedRequest, res: Response, next: NextFunction) => {
-        const messages = getQueryErrors(req.query);
-        attendancePage(
-            req,
-            res,
-            next,
-            isMarktBewerker(req) ? Roles.MARKTBEWERKER : Roles.MARKTMEESTER,
-            req.params.erkenningsNummer,
-            req.csrfToken(),
-            messages
-        );
-    }
-)
-
-app.post(
-    '/ondernemer/:erkenningsNummer/aanwezigheid/',
-    keycloak.protect(Roles.MARKTBEWERKER),
-    csrfProtection,
-    (req: GrantedRequest, res: Response, next: NextFunction) => {
-        handleAttendanceUpdate(req, res, next, Roles.MARKTBEWERKER, req.params.erkenningsNummer);
-    },
-);
-
-app.get(
-    '/aanwezigheid/',
-    keycloak.protect(Roles.MARKTONDERNEMER),
-    csrfProtection,
-    (req: GrantedRequest, res: Response, next: NextFunction) => {
-        const messages = getQueryErrors(req.query);
-        attendancePage(req, res, next, Roles.MARKTONDERNEMER, getErkenningsNummer(req), req.csrfToken(), messages);
-    },
-);
-
-app.post(
-    '/aanwezigheid/',
-    keycloak.protect(Roles.MARKTONDERNEMER),
-    csrfProtection,
-    (req: GrantedRequest, res: Response, next: NextFunction) => {
-        handleAttendanceUpdate(req, res, next, Roles.MARKTONDERNEMER, getErkenningsNummer(req));
-    },
-);
 
 app.get(
     '/voorkeuren/:marktId/',
@@ -462,14 +474,6 @@ app.get(
 
 app.get('/toewijzingen-afwijzingen/', keycloak.protect(Roles.MARKTONDERNEMER), (req: GrantedRequest, res: Response) =>
     toewijzingenAfwijzingenPage(req, res, getErkenningsNummer(req), Roles.MARKTONDERNEMER),
-);
-
-app.get(
-    '/audit-logs/',
-    keycloak.protect(Roles.MARKTMEESTER),
-    (req: GrantedRequest, res: Response, next: NextFunction) => {
-        auditLogPage(req, res, next, Roles.MARKTMEESTER);
-    },
 );
 
 app.get(
