@@ -51,6 +51,34 @@ export interface IMarkt {
     expansionLimit?: number;
 }
 
+export interface IDaalderMarkt {
+    id: string;
+    afkorting: string;
+    naam: string;
+    geoArea?: any;
+    soort?: string;
+    marktDagen: string[];
+    standaardKraamAfmeting?: number;
+    extraMetersMogelijk?: boolean;
+    kiesJeKraamFase?: string;
+    kiesJeKraamActief?: boolean;
+    kiesJeKraamGeblokkeerdeData?: string;
+    kiesJeKraamGeblokkeerdePlaatsen?: string;
+    kiesJeKraamEmailKramenzetter?: string;
+    aanwezigeOpties?: {
+        '3mKramen'?: boolean;
+        '4mKramen'?: boolean;
+        extraMeters?: boolean;
+        elektra?: boolean;
+        afvaleiland?: boolean;
+    };
+    telefoonNummerContact?: string;
+    perfectViewNummer?: number;
+    aantalKramen?: number;
+    aantalMeter?: number;
+    auditMax?: number;
+}
+
 export interface IMarktindelingSeed {
     aanwezigheid: IRSVP[];
     aLijst: IMarktondernemer[];
@@ -312,10 +340,10 @@ export interface IAuditLog {
 }
 
 export interface IKeycloakUserData {
-    id: string,
-    username: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    createdAt: string
+    id: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    createdAt: string;
 }

@@ -47,6 +47,8 @@ const isoMarktDagen = {
     zo: ISO_SUNDAY,
 };
 
+export const EMPTY_BRANCH = '000-EMPTY';
+
 export const DAYS_CLOSED = (function() {
     try {
         const data = fs.readFileSync(`${__dirname}/../config/markt/daysClosed.json`, 'utf8');
@@ -266,6 +268,7 @@ export const plaatsSort = (plaatsA, plaatsB, byKey) => {
 const isErkenningsnummer = str => /^\d+$/.test(str);
 
 module.exports = {
+    EMPTY_BRANCH,
     DAYS_CLOSED,
     A_LIJST_DAYS,
     INDELINGSTIJDSTIP,
