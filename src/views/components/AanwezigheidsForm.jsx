@@ -1,7 +1,6 @@
+import { EMPTY_BRANCH, isVast } from '../../domain-knowledge';
 import { toDate, WEEK_DAYS_SHORT } from '../../util.ts';
-import { isVast } from '../../domain-knowledge';
 import Alert from './Alert';
-import { EMPTY_BRANCH } from '../../makkelijkemarkt-api';
 import Form from './Form';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -34,13 +33,13 @@ class AanwezigheidsForm extends React.Component {
         // Wordt in de HTML gebruikt om de `rsvp` <input>s te nummeren.
         let dayIndex = -1;
 
-        const getVoorkeurForMarkt = (marktId) => {
-            return voorkeuren.find((voorkeur) => {
+        const getVoorkeurForMarkt = marktId => {
+            return voorkeuren.find(voorkeur => {
                 return voorkeur.marktId === marktId.toString();
             });
         };
 
-        const getVoorkeurenLink = (markt) => {
+        const getVoorkeurenLink = markt => {
             let link;
             role === Roles.MARKTMEESTER
                 ? (link = `/ondernemer/${ondernemer.erkenningsnummer}/algemene-voorkeuren/${markt.id}/`)
@@ -48,13 +47,13 @@ class AanwezigheidsForm extends React.Component {
             return link;
         };
 
-        const hasNoBranche = (markt) => {
+        const hasNoBranche = markt => {
             const voorkeur = getVoorkeurForMarkt(markt.id);
             return !voorkeur || !voorkeur.branches || voorkeur.branches[0] === EMPTY_BRANCH;
         };
 
-        const solStatus = (markt, sollicitaties) => {
-            const solMatchedByMarkt = sollicitaties.filter((solicitatie) => {
+        const solStatus = (markt, sollicitatiesArg) => {
+            const solMatchedByMarkt = sollicitatiesArg.filter(solicitatie => {
                 return solicitatie.markt.id === markt.id;
             })[0];
             return solMatchedByMarkt.status;
@@ -86,7 +85,7 @@ class AanwezigheidsForm extends React.Component {
                         {aanmeldingenPerWeek.map((week, i) => (
                             <div className="week" key={`markt-${markt.id}-week-${i}`}>
                                 <h4>{i === 0 ? 'Deze week' : 'Volgende week'}</h4>
-                                {[0, 1, 2, 3, 4, 5, 6].map((day) => {
+                                {[0, 1, 2, 3, 4, 5, 6].map(day => {
                                     dayIndex++;
                                     return day in week ? (
                                         <span className="day" key={`markt-${markt.id}-week-${week}-day-${day}`}>

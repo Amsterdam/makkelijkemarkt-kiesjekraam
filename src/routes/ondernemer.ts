@@ -1,11 +1,5 @@
 import {
     // getAfwijzingenByOndernemer,
-    // getMarkten,
-    // getOndernemer,
-    // getToewijzingenByOndernemer,
-} from '../makkelijkemarkt-api';
-import {
-    // getAfwijzingenByOndernemer,
     getMarkten,
     getOndernemer,
     getToewijzingenAfwijzingen,
@@ -21,15 +15,13 @@ import {
 import {
     GrantedRequest,
 } from 'keycloak-connect';
-import {
-    MMSollicitatie,
-} from '../model/makkelijkemarkt.model';
-import {
-    Response,
-} from 'express';
+import { Response } from 'express';
 import {
     Roles,
 } from '../authentication';
+
+// Minimal shape needed for filtering by market id
+type Sollicitatie = { markt: { id: string | number } };
 
 export const publicProfilePage = async (req: GrantedRequest, res: Response, erkenningsNummer: string, role: string) => {
     const messages = getQueryErrors(req.query);
@@ -38,7 +30,7 @@ export const publicProfilePage = async (req: GrantedRequest, res: Response, erke
         const ondernemer = await getOndernemer(erkenningsNummer);
         const marktenEnabled = await getMarkten(true);
         const marktenEnabledIds = marktenEnabled.map((markt: any) => markt.id);
-        ondernemer.sollicitaties = ondernemer.sollicitaties.filter((sollicitatie: MMSollicitatie) =>
+        ondernemer.sollicitaties = ondernemer.sollicitaties.filter((sollicitatie: Sollicitatie) =>
             marktenEnabledIds.includes(sollicitatie.markt.id),
         );
 

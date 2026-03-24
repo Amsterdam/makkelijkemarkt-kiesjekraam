@@ -10,9 +10,14 @@ import {
     userExists,
 } from '../keycloak-api';
 import {
-    checkActivationCode,
     getOndernemer,
-} from '../makkelijkemarkt-api';
+} from '../daalder-api';
+
+const checkActivationCode = (username: string, code: string): Promise<boolean> =>
+    getOndernemer(username).then((ondernemer) => {
+        if (!ondernemer.pasUid) throw Error('Incorrect username/password');
+        return typeof code === 'string' && code.length > 0 && code === ondernemer.pasUid;
+    });
 import {
     Router,
 } from 'express';

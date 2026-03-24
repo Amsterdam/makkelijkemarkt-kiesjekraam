@@ -1,13 +1,4 @@
 import {
-    // deletePlaatsvoorkeurenByMarktAndKoopman,
-    // getIndelingVoorkeur,
-    // getMarktBasics,
-    // getOndernemer,
-    // getPlaatsvoorkeurenByMarktEnOndernemer,
-    // updateMarktVoorkeur,
-    // updatePlaatsvoorkeur,
-} from '../makkelijkemarkt-api';
-import {
     getPlaatsvoorkeurenByMarktEnOndernemer,
     updatePlaatsvoorkeur,
     deletePlaatsvoorkeurenByMarktAndKoopman,

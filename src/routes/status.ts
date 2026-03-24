@@ -3,9 +3,6 @@ import {
     Response,
 } from 'express';
 import {
-    checkLogin,
-} from '../makkelijkemarkt-api';
-import {
     getKeycloakAdmin,
 } from '../keycloak-api';
 import {
@@ -35,15 +32,5 @@ export const keycloakHealth = (req: Request, res: Response) => {
         })
         .catch((err: Error) => {
             internalServerErrorPage(res)('Unable to connect to the Keycloak');
-        });
-};
-
-export const makkelijkeMarktHealth = (req: Request, res: Response) => {
-    checkLogin()
-        .then(() => {
-            res.end('Makkelijke Markt API OK!');
-        })
-        .catch((err: Error) => {
-            internalServerErrorPage(res)('Unable to connect to Makkelijke Markt API');
         });
 };

@@ -1,9 +1,8 @@
 import { GrantedRequest } from 'keycloak-connect';
 import { NextFunction, Response } from 'express';
 
-import { MMMarkt } from '../model/makkelijkemarkt.model'
+import { IDaalderMarkt } from '../model/markt.model';
 import { getAllowedMarketsFromToken } from "../roles";
-// import { getMarkten, getMarkt } from '../makkelijkemarkt-api'
 import { getMarkten, getMarkt, getIndelingData } from '../daalder-api'
 import { Roles } from '../authentication'
 import { getKeycloakUser } from '../keycloak-api';
@@ -14,39 +13,38 @@ import { safeCastStringValueToInt, today, tomorrow, validateDateStringHasISOForm
 
 const _getAllowedMarkets = (req: GrantedRequest) => {
     const allowedMarkets = getAllowedMarketsFromToken(req)
-    return getMarkten(false).then((markten: MMMarkt[]) => {
-        return markten.filter((markt: MMMarkt) => allowedMarkets?.includes(markt.afkorting))
-    })
+    return getMarkten(false).then((markten: IDaalderMarkt[]) => {
+        return markten.filter((markt: IDaalderMarkt) => allowedMarkets?.includes(markt.afkorting));
+    });
 }
 
-const _getIndelingForTodayOrTomorrow = (markt: MMMarkt) => {
-
+const _getIndelingForTodayOrTomorrow = (markt: IDaalderMarkt) => {
     // If it's after allocation time we assume the kramenzetter wants to see the
     // indeling of tomorrow, not today.
-    const nextAllocationDate = isAfterMailingTime() ? tomorrow() : today()
+    const nextAllocationDate = isAfterMailingTime() ? tomorrow() : today();
     const marktDagen = (markt.marktDagen || []).map(parseMarktDag);
-    const dates = getMarktDays(nextAllocationDate, nextAllocationDate, marktDagen)
+    const dates = getMarktDays(nextAllocationDate, nextAllocationDate, marktDagen);
 
     // We always want to show 1 link to not confuse kramenzetters.
     // If there are no available dates, we dont show a link.
-    return dates.length ? dates[0] : ''
-}
+    return dates.length ? dates[0] : '';
+};
 
-const _setIndelingForTodayOrTomorrow = (markt) => {
-    return {nextIndelingsDate: _getIndelingForTodayOrTomorrow(markt), ...markt}
-}
+const _setIndelingForTodayOrTomorrow = (markt: IDaalderMarkt) => {
+    return { nextIndelingsDate: _getIndelingForTodayOrTomorrow(markt), ...markt };
+};
 
-const _isAllowedToSeeIndeling = (req: GrantedRequest, markt: MMMarkt, marktDate: string) => {
-    const allowedMarkets = getAllowedMarketsFromToken(req)
+const _isAllowedToSeeIndeling = (req: GrantedRequest, markt: IDaalderMarkt, marktDate: string) => {
+    const allowedMarkets = getAllowedMarketsFromToken(req);
 
     if (!allowedMarkets.includes(markt.afkorting)) {
-        return false
+        return false;
     }
     if (_getIndelingForTodayOrTomorrow(markt) !== marktDate) {
-        return false
+        return false;
     }
-    return true
-}
+    return true;
+};
 
 export const getKramenzetterOverzichtPage = (req: GrantedRequest, res: Response, next: NextFunction) => {
     _getAllowedMarkets(req).then((markten: any) => {

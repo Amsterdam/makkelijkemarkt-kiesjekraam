@@ -1,9 +1,3 @@
-import {
-    // getMarktBasics,
-    // getOndernemer,
-    // getVoorkeurByMarktEnOndernemer,
-    // updateMarktVoorkeur,
-} from '../makkelijkemarkt-api';
 import { getQueryErrors, HTTP_CREATED_SUCCESS, internalServerErrorPage } from '../express-util';
 import { NextFunction, Request, Response } from 'express';
 import { convertVoorkeur } from '../pakjekraam-api';
