@@ -113,7 +113,7 @@ export const getMarktAanwezigheid = async (marktId: string, day: string): Promis
 
 const getOndernemerPrefs = async (erkenningsNummer: string): Promise<any> => {
     const serial = erkenningsNummerToSerial(erkenningsNummer);
-    const response: [{specs: {}, id: number}] = await api.get(`/kiesjekraam/pref/?inschrijving__ondernemer__serial=${serial}`);
+    const response: [{specs: {}, id: number}] = await api.get(`/kiesjekraam/pref/?ondernemer__serial=${serial}`);
     return response.map(({id, specs}) => ({id, ...specs}));
 }
 
@@ -287,7 +287,7 @@ export const getRsvps = async (erkenningsNummer: string): Promise<ILegacyRSVP[]>
     const sundayInTwoWeeks = moment(monday).add(20, 'days').format('YYYY-MM-DD');
 
     const serial = erkenningsNummerToSerial(erkenningsNummer);
-    const queryParms = `?inschrijving__ondernemer__serial=${serial}&day__gte=${monday}&day__lte=${sundayInTwoWeeks}`;
+    const queryParms = `?ondernemer__serial=${serial}&day__gte=${monday}&day__lte=${sundayInTwoWeeks}`;
     const rsvps: ILegacyRSVP[] = await api.get(`/kiesjekraam/rsvp/${queryParms}`);
     return rsvps
 };
@@ -295,7 +295,7 @@ export const getRsvps = async (erkenningsNummer: string): Promise<ILegacyRSVP[]>
 export const getRsvpPatterns = async (erkenningsNummer: string): Promise<IRsvpPattern[]> => {
     console.log('getRsvpPatterns', erkenningsNummer);
     const serial = erkenningsNummerToSerial(erkenningsNummer);
-    const queryParms = `?inschrijving__ondernemer__serial=${serial}`;
+    const queryParms = `?ondernemer__serial=${serial}`;
     const rsvpPatterns: IRsvpPattern[] = await api.get(`/kiesjekraam/rsvp-pattern/${queryParms}`);
     return rsvpPatterns;
 };
