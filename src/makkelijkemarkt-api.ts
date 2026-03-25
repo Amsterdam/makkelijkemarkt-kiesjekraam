@@ -40,13 +40,11 @@ const HTTP_HEADER_REQUEST_START_TIME = 'requestStartTime';
 
 requireEnv('API_MMAPPKEY');
 requireEnv('API_KEY');
-requireEnv('MM_API_NGINX_MM_API_SERVICE_HOST');
-requireEnv('MM_API_NGINX_MM_API_SERVICE_PORT');
 
 
 export const mmConfig = {
-    // MM_API_MM_API_SERVICE_HOST and PORT defined by helm/kubernetes. When service name changes, this var should be changed.
-    baseUrl: `http://${process.env.MM_API_NGINX_MM_API_SERVICE_HOST}:${process.env.MM_API_NGINX_MM_API_SERVICE_PORT}/api/1.1.0/`,
+    // Base URL configured via API_URL to avoid coupling to nginx service env vars.
+    baseUrl: '', // Empty string because ENV var is removed. MM api is no longer used.
     appKey: process.env.API_MMAPPKEY,
     loginUrl: 'login/apiKey/',
     apiKey: process.env.API_KEY,
