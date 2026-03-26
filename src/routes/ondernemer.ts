@@ -19,9 +19,7 @@ import { Response } from 'express';
 import {
     Roles,
 } from '../authentication';
-
-// Minimal shape needed for filtering by market id
-type Sollicitatie = { markt: { id: string | number } };
+import { MMSollicitatie } from '../model/markt.model';
 
 export const publicProfilePage = async (req: GrantedRequest, res: Response, erkenningsNummer: string, role: string) => {
     const messages = getQueryErrors(req.query);
@@ -30,7 +28,7 @@ export const publicProfilePage = async (req: GrantedRequest, res: Response, erke
         const ondernemer = await getOndernemer(erkenningsNummer);
         const marktenEnabled = await getMarkten(true);
         const marktenEnabledIds = marktenEnabled.map((markt: any) => markt.id);
-        ondernemer.sollicitaties = ondernemer.sollicitaties.filter((sollicitatie: Sollicitatie) =>
+        ondernemer.sollicitaties = ondernemer.sollicitaties.filter((sollicitatie: MMSollicitatie) =>
             marktenEnabledIds.includes(sollicitatie.markt.id),
         );
 

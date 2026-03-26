@@ -1,7 +1,7 @@
 import { GrantedRequest } from 'keycloak-connect';
 import { NextFunction, Response } from 'express';
 
-import { IDaalderMarkt } from '../model/markt.model';
+import { MMMarkt } from '../model/markt.model';
 import { getAllowedMarketsFromToken } from "../roles";
 import { getMarkten, getMarkt, getIndelingData } from '../daalder-api'
 import { Roles } from '../authentication'
@@ -13,12 +13,12 @@ import { safeCastStringValueToInt, today, tomorrow, validateDateStringHasISOForm
 
 const _getAllowedMarkets = (req: GrantedRequest) => {
     const allowedMarkets = getAllowedMarketsFromToken(req)
-    return getMarkten(false).then((markten: IDaalderMarkt[]) => {
-        return markten.filter((markt: IDaalderMarkt) => allowedMarkets?.includes(markt.afkorting));
+    return getMarkten(false).then((markten: MMMarkt[]) => {
+        return markten.filter((markt: MMMarkt) => allowedMarkets?.includes(markt.afkorting));
     });
 }
 
-const _getIndelingForTodayOrTomorrow = (markt: IDaalderMarkt) => {
+const _getIndelingForTodayOrTomorrow = (markt: MMMarkt) => {
     // If it's after allocation time we assume the kramenzetter wants to see the
     // indeling of tomorrow, not today.
     const nextAllocationDate = isAfterMailingTime() ? tomorrow() : today();
@@ -30,11 +30,11 @@ const _getIndelingForTodayOrTomorrow = (markt: IDaalderMarkt) => {
     return dates.length ? dates[0] : '';
 };
 
-const _setIndelingForTodayOrTomorrow = (markt: IDaalderMarkt) => {
+const _setIndelingForTodayOrTomorrow = (markt: MMMarkt) => {
     return { nextIndelingsDate: _getIndelingForTodayOrTomorrow(markt), ...markt };
 };
 
-const _isAllowedToSeeIndeling = (req: GrantedRequest, markt: IDaalderMarkt, marktDate: string) => {
+const _isAllowedToSeeIndeling = (req: GrantedRequest, markt: MMMarkt, marktDate: string) => {
     const allowedMarkets = getAllowedMarketsFromToken(req);
 
     if (!allowedMarkets.includes(markt.afkorting)) {

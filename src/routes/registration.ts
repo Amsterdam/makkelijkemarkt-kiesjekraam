@@ -13,11 +13,6 @@ import {
     getOndernemer,
 } from '../daalder-api';
 
-const checkActivationCode = (username: string, code: string): Promise<boolean> =>
-    getOndernemer(username).then((ondernemer) => {
-        if (!ondernemer.pasUid) throw Error('Incorrect username/password');
-        return typeof code === 'string' && code.length > 0 && code === ondernemer.pasUid;
-    });
 import {
     Router,
 } from 'express';
@@ -36,6 +31,12 @@ module.exports = () => {
 
     return router;
 };
+
+const checkActivationCode = (username: string, code: string): Promise<boolean> =>
+    getOndernemer(username).then((ondernemer) => {
+        if (!ondernemer.pasUid) throw Error('Incorrect username/password');
+        return typeof code === 'string' && code.length > 0 && code === ondernemer.pasUid;
+    });
 
 const activationPage = (req, res) => {
     res.render('ActivatePage', {

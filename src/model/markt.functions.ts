@@ -1,7 +1,7 @@
 import { addDays, dateDiffInDays, formatDayOfWeekShort, getMaDiWoDo, today } from '../util';
 import { DAYS_CLOSED } from '../domain-knowledge';
 import { getMarkten } from '../daalder-api';
-import { IDaalderMarkt } from './markt.model';
+import { MMMarkt } from './markt.model';
 
 export const getMarktenByDate = (marktDate: string) => {
     return getMarkten().then((markten) => {
@@ -20,7 +20,7 @@ export const getMarktenByDate = (marktDate: string) => {
     });
 };
 
-export const getNextMarktDate = (markt: IDaalderMarkt, skipDays: number, autoAdjust = true) => {
+export const getNextMarktDate = (markt: MMMarkt, skipDays: number, autoAdjust = true) => {
     if (!markt.marktDagen) {
         return undefined;
     }
@@ -44,12 +44,12 @@ export const getNextMarktDate = (markt: IDaalderMarkt, skipDays: number, autoAdj
         : getNextMarktDate(markt, skipDays + 1, false);
 };
 
-const isMarketDay = (markt: IDaalderMarkt, dateString: string) => {
+const isMarketDay = (markt: MMMarkt, dateString: string) => {
     const dayShort = formatDayOfWeekShort(dateString);
     return markt.marktDagen && markt.marktDagen.includes(dayShort);
 };
 
-export const isMarketClosed = (markt: IDaalderMarkt, dateString: string) => {
+export const isMarketClosed = (markt: MMMarkt, dateString: string) => {
     if (!isMarketDay(markt, dateString)) {
         return true;
     }

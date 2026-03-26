@@ -1,11 +1,11 @@
 import {
     IAanwezigheid,
-    IDaalderMarkt,
     IMarktondernemerVoorkeur,
     IMarktondernemerVoorkeurRow,
     IPlaatsvoorkeur,
     IRSVP,
     IRsvpPattern,
+    MMMarkt,
 } from 'model/markt.model';
 import { requireEnv, safeCastStringValueToInt } from './util';
 import axios, { AxiosResponse } from 'axios';
@@ -85,23 +85,23 @@ export const getOndernemer = async (erkenningsNummer: string): Promise<any> => {
     return ondernemer;
 };
 
-export const getMarkten = async (includeInactive: boolean = false): Promise<IDaalderMarkt[]> => {
-    const markten: IDaalderMarkt[] = await api.get('/kiesjekraam/markt/');
+export const getMarkten = async (includeInactive: boolean = false): Promise<MMMarkt[]> => {
+    const markten: MMMarkt[] = await api.get('/kiesjekraam/markt/');
     return markten;
 };
 
-export const getMarkt = async (marktId: string): Promise<IDaalderMarkt> => {
+export const getMarkt = async (marktId: string): Promise<MMMarkt> => {
     safeCastStringValueToInt(marktId);
-    const markt: IDaalderMarkt = await api.get(`/kiesjekraam/markt/${marktId}/`);
+    const markt: MMMarkt = await api.get(`/kiesjekraam/markt/${marktId}/`);
     return markt;
 };
 
 export const getMarktBasics = async (
     marktId: string,
-): Promise<{ markt: IDaalderMarkt; marktplaatsen: any[]; branches: any[] }> => {
+): Promise<{ markt: MMMarkt; marktplaatsen: any[]; branches: any[] }> => {
     // also used by getMarktDetails, which is used by allocation related stuff
     safeCastStringValueToInt(marktId);
-    const markt: IDaalderMarkt = await getMarkt(marktId);
+    const markt: MMMarkt = await getMarkt(marktId);
     const branches = await getBranches(marktId);
     const standplaatsen = await getStandplaatsen(marktId);
     return {

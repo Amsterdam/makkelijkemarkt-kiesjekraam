@@ -1,11 +1,7 @@
-import { IMarktondernemerVoorkeurRow } from './markt.model';
+import { IMarktondernemerVoorkeurRow, MMSollicitatie } from './markt.model';
 import { isVast } from '../domain-knowledge';
-type Sollicitatie = {
-    status: string;
-    vastePlaatsen: unknown[];
-};
 
-export const getDefaultVoorkeur = (sollicitatie: Sollicitatie) => {
+export const getDefaultVoorkeur = (sollicitatie: MMSollicitatie) => {
     return {
         minimum: isVast(sollicitatie.status) ? sollicitatie.vastePlaatsen.length : 1,
         maximum: isVast(sollicitatie.status) ? sollicitatie.vastePlaatsen.length : 1,

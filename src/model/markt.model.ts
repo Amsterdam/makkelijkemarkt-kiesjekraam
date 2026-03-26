@@ -51,7 +51,7 @@ export interface IMarkt {
     expansionLimit?: number;
 }
 
-export interface IDaalderMarkt {
+export interface MMMarkt {
     id: string;
     afkorting: string;
     naam: string;
@@ -231,6 +231,27 @@ export interface IGenericBranche {
     afkorting: string;
     omschrijving: string;
     color: string;
+}
+
+export interface MMSollicitatie {
+    id: number;
+    sollicitatieNummer: number;
+    status: DeelnemerStatus;
+    vastePlaatsen: string[];
+    aantal3MeterKramen: number;
+    aantal4MeterKramen: number;
+    aantalExtraMeters: number;
+    aantalElektra: number;
+    krachtstroom: boolean;
+    doorgehaald: boolean;
+    doorgehaaldReden: string;
+    markt: {
+        id: string;
+        naam: string;
+        afkorting: string;
+    };
+    koppelveld: any;
+    aantalAfvaleiland: number;
 }
 
 export interface IPlaatsvoorkeur {
