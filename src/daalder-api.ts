@@ -50,7 +50,6 @@ api.interceptors.response.use(
             console.error('Daalder API error response:', error.response.data);
         } else {
             console.error('API request error message', error.message);
-            console.log('Error:', error);
         }
         return Promise.reject(error);
     },
