@@ -5,7 +5,6 @@ import { find, findLast, groupBy, includes, isEmpty, orderBy } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { RoleContext } from '../components/providers/RoleProvider'
-import { EMPTY_BRANCH } from '../../src/domain-knowledge'
 
 import { SaveButton } from '../components/buttons'
 import { VASTE_PLAATS_HOUDER_STATUS } from '../constants'
@@ -31,6 +30,7 @@ import {
 const { Link } = Typography
 
 const CUTOFF_TIME = '15:00:00'
+const EMPTY_BRANCH = '000-EMPTY'
 
 const WEEKDAY_NAME_MAP = {
   monday: 'ma',
