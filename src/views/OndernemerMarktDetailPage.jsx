@@ -109,6 +109,11 @@ class OndernemerMarktDetailPage extends React.Component {
                         </Alert>
                     ) : null}
                     <SollicitatieSpecs sollicitatie={sollicitatie} markt={markt} />
+                    {sollicitatie?.future_active &&
+                    <p>
+                        <strong>Let op:</strong> Uw inschrijving op deze markt is nog niet actief.<br />
+                        Ingestelde aanmeldingen, afmeldingen en andere voorkeuren tellen pas mee vanaf de dag dat uw inschrijving actief wordt.
+                    </p>}
                     <Uitslag
                         ondernemer={ondernemer}
                         markt={markt}
