@@ -483,7 +483,9 @@ app.get(
 )
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error(err);
+    if (!err.isAxiosError) {
+        console.log(err)
+    }
     if (process.env.APP_ENV === 'production') {
         res.render('ErrorPage', { errorCode: 500, req });
     } else {

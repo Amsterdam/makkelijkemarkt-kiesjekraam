@@ -1,6 +1,6 @@
 import { IAanwezigheid, IMarktondernemerVoorkeur, IMarktondernemerVoorkeurRow, IPlaatsvoorkeur, IRSVP, IRsvpPattern } from 'model/markt.model';
 import { requireEnv, safeCastStringValueToInt } from './util';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { flatten, last, orderBy } from 'lodash';
 import moment from 'moment';
 
@@ -14,6 +14,25 @@ export const daalderConfig = {
     daalderKjkApiUserToken: process.env.DAALDER_KJK_API_USER_TOKEN as string,
 };
 
+const apiLogFromError = (error: AxiosError): string => {
+    const logEntry = ['Daalder API error'];
+    if (error.status) {
+        logEntry.push(`status: ${error.status}`);
+    } else {
+        logEntry.push('status unknown');
+    }
+    if (error.message) {
+        logEntry.push(`message: ${error.message}`);
+    }
+    if (error.response) {
+        logEntry.push(`data: ${JSON.stringify(error.response.data).slice(0, 200)}`);
+    }
+    if (error.config) {
+        logEntry.push(`request: ${error.config.method || 'unknown'} ${error.config.url || 'unknown'}`);
+    }
+    return logEntry.join(', ');
+}
+
 // New Daalder API client
 const api = axios.create({
     baseURL: daalderConfig.baseUrl,
@@ -24,26 +43,11 @@ const api = axios.create({
     timeout: 10000, // 10 seconds timeout
 });
 
-api.interceptors.request.use(
-    config => {
-        console.log(`Daalder API Request: ${config.method} ${config.url}`);
-        return config;
-    },
-    error => {
-        console.error('Error in Daalder API request:', error.message);
-        return Promise.reject(error);
-    },
-);
-
 api.interceptors.response.use(
     (response: AxiosResponse) => response.data,
     error => {
-        if (error.response) {
-            console.error('Daalder API error response:', error.response.data);
-        } else {
-            console.error('API request error message', error.message);
-            console.log('Error:', error);
-        }
+        const logEntry = apiLogFromError(error);
+        console.error(logEntry)
         return Promise.reject(error);
     },
 );
@@ -326,7 +330,7 @@ export const getAllocationResult = async (marktId: string, marktDate: string): P
     safeCastStringValueToInt(marktId);
     const mode = DAALDER_ALLOCATION_MODE.SCHEDULED;
     const queryParms = `?day=${marktDate}&markt_version_id=${marktId}&mode=${mode}`;
-    const allocationResults = await api.get(`/kiesjekraam/allocation-result/${queryParms}`);
+    const allocationResults: any[] = await api.get(`/kiesjekraam/allocation-result/${queryParms}`);
     return allocationResults ? last(allocationResults) : {};
 }
 
