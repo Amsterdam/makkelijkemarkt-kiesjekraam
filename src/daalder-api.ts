@@ -43,17 +43,6 @@ const api = axios.create({
     timeout: 10000, // 10 seconds timeout
 });
 
-api.interceptors.request.use(
-    config => {
-        console.log(`Daalder API Request: ${config.method} ${config.url}`);
-        return config;
-    },
-    error => {
-        console.error('Error in Daalder API request:', error.message);
-        return Promise.reject(error);
-    },
-);
-
 api.interceptors.response.use(
     (response: AxiosResponse) => response.data,
     error => {
