@@ -1,6 +1,6 @@
 import { IAanwezigheid, IMarktondernemerVoorkeur, IMarktondernemerVoorkeurRow, IPlaatsvoorkeur, IRSVP, IRsvpPattern } from 'model/markt.model';
 import { requireEnv, safeCastStringValueToInt } from './util';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { flatten, last, orderBy } from 'lodash';
 import moment from 'moment';
 
@@ -13,6 +13,25 @@ export const daalderConfig = {
     baseUrl: `http://${process.env.MM_RAH_MM_RAH_SERVICE_HOST}:${process.env.MM_RAH_MM_RAH_SERVICE_PORT}`,
     daalderKjkApiUserToken: process.env.DAALDER_KJK_API_USER_TOKEN as string,
 };
+
+const apiLogFromError = (error: AxiosError): string => {
+    const logEntry = ['Daalder API error'];
+    if (error.status) {
+        logEntry.push(`status: ${error.status}`);
+    } else {
+        logEntry.push('status unknown');
+    }
+    if (error.message) {
+        logEntry.push(`message: ${error.message}`);
+    }
+    if (error.response) {
+        logEntry.push(`data: ${JSON.stringify(error.response.data).slice(0, 200)}`);
+    }
+    if (error.config) {
+        logEntry.push(`request: ${error.config.method || 'unknown'} ${error.config.url || 'unknown'}`);
+    }
+    return logEntry.join(', ');
+}
 
 // New Daalder API client
 const api = axios.create({
@@ -38,12 +57,8 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response: AxiosResponse) => response.data,
     error => {
-        if (error.response) {
-            console.error('Daalder API error response:', error.response.data);
-        } else {
-            console.error('API request error message', error.message);
-            console.log('Error:', error);
-        }
+        const logEntry = apiLogFromError(error);
+        console.error(logEntry)
         return Promise.reject(error);
     },
 );
