@@ -330,7 +330,7 @@ export const getAllocationResult = async (marktId: string, marktDate: string): P
     safeCastStringValueToInt(marktId);
     const mode = DAALDER_ALLOCATION_MODE.SCHEDULED;
     const queryParms = `?day=${marktDate}&markt_version_id=${marktId}&mode=${mode}`;
-    const allocationResults = await api.get(`/kiesjekraam/allocation-result/${queryParms}`);
+    const allocationResults: any[] = await api.get(`/kiesjekraam/allocation-result/${queryParms}`);
     return allocationResults ? last(allocationResults) : {};
 }
 
