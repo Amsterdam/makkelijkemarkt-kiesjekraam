@@ -13,6 +13,7 @@ import {
     yyyyMmDdtoDDMMYYYY,
 } from '../../util.ts';
 import { Roles } from '../../authentication'
+import { getAbsenceMessageForOndernemer } from '../../daalder-api';
 
 class AlgemeneVoorkeurenForm extends React.Component {
     propTypes = {
@@ -32,6 +33,7 @@ class AlgemeneVoorkeurenForm extends React.Component {
         const { branches, ondernemer, markt, marktId, marktDate, role, csrfToken } = this.props;
         const sollicitatie = ondernemer.sollicitaties.find(soll => soll.markt.id === markt.id);
         const voorkeur = this.props.voorkeur || getDefaultVoorkeur(sollicitatie);
+        const absenceMessage = getAbsenceMessageForOndernemer(ondernemer);
 
         if (voorkeur.absentFrom) {
             voorkeur.absentFrom = yyyyMmDdtoDDMMYYYY(voorkeur.absentFrom);
@@ -111,37 +113,12 @@ class AlgemeneVoorkeurenForm extends React.Component {
                             <label htmlFor="inrichting">Ja, ik kom met een eigen verkoopwagen/eigen materiaal.</label>
                         </p>
                     </div>
-                    {/* {(role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER) ? (
+                    {((role === Roles.MARKTBEWERKER || role === Roles.MARKTMEESTER) && absenceMessage) ? (
                         <div className={`Fieldset Fieldset--highlighted`}>
                             <h2 className="Fieldset__header">Langdurige afwezigheid</h2>
-                            <p className="InputField  InputField--text">
-                                <label className="Label" htmlFor="absentFrom">
-                                    Afwezig vanaf (dd-mm-yyyy):{' '}
-                                </label>
-                                <input
-                                    id="absentFrom"
-                                    type="text"
-                                    name="absentFrom"
-                                    placeholder="dd-mm-yyyy"
-                                    className="Input Input--medium"
-                                    value={voorkeur.absentFrom}
-                                />
-                            </p>
-                            <p className="InputField InputField--text">
-                                <label className="Label" htmlFor="absentUntil">
-                                    Afwezig tot en met (dd-mm-yyyy):
-                                </label>
-                                <input
-                                    id="absentUntil"
-                                    type="text"
-                                    name="absentUntil"
-                                    placeholder="dd-mm-yyyy"
-                                    className="Input Input--medium"
-                                    value={voorkeur.absentUntil}
-                                />
-                            </p>
+                            {absenceMessage}
                         </div>
-                    ) : null} */}
+                    ) : null}
                 </div>
 
                 <div className="Fieldset">
