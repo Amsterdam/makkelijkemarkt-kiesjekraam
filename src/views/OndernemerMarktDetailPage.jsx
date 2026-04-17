@@ -1,6 +1,7 @@
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { getAbsenceMessageForOndernemer } from '../daalder-api';
+
 const {
     today,
     getBreadcrumbsOndernemer,
@@ -68,9 +69,9 @@ class OndernemerMarktDetailPage extends React.Component {
             today(),
         );
 
-        const absentGemeld = algemeneVoorkeur ? algemeneVoorkeur.absentFrom && algemeneVoorkeur.absentUntil : false;
         const breadcrumbs = getBreadcrumbsOndernemer(ondernemer, role);
         const branchesObj = arrayToObject(branches, 'brancheId');
+        const absenceMessage = getAbsenceMessageForOndernemer(ondernemer);
 
         return (
             <Page messages={messages}>
@@ -121,16 +122,14 @@ class OndernemerMarktDetailPage extends React.Component {
                         afwijzingen={afwijzingen}
                         aanmeldingen={aanmeldingen}
                     />
-                    {absentGemeld ? (
+                    {absenceMessage ? (
                         <Alert type="warning" inline={true}>
                             <span>
                                 LET OP: U bent langere tijd afwezig gemeld{' '}
                                 <strong>
-                                    ({moment(algemeneVoorkeur.absentFrom).format('DD-MM-YYYY')} t/m{' '}
-                                    {moment(algemeneVoorkeur.absentUntil).format('DD-MM-YYYY')})
+                                    ({absenceMessage})
                                 </strong>
-                                . Klopt dit niet, neem dan contact op met de marktmeesters via{' '}
-                                {markt.telefoonNummerContact}.
+                                . Klopt dit niet, neem dan contact op met de marktmeesters of de markten administratie.
                             </span>
                         </Alert>
                     ) : null}

@@ -364,3 +364,18 @@ export const getIndelingData = async (marktId: string, marktDate: string): Promi
     }
     return null;
 }
+
+export const getAbsenceMessageForOndernemer = (ondernemer: any): string => {
+    let absenceMessage = ''
+    if (ondernemer?.absence) {
+        if (ondernemer.absence?.from) {
+            absenceMessage += `vanaf ${moment(ondernemer.absence.from).format('DD-MM-YYYY')} `
+        }
+        if (ondernemer.absence?.to) {
+            absenceMessage += `t/m ${moment(ondernemer.absence.to).format('DD-MM-YYYY')}`
+        } else {
+            absenceMessage += `voor onbepaalde tijd`
+        }
+    }
+    return absenceMessage;
+}
