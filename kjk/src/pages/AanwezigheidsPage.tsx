@@ -413,6 +413,8 @@ const Messages: React.VFC<{ showMissingBrancheWarning: boolean; marktData: any }
       <p style={{ fontStyle: 'italic' }}>
         Bent u er niet? Dan brengen wij het marktgeld de volgende keer dat u op de markt bent in rekening. Indien u niet
         aan uw betaalverplichting voldoet, zijn wij genoodzaakt uw vergunning in te trekken totdat u heeft betaald.
+
+        Indien u officieel langdurig afwezig bent gemeld, dan hoeft u deze pagina niet bij te werken. U staat in dat geval standaard op afwezig.
       </p>
     </>
   )
