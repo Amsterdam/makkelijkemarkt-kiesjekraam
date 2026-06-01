@@ -1,10 +1,9 @@
 import React from 'react';
 
 const PrintButton = () => {
-    /* eslint-disable no-script-url */
     return (
         <div className="PrintButton">
-            <a href="javascript:print()" role="button" className="PrintButton__btn">
+            <a href="#" role="button" className="PrintButton__btn" data-handler="print-page">
                 Print
             </a>
         </div>

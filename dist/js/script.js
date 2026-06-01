@@ -108,6 +108,10 @@ function splitByArray(orgArr, valueArr) {
 !function (w, d) {
 
   var handlers = {
+    'print-page': function (e) {
+      e && e.preventDefault();
+      w.print();
+    },
     'remove-voorkeur': function (e) {
       e.stopPropagation();
       var voorkeur = _closest(this, '.Draggable-list-item');
@@ -130,6 +134,12 @@ function splitByArray(orgArr, valueArr) {
             out.push(encodeURIComponent(hiddenFields[i].getAttribute('name')) + '=' + encodeURIComponent(hiddenFields[i].value))
           }
           out.push(encodeURIComponent('next') + '=' + encodeURIComponent(redirectTo));
+
+            if (d.body && d.body.classList.contains('page-waiting')) {
+              w.setTimeout(function () {
+                w.location.reload();
+              }, 2000);
+            }
 
           return out.join('&').replace(/%20/g, '+');;
         },

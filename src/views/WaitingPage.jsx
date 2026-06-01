@@ -10,12 +10,8 @@ class HomePage extends React.Component {
     };
 
     render() {
-        const js = `window.setTimeout(function () {
-                        window.location.reload();
-                    }, 2000)`;
         return (
-            <Page>
-                <script dangerouslySetInnerHTML={{ __html: js }} />
+            <Page bodyClass="page-waiting">
                 <Header hideLogout={true} />
                 <Content>
                     <h2>Even geduld a.u.b</h2>
