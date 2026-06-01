@@ -42,7 +42,7 @@ const contentSecurityPolicy = [
     "default-src 'self'",
     "base-uri 'self'",
     "connect-src 'self'",
-    "font-src 'self' data:",
+    "font-src 'self' data: https://www.amsterdam.nl",
     "form-action 'self'",
     "frame-ancestors 'self'",
     "img-src 'self' data:",
