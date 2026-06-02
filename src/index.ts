@@ -73,6 +73,10 @@ app.engine('tsx', templateEngine);
 
 app.use(morgan(':date[iso] :method :status :url :response-time ms'));
 
+app.get('/.well-known/security.txt', (req: Request, res: Response) => {
+    res.redirect(301, 'https://www.amsterdam.nl/.well-known/security.txt');
+});
+
 app.get('/status/health', serverHealth);
 app.get('/status/time', serverTime);
 app.get('/status/keycloak', keycloakHealth);
