@@ -135,12 +135,6 @@ function splitByArray(orgArr, valueArr) {
           }
           out.push(encodeURIComponent('next') + '=' + encodeURIComponent(redirectTo));
 
-            if (d.body && d.body.classList.contains('page-waiting')) {
-              w.setTimeout(function () {
-                w.location.reload();
-              }, 2000);
-            }
-
           return out.join('&').replace(/%20/g, '+');;
         },
         _process = function (data, selector) {
