@@ -108,6 +108,10 @@ function splitByArray(orgArr, valueArr) {
 !function (w, d) {
 
   var handlers = {
+    'print-page': function (e) {
+      e && e.preventDefault();
+      w.print();
+    },
     'remove-voorkeur': function (e) {
       e.stopPropagation();
       var voorkeur = _closest(this, '.Draggable-list-item');

@@ -1,7 +1,8 @@
-require('path');
+const path = require('path');
 
 module.exports = {
     mode: 'development',
+    devtool: false,
     entry: './dist/js/script.js',
     output: {
         path: path.resolve(__dirname, 'dist/js'),

@@ -10,12 +10,8 @@ class HomePage extends React.Component {
     };
 
     render() {
-        const js = `window.setTimeout(function () {
-                        window.location.reload();
-                    }, 2000)`;
         return (
             <Page>
-                <script dangerouslySetInnerHTML={{ __html: js }} />
                 <Header hideLogout={true} />
                 <Content>
                     <h2>Even geduld a.u.b</h2>
@@ -23,8 +19,8 @@ class HomePage extends React.Component {
                         <p>
                             <img width="20px" src="/images/loading-buffering.gif" />
                         </p>
-                        Het berekenen van een concept indeling kan even duren. Deze pagina ververst automatisch. Zodra
-                        de berekening klaar is wordt de indeling getoond.
+                        Het berekenen van een concept indeling kan even duren. Zodra de berekening klaar is wordt de
+                        indeling getoond.
                     </p>
                 </Content>
             </Page>

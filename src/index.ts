@@ -38,6 +38,19 @@ import { updateOndernemerKjkEmail } from './daalder-api';
 
 const csrfProtection = csrf({ cookie: true });
 
+const contentSecurityPolicy = [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "connect-src 'self'",
+    "font-src 'self' data: https://www.amsterdam.nl",
+    "form-action 'self'",
+    "frame-ancestors 'self'",
+    "img-src 'self' data:",
+    "object-src 'none'",
+    "script-src 'self'",
+    "style-src 'self' 'unsafe-inline'",
+].join('; ');
+
 requireEnv('APP_SECRET');
 
 const HTTP_DEFAULT_PORT = 8080;
@@ -77,18 +90,19 @@ app.get('/.well-known/security.txt', (req: Request, res: Response) => {
     res.redirect(301, 'https://www.amsterdam.nl/.well-known/security.txt');
 });
 
-app.get('/status/health', serverHealth);
-app.get('/status/time', serverTime);
-app.get('/status/keycloak', keycloakHealth);
-app.get('/status/makkelijkemarkt', makkelijkeMarktHealth);
-
 app.use((req, res, next) => {
+    res.header('Content-Security-Policy', contentSecurityPolicy);
     res.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
     res.header('X-Content-Type-Options', 'nosniff');
     res.header('X-XSS-Protection', '1; mode=block');
     res.header('X-Frame-Options', 'SAMEORIGIN');
     next();
 });
+
+app.get('/status/health', serverHealth);
+app.get('/status/time', serverTime);
+app.get('/status/keycloak', keycloakHealth);
+app.get('/status/makkelijkemarkt', makkelijkeMarktHealth);
 
 app.use(express.urlencoded({ extended: true }) as RequestHandler);
 app.use(express.json() as RequestHandler);
