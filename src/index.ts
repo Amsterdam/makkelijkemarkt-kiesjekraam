@@ -38,19 +38,12 @@ import { updateOndernemerKjkEmail } from './daalder-api';
 
 const csrfProtection = csrf({ cookie: true });
 
-const getCspOrigin = (value: string) => {
-    try {
-        return new URL(value).origin;
-    } catch {
-        throw new Error(`CSP origin value must be an absolute URL, received "${value}"`);
-    }
-};
-
 const daalderApiUrl = process.env.DAALDER_API_URL;
 const imgSrc = ["'self'", 'data:'];
 
 if (daalderApiUrl) {
-    imgSrc.push(getCspOrigin(daalderApiUrl));
+    const daalderApiOrigin = new URL(daalderApiUrl).origin; 
+    imgSrc.push(daalderApiOrigin);
 }
 
 const contentSecurityPolicy = [
