@@ -38,6 +38,21 @@ import { updateOndernemerKjkEmail } from './daalder-api';
 
 const csrfProtection = csrf({ cookie: true });
 
+const getCspOrigin = (value: string) => {
+    try {
+        return new URL(value).origin;
+    } catch {
+        throw new Error(`CSP origin value must be an absolute URL, received "${value}"`);
+    }
+};
+
+const daalderApiUrl = process.env.DAALDER_API_URL;
+const imgSrc = ["'self'", 'data:'];
+
+if (daalderApiUrl) {
+    imgSrc.push(getCspOrigin(daalderApiUrl));
+}
+
 const contentSecurityPolicy = [
     "default-src 'self'",
     "base-uri 'self'",
@@ -45,7 +60,7 @@ const contentSecurityPolicy = [
     "font-src 'self' data: https://www.amsterdam.nl",
     "form-action 'self'",
     "frame-ancestors 'self'",
-    "img-src 'self' data:",
+    `img-src ${imgSrc.join(' ')}`,
     "object-src 'none'",
     "script-src 'self'",
     "style-src 'self' 'unsafe-inline'",
