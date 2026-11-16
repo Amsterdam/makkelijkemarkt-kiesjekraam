@@ -62,7 +62,7 @@
     "jsonschema": "1.2.5",
     "keycloak-connect": "21.1.1",
     "lodash": "^4.17.23",
-    "moment": "2.29.4",
+    "moment": "2.31.0",
     "moment-timezone": "^0.5.43",
     "morgan": "1.10.1",
     "prop-types": "15.7.2",
