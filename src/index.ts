@@ -120,6 +120,7 @@ if (process.env.ENABLE_CORS_FOR_ORIGIN) {
 }
 
 // Static files that are public (robots.txt, favicon.ico)
+app.use('/assets', express.static('./assets'));
 app.use(express.static('./dist/'));
 
 app.get('/kjk/static/*/(*.js|*.css)', function(req, res, next) {
